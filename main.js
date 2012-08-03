@@ -13,12 +13,12 @@ var gWaveTypes = ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE'];
 ////////////////////////////////////////////////////////////////////////////////
 // Filter constants
 var gFilterTypes = ['LOWPASS', 'HIGHPASS', 'BANDPASS', 'LOWSHELF', 'HIGHSHELF',
-                    'PEAKING', 'NOTCH', 'HIGHPASS'];
+                    'PEAKING', 'NOTCH', 'ALLPASS'];
 var gFilterHasGain = [false, false, false, true, true, true, false, false];
 var gFilterFrequencyFactors = [0.5, 0.707, 1, 1.414, 2, 2.828];
 
 // Todo:
-// 1. Output filter with LFO
+// 1. Optional output filter with LFO
 // 2. Affect pitch with LFO
 // 3. Affect volume with LFO
 // 4. ADSR envelope
@@ -26,7 +26,14 @@ var gFilterFrequencyFactors = [0.5, 0.707, 1, 1.414, 2, 2.828];
 
 ////////////////////////////////////////////////////////////////////////////////
 // The Note class
-function Note(context, outputNode, frequency, waveType) {
+function Note(context,
+              outputNode,
+              frequency,
+              waveType,
+              filterType,
+              filterFrequency,
+              filterQ,
+              filterGain) {
   this.context_ = context;
   this.oscillatorNode_ = this.context_.createOscillator();
   this.oscillatorNode_.frequency.value = frequency;
@@ -34,7 +41,13 @@ function Note(context, outputNode, frequency, waveType) {
   this.gainNode_ = this.context_.createGainNode();
   this.gainNode_.gain.setValueAtTime(0, this.context_.currentTime);
   this.gainNode_.gain.setTargetValueAtTime(1, this.context_.currentTime, 0.1);
-  this.oscillatorNode_.connect(this.gainNode_);
+  this.filterNode_ = this.context_.createBiquadFilter();
+  this.filterNode_.type = filterType;
+  this.filterNode_.frequency.value = filterFrequency;
+  this.filterNode_.Q.value = filterQ;
+  this.filterNode_.gain.value = filterGain;
+  this.oscillatorNode_.connect(this.filterNode_);
+  this.filterNode_.connect(this.gainNode_);
   this.gainNode_.connect(outputNode);
   this.oscillatorNode_.noteOn(0);
 }
@@ -45,6 +58,7 @@ Note.prototype.stop = function() {
   setTimeout(function() {
     thisNote.oscillatorNode_.noteOff(0);
     thisNote.oscillatorNode_.disconnect();
+    thisNote.filterNode_.disconnect();
     thisNote.gainNode_.disconnect();
   }, 3000);
 }
@@ -55,6 +69,22 @@ Note.prototype.changeFrequency = function(frequency) {
 
 Note.prototype.changeWaveType = function(waveType) {
   this.oscillatorNode_.type = waveType;
+}
+
+Note.prototype.changeFilterType = function(filterType) {
+  this.filterNode_.type = filterType;
+}
+
+Note.prototype.changeFilterFrequency = function(frequency) {
+  this.filterNode_.frequency.value = frequency;
+}
+
+Note.prototype.changeFilterQ = function(Q) {
+  this.filterNode_.q.value = Q;
+}
+
+Note.prototype.changeFilterGain = function(gain) {
+  this.filterNode_.gain.value = gain;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,10 +118,10 @@ function init() {
   filterFrequencyChanged();
   filterQChanged();
 }
-window.onload = init;
+  window.onload = init;
 
 ////////////////////////////////////////////////////////////////////////////////
-// Accessors for values
+// Settings accessors
 
 function oscillatorFrequency() {
   var octaveEl = document.getElementById('octave');
@@ -105,15 +135,42 @@ function waveType() {
   return select.value;
 }
 
+function filterType() {
+  var select = document.getElementById('filterTypes');
+  return select.value;
+}
+
+function filterFrequency() {
+  var el = document.getElementById('filterFrequency');
+  var factor = gFilterFrequencyFactors[el.value];
+  return oscillatorFrequency() * factor;
+}
+
+function filterQ() {
+  var el = document.getElementById('filterQ');
+  return el.value;
+}
+
+function filterGain() {
+  var el = document.getElementById('filterGain');
+  return el.value;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Utils
+function roundForDisplay(number) {
+  return Math.round(number * 100) / 100;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Event handlers
 
 function oscillatorFrequencyChanged() {
   var outEl = document.getElementById('selectedOscillatorFrequency');
-  var frequencyToPrint = Math.round(oscillatorFrequency() * 100) / 100;
-  outEl.innerHTML = frequencyToPrint;
+  outEl.innerHTML = roundForDisplay(oscillatorFrequency());
   if (gCurrentNote)
     gCurrentNote.changeFrequency(oscillatorFrequency());
+  filterFrequencyChanged();
 }
 
 function octaveChanged() {
@@ -136,23 +193,39 @@ function waveTypeChanged() {
 }
 
 function filterTypeChanged() {
-  var el = document.getElementById('filterTypes');
   var gainEl = document.getElementById('filterGain');
-  gainEl.disabled = !gFilterHasGain[el.value];
+  gainEl.disabled = !gFilterHasGain[filterType()];
+  filterGainChanged();
+  if (gCurrentNote)
+    gCurrentNote.changeFilterType(filterType());
 }
 
 function filterFrequencyChanged() {
   var el = document.getElementById('filterFrequency');
   var outEl = document.getElementById('selectedFilterFrequency');
-  //var freqFactor =
+  var freqFactor = gFilterFrequencyFactors[el.value];
+  outEl.innerHTML = roundForDisplay(filterFrequency()) +
+                    ' (x' + freqFactor + ')';
+  if (gCurrentNote)
+    gCurrentNote.changeFilterFrequency(filterFrequency());
 }
 
 function filterQChanged() {
-
+  var outEl = document.getElementById('selectedQ');
+  outEl.innerHTML = filterQ();
+  if (gCurrentNote)
+    gCurrentNote.changeFilterQ(filterQ());
 }
 
 function filterGainChanged() {
-
+  var el = document.getElementById('filterGain');
+  var outEl = document.getElementById('selectedFilterGain');
+  if (el.disabled)
+    outEl.innerHTML = 'N/A';
+  else
+    outEl.innerHTML = filterGain() + 'dB';
+  if (gCurrentNote)
+    gCurrentNote.changeFilterGain(filterGain());
 }
 
 function playClicked() {
@@ -161,7 +234,11 @@ function playClicked() {
     gCurrentNote = new Note(gContext,
                             gContext.destination,
                             oscillatorFrequency(),
-                            waveType());
+                            waveType(),
+                            filterType(),
+                            filterFrequency(),
+                            filterQ(),
+                            filterGain());
   else if (gCurrentNote) {
     gCurrentNote.stop();
     gCurrentNote = null;

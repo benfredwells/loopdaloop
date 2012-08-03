@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+  <script src='main.js'></script>
+</head>
+<body>
+  Oscillator<br>
+  <input type='range' id='octave' min='0' max='8'>Octave:</input>
+  <span id='selectedOctave'></span><br>
+  <input type='range' id='note' min='0' max='11'>Note:</input>
+  <span id='selectedNote'></span><br>
+  Frequency:&nbsp<span id='selectedOscillatorFrequency'></span><br>
+  Wave Type:&nbsp<select id='waveTypes'></select><br>
+  Output filter<br>
+  Type:&nbsp<select id='filterTypes'></select><br>
+  <input type='range' id='filterFrequency' min='0' max='5'>Frequency:</input>
+  <span id='selectedFilterFrequency'></span><br>
+  <input type='range' id='filterQ' min='0' max='20'>Q:</input>
+  <span id='selectedQ'></span><br>
+  <input type='range' id='filterGain' min='-20' max='20'>Gain:</input>
+  <span id='selectedFilterGain'></span><br>
+  <input type='checkbox' id='play'>Play</input>
+</body>
+</html>

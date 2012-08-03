@@ -30,6 +30,7 @@ function Note(context,
               outputNode,
               frequency,
               waveType,
+              filterEnabled,
               filterType,
               filterFrequency,
               filterQ,
@@ -46,8 +47,12 @@ function Note(context,
   this.filterNode_.frequency.value = filterFrequency;
   this.filterNode_.Q.value = filterQ;
   this.filterNode_.gain.value = filterGain;
-  this.oscillatorNode_.connect(this.filterNode_);
-  this.filterNode_.connect(this.gainNode_);
+  if (filterEnabled) {
+    this.oscillatorNode_.connect(this.filterNode_);
+    this.filterNode_.connect(this.gainNode_);
+  } else {
+    this.oscillatorNode_.connect(this.gainNode_);
+  }
   this.gainNode_.connect(outputNode);
   this.oscillatorNode_.noteOn(0);
 }
@@ -69,6 +74,17 @@ Note.prototype.changeFrequency = function(frequency) {
 
 Note.prototype.changeWaveType = function(waveType) {
   this.oscillatorNode_.type = waveType;
+}
+
+Note.prototype.changeFilterEnabled = function(enabled) {
+  this.oscillatorNode_.disconnect();
+  this.filterNode_.disconnect();
+  if (enabled) {
+    this.oscillatorNode_.connect(this.filterNode_);
+    this.filterNode_.connect(this.gainNode_);
+  } else {
+    this.oscillatorNode_.connect(this.gainNode_);
+  }
 }
 
 Note.prototype.changeFilterType = function(filterType) {
@@ -110,11 +126,12 @@ function init() {
   populateSelect('waveTypes', gWaveTypes);
   document.getElementById('waveTypes').onchange = waveTypeChanged;
   populateSelect('filterTypes', gFilterTypes);
+  document.getElementById('filterEnabled').onchange = filterEnabledChanged;
   document.getElementById('filterTypes').onchange = filterTypeChanged;
   document.getElementById('filterFrequency').onchange = filterFrequencyChanged;
   document.getElementById('filterQ').onchange = filterQChanged;
   document.getElementById('filterGain').onchange = filterGainChanged;
-  filterTypeChanged(); // will update gain too
+  filterEnabledChanged(); // will update type and gain
   filterFrequencyChanged();
   filterQChanged();
 }
@@ -131,13 +148,15 @@ function oscillatorFrequency() {
 }
 
 function waveType() {
-  var select = document.getElementById('waveTypes');
-  return select.value;
+  return document.getElementById('waveTypes').value;
+}
+
+function filterEnabled() {
+  return document.getElementById('filterEnabled').checked;
 }
 
 function filterType() {
-  var select = document.getElementById('filterTypes');
-  return select.value;
+  return document.getElementById('filterTypes').value;
 }
 
 function filterFrequency() {
@@ -147,13 +166,11 @@ function filterFrequency() {
 }
 
 function filterQ() {
-  var el = document.getElementById('filterQ');
-  return el.value;
+  return document.getElementById('filterQ').value;
 }
 
 function filterGain() {
-  var el = document.getElementById('filterGain');
-  return el.value;
+  return document.getElementById('filterGain').value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,9 +209,18 @@ function waveTypeChanged() {
     gCurrentNote.changeWaveType(waveType());
 }
 
+function filterEnabledChanged() {
+  document.getElementById('filterTypes').disabled = !filterEnabled();
+  document.getElementById('filterFrequency').disabled = !filterEnabled();
+  document.getElementById('filterQ').disabled = !filterEnabled();
+  if (gCurrentNote)
+    gCurrentNote.changeFilterEnabled(filterEnabled());
+  filterTypeChanged(); // to update gain
+}
+
 function filterTypeChanged() {
   var gainEl = document.getElementById('filterGain');
-  gainEl.disabled = !gFilterHasGain[filterType()];
+  gainEl.disabled = !gFilterHasGain[filterType()] || !filterEnabled();
   filterGainChanged();
   if (gCurrentNote)
     gCurrentNote.changeFilterType(filterType());
@@ -220,10 +246,10 @@ function filterQChanged() {
 function filterGainChanged() {
   var el = document.getElementById('filterGain');
   var outEl = document.getElementById('selectedFilterGain');
-  if (el.disabled)
-    outEl.innerHTML = 'N/A';
-  else
+  if (gFilterHasGain[filterType()])
     outEl.innerHTML = filterGain() + 'dB';
+  else
+    outEl.innerHTML = 'N/A';
   if (gCurrentNote)
     gCurrentNote.changeFilterGain(filterGain());
 }
@@ -235,6 +261,7 @@ function playClicked() {
                             gContext.destination,
                             oscillatorFrequency(),
                             waveType(),
+                            filterEnabled(),
                             filterType(),
                             filterFrequency(),
                             filterQ(),

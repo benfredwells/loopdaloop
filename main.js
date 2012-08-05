@@ -1,5 +1,6 @@
 var gContext = null;
 var gCurrentNote = null;
+var gSequencyManager = null;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillator constants
@@ -16,6 +17,13 @@ var gFilterTypes = ['LOWPASS', 'HIGHPASS', 'BANDPASS', 'LOWSHELF', 'HIGHSHELF',
                     'PEAKING', 'NOTCH', 'ALLPASS'];
 var gFilterHasGain = [false, false, false, true, true, true, false, false];
 var gFilterFrequencyFactors = [0.5, 0.707, 1, 1.414, 2, 2.828];
+
+////////////////////////////////////////////////////////////////////////////////
+// LFO constants
+var gMaxLFOFrequencyRangeValue = 100;
+var gMaxLFOFrequency = 10;
+var gMaxLFOGainRangeValue = 100;
+var gMaxLFOPhaseRangeValue = 36;
 
 // Todo:
 // 1. Optional output filter with LFO
@@ -34,7 +42,11 @@ function Note(context,
               filterType,
               filterFrequency,
               filterQ,
-              filterGain) {
+              filterGain,
+              filterLFOEnabled,
+              filterLFOFrequency,
+              filterLFOGain,
+              filterLFOPhase) {
   this.context_ = context;
   this.oscillatorNode_ = this.context_.createOscillator();
   this.oscillatorNode_.frequency.value = frequency;
@@ -47,6 +59,13 @@ function Note(context,
   this.filterNode_.frequency.value = filterFrequency;
   this.filterNode_.Q.value = filterQ;
   this.filterNode_.gain.value = filterGain;
+  if (filterLFOEnabled) {
+    this.filterLFO_ = gSequencyManager.newLFO(this.filterNode_.frequency,
+                                              filterLFOFrequency,
+                                              filterLFOPhase,
+                                              filterFrequency,
+                                              filterLFOGain);
+  }
   if (filterEnabled) {
     this.oscillatorNode_.connect(this.filterNode_);
     this.filterNode_.connect(this.gainNode_);
@@ -65,6 +84,8 @@ Note.prototype.stop = function() {
     thisNote.oscillatorNode_.disconnect();
     thisNote.filterNode_.disconnect();
     thisNote.gainNode_.disconnect();
+    if (this.lfo_)
+      gSequencyManager.removeSequencer(this.lfo_);
   }, 3000);
 }
 
@@ -118,6 +139,7 @@ function populateSelect(selectId, array) {
 
 function init() {
   gContext = new webkitAudioContext();
+  gSequencyManager = new SequenceManager(gContext);
   document.getElementById('play').onclick = playClicked;
   document.getElementById('octave').onchange = octaveChanged;
   document.getElementById('note').onchange = noteChanged;
@@ -131,9 +153,16 @@ function init() {
   document.getElementById('filterFrequency').onchange = filterFrequencyChanged;
   document.getElementById('filterQ').onchange = filterQChanged;
   document.getElementById('filterGain').onchange = filterGainChanged;
-  filterEnabledChanged(); // will update type and gain
+  filterEnabledChanged(); // will update type, gain and lfo enabled
   filterFrequencyChanged();
   filterQChanged();
+  document.getElementById('filterLFOEnabled').onchange = filterLFOEnabledChanged;
+  document.getElementById('filterLFOFrequency').onchange = filterLFOFrequencyChanged;
+  document.getElementById('filterLFOGain').onchange = filterLFOGainChanged;
+  document.getElementById('filterLFOPhase').onchange = filterLFOPhaseChanged;
+  filterLFOFrequencyChanged();
+  filterLFOGainChanged();
+  filterLFOPhaseChanged();
 }
   window.onload = init;
 
@@ -171,6 +200,34 @@ function filterQ() {
 
 function filterGain() {
   return document.getElementById('filterGain').value;
+}
+
+function filterLFOEnabled() {
+  return document.getElementById('filterLFOEnabled').checked;
+}
+
+function filterLFOFrequency() {
+  var rangeValue = document.getElementById('filterLFOFrequency').value;
+  return gMaxLFOFrequency * rangeValue / gMaxLFOFrequencyRangeValue;
+}
+
+function filterLFOGain() {
+  var rangeValue = document.getElementById('filterLFOGain').value;
+  var maxSwing = filterFrequency();
+  return maxSwing * rangeValue / gMaxLFOGainRangeValue;
+}
+
+function filterLFOPhase() {
+  var rangeValue = document.getElementById('filterLFOPhase').value;
+  return 2 * Math.PI * rangeValue / gMaxLFOPhaseRangeValue;
+}
+
+function filterLFOPhaseDegrees() {
+  var rangeValue = document.getElementById('filterLFOPhase').value;
+  var value = 360 * rangeValue / gMaxLFOPhaseRangeValue;
+  if (value > 180)
+    value = value - 360;
+  return value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,9 +270,11 @@ function filterEnabledChanged() {
   document.getElementById('filterTypes').disabled = !filterEnabled();
   document.getElementById('filterFrequency').disabled = !filterEnabled();
   document.getElementById('filterQ').disabled = !filterEnabled();
+  document.getElementById('filterLFOEnabled').disabled = !filterEnabled();
   if (gCurrentNote)
     gCurrentNote.changeFilterEnabled(filterEnabled());
   filterTypeChanged(); // to update gain
+  filterLFOEnabledChanged();
 }
 
 function filterTypeChanged() {
@@ -234,6 +293,7 @@ function filterFrequencyChanged() {
                     ' (x' + freqFactor + ')';
   if (gCurrentNote)
     gCurrentNote.changeFilterFrequency(filterFrequency());
+  filterLFOGainChanged();
 }
 
 function filterQChanged() {
@@ -254,6 +314,28 @@ function filterGainChanged() {
     gCurrentNote.changeFilterGain(filterGain());
 }
 
+function filterLFOEnabledChanged() {
+  var lfoEnabled = filterEnabled() && filterLFOEnabled();
+  document.getElementById('filterLFOFrequency').disabled = !lfoEnabled;
+  document.getElementById('filterLFOGain').disabled = !lfoEnabled;
+  document.getElementById('filterLFOPhase').disabled = !lfoEnabled;
+}
+
+function filterLFOFrequencyChanged() {
+  var outEl = document.getElementById('selectedFilterLFOFrequency');
+  outEl.innerHTML = filterLFOFrequency();
+}
+
+function filterLFOGainChanged() {
+  var outEl = document.getElementById('selectedFilterLFOGain');
+  outEl.innerHTML = roundForDisplay(filterLFOGain());
+}
+
+function filterLFOPhaseChanged() {
+  var outEl = document.getElementById('selectedFilterLFOPhase');
+  outEl.innerHTML = filterLFOPhaseDegrees();
+}
+
 function playClicked() {
   var el = document.getElementById('play');
   if (el.checked)
@@ -265,7 +347,11 @@ function playClicked() {
                             filterType(),
                             filterFrequency(),
                             filterQ(),
-                            filterGain());
+                            filterGain(),
+                            filterLFOEnabled(),
+                            filterLFOFrequency(),
+                            filterLFOGain(),
+                            filterLFOPhase());
   else if (gCurrentNote) {
     gCurrentNote.stop();
     gCurrentNote = null;

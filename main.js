@@ -1,6 +1,6 @@
 var gContext = null;
 var gCurrentNote = null;
-var gSequencyManager = null;
+var gControllerManager = null;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillator constants
@@ -26,11 +26,19 @@ var gMaxLFOGainRangeValue = 100;
 var gMaxLFOPhaseRangeValue = 36;
 
 // Todo:
-// 1. Optional output filter with LFO
-// 2. Affect pitch with LFO
-// 3. Affect volume with LFO
-// 4. ADSR envelope
-// 5. Multiple sources
+// Optional output filter with LFO
+//   Don't have gain be proportional to filter cutoff
+//   Exponential frequency
+//   Reasonable gain range
+//   Default phase 0
+//   Update when dc changes
+// Play notes on keyboard
+//   Separate instrument from note
+//   Hook up to keys :)
+// Affect pitch with LFO
+// Affect volume with LFO
+// ADSR envelope
+// Option to have filter cutoff not related to pitch
 
 ////////////////////////////////////////////////////////////////////////////////
 // The Note class
@@ -60,11 +68,11 @@ function Note(context,
   this.filterNode_.Q.value = filterQ;
   this.filterNode_.gain.value = filterGain;
   if (filterLFOEnabled) {
-    this.filterLFO_ = gSequencyManager.newLFO(this.filterNode_.frequency,
-                                              filterLFOFrequency,
-                                              filterLFOPhase,
-                                              filterFrequency,
-                                              filterLFOGain);
+    this.filterLFO_ = gControllerManager.newLFO(this.filterNode_.frequency,
+                                                filterLFOFrequency,
+                                                filterLFOPhase,
+                                                filterFrequency,
+                                                filterLFOGain);
   }
   if (filterEnabled) {
     this.oscillatorNode_.connect(this.filterNode_);
@@ -85,7 +93,7 @@ Note.prototype.stop = function() {
     thisNote.filterNode_.disconnect();
     thisNote.gainNode_.disconnect();
     if (this.lfo_)
-      gSequencyManager.removeSequencer(this.lfo_);
+      gControllerManager.removeController(this.lfo_);
   }, 3000);
 }
 
@@ -139,7 +147,7 @@ function populateSelect(selectId, array) {
 
 function init() {
   gContext = new webkitAudioContext();
-  gSequencyManager = new SequenceManager(gContext);
+  gControllerManager = new ControllerManager(gContext);
   document.getElementById('play').onclick = playClicked;
   document.getElementById('octave').onchange = octaveChanged;
   document.getElementById('note').onchange = noteChanged;

@@ -1,25 +1,25 @@
-// This controls how often all sequenced param values get updated, in seconds.
+// This controls how often all param values get updated, in seconds.
 var gUpdateInterval = 5;
 
 ////////////////////////////////////////////////////////////////////////////////
-// ParamSequencer interface
+// ParamController interface
 //
-// ParamSequencer.updateParam(atLeastToTime)
+// ParamController.updateParam(atLeastToTime)
 
 ////////////////////////////////////////////////////////////////////////////////
-// SequenceManager class
+// ControllerManager class
 
-function SequenceManager(context) {
+function ControllerManager(context) {
   this.context_ = context;
-  this.paramSequencers_ = [];
+  this.paramControllers_ = [];
   this.updateParams();
 }
 
-SequenceManager.prototype.updateParams = function() {
+ControllerManager.prototype.updateParams = function() {
   var manager = this;
   manager.updateTo_ = manager.context_.currentTime + gUpdateInterval * 2;
-  manager.paramSequencers_.forEach(function(sequencer) {
-    sequencer.updateParam(manager.updateTo_);
+  manager.paramControllers_.forEach(function(controller) {
+    controller.updateParam(manager.updateTo_);
   });
   setTimeout(function() {
     manager.updateParams();
@@ -30,16 +30,16 @@ SequenceManager.prototype.updateParams = function() {
 // phase in radians
 // dc is the average value of the param
 // ac is the max positive offset from the dc average
-SequenceManager.prototype.newLFO = function(param, frequency, phase, dc, ac) {
+ControllerManager.prototype.newLFO = function(param, frequency, phase, dc, ac) {
   var lfo = new LFO(this.context_, param, frequency, phase, dc, ac);
   lfo.updateParam(this.updateTo_);
-  this.paramSequencers_.push(lfo);
+  this.paramControllers_.push(lfo);
 }
 
-SequenceManager.prototype.removeSequencer = function(sequencer) {
-  var index = this.paramSequencers_.indexOf(sequencer);
+ControllerManager.prototype.removeController = function(controller) {
+  var index = this.paramControllers_.indexOf(controller);
   if (index != -1)
-    this.paramSequencers_.splice(index, 1);
+    this.paramControllers_.splice(index, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -4,11 +4,6 @@ var gControllerManager = null;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillator constants
-var gNotes = ['C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb',
-              'G', 'G#/Ab', 'A', 'A#/Bb', 'B'];
-var gMiddleAFrequency = 440;
-var gMiddleAIndex = (4 * 12) + 9;
-var gNoteFactor = Math.pow(2, 1 / 12);
 var gWaveTypes = ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE'];
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -177,8 +172,7 @@ function init() {
 function oscillatorFrequency() {
   var octaveEl = document.getElementById('octave');
   var noteEl = document.getElementById('note');
-  var noteIndex = (12 * parseInt(octaveEl.value)) + parseInt(noteEl.value);
-  return gMiddleAFrequency * Math.pow(gNoteFactor, noteIndex - gMiddleAIndex);
+  return frequencyForNote(parseInt(octaveEl.value), parseInt(noteEl.value));
 }
 
 function waveType() {

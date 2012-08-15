@@ -21,24 +21,21 @@ var gFilterFrequencyFactors = [0.5, 0.707, 1, 1.414, 2, 2.828];
 ////////////////////////////////////////////////////////////////////////////////
 // LFO constants
 var gMaxLFOFrequencyRangeValue = 100;
-var gMaxLFOFrequency = 10;
+var gLFOFrequencyExponentFactor = 1/25;
 var gMaxLFOGainRangeValue = 100;
 var gMaxLFOPhaseRangeValue = 36;
 
 // Todo:
-// Optional output filter with LFO
-//   Don't have gain be proportional to filter cutoff
-//   Exponential frequency
-//   Reasonable gain range
-//   Default phase 0
-//   Update when dc changes
 // Play notes on keyboard
 //   Separate instrument from note
 //   Hook up to keys :)
+//   Fancy keyboard display
 // Affect pitch with LFO
 // Affect volume with LFO
 // ADSR envelope
 // Option to have filter cutoff not related to pitch
+// Multiple filters
+// Looping!
 
 ////////////////////////////////////////////////////////////////////////////////
 // The Note class
@@ -216,7 +213,9 @@ function filterLFOEnabled() {
 
 function filterLFOFrequency() {
   var rangeValue = document.getElementById('filterLFOFrequency').value;
-  return gMaxLFOFrequency * rangeValue / gMaxLFOFrequencyRangeValue;
+  rangeValue = rangeValue - (gMaxLFOFrequencyRangeValue / 2);
+  rangeValue = rangeValue * gLFOFrequencyExponentFactor;
+  return Math.pow(10, rangeValue);
 }
 
 function filterLFOGain() {
@@ -331,7 +330,7 @@ function filterLFOEnabledChanged() {
 
 function filterLFOFrequencyChanged() {
   var outEl = document.getElementById('selectedFilterLFOFrequency');
-  outEl.innerHTML = filterLFOFrequency();
+  outEl.innerHTML = roundForDisplay(filterLFOFrequency());
 }
 
 function filterLFOGainChanged() {

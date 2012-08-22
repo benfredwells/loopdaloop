@@ -26,7 +26,7 @@ var gMaxLFOPhaseRangeValue = 36;
 // Play notes on keyboard
 //   Separate instrument from note
 //   Make calculations common in instrument etc.
-//   Separate instrument setting from UI updating
+//   Separate instrument setting from UI updating (inputs from outputs)
 //   Hook up to keys :)
 //   Fancy keyboard display
 // Affect pitch with LFO
@@ -190,6 +190,10 @@ function noteChanged() {
   oscillatorFrequencyChanged();
 }
 
+function waveTypeChanged() {
+  gInstrument.oscillatorType = waveType();
+}
+
 function filterEnabledChanged() {
   gInstrument.filterEnabled = filterEnabled();
 
@@ -270,7 +274,7 @@ function filterLFOPhaseChanged() {
 
 function playClicked() {
   var el = document.getElementById('play');
-  if (el.checked) {}
+  if (el.checked) {
     gCurrentNote = gInstrument.createPlayedNote(octave(), note());
     gCurrentNote.start();
   } else if (gCurrentNote) {

@@ -7,7 +7,7 @@ function PlayedNote(context,
                     allNodes,
                     paramControllers) {
   this.context_ = context;
-  this.oscillatorNodes_ = oscillatorNodes_;
+  this.oscillatorNodes_ = oscillatorNodes;
   this.gainNode_ = gainNode;
   this.allNodes_ = allNodes;
   this.paramControllers_ = paramControllers;
@@ -26,7 +26,7 @@ PlayedNote.prototype.stop = function() {
   thisNote = this;
   setTimeout(function() {
     thisNote.oscillatorNodes_.forEach(function(oscillator) {
-      oscillator_.noteOff(0);
+      oscillator.noteOff(0);
     });
     thisNote.allNodes_.forEach(function(node) {
       node.disconnect();

@@ -34,7 +34,7 @@ Instrument.prototype.createFilter_ = function(octave, note) {
   return filter;
 }
 
-Instrument.prototype.createFilterLFO = function(filter) {
+Instrument.prototype.createFilterLFO_ = function(filter) {
   return gControllerManager.newLFO(filter.frequency,
                                    this.filterLFOFrequency,
                                    this.filterLFOPhase,
@@ -42,7 +42,7 @@ Instrument.prototype.createFilterLFO = function(filter) {
                                    filter.frequency.value * this.filterLFOGainFactor);
 }
 
-Instrument.prototype.createGainNode = function() {
+Instrument.prototype.createGainNode_ = function() {
   var gainNode = this.context_.createGainNode();
   gainNode.gain.setValueAtTime(0, this.context_.currentTime);
   gainNode.gain.setTargetValueAtTime(1, this.context_.currentTime, 0.1);
@@ -58,14 +58,14 @@ Instrument.prototype.createPlayedNote = function(octave, note) {
   if (this.filterEnabled) {
     var filter = this.createFilter_(octave, note);
     allNodes.push(filter);
-    oscillatorNode.connect(filter);
+    oscillator.connect(filter);
     filter.connect(gainNode);
     if (this.filterLFOEnabled) {
-      paramControllers.push(this.createFilterLFO(filter));
+      paramControllers.push(this.createFilterLFO_(filter));
     }
   } else {
-    oscillatorNode.connect(gainNode);
+    oscillator.connect(gainNode);
   }
   gainNode.connect(this.context_.destination);
-  return PlayedNote(this.context_, oscillator, gainNode, allNodex, paramControllers);
+  return new PlayedNote(this.context_, [oscillator], gainNode, allNodes, paramControllers);
 }

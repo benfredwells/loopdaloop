@@ -2,13 +2,13 @@
 // PlayedNote class
 
 function PlayedNote(context,
-                    gainNode,
                     oscillatorNodes,
+                    gainNode,
                     allNodes,
                     paramControllers) {
   this.context_ = context;
-  this.gainNode_ = gainNode;
   this.oscillatorNodes_ = oscillatorNodes_;
+  this.gainNode_ = gainNode;
   this.allNodes_ = allNodes;
   this.paramControllers_ = paramControllers;
 }

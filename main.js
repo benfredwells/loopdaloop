@@ -21,6 +21,7 @@ var gMaxLFOGainRangeValue = 100;
 var gMaxLFOPhaseRangeValue = 36;
 
 // Todo:
+// Hide things in anon functions
 // Play notes on keyboard
 //   Separate instrument from note
 //   Hook up to keys :)

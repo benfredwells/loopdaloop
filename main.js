@@ -22,11 +22,11 @@ var gMaxLFOGainRangeValue = 100;
 var gMaxLFOPhaseRangeValue = 36;
 
 // Todo:
-// Hide things in anon functions
-// Play notes on keyboard
-//   Separate instrument from note
+// Cleanup
+//   Hide things in anon functions
 //   Make calculations common in instrument etc.
 //   Separate instrument setting from UI updating (inputs from outputs)
+// Play notes on keyboard
 //   Hook up to keys :)
 //   Fancy keyboard display
 // Affect pitch with LFO

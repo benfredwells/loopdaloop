@@ -51,9 +51,10 @@ function populateSelect(selectId, array) {
 
 function init() {
   gContext = new webkitAudioContext();
-  gInstrument = new Instrument(gContext);
   gControllerManager = new ControllerManager(gContext);
-  document.getElementById('play').onclick = playClicked;
+
+  // Instrument UI setup
+  gInstrument = new Instrument(gContext);
   document.getElementById('octave').onchange = octaveChanged;
   document.getElementById('note').onchange = noteChanged;
   octaveChanged();
@@ -76,6 +77,11 @@ function init() {
   filterLFOFrequencyChanged();
   filterLFOGainChanged();
   filterLFOPhaseChanged();
+
+  // Player setup
+  document.getElementById('play').onclick = playClicked;
+  window.onkeydown = keyDown;
+  window.onkeyup = keyUp;
 }
   window.onload = init;
 
@@ -278,6 +284,24 @@ function playClicked() {
     gCurrentNote = gInstrument.createPlayedNote(octave(), note());
     gCurrentNote.start();
   } else if (gCurrentNote) {
+    gCurrentNote.stop();
+    gCurrentNote = null;
+  }
+}
+
+function keyDown(event) {
+  if (event.keyCode == 'C'.charCodeAt(0)) {
+    if (gCurrentNote) {
+      gCurrentNote.stop();
+      gCurrentNote = null;
+    }
+    gCurrentNote = gInstrument.createPlayedNote(octave(), note());
+    gCurrentNote.start();
+  }
+}
+
+function keyUp(event) {
+  if (event.keyCode == 'C'.charCodeAt(0)) {
     gCurrentNote.stop();
     gCurrentNote = null;
   }

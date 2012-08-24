@@ -83,7 +83,8 @@ function init() {
   window.onkeydown = keyDown;
   window.onkeyup = keyUp;
 }
-  window.onload = init;
+
+window.onload = init;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Settings accessors

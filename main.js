@@ -38,7 +38,7 @@ function init() {
 
   // Instrument UI setup
   gInstrumentUI = new InstrumentUI(
-      document.getElementById('waveTypes').onchange,
+      document.getElementById('waveTypes'),
       // filter settings
       document.getElementById('filterEnabled'),
       document.getElementById('filterTypes'),
@@ -57,8 +57,8 @@ function init() {
       // filterLFO display
       document.getElementById('selectedFilterLFOFrequency'),
       document.getElementById('selectedFilterLFOGain'),
-      document.getElementById('selectedFilterLFOPhase')) {
-    )
+      document.getElementById('selectedFilterLFOPhase')
+  );
   gInstrument = gInstrumentUI.instrument();
 
   // Player setup

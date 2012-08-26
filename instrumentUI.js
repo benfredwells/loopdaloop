@@ -29,188 +29,198 @@ function InstrumentUI(// oscillator settings
                       // filterLFO display
                       filterLFOFrequencyFactorLabel, filterLFOGainLabel,
                       filterLFOPhaseLabel) {
-  this.instrument_ = new Instrument(gContext);
-  this.waveTypeSelect_ = waveTypeSelect;
-  this.filterCheckBox_ = filterCheckBox;
-  this.filterTypeSelect_ = filterTypeSelect;
-  this.filterFrequencyRange_ = filterFrequencyRange,
-  this.filterQRange_ = filterQRange;
-  this.filterGainRange_ = filterGainRange;
-  this.filterLFOCheckBox_ = filterLFOCheckBox;
-  this.filterLFOFrequencyRange_ = filterLFOFrequencyRange;
-  this.filterLFOGainRange_ = filterLFOGainRange;
-  this.filterLFOPhaseRange_ = filterLFOPhaseRange;
-  this.filterFrequencyFactorLabel_ = filterFrequencyFactorLabel;
-  this.filterQLabel_ = filterQLabel;
-  this.filterGainLabel_ = filterGainLabel;
-  this.filterLFOFrequencyFactorLabel_ = filterLFOFrequencyFactorLabel;
-  this.filterLFOGainLabel_ = filterLFOGainLabel;
-  this.filterLFOPhaseLabel_ = filterLFOPhaseLabel;
-  this.populateSelect_(this.waveTypeSelect_, gWaveTypes);
-  this.waveTypeSelect_.onchange = this.waveTypeChanged;
-  this.populateSelect_(this.filterTypeSelect_, gFilterTypes);
-  this.filterCheckBox_.onchange = this.filterEnabledChanged;
-  this.filterTypeSelect_.onchange = this.filterTypeChanged;
-  this.filterFrequencyRange_.onchange = this.filterFrequencyFactorChanged;
-  this.fitlerQRange_.onchange = this.filterQChanged;
-  this.filterGainRange_.onchange = this.filterGainChanged;
-  this.filterEnabledChanged(); // will update type, gain and lfo enabled
-  this.filterFrequencyChanged();
-  this.filterQChanged();
-  this.filterLFOCheckBox_.onchange = this.filterLFOEnabledChanged;
-  this.filterLFOFrequencyRange_.onchange = this.filterLFOFrequencyChanged;
-  this.filterLFOGainRange_.onchange = this.filterLFOGainFactorChanged;
-  this.filterLFOPhaseRange_.onchange = this.filterLFOPhaseChanged;
-  filterLFOFrequencyChanged();
-  filterLFOGainChanged();
-  filterLFOPhaseChanged();
-}
+  ui = this;
 
-////////////////////////////////////////////////////////////////////////////////
-// Public accessors
-InstrumentUI.prototype.instrument = function() {
-  return this.instrument_;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Utils
-InstrumentUI.prototype.populateSelect_ = function(element, array) {
-  for (var i = 0; i < array.length; i++) {
-    var option = document.createElement('option');
-    option.value = i;
-    option.text = array[i];
-    element.add(option, null);
+  //////////////////////////////////////////////////////////////////////////////
+  // Public accessors
+  this.instrument = function() {
+    return ui.instrument_;
   }
-}
 
-Instrument.UI.prototype.roundForDisplay_ = function(number) {
-  return Math.round(number * 100) / 100;
-}
+  //////////////////////////////////////////////////////////////////////////////
+  // Utils
+  this.populateSelect_ = function(element, array) {
+    for (var i = 0; i < array.length; i++) {
+      var option = document.createElement('option');
+      option.value = i;
+      option.text = array[i];
+      element.add(option, null);
+    }
+  }
 
-////////////////////////////////////////////////////////////////////////////////
-// Settings accessors
+  this.roundForDisplay_ = function(number) {
+    return Math.round(number * 100) / 100;
+  }
 
-Instrument.UI.prototype.waveType_ = waveType() {
-  return this.waveTypeSelect_.value;
-}
+  //////////////////////////////////////////////////////////////////////////////
+  // Settings accessors
 
-Instrument.UI.prototype.filterEnabled_ = function() {
-  return this.filterCheckBox_.checked;
-}
+  this.waveType_ = function() {
+    return ui.waveTypeSelect_.value;
+  }
 
-Instrument.UI.prototype.filterType_ = function() {
-  return this.fitlerTypeRange_.value;
-}
+  this.filterEnabled_ = function() {
+    return ui.filterCheckBox_.checked;
+  }
 
-Instrument.UI.prototype.filterFrequencyFactor_ = function() {
-  return gFilterFrequencyFactors[this.filterFrequencyRange_.value];
-}
+  this.filterType_ = function() {
+    return ui.filterTypeSelect_.value;
+  }
 
-Instrument.UI.prototype.filterQ_ = function() {
-  return this.filterQRange_.value;
-}
+  this.filterFrequencyFactor_ = function() {
+    return gFilterFrequencyFactors[ui.filterFrequencyRange_.value];
+  }
 
-Instrument.UI.prototype.filterGain_ = function() {
-  return this.filterGainRange_.value;
-}
+  this.filterQ_ = function() {
+    return ui.filterQRange_.value;
+  }
 
-Instrument.UI.prototype.filterLFOEnabled_ = function() {
-  return this.filterLFOCheckBox_.checked;
-}
+  this.filterGain_ = function() {
+    return ui.filterGainRange_.value;
+  }
 
-Instrument.UI.prototype.filterLFOFrequency_ = function() {
-  var rangeValue = this.filterLFOFrequencyRange_.value;
-  rangeValue = rangeValue - (gMaxLFOFrequencyRangeValue / 2);
-  rangeValue = rangeValue * gLFOFrequencyExponentFactor;
-  return Math.pow(10, rangeValue);
-}
+  this.filterLFOEnabled_ = function() {
+    return ui.filterLFOCheckBox_.checked;
+  }
 
-Instrument.UI.prototype.filterLFOGainFactor_ = function() {
-  return this.filterLFOGainRange_.value / gMaxLFOGainRangeValue;
-}
+  this.filterLFOFrequency_ = function() {
+    var rangeValue = ui.filterLFOFrequencyRange_.value;
+    rangeValue = rangeValue - (gMaxLFOFrequencyRangeValue / 2);
+    rangeValue = rangeValue * gLFOFrequencyExponentFactor;
+    return Math.pow(10, rangeValue);
+  }
 
-Instrument.UI.prototype.filterLFOPhase_ = function() {
-  return 2 * Math.PI * this.filterLFOPhaseRange_.value / gMaxLFOPhaseRangeValue;
-}
+  this.filterLFOGainFactor_ = function() {
+    return ui.filterLFOGainRange_.value / gMaxLFOGainRangeValue;
+  }
 
-Instrument.UI.prototype.filterLFOPhaseDegrees_ = function() {
-  var value = 360 * this.filterLFOPhaseRange_.value / gMaxLFOPhaseRangeValue;
-  if (value > 180)
-    value = value - 360;
-  return value;
-}
+  this.filterLFOPhase_ = function() {
+    return 2 * Math.PI * ui.filterLFOPhaseRange_.value / gMaxLFOPhaseRangeValue;
+  }
 
-////////////////////////////////////////////////////////////////////////////////
-// Event handlers
+  this.filterLFOPhaseDegrees_ = function() {
+    var value = 360 * ui.filterLFOPhaseRange_.value / gMaxLFOPhaseRangeValue;
+    if (value > 180)
+      value = value - 360;
+    return value;
+  }
 
-Instrument.UI.prototype.waveTypeChanged = function() {
-  this.instrument_.oscillatorType = this.waveType_();
-}
+  //////////////////////////////////////////////////////////////////////////////
+  // Event handlers
 
-Instrument.UI.prototype.filterEnabledChanged = function() {
-  this.instrument_.filterEnabled = this.filterEnabled_();
+  this.waveTypeChanged = function() {
+    ui.instrument_.oscillatorType = ui.waveType_();
+  }
 
-  this.filterTypeSelect_.disabled = !this.filterEnabled_();
-  this.filterFrequencyRange_.disabled = !this.filterEnabled_();
-  this.filterQRange_.disabled = !this.filterEnabled_();
-  this.filterLFOCheckBox_.disabled = !this.filterEnabled_();
-  this.filterTypeChanged(); // to update gain enabled
-  this.filterLFOEnabledChanged();
-}
+  this.filterEnabledChanged = function() {
+    ui.instrument_.filterEnabled = ui.filterEnabled_();
 
-Instrument.UI.prototype.filterTypeChanged = function() {
-  this.instrument_.filterType = this.filterType_();
+    ui.filterTypeSelect_.disabled = !ui.filterEnabled_();
+    ui.filterFrequencyRange_.disabled = !ui.filterEnabled_();
+    ui.filterQRange_.disabled = !ui.filterEnabled_();
+    ui.filterLFOCheckBox_.disabled = !ui.filterEnabled_();
+    ui.filterTypeChanged(); // to update gain enabled
+    ui.filterLFOEnabledChanged();
+  }
 
-  this.filterGainRange_.disabled = !gFilterHasGain[filterType()] || !this.filterEnabled_();
-  this.filterGainChanged();
-}
+  this.filterTypeChanged = function() {
+    ui.instrument_.filterType = ui.filterType_();
 
-Instrument.UI.prototype.filterFrequencyFactorChanged = function() {
-  this.instrument_.filterFrequencyFactor = this.filterFrequencyFactor_();
+    ui.filterGainRange_.disabled = !gFilterHasGain[ui.filterType_()] || !ui.filterEnabled_();
+    ui.filterGainChanged();
+  }
 
-  this.filterFrequencyFactorLabel_.innerHTML = '(x' + this.filterFrequencyFactor_() + ')';
-}
+  this.filterFrequencyFactorChanged = function() {
+    ui.instrument_.filterFrequencyFactor = ui.filterFrequencyFactor_();
 
-Instrument.UI.prototype.filterQChanged = function() {
-  this.instrument_.filterQ = thils.filterQ_();
+    ui.filterFrequencyFactorLabel_.innerHTML = '(x' + ui.filterFrequencyFactor_() + ')';
+  }
 
-  this.filterQLabel_ = this.filterQ_();
-}
+  this.filterQChanged = function() {
+    ui.instrument_.filterQ = ui.filterQ_();
 
-Instrument.UI.prototype.filterGainChanged = function() {
-  this.instrument_.filterGain = this.filterGain_();
+    ui.filterQLabel_ = ui.filterQ_();
+  }
 
-  var el = document.getElementById('filterGain');
-  var outEl = document.getElementById('selectedFilterGain');
-  if (gFilterHasGain[this.filterType_()])
-    this.filterGainLabel_.innerHTML = this.filterGain_() + 'dB';
-  else
-    this.filterGainLabel_.innerHTML = 'N/A';
-}
+  this.filterGainChanged = function() {
+    ui.instrument_.filterGain = ui.filterGain_();
 
-Instrument.UI.prototype.filterLFOEnabledChanged = function() {
-  var lfoEnabled = this.filterEnabled_() && this.filterLFOEnabled_();
-  this.instrument_.filterLFOEnabled = lfoEnabled;
+    var el = document.getElementById('filterGain');
+    var outEl = document.getElementById('selectedFilterGain');
+    if (gFilterHasGain[ui.filterType_()])
+      ui.filterGainLabel_.innerHTML = ui.filterGain_() + 'dB';
+    else
+      ui.filterGainLabel_.innerHTML = 'N/A';
+  }
 
-  this.filterLFOFrequencyRange_.disabled = !lfoEnabled;
-  this.filterLFOGainRange_.disabled = !lfoEnabled;
-  this.filterLFOPhaseRange_.disabled = !lfoEnabled;
-}
+  this.filterLFOEnabledChanged = function() {
+    var lfoEnabled = ui.filterEnabled_() && ui.filterLFOEnabled_();
+    ui.instrument_.filterLFOEnabled = lfoEnabled;
 
-Instrument.UI.prototype.filterLFOFrequencyChanged = function() {
-  this.instrument_.filterLFOFrequency = this.filterLFOFrequency_();
+    ui.filterLFOFrequencyRange_.disabled = !lfoEnabled;
+    ui.filterLFOGainRange_.disabled = !lfoEnabled;
+    ui.filterLFOPhaseRange_.disabled = !lfoEnabled;
+  }
 
-  this.filterLFOFrequencyFactorLabel_.innerHTML = roundForDisplay(this.filterLFOFrequency_());
-}
+  this.filterLFOFrequencyChanged = function() {
+    ui.instrument_.filterLFOFrequency = ui.filterLFOFrequency_();
 
-Instrument.UI.prototype.filterLFOGainFactorChanged = function() {
-  this.instrument_.filterLFOGainFactor = this.filterLFOGainFactor_();
+    ui.filterLFOFrequencyFactorLabel_.innerHTML = roundForDisplay(ui.filterLFOFrequency_());
+  }
 
-  this.filterLFOGainLabel_.innerHTML = '+-' + roundForDisplay(this.filterLFOGainFactor_());
-}
+  this.filterLFOGainFactorChanged = function() {
+    ui.instrument_.filterLFOGainFactor = ui.filterLFOGainFactor_();
 
-Instrument.UI.prototype.filterLFOPhaseChanged = function() {
-  this.instrument_.filterLFOPhase = this.filterLFOPhase_();
+    ui.filterLFOGainLabel_.innerHTML = '+-' + roundForDisplay(ui.filterLFOGainFactor_());
+  }
 
-  this.filterLFOPhaseLabel_.innerHTML = filterLFOPhaseDegrees();
+  this.filterLFOPhaseChanged = function() {
+    ui.instrument_.filterLFOPhase = ui.filterLFOPhase_();
+
+    ui.filterLFOPhaseLabel_.innerHTML = ui.filterLFOPhaseDegrees_();
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Private fields
+  ui.instrument_ = new Instrument(gContext);
+  ui.waveTypeSelect_ = waveTypeSelect;
+  ui.filterCheckBox_ = filterCheckBox;
+  ui.filterTypeSelect_ = filterTypeSelect;
+  ui.filterFrequencyRange_ = filterFrequencyRange,
+  ui.filterQRange_ = filterQRange;
+  ui.filterGainRange_ = filterGainRange;
+  ui.filterLFOCheckBox_ = filterLFOCheckBox;
+  ui.filterLFOFrequencyRange_ = filterLFOFrequencyRange;
+  ui.filterLFOGainRange_ = filterLFOGainRange;
+  ui.filterLFOPhaseRange_ = filterLFOPhaseRange;
+  ui.filterFrequencyFactorLabel_ = filterFrequencyFactorLabel;
+  ui.filterQLabel_ = filterQLabel;
+  ui.filterGainLabel_ = filterGainLabel;
+  ui.filterLFOFrequencyFactorLabel_ = filterLFOFrequencyFactorLabel;
+  ui.filterLFOGainLabel_ = filterLFOGainLabel;
+  ui.filterLFOPhaseLabel_ = filterLFOPhaseLabel;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Setup event halders
+  ui.waveTypeSelect_.onchange = ui.waveTypeChanged;
+  ui.filterCheckBox_.onchange = ui.filterEnabledChanged;
+  ui.filterTypeSelect_.onchange = ui.filterTypeChanged;
+  ui.filterFrequencyRange_.onchange = ui.filterFrequencyFactorChanged;
+  ui.filterQRange_.onchange = ui.filterQChanged;
+  ui.filterGainRange_.onchange = ui.filterGainChanged;
+  ui.filterLFOCheckBox_.onchange = ui.filterLFOEnabledChanged;
+  ui.filterLFOFrequencyRange_.onchange = ui.filterLFOFrequencyChanged;
+  ui.filterLFOGainRange_.onchange = ui.filterLFOGainFactorChanged;
+  ui.filterLFOPhaseRange_.onchange = ui.filterLFOPhaseChanged;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Initialize UI
+  ui.populateSelect_(ui.waveTypeSelect_, gWaveTypes);
+  ui.populateSelect_(ui.filterTypeSelect_, gFilterTypes);
+  ui.filterEnabledChanged(); // will update type, gain and lfo enabled
+  ui.filterFrequencyFactorChanged();
+  ui.filterQChanged();
+  ui.filterLFOFrequencyChanged();
+  ui.filterLFOGainFactorChanged();
+  ui.filterLFOPhaseChanged();
 }

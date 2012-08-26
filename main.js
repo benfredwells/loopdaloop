@@ -55,12 +55,12 @@ function init() {
       document.getElementById('selectedFilterLFOPhase'));
 
   // Player setup
-  octaveChanged();
-  noteChanged();
   document.getElementById('octave').onchange = octaveChanged;
   document.getElementById('note').onchange = noteChanged;
   document.getElementById('play').onclick = playClicked;
   gKeyboard = new KeyboardPiano(4, gInstrument);
+  octaveChanged();
+  noteChanged();
 }
 
 window.onload = init;
@@ -96,6 +96,7 @@ function oscillatorFrequencyChanged() {
 
 function octaveChanged() {
   gInstrument.octave = octave();
+  gKeyboard.octave = octave();
 
   var el = document.getElementById('octave');
   var outEl = document.getElementById('selectedOctave');

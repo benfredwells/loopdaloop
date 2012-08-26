@@ -22,16 +22,6 @@ var gInstrument = null;
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 
-function populateSelect(selectId, array) {
-  var select = document.getElementById(selectId);
-  for (var i = 0; i < array.length; i++) {
-    var option = document.createElement('option');
-    option.value = i;
-    option.text = array[i];
-    select.add(option, null);
-  }
-}
-
 function init() {
   gContext = new webkitAudioContext();
   gControllerManager = new ControllerManager(gContext);

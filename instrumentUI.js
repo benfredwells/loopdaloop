@@ -33,13 +33,13 @@ function InstrumentUI(// oscillator settings
 
   //////////////////////////////////////////////////////////////////////////////
   // Public accessors
-  this.instrument = function() {
+  ui.instrument = function() {
     return ui.instrument_;
   }
 
   //////////////////////////////////////////////////////////////////////////////
   // Utils
-  this.populateSelect_ = function(element, array) {
+  ui.populateSelect_ = function(element, array) {
     for (var i = 0; i < array.length; i++) {
       var option = document.createElement('option');
       option.value = i;
@@ -48,57 +48,57 @@ function InstrumentUI(// oscillator settings
     }
   }
 
-  this.roundForDisplay_ = function(number) {
+  ui.roundForDisplay_ = function(number) {
     return Math.round(number * 100) / 100;
   }
 
   //////////////////////////////////////////////////////////////////////////////
   // Settings accessors
 
-  this.waveType_ = function() {
+  ui.waveType_ = function() {
     return ui.waveTypeSelect_.value;
   }
 
-  this.filterEnabled_ = function() {
+  ui.filterEnabled_ = function() {
     return ui.filterCheckBox_.checked;
   }
 
-  this.filterType_ = function() {
+  ui.filterType_ = function() {
     return ui.filterTypeSelect_.value;
   }
 
-  this.filterFrequencyFactor_ = function() {
+  ui.filterFrequencyFactor_ = function() {
     return gFilterFrequencyFactors[ui.filterFrequencyRange_.value];
   }
 
-  this.filterQ_ = function() {
+  ui.filterQ_ = function() {
     return ui.filterQRange_.value;
   }
 
-  this.filterGain_ = function() {
+  ui.filterGain_ = function() {
     return ui.filterGainRange_.value;
   }
 
-  this.filterLFOEnabled_ = function() {
+  ui.filterLFOEnabled_ = function() {
     return ui.filterLFOCheckBox_.checked;
   }
 
-  this.filterLFOFrequency_ = function() {
+  ui.filterLFOFrequency_ = function() {
     var rangeValue = ui.filterLFOFrequencyRange_.value;
     rangeValue = rangeValue - (gMaxLFOFrequencyRangeValue / 2);
     rangeValue = rangeValue * gLFOFrequencyExponentFactor;
     return Math.pow(10, rangeValue);
   }
 
-  this.filterLFOGainFactor_ = function() {
+  ui.filterLFOGainFactor_ = function() {
     return ui.filterLFOGainRange_.value / gMaxLFOGainRangeValue;
   }
 
-  this.filterLFOPhase_ = function() {
+  ui.filterLFOPhase_ = function() {
     return 2 * Math.PI * ui.filterLFOPhaseRange_.value / gMaxLFOPhaseRangeValue;
   }
 
-  this.filterLFOPhaseDegrees_ = function() {
+  ui.filterLFOPhaseDegrees_ = function() {
     var value = 360 * ui.filterLFOPhaseRange_.value / gMaxLFOPhaseRangeValue;
     if (value > 180)
       value = value - 360;
@@ -108,11 +108,11 @@ function InstrumentUI(// oscillator settings
   //////////////////////////////////////////////////////////////////////////////
   // Event handlers
 
-  this.waveTypeChanged = function() {
+  ui.waveTypeChanged = function() {
     ui.instrument_.oscillatorType = ui.waveType_();
   }
 
-  this.filterEnabledChanged = function() {
+  ui.filterEnabledChanged = function() {
     ui.instrument_.filterEnabled = ui.filterEnabled_();
 
     ui.filterTypeSelect_.disabled = !ui.filterEnabled_();
@@ -123,26 +123,26 @@ function InstrumentUI(// oscillator settings
     ui.filterLFOEnabledChanged();
   }
 
-  this.filterTypeChanged = function() {
+  ui.filterTypeChanged = function() {
     ui.instrument_.filterType = ui.filterType_();
 
     ui.filterGainRange_.disabled = !gFilterHasGain[ui.filterType_()] || !ui.filterEnabled_();
     ui.filterGainChanged();
   }
 
-  this.filterFrequencyFactorChanged = function() {
+  ui.filterFrequencyFactorChanged = function() {
     ui.instrument_.filterFrequencyFactor = ui.filterFrequencyFactor_();
 
     ui.filterFrequencyFactorLabel_.innerHTML = '(x' + ui.filterFrequencyFactor_() + ')';
   }
 
-  this.filterQChanged = function() {
+  ui.filterQChanged = function() {
     ui.instrument_.filterQ = ui.filterQ_();
 
     ui.filterQLabel_ = ui.filterQ_();
   }
 
-  this.filterGainChanged = function() {
+  ui.filterGainChanged = function() {
     ui.instrument_.filterGain = ui.filterGain_();
 
     var el = document.getElementById('filterGain');
@@ -153,7 +153,7 @@ function InstrumentUI(// oscillator settings
       ui.filterGainLabel_.innerHTML = 'N/A';
   }
 
-  this.filterLFOEnabledChanged = function() {
+  ui.filterLFOEnabledChanged = function() {
     var lfoEnabled = ui.filterEnabled_() && ui.filterLFOEnabled_();
     ui.instrument_.filterLFOEnabled = lfoEnabled;
 
@@ -162,19 +162,19 @@ function InstrumentUI(// oscillator settings
     ui.filterLFOPhaseRange_.disabled = !lfoEnabled;
   }
 
-  this.filterLFOFrequencyChanged = function() {
+  ui.filterLFOFrequencyChanged = function() {
     ui.instrument_.filterLFOFrequency = ui.filterLFOFrequency_();
 
     ui.filterLFOFrequencyFactorLabel_.innerHTML = roundForDisplay(ui.filterLFOFrequency_());
   }
 
-  this.filterLFOGainFactorChanged = function() {
+  ui.filterLFOGainFactorChanged = function() {
     ui.instrument_.filterLFOGainFactor = ui.filterLFOGainFactor_();
 
     ui.filterLFOGainLabel_.innerHTML = '+-' + roundForDisplay(ui.filterLFOGainFactor_());
   }
 
-  this.filterLFOPhaseChanged = function() {
+  ui.filterLFOPhaseChanged = function() {
     ui.instrument_.filterLFOPhase = ui.filterLFOPhase_();
 
     ui.filterLFOPhaseLabel_.innerHTML = ui.filterLFOPhaseDegrees_();

@@ -23,7 +23,12 @@ function InstrumentUI(// oscillator settings
                       filterQRange, filterGainRange,
                       // filterLFO settings
                       filterLFOCheckBox, filterLFOFrequencyRange,
-                      filterLFOGainRange, filterLFOPhaseRange) {
+                      filterLFOGainRange, filterLFOPhaseRange,
+                      // filter display
+                      filterFrequencyFactorLabel, filterQLabel, filterGainLabel,
+                      // filterLFO display
+                      filterLFOFrequencyFactorLabel, filterLFOGainLabel,
+                      filterLFOPhaseLabel) {
   this.instrument_ = new Instrument(gContext);
   this.waveTypeSelect_ = waveTypeSelect;
   this.filterCheckBox_ = filterCheckBox;
@@ -35,12 +40,18 @@ function InstrumentUI(// oscillator settings
   this.filterLFOFrequencyRange_ = filterLFOFrequencyRange;
   this.filterLFOGainRange_ = filterLFOGainRange;
   this.filterLFOPhaseRange_ = filterLFOPhaseRange;
+  this.filterFrequencyFactorLabel_ = filterFrequencyFactorLabel;
+  this.filterQLabel_ = filterQLabel;
+  this.filterGainLabel_ = filterGainLabel;
+  this.filterLFOFrequencyFactorLabel_ = filterLFOFrequencyFactorLabel;
+  this.filterLFOGainLabel_ = filterLFOGainLabel;
+  this.filterLFOPhaseLabel_ = filterLFOPhaseLabel;
   this.populateSelect_(this.waveTypeSelect_, gWaveTypes);
   this.waveTypeSelect_.onchange = this.waveTypeChanged;
   this.populateSelect_(this.filterTypeSelect_, gFilterTypes);
   this.filterCheckBox_.onchange = this.filterEnabledChanged;
   this.filterTypeSelect_.onchange = this.filterTypeChanged;
-  this.filterFrequencyRange_.onchange = this.filterFrequencyChanged;
+  this.filterFrequencyRange_.onchange = this.filterFrequencyFactorChanged;
   this.fitlerQRange_.onchange = this.filterQChanged;
   this.filterGainRange_.onchange = this.filterGainChanged;
   this.filterEnabledChanged(); // will update type, gain and lfo enabled
@@ -48,7 +59,7 @@ function InstrumentUI(// oscillator settings
   this.filterQChanged();
   this.filterLFOCheckBox_.onchange = this.filterLFOEnabledChanged;
   this.filterLFOFrequencyRange_.onchange = this.filterLFOFrequencyChanged;
-  this.filterLFOGainRange_.onchange = this.filterLFOGainChanged;
+  this.filterLFOGainRange_.onchange = this.filterLFOGainFactorChanged;
   this.filterLFOPhaseRange_.onchange = this.filterLFOPhaseChanged;
   filterLFOFrequencyChanged();
   filterLFOGainChanged();
@@ -89,10 +100,6 @@ Instrument.UI.prototype.filterFrequencyFactor_ = function() {
   return gFilterFrequencyFactors[this.filterFrequencyRange_.value];
 }
 
-Instrument.UI.prototype.filterFrequency_ = function() {
-  return this.oscillatorFrequency_() * this.filterFrequencyFactor_();
-}
-
 Instrument.UI.prototype.filterQ_ = function() {
   return this.filterQRange_.value;
 }
@@ -116,11 +123,6 @@ Instrument.UI.prototype.filterLFOGainFactor_ = function() {
   return this.filterLFOGainRange_.value / gMaxLFOGainRangeValue;
 }
 
-Instrument.UI.prototype.filterLFOGain_ = function() {
-  var maxSwing = this.filterFrequency_();
-  return maxSwing * this.filterLFOGainFactor_();
-}
-
 Instrument.UI.prototype.filterLFOPhase_ = function() {
   return 2 * Math.PI * this.filterLFOPhaseRange_.value / gMaxLFOPhaseRangeValue;
 }
@@ -135,108 +137,74 @@ Instrument.UI.prototype.filterLFOPhaseDegrees_ = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Event handlers
 
-Instrument.UI.prototype.function oscillatorFrequencyChanged() {
-  var outEl = document.getElementById('selectedOscillatorFrequency');
-  outEl.innerHTML = roundForDisplay(oscillatorFrequency());
-  filterFrequencyChanged();
+Instrument.UI.prototype.waveTypeChanged = function() {
+  gInstrument.oscillatorType = this.waveType_();
 }
 
-Instrument.UI.prototype.function octaveChanged() {
-  gInstrument.octave = octave();
+Instrument.UI.prototype.filterEnabledChanged = function() {
+  gInstrument.filterEnabled = this.filterEnabled_();
 
-  var el = document.getElementById('octave');
-  var outEl = document.getElementById('selectedOctave');
-  outEl.innerHTML = el.value;
-  oscillatorFrequencyChanged();
+  this.filterTypeSelect_.disabled = !this.filterEnabled_();
+  this.filterFrequencyRange_.disabled = !this.filterEnabled_();
+  this.filterQRange_.disabled = !this.filterEnabled_();
+  this.filterLFOCheckBox_.disabled = !this.filterEnabled_();
+  this.filterTypeChanged(); // to update gain enabled
+  this.filterLFOEnabledChanged();
 }
 
-Instrument.UI.prototype.function noteChanged() {
-  gInstrument.note = note();
+Instrument.UI.prototype.filterTypeChanged = function() {
+  gInstrument.filterType = this.filterType_();
 
-  var el = document.getElementById('note');
-  var outEl = document.getElementById('selectedNote');
-  outEl.innerHTML = gNotes[el.value];
-  oscillatorFrequencyChanged();
+  this.filterGainRange_.disabled = !gFilterHasGain[filterType()] || !this.filterEnabled_();
+  this.filterGainChanged();
 }
 
-Instrument.UI.prototype.function waveTypeChanged() {
-  gInstrument.oscillatorType = waveType();
+Instrument.UI.prototype.filterFrequencyFactorChanged = function() {
+  gInstrument.filterFrequencyFactor = this.filterFrequencyFactor_();
+
+  this.filterFrequencyFactorLabel_.innerHTML = '(x' + this.filterFrequencyFactor_() + ')';
 }
 
-Instrument.UI.prototype.function filterEnabledChanged() {
-  gInstrument.filterEnabled = filterEnabled();
+Instrument.UI.prototype.filterQChanged = function() {
+  gInstrument.filterQ = thils.filterQ_();
 
-  document.getElementById('filterTypes').disabled = !filterEnabled();
-  document.getElementById('filterFrequency').disabled = !filterEnabled();
-  document.getElementById('filterQ').disabled = !filterEnabled();
-  document.getElementById('filterLFOEnabled').disabled = !filterEnabled();
-  filterTypeChanged(); // to update gain
-  filterLFOEnabledChanged();
+  this.filterQLabel_ = this.filterQ_();
 }
 
-Instrument.UI.prototype.function filterTypeChanged() {
-  gInstrument.filterType = filterType();
-
-  var gainEl = document.getElementById('filterGain');
-  gainEl.disabled = !gFilterHasGain[filterType()] || !filterEnabled();
-  filterGainChanged();
-}
-
-Instrument.UI.prototype.function filterFrequencyChanged() {
-  gInstrument.filterFrequencyFactor = filterFrequencyFactor();
-
-  var el = document.getElementById('filterFrequency');
-  var outEl = document.getElementById('selectedFilterFrequency');
-  var freqFactor = gFilterFrequencyFactors[el.value];
-  outEl.innerHTML = roundForDisplay(filterFrequency()) +
-                    ' (x' + freqFactor + ')';
-  filterLFOGainChanged();
-}
-
-Instrument.UI.prototype.function filterQChanged() {
-  gInstrument.filterQ = filterQ();
-
-  var outEl = document.getElementById('selectedQ');
-  outEl.innerHTML = filterQ();
-}
-
-Instrument.UI.prototype.function filterGainChanged() {
-  gInstrument.filterGain = filterGain();
+Instrument.UI.prototype.filterGainChanged = function() {
+  gInstrument.filterGain = this.filterGain_();
 
   var el = document.getElementById('filterGain');
   var outEl = document.getElementById('selectedFilterGain');
-  if (gFilterHasGain[filterType()])
-    outEl.innerHTML = filterGain() + 'dB';
+  if (gFilterHasGain[this.filterType_()])
+    this.filterGainLabel_.innerHTML = this.filterGain_() + 'dB';
   else
-    outEl.innerHTML = 'N/A';
+    this.filterGainLabel_.innerHTML = 'N/A';
 }
 
-Instrument.UI.prototype.function filterLFOEnabledChanged() {
-  var lfoEnabled = filterEnabled() && filterLFOEnabled();
+Instrument.UI.prototype.filterLFOEnabledChanged = function() {
+  var lfoEnabled = this.filterEnabled_() && this.filterLFOEnabled_();
   gInstrument.filterLFOEnabled = lfoEnabled;
 
-  document.getElementById('filterLFOFrequency').disabled = !lfoEnabled;
-  document.getElementById('filterLFOGain').disabled = !lfoEnabled;
-  document.getElementById('filterLFOPhase').disabled = !lfoEnabled;
+  this.filterLFOFrequencyRange_.disabled = !lfoEnabled;
+  this.filterLFOGainRange_.disabled = !lfoEnabled;
+  this.filterLFOPhaseRange_.disabled = !lfoEnabled;
 }
 
-Instrument.UI.prototype.function filterLFOFrequencyChanged() {
-  gInstrument.filterLFOFrequency = filterLFOFrequency();
+Instrument.UI.prototype.filterLFOFrequencyChanged = function() {
+  gInstrument.filterLFOFrequency = this.filterLFOFrequency_();
 
-  var outEl = document.getElementById('selectedFilterLFOFrequency');
-  outEl.innerHTML = roundForDisplay(filterLFOFrequency());
+  this.filterLFOFrequencyFactorLabel_.innerHTML = roundForDisplay(this.filterLFOFrequency_());
 }
 
-Instrument.UI.prototype.function filterLFOGainChanged() {
-  gInstrument.filterLFOGainFactor = filterLFOGainFactor();
+Instrument.UI.prototype.filterLFOGainFactorChanged = function() {
+  gInstrument.filterLFOGainFactor = this.filterLFOGainFactor_();
 
-  var outEl = document.getElementById('selectedFilterLFOGain');
-  outEl.innerHTML = roundForDisplay(filterLFOGain());
+  this.filterLFOGainLabel_.innerHTML = '+-' + roundForDisplay(this.filterLFOGainFactor_());
 }
 
-Instrument.UI.prototype.function filterLFOPhaseChanged() {
-  gInstrument.filterLFOPhase = filterLFOPhase();
+Instrument.UI.prototype.filterLFOPhaseChanged = function() {
+  gInstrument.filterLFOPhase = this.filterLFOPhase_();
 
-  var outEl = document.getElementById('selectedFilterLFOPhase');
-  outEl.innerHTML = filterLFOPhaseDegrees();
+  this.filterLFOPhaseLabel_.innerHTML = filterLFOPhaseDegrees();
 }

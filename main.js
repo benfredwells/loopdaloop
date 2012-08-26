@@ -3,6 +3,7 @@ var gCurrentNote = null;
 var gControllerManager = null;
 var gInstrumentUI = null;
 var gInstrument = null;
+var gKeyboard = null;
 
 // Todo:
 // Cleanup
@@ -47,8 +48,7 @@ function init() {
       // filterLFO display
       document.getElementById('selectedFilterLFOFrequency'),
       document.getElementById('selectedFilterLFOGain'),
-      document.getElementById('selectedFilterLFOPhase')
-  );
+      document.getElementById('selectedFilterLFOPhase'));
   gInstrument = gInstrumentUI.instrument();
 
   // Player setup
@@ -57,8 +57,7 @@ function init() {
   document.getElementById('octave').onchange = octaveChanged;
   document.getElementById('note').onchange = noteChanged;
   document.getElementById('play').onclick = playClicked;
-  window.onkeydown = keyDown;
-  window.onkeyup = keyUp;
+  gKeyboard = new KeyboardPiano(4, gInstrument);
 }
 
 window.onload = init;
@@ -116,24 +115,6 @@ function playClicked() {
     gCurrentNote = gInstrument.createPlayedNote(octave(), note());
     gCurrentNote.start();
   } else if (gCurrentNote) {
-    gCurrentNote.stop();
-    gCurrentNote = null;
-  }
-}
-
-function keyDown(event) {
-  if (event.keyCode == 'C'.charCodeAt(0)) {
-    if (gCurrentNote) {
-      gCurrentNote.stop();
-      gCurrentNote = null;
-    }
-    gCurrentNote = gInstrument.createPlayedNote(octave(), note());
-    gCurrentNote.start();
-  }
-}
-
-function keyUp(event) {
-  if (event.keyCode == 'C'.charCodeAt(0)) {
     gCurrentNote.stop();
     gCurrentNote = null;
   }

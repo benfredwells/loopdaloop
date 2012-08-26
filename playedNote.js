@@ -23,7 +23,7 @@ PlayedNote.prototype.start = function() {
 
 PlayedNote.prototype.stop = function() {
   this.gainNode_.gain.setTargetValueAtTime(0, this.context_.currentTime, 0.1);
-  thisNote = this;
+  var thisNote = this;
   setTimeout(function() {
     thisNote.oscillatorNodes_.forEach(function(oscillator) {
       oscillator.noteOff(0);

@@ -29,7 +29,7 @@ function InstrumentUI(// oscillator settings
                       // filterLFO display
                       filterLFOFrequencyFactorLabel, filterLFOGainLabel,
                       filterLFOPhaseLabel) {
-  ui = this;
+  var ui = this;
 
   //////////////////////////////////////////////////////////////////////////////
   // Public accessors

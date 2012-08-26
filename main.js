@@ -26,9 +26,13 @@ var gKeyboard = null;
 function init() {
   gContext = new webkitAudioContext();
   gControllerManager = new ControllerManager(gContext);
+  var compressor = gContext.createDynamicsCompressor();
+  compressor.connect(gContext.destination);
+  gInstrument = new Instrument(gContext, compressor);
 
   // Instrument UI setup
   gInstrumentUI = new InstrumentUI(
+      gInstrument,
       document.getElementById('waveTypes'),
       // filter settings
       document.getElementById('filterEnabled'),
@@ -49,7 +53,6 @@ function init() {
       document.getElementById('selectedFilterLFOFrequency'),
       document.getElementById('selectedFilterLFOGain'),
       document.getElementById('selectedFilterLFOPhase'));
-  gInstrument = gInstrumentUI.instrument();
 
   // Player setup
   octaveChanged();

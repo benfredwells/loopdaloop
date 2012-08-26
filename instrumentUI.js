@@ -16,7 +16,8 @@ var gLFOFrequencyExponentFactor = 1/25;
 var gMaxLFOGainRangeValue = 100;
 var gMaxLFOPhaseRangeValue = 36;
 
-function InstrumentUI(// oscillator settings
+function InstrumentUI(instrument,
+                      // oscillator settings
                       waveTypeSelect,
                       // filter settings
                       filterCheckBox, filterTypeSelect, filterFrequencyRange,
@@ -30,12 +31,6 @@ function InstrumentUI(// oscillator settings
                       filterLFOFrequencyFactorLabel, filterLFOGainLabel,
                       filterLFOPhaseLabel) {
   var ui = this;
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Public accessors
-  ui.instrument = function() {
-    return ui.instrument_;
-  }
 
   //////////////////////////////////////////////////////////////////////////////
   // Utils
@@ -182,7 +177,7 @@ function InstrumentUI(// oscillator settings
 
   //////////////////////////////////////////////////////////////////////////////
   // Private fields
-  ui.instrument_ = new Instrument(gContext);
+  ui.instrument_ = instrument;
   ui.waveTypeSelect_ = waveTypeSelect;
   ui.filterCheckBox_ = filterCheckBox;
   ui.filterTypeSelect_ = filterTypeSelect;

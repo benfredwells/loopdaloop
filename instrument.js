@@ -1,8 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Instrument class
 
-function Instrument(context) {
+function Instrument(context, destinationNode) {
   this.context_ = context;
+  this.destinationNode_ = destinationNode;
   // Public fields
   this.oscillatorType = 0;
   this.filterEnabled = false;
@@ -66,6 +67,6 @@ Instrument.prototype.createPlayedNote = function(octave, note) {
   } else {
     oscillator.connect(gainNode);
   }
-  gainNode.connect(this.context_.destination);
+  gainNode.connect(this.destinationNode_);
   return new PlayedNote(this.context_, [oscillator], gainNode, allNodes, paramControllers);
 }

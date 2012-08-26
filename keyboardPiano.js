@@ -1,4 +1,4 @@
-function Key(keyCode, note, octave, instrument) {
+function Key(startOctave, instrument) {
   key = this;
 
   //////////////////////////////////////////////////////////////////////////////

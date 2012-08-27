@@ -41,11 +41,8 @@ function init() {
 
   // Player setup
   document.getElementById('octave').onchange = octaveChanged;
-  document.getElementById('note').onchange = noteChanged;
-  document.getElementById('play').onclick = playClicked;
   gKeyboard = new KeyboardPiano(4, gInstrument);
   octaveChanged();
-  noteChanged();
 }
 
 window.onload = init;
@@ -53,58 +50,18 @@ window.onload = init;
 ////////////////////////////////////////////////////////////////////////////////
 // Settings accessors
 
-function note() {
-  return parseInt(document.getElementById('note').value);
-}
-
 function octave() {
   return parseInt(document.getElementById('octave').value);
-}
-
-function oscillatorFrequency() {
-  return frequencyForNote(octave(), note());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Utils
-function roundForDisplay(number) {
-  return Math.round(number * 100) / 100;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Event handlers
 
-function oscillatorFrequencyChanged() {
-  var outEl = document.getElementById('selectedOscillatorFrequency');
-  outEl.innerHTML = roundForDisplay(oscillatorFrequency());
-}
-
 function octaveChanged() {
-  gInstrument.octave = octave();
   gKeyboard.octave = octave();
 
   var el = document.getElementById('octave');
   var outEl = document.getElementById('selectedOctave');
   outEl.innerHTML = el.value;
-  oscillatorFrequencyChanged();
 }
 
-function noteChanged() {
-  gInstrument.note = note();
-
-  var el = document.getElementById('note');
-  var outEl = document.getElementById('selectedNote');
-  outEl.innerHTML = gNotes[el.value];
-  oscillatorFrequencyChanged();
-}
-
-function playClicked() {
-  var el = document.getElementById('play');
-  if (el.checked) {
-    gCurrentNote = gInstrument.createPlayedNote(octave(), note());
-    gCurrentNote.start();
-  } else if (gCurrentNote) {
-    gCurrentNote.stop();
-    gCurrentNote = null;
-  }
-}

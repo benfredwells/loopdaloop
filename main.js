@@ -12,7 +12,9 @@ var gKeyboard = null;
 //   Make calculations common in instrument etc.
 //   Separate instrument setting from UI updating (inputs from outputs)
 //   Use new class pattern
-// Play notes on keyboard
+// UI
+//   Styling for instrument
+//   Dynamically create instrument
 //   Fancy keyboard display
 // Synthesizer
 //   Affect pitch with LFO

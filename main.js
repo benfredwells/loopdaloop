@@ -5,31 +5,6 @@ var gInstrumentUI = null;
 var gInstrument = null;
 var gKeyboard = null;
 
-// Todo:
-// Cleanup
-//   Turn on strict
-//   Hide things in anon functions
-//   Make calculations common in instrument etc.
-//   Separate instrument setting from UI updating (inputs from outputs)
-//   Use new class pattern
-// UI
-//   Styling for instrument
-//   Dynamically create instrument
-//   Fancy keyboard display
-// Synthesizer
-//   Affect pitch with LFO
-//   Affect volume with LFO
-//   ADSR envelope
-//   Option to have filter cutoff not related to pitch
-//   Multiple filters
-//   Feedback
-//   More?
-// Sampler
-//   Basic instrument hooked up to a file
-//   Assign samples to keys
-//   ADSR envelope etc.
-// Looping!
-
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 

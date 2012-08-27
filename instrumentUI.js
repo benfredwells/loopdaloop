@@ -160,13 +160,13 @@ function InstrumentUI(instrument,
   ui.filterLFOFrequencyChanged = function() {
     ui.instrument_.filterLFOFrequency = ui.filterLFOFrequency_();
 
-    ui.filterLFOFrequencyFactorLabel_.innerHTML = roundForDisplay(ui.filterLFOFrequency_());
+    ui.filterLFOFrequencyFactorLabel_.innerHTML = ui.roundForDisplay_(ui.filterLFOFrequency_());
   }
 
   ui.filterLFOGainFactorChanged = function() {
     ui.instrument_.filterLFOGainFactor = ui.filterLFOGainFactor_();
 
-    ui.filterLFOGainLabel_.innerHTML = '+-' + roundForDisplay(ui.filterLFOGainFactor_());
+    ui.filterLFOGainLabel_.innerHTML = '+-' + ui.roundForDisplay_(ui.filterLFOGainFactor_());
   }
 
   ui.filterLFOPhaseChanged = function() {

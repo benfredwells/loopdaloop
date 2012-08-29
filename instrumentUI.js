@@ -134,7 +134,7 @@ function InstrumentUI(instrument,
   ui.filterQChanged = function() {
     ui.instrument_.filterQ = ui.filterQ_();
 
-    ui.filterQLabel_ = ui.filterQ_();
+    ui.filterQLabel_.innerHTML = ui.filterQ_();
   }
 
   ui.filterGainChanged = function() {

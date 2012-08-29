@@ -8,27 +8,83 @@
   <script src='instrumentUI.js'></script>
   <script src='keyboardPiano.js'></script>
   <script src='main.js'></script>
+  <link rel='stylesheet' href='main.css'/>
 </head>
 <body>
-  Oscillator<br>
-  <input type='range' id='octave' min='0' max='8'>Octave:</input>
-  <span id='selectedOctave'></span><br>
-  Wave Type:&nbsp<select id='waveTypes'></select><br>
-  Output filter<br>
-  <input type='checkbox' id='filterEnabled'>Enabled</input><br>
-  Type:&nbsp<select id='filterTypes'></select><br>
-  <input type='range' id='filterFrequency' min='0' max='5'>Frequency:</input>
-  <span id='selectedFilterFrequency'></span><br>
-  <input type='checkbox' id='filterLFOEnabled'>LFO Enabled</input><br>
-  <input type='range' id='filterLFOFrequency' min='0' max='100'>LFO Frequency</input>
-  <span id='selectedFilterLFOFrequency'></span><br>
-  <input type='range' id='filterLFOGain' min='0' max='100'>LFO Gain</input>
-  <span id='selectedFilterLFOGain'></span><br>
-  <input type='range' id='filterLFOPhase' min='0' max='36' value='0'>LFO Phase</input>
-  <span id='selectedFilterLFOPhase'></span><br>
-  <input type='range' id='filterQ' min='0' max='20'>Q:</input>
-  <span id='selectedQ'></span><br>
-  <input type='range' id='filterGain' min='-20' max='20'>Gain:</input>
-  <span id='selectedFilterGain'></span><br>
+  <div class='page'>
+    <div class='section'>
+      <div class='instrTitle'>Synthesizer</div>
+      <div class='instrSettingBlock'>
+        <div class='instrSettingHeading'>
+          <div class='instrSettingDescr'>Oscillator</div>
+          <div class='instrSetting'><select id='waveTypes'></select></div>
+        </div>
+      </div>
+      <div class='instrSettingBlock'>
+        <div class='instrSettingHeading'>
+          <div class='instrSettingDescr'>Output filter</div>
+          <div class='instrSetting'>
+            <input type='checkbox' id='filterEnabled'>Enabled</input>
+          </div>
+        </div>
+        <div class='instrSettingRow'>
+          <div class='instrSubSettingDescr'>Type</div>
+          <div class='instrSetting'><select id='filterTypes'></select></div>
+        </div>
+        <div class='instrSettingRow'>
+          <div class='instrSubSettingDescr'>Frequency</div>
+          <div class='instrSetting'>
+            <input type='range' id='filterFrequency' min='0' max='5'>
+          </div>
+          <div class='instrSettingValue'><span id='selectedFilterFrequency'></span></div>
+        </div>
+        <div class='instrSettingRow'>
+          <div class='instrSubSettingDescr'>LFO</div>
+          <div class='instrSetting'>
+            <input type='checkbox' id='filterLFOEnabled'>Enabled</input>
+          </div>
+        </div>
+        <div class='instrSettingRow'>
+          <div class='instrSubSubSettingDescr'>Frequency</div>
+          <div class='instrSetting'>
+            <input type='range' id='filterLFOFrequency' min='0' max='100'></input>
+          </div>
+          <div class='instrSettingValue'><span id='selectedFilterLFOFrequency'></span></div>
+        </div>
+        <div class='instrSettingRow'>
+          <div class='instrSubSubSettingDescr'>Gain</div>
+          <div class='instrSetting'>
+            <input type='range' id='filterLFOGain' min='0' max='100'></input>
+          </div>
+          <div class='instrSettingValue'><span id='selectedFilterLFOGain'></span></div>
+        </div>
+        <div class='instrSettingRow'>
+          <div class='instrSubSubSettingDescr'>Phase</div>
+          <div class='instrSetting'>
+            <input type='range' id='filterLFOPhase' min='0' max='36' value='0'></input>
+          </div>
+          <div class='instrSettingValue'><span id='selectedFilterLFOPhase'></span></div>
+        </div>
+        <div class='instrSettingRow'>
+          <div class='instrSubSettingDescr'>Q</div>
+          <div class='instrSetting'>
+            <input type='range' id='filterQ' min='0' max='20'></input>
+          </div>
+          <div class='instrSettingValue'><span id='selectedQ'></span></div>
+        </div>
+        <div class='instrSettingRow'>
+          <div class='instrSubSettingDescr'>Gain</div>
+          <div class='instrSetting'>
+            <input type='range' id='filterGain' min='-20' max='20'></input>
+          </div>
+          <div class='instrSettingValue'><span id='selectedFilterGain'></span></div>
+        </div>
+    </div>
+  </div>
+  <div class='section'>
+    <div class='keyboardTitle'>Keyboard</div>
+    <input type='range' id='octave' min='0' max='8'>Octave:</input>
+    <span id='selectedOctave'></span><br>
+  </div>
 </body>
 </html>

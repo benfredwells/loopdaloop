@@ -1,0 +1,87 @@
+body {
+  font-family: arial, sans-serif;
+  font-size: small;
+  color: #555;
+  background-color: #DDD;
+  margin: 0px;
+}
+
+div.page {
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #FFF;
+}
+
+div.section {
+  padding: 20px;
+  margin-bottom: 50px;
+}
+
+div.instrTitle {
+  color: #88E;
+  font-size: large;
+  margin-bottom: 10px;
+}
+
+div.keyboardTitle {
+  color: #1A8;
+  font-size: large;
+  margin-bottom: 10px;
+}
+
+div.instrSettingBlock {
+  background-color: #EEE;
+  padding: 10px 5px;
+  margin: 5px 0px;
+  width: 300px;
+}
+
+div.instrSettingHeading {
+}
+
+div.instrSettingRow {
+  margin-top: 3px;
+}
+
+div.instrSettingDescr {
+  display: inline-block;
+  width: 100px;
+}
+
+div.instrSubSettingDescr {
+  display: inline-block;
+  width: 90px;
+  padding-left: 10px;
+}
+
+div.instrSubSubSettingDescr {
+  display: inline-block;
+  width: 80px;
+  padding-left: 20px;
+}
+
+div.instrSetting {
+  display: inline-block;
+  width: 130px;
+}
+
+div.instrSetting select {
+  width: 120px;
+}
+
+div.instrSetting input {
+  width: 120px;
+}
+
+div.instrSetting input[type="checkbox"] {
+  width: auto;
+}
+
+div.instrSettingValue {
+  display: inline-block;
+}
+
+div.keyboard {
+  margin-top: 50px;
+}

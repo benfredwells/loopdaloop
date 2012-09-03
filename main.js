@@ -41,7 +41,7 @@ function init() {
 
   // Player setup
   document.getElementById('octave').onchange = octaveChanged;
-  gKeyboard = new KeyboardPiano(4, gInstrument);
+  gKeyboard = new KeyboardPiano(4, gInstrument, document.getElementById('keyboard'));
   octaveChanged();
 }
 

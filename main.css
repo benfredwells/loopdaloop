@@ -15,7 +15,10 @@ div.page {
 
 div.section {
   padding: 20px;
-  margin-bottom: 50px;
+}
+
+div.first {
+  padding-bottom: 0px;
 }
 
 div.instrTitle {
@@ -83,5 +86,54 @@ div.instrSettingValue {
 }
 
 div.keyboard {
-  margin-top: 50px;
+  width: auto;
+  height: 250px;
+  margin-top: 10px;
 }
+
+div.key {
+  display: inline-block;
+  position: fixed;
+  border: 1px solid black;
+  text-align: center;
+}
+
+div.key * {
+  position: relative;
+}
+
+div.white {
+  background: -webkit-linear-gradient( 90deg, white, #DDD);
+  z-index: 10;
+}
+
+div.white.playing {
+  background: -webkit-linear-gradient( 90deg, #FAA, #DDD);
+}
+
+div.white:hover {
+  background: -webkit-linear-gradient( 90deg, #FFA, #DDD);
+}
+
+div.white.playing:hover {
+  background: -webkit-linear-gradient( 90deg, #FAA, #DDD);
+}
+
+div.black {
+  background: -webkit-linear-gradient( 90deg, #555, black 10%, black 80%, #222);
+  color: #888;
+  z-index: 20;
+}
+
+div.black.playing {
+  background: -webkit-linear-gradient( 90deg, #633, #300 10%, #300 80%, #211);
+}
+
+div.black:hover {
+  background: -webkit-linear-gradient( 90deg, #663, #220 10%, #220 80%, #221);
+}
+
+div.black.playing:hover {
+  background: -webkit-linear-gradient( 90deg, #633, #300 10%, #300 80%, #211);
+}
+

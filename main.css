@@ -127,14 +127,14 @@ div.black {
 }
 
 div.black.playing {
-  background: -webkit-linear-gradient( 90deg, #633, #300 10%, #300 80%, #211);
+  background: -webkit-linear-gradient( 90deg, #633, #600 10%, #300 80%, #211);
 }
 
 div.black:hover {
-  background: -webkit-linear-gradient( 90deg, #663, #220 10%, #220 80%, #221);
+  background: -webkit-linear-gradient( 90deg, #663, #440 10%, #220 80%, #221);
 }
 
 div.black.playing:hover {
-  background: -webkit-linear-gradient( 90deg, #633, #300 10%, #300 80%, #211);
+  background: -webkit-linear-gradient( 90deg, #633, #600 10%, #300 80%, #211);
 }
 

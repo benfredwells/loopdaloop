@@ -96,6 +96,7 @@ div.key {
   position: fixed;
   border: 1px solid black;
   text-align: center;
+  -webkit-user-select: none;
 }
 
 div.key * {

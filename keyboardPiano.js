@@ -12,17 +12,35 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
   var key = this;
 
   //////////////////////////////////////////////////////////////////////////////
+  // Play control
+  key.startPlaying = function() {
+    if (key.playingNote_)
+      return;
+
+    key.playingNote_ = key.instrument_.createPlayedNote(
+        key.keyboard_.octave + key.octaveDelta_,
+        key.note_);
+    key.playingNote_.start();
+    key.element_.classList.add('playing');
+  }
+
+  key.stopPlaying = function() {
+    if (!key.playingNote_)
+      return;
+
+    key.playingNote_.stop();
+    key.playingNote_ = null;
+    key.element_.classList.remove('playing');
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
   // Key events
   key.down = function(event) {
     if (key.keyCode_ != event.keyCode)
       return;
     if (key.playingNote_)
       return;
-    key.playingNote_ = key.instrument_.createPlayedNote(
-        key.keyboard_.octave + key.octaveDelta_,
-        key.note_);
-    key.playingNote_.start();
-    key.element_.classList.add('playing');
+    key.startPlaying();
     event.stopPropagation();
   }
 
@@ -31,10 +49,33 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
       return;
     if (!key.playingNote_)
       return;
-    key.playingNote_.stop();
-    key.playingNote_ = null;
-    key.element_.classList.remove('playing');
+    key.stopPlaying();
     event.stopPropagation();
+  }
+
+  key.mouseOver = function(event) {
+    if (keyboard.mouseDown_ && keyboard.mouseKey_ != key) {
+      if (keyboard.mouseKey_)
+        keyboard.mouseKey_.stopPlaying();
+      keyboard.mouseKey_ = key;
+      key.startPlaying();
+    }
+  }
+
+  key.mouseDown = function(event) {
+    if (event.button == 0) {
+      keyboard.mouseDown_ = true;
+      keyboard.mouseKey_ = key;
+      key.startPlaying();
+    }
+  }
+
+  key.mouseUp = function(event) {
+    if (event.button == 0) {
+      keyboard.mouseDown_ = false;
+      keyboard.mouseKey_ = null;
+      key.stopPlaying();
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -70,6 +111,9 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
   text.innerHTML = keyChar;
   text.style.top = asPixels(height - gTextOffset);
   el.appendChild(text);
+  el.onmouseover = key.mouseOver;
+  el.onmousedown = key.mouseDown;
+  el.onmouseup = key.mouseUp;
   key.keyboard_.div_.appendChild(el);
 
   key.element_ = el;
@@ -96,10 +140,11 @@ function KeyboardPiano(startOctave, instrument, div) {
     });
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  // Setup window events.
-  window.onkeydown = keyboard.onKeyDown;
-  window.onkeyup = keyboard.onKeyUp;
+  keyboard.onMouseUp = function(event) {
+    keyboard.mouseDown_ = false;
+    if (keyboard.mouseKey_)
+      keyboard.mouseKey_.stopPlaying();
+  }
 
   //////////////////////////////////////////////////////////////////////////////
   // Private fields.
@@ -113,6 +158,14 @@ function KeyboardPiano(startOctave, instrument, div) {
   keyboard.blackKeyWidth_ = keyboard.whiteKeyWidth_ - 10;
   var gap = maxWidth - numWhites * keyboard.whiteKeyWidth_;
   keyboard.left_ = div.offsetLeft + gap / 2;
+  keyboard.mouseDown_ = false;
+  keyboard.mouseKey_ = null;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Setup keyboard events.
+  window.onkeydown = keyboard.onKeyDown;
+  window.onkeyup = keyboard.onKeyUp;
+  window.onmouseup = keyboard.onMouseUp;
 
   //////////////////////////////////////////////////////////////////////////////
   // Setup keys.

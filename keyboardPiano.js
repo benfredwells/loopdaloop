@@ -13,8 +13,8 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
 
   //////////////////////////////////////////////////////////////////////////////
   // Key events
-  key.down = function(keyCode) {
-    if (key.keyCode_ != keyCode)
+  key.down = function(event) {
+    if (key.keyCode_ != event.keyCode)
       return;
     if (key.playingNote_)
       return;
@@ -23,16 +23,18 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
         key.note_);
     key.playingNote_.start();
     key.element_.classList.add('playing');
+    event.stopPropagation();
   }
 
-  key.up = function(keyCode) {
-    if (key.keyCode_ != keyCode)
+  key.up = function(event) {
+    if (key.keyCode_ != event.keyCode)
       return;
     if (!key.playingNote_)
       return;
     key.playingNote_.stop();
     key.playingNote_ = null;
     key.element_.classList.remove('playing');
+    event.stopPropagation();
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -84,13 +86,13 @@ function KeyboardPiano(startOctave, instrument, div) {
   // Keyboard events.
   keyboard.onKeyDown = function(event) {
     keyboard.keys_.forEach(function(key) {
-      key.down(event.keyCode);
+      key.down(event);
     });
   }
 
   keyboard.onKeyUp = function(event) {
     keyboard.keys_.forEach(function(key) {
-      key.up(event.keyCode);
+      key.up(event);
     });
   }
 

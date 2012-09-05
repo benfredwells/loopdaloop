@@ -12,7 +12,7 @@ var gKeyboard = null;
 
 function init() {
   gContext = new webkitAudioContext();
-  gControllerManager = new ControllerManager(gContext);
+  gControllerManager = new ParamController.Manager(gContext);
   var compressor = gContext.createDynamicsCompressor();
   compressor.connect(gContext.destination);
   gInstrument = new Instrument.Instrument(gContext, compressor);

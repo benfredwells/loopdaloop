@@ -1,7 +1,10 @@
+ParamController = (function() {
+
 "use strict";
+var module = [];
 
 // This controls how often all param values get updated, in seconds.
-var gUpdateInterval = 5;
+var kUpdateInterval = 5;
 
 ////////////////////////////////////////////////////////////////////////////////
 // ParamController interface
@@ -11,34 +14,34 @@ var gUpdateInterval = 5;
 ////////////////////////////////////////////////////////////////////////////////
 // ControllerManager class
 
-function ControllerManager(context) {
+module.Manager = function (context) {
   this.context_ = context;
   this.paramControllers_ = [];
   this.updateParams();
 }
 
-ControllerManager.prototype.updateParams = function() {
+module.Manager.prototype.updateParams = function() {
   var manager = this;
-  manager.updateTo_ = manager.context_.currentTime + gUpdateInterval * 2;
+  manager.updateTo_ = manager.context_.currentTime + kUpdateInterval * 2;
   manager.paramControllers_.forEach(function(controller) {
     controller.updateParam(manager.updateTo_);
   });
   setTimeout(function() {
     manager.updateParams();
-  }, gUpdateInterval * 1000);
+  }, kUpdateInterval * 1000);
 }
 
 // frequency in Hz
 // phase in radians
 // dc is the average value of the param
 // ac is the max positive offset from the dc average
-ControllerManager.prototype.newLFO = function(param, frequency, phase, dc, ac) {
+module.Manager.prototype.newLFO = function(param, frequency, phase, dc, ac) {
   var lfo = new LFO(this.context_, param, frequency, phase, dc, ac);
   lfo.updateParam(this.updateTo_);
   this.paramControllers_.push(lfo);
 }
 
-ControllerManager.prototype.removeController = function(controller) {
+module.Manager.prototype.removeController = function(controller) {
   var index = this.paramControllers_.indexOf(controller);
   if (index != -1)
     this.paramControllers_.splice(index, 1);
@@ -75,3 +78,7 @@ LFO.prototype.updateParam = function(atLeastToTime) {
     this.lastTime_ =this.lastTime_ + this.bufferSeconds_;
   }
 }
+
+return module;
+
+})();

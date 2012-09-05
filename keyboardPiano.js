@@ -1,11 +1,18 @@
+KeyboardPiano = (function() {
+
 "use strict";
+module = [];
 
-var gKeyIsWhite = [true, false, true, false, true, true, false,
+////////////////////////////////////////////////////////////////////////////////
+// Constants
+var kKeyIsWhite = [true, false, true, false, true, true, false,
                   true, false, true, false, true];
-var gKeyOffset = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12];
-var gKeyOctaveOffset = 14;
-var gTextOffset = 30;
+var kKeyOffset = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12];
+var kKeyOctaveOffset = 14;
+var kTextOffset = 30;
 
+////////////////////////////////////////////////////////////////////////////////
+// Private
 function asPixels(num) {
   return Math.round(num).toString() + 'px';
 }
@@ -91,8 +98,8 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
 
   //////////////////////////////////////////////////////////////////////////////
   // Create UI
-  var isWhite = gKeyIsWhite[note];
-  var offset = octaveDelta * gKeyOctaveOffset + gKeyOffset[note % 12];
+  var isWhite = kKeyIsWhite[note];
+  var offset = octaveDelta * kKeyOctaveOffset + kKeyOffset[note % 12];
   offset = (offset + 1) * (key.keyboard_.whiteKeyWidth_ / 2) + keyboard.left_;
   var el = document.createElement('div');
   el.classList.add('key');
@@ -111,7 +118,7 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
   el.style.height = asPixels(height);
   var text = document.createElement('span');
   text.innerHTML = keyChar;
-  text.style.top = asPixels(height - gTextOffset);
+  text.style.top = asPixels(height - kTextOffset);
   el.appendChild(text);
   el.onmouseover = key.mouseOver;
   el.onmousedown = key.mouseDown;
@@ -121,7 +128,9 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
   key.element_ = el;
 }
 
-function KeyboardPiano(startOctave, instrument, div) {
+////////////////////////////////////////////////////////////////////////////////
+// Public
+module.Piano = function(startOctave, instrument, div) {
   var keyboard = this;
 
   //////////////////////////////////////////////////////////////////////////////
@@ -201,3 +210,7 @@ function KeyboardPiano(startOctave, instrument, div) {
   keyboard.keys_.push(new KeyboardPianoKey('0',  3, 2, keyboard, instrument));
   keyboard.keys_.push(new KeyboardPianoKey('P',  4, 2, keyboard, instrument));
 }
+
+return module;
+
+}());

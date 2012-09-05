@@ -21,28 +21,6 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
   var key = this;
 
   //////////////////////////////////////////////////////////////////////////////
-  // Play control
-  key.startPlaying = function() {
-    if (key.playingNote_)
-      return;
-
-    key.playingNote_ = key.instrument_.createPlayedNote(
-        key.keyboard_.octave + key.octaveDelta_,
-        key.note_);
-    key.playingNote_.start();
-    key.element_.classList.add('playing');
-  }
-
-  key.stopPlaying = function() {
-    if (!key.playingNote_)
-      return;
-
-    key.playingNote_.stop();
-    key.playingNote_ = null;
-    key.element_.classList.remove('playing');
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
   // Key events
   key.down = function(event) {
     if (key.keyCode_ != event.keyCode)
@@ -126,6 +104,28 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
   key.keyboard_.div_.appendChild(el);
 
   key.element_ = el;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Play control
+KeyboardPianoKey.prototype.startPlaying = function() {
+  if (this.playingNote_)
+    return;
+
+  this.playingNote_ = this.instrument_.createPlayedNote(
+      this.keyboard_.octave + this.octaveDelta_,
+      this.note_);
+  this.playingNote_.start();
+  this.element_.classList.add('playing');
+}
+
+KeyboardPianoKey.prototype.stopPlaying = function() {
+  if (!this.playingNote_)
+    return;
+
+  this.playingNote_.stop();
+  this.playingNote_ = null;
+  this.element_.classList.remove('playing');
 }
 
 ////////////////////////////////////////////////////////////////////////////////

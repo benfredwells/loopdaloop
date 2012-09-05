@@ -66,4 +66,3 @@ function octaveChanged() {
   var outEl = document.getElementById('selectedOctave');
   outEl.innerHTML = el.value;
 }
-

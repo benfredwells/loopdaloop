@@ -1,3 +1,5 @@
+"use strict";
+
 // This controls how often all param values get updated, in seconds.
 var gUpdateInterval = 5;
 
@@ -49,7 +51,7 @@ function LFO(context, param, frequency, phase, dc, ac) {
   this.context_ = context;
   this.param_ = param;
   this.frequency_ = frequency;
-  this_phase_ = phase;
+  this.phase_ = phase;
   this.dc_ = dc;
   this.ac_ = ac;
   if (frequency == 0)

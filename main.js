@@ -1,3 +1,5 @@
+"use strict";
+
 var gContext = null;
 var gCurrentNote = null;
 var gControllerManager = null;

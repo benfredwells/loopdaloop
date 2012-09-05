@@ -18,7 +18,7 @@ function init() {
   gInstrument = new Instrument.Instrument(gContext, compressor);
 
   // Instrument UI setup
-  gInstrumentUI = new InstrumentUI(
+  gInstrumentUI = new InstrumentUI.UI(
       gInstrument,
       document.getElementById('waveTypes'),
       // filter settings

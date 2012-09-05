@@ -1,24 +1,27 @@
+InstrumentUI = (function() {
+
 "use strict;"
+module = [];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillator constants
-var gWaveTypes = ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE'];
+var kWaveTypes = ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE'];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Filter constants
-var gFilterTypes = ['LOWPASS', 'HIGHPASS', 'BANDPASS', 'LOWSHELF', 'HIGHSHELF',
+var kFilterTypes = ['LOWPASS', 'HIGHPASS', 'BANDPASS', 'LOWSHELF', 'HIGHSHELF',
                     'PEAKING', 'NOTCH', 'ALLPASS'];
-var gFilterHasGain = [false, false, false, true, true, true, false, false];
-var gFilterFrequencyFactors = [0.5, 0.707, 1, 1.414, 2, 2.828];
+var kFilterHasGain = [false, false, false, true, true, true, false, false];
+var kFilterFrequencyFactors = [0.5, 0.707, 1, 1.414, 2, 2.828];
 
 ////////////////////////////////////////////////////////////////////////////////
 // LFO constants
-var gMaxLFOFrequencyRangeValue = 100;
-var gLFOFrequencyExponentFactor = 1/25;
-var gMaxLFOGainRangeValue = 100;
-var gMaxLFOPhaseRangeValue = 36;
+var kMaxLFOFrequencyRangeValue = 100;
+var kLFOFrequencyExponentFactor = 1/25;
+var kMaxLFOGainRangeValue = 100;
+var kMaxLFOPhaseRangeValue = 36;
 
-function InstrumentUI(instrument,
+module.UI = function (instrument,
                       // oscillator settings
                       waveTypeSelect,
                       // filter settings
@@ -65,7 +68,7 @@ function InstrumentUI(instrument,
   }
 
   ui.filterFrequencyFactor_ = function() {
-    return gFilterFrequencyFactors[ui.filterFrequencyRange_.value];
+    return kFilterFrequencyFactors[ui.filterFrequencyRange_.value];
   }
 
   ui.filterQ_ = function() {
@@ -82,21 +85,21 @@ function InstrumentUI(instrument,
 
   ui.filterLFOFrequency_ = function() {
     var rangeValue = ui.filterLFOFrequencyRange_.value;
-    rangeValue = rangeValue - (gMaxLFOFrequencyRangeValue / 2);
-    rangeValue = rangeValue * gLFOFrequencyExponentFactor;
+    rangeValue = rangeValue - (kMaxLFOFrequencyRangeValue / 2);
+    rangeValue = rangeValue * kLFOFrequencyExponentFactor;
     return Math.pow(10, rangeValue);
   }
 
   ui.filterLFOGainFactor_ = function() {
-    return ui.filterLFOGainRange_.value / gMaxLFOGainRangeValue;
+    return ui.filterLFOGainRange_.value / kMaxLFOGainRangeValue;
   }
 
   ui.filterLFOPhase_ = function() {
-    return 2 * Math.PI * ui.filterLFOPhaseRange_.value / gMaxLFOPhaseRangeValue;
+    return 2 * Math.PI * ui.filterLFOPhaseRange_.value / kMaxLFOPhaseRangeValue;
   }
 
   ui.filterLFOPhaseDegrees_ = function() {
-    var value = 360 * ui.filterLFOPhaseRange_.value / gMaxLFOPhaseRangeValue;
+    var value = 360 * ui.filterLFOPhaseRange_.value / kMaxLFOPhaseRangeValue;
     if (value > 180)
       value = value - 360;
     return value;
@@ -123,7 +126,7 @@ function InstrumentUI(instrument,
   ui.filterTypeChanged = function() {
     ui.instrument_.filterType = ui.filterType_();
 
-    ui.filterGainRange_.disabled = !gFilterHasGain[ui.filterType_()] || !ui.filterEnabled_();
+    ui.filterGainRange_.disabled = !kFilterHasGain[ui.filterType_()] || !ui.filterEnabled_();
     ui.filterGainChanged();
   }
 
@@ -144,7 +147,7 @@ function InstrumentUI(instrument,
 
     var el = document.getElementById('filterGain');
     var outEl = document.getElementById('selectedFilterGain');
-    if (gFilterHasGain[ui.filterType_()])
+    if (kFilterHasGain[ui.filterType_()])
       ui.filterGainLabel_.innerHTML = ui.filterGain_() + 'dB';
     else
       ui.filterGainLabel_.innerHTML = 'N/A';
@@ -212,8 +215,8 @@ function InstrumentUI(instrument,
 
   //////////////////////////////////////////////////////////////////////////////
   // Initialize UI
-  ui.populateSelect_(ui.waveTypeSelect_, gWaveTypes);
-  ui.populateSelect_(ui.filterTypeSelect_, gFilterTypes);
+  ui.populateSelect_(ui.waveTypeSelect_, kWaveTypes);
+  ui.populateSelect_(ui.filterTypeSelect_, kFilterTypes);
   ui.filterEnabledChanged(); // will update type, gain and lfo enabled
   ui.filterFrequencyFactorChanged();
   ui.filterQChanged();
@@ -221,3 +224,7 @@ function InstrumentUI(instrument,
   ui.filterLFOGainFactorChanged();
   ui.filterLFOPhaseChanged();
 }
+
+return module;
+
+}());

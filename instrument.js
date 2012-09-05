@@ -22,13 +22,14 @@ function Instrument(context, destinationNode) {
 // Private methods
 Instrument.prototype.createOscillator_ = function(octave, note) {
   var oscillator = this.context_.createOscillator();
-  oscillator.frequency.value = frequencyForNote(octave, note);
+  oscillator.frequency.value = ChromaticScale.frequencyForNote(octave, note);
   oscillator.type = this.oscillatorType;
   return oscillator;
 }
 
 Instrument.prototype.createFilter_ = function(octave, note) {
-  var filterFrequency = frequencyForNote(octave, note) * this.filterFrequencyFactor;
+  var filterFrequency = ChromaticScale.frequencyForNote(octave, note) *
+                        this.filterFrequencyFactor;
   var filter = this.context_.createBiquadFilter();
   filter.type = this.filterType;
   filter.frequency.value = filterFrequency;

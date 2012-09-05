@@ -74,7 +74,7 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
     oscillator.connect(gainNode);
   }
   gainNode.connect(this.destinationNode_);
-  return new PlayedNote(this.context_, [oscillator], gainNode, allNodes, paramControllers);
+  return new PlayedNote.Note(this.context_, [oscillator], gainNode, allNodes, paramControllers);
 }
 
 return module;

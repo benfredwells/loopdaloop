@@ -1,13 +1,16 @@
+PlayedNote = (function() {
+
 "use strict";
+var module = [];
 
 ////////////////////////////////////////////////////////////////////////////////
 // PlayedNote class
 
-function PlayedNote(context,
-                    oscillatorNodes,
-                    gainNode,
-                    allNodes,
-                    paramControllers) {
+module.Note = function(context,
+                       oscillatorNodes,
+                       gainNode,
+                       allNodes,
+                       paramControllers) {
   this.context_ = context;
   this.oscillatorNodes_ = oscillatorNodes;
   this.gainNode_ = gainNode;
@@ -15,7 +18,7 @@ function PlayedNote(context,
   this.paramControllers_ = paramControllers;
 }
 
-PlayedNote.prototype.start = function() {
+module.Note.prototype.start = function() {
   this.gainNode_.gain.setValueAtTime(0, this.context_.currentTime);
   this.gainNode_.gain.setTargetValueAtTime(1, this.context_.currentTime, 0.1);
   this.oscillatorNodes_.forEach(function (oscillator) {
@@ -23,7 +26,7 @@ PlayedNote.prototype.start = function() {
   });
 }
 
-PlayedNote.prototype.stop = function() {
+module.Note.prototype.stop = function() {
   this.gainNode_.gain.setTargetValueAtTime(0, this.context_.currentTime, 0.1);
   var thisNote = this;
   setTimeout(function() {
@@ -38,3 +41,7 @@ PlayedNote.prototype.stop = function() {
     })
   }, 3000);
 }
+
+return module;
+
+})();

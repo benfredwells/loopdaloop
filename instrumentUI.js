@@ -38,74 +38,6 @@ module.UI = function (instrument,
   var ui = this;
 
   //////////////////////////////////////////////////////////////////////////////
-  // Utils
-  ui.populateSelect_ = function(element, array) {
-    for (var i = 0; i < array.length; i++) {
-      var option = document.createElement('option');
-      option.value = i;
-      option.text = array[i];
-      element.add(option, null);
-    }
-  }
-
-  ui.roundForDisplay_ = function(number) {
-    return Math.round(number * 100) / 100;
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Settings accessors
-
-  ui.waveType_ = function() {
-    return ui.waveTypeSelect_.value;
-  }
-
-  ui.filterEnabled_ = function() {
-    return ui.filterCheckBox_.checked;
-  }
-
-  ui.filterType_ = function() {
-    return ui.filterTypeSelect_.value;
-  }
-
-  ui.filterFrequencyFactor_ = function() {
-    return kFilterFrequencyFactors[ui.filterFrequencyRange_.value];
-  }
-
-  ui.filterQ_ = function() {
-    return ui.filterQRange_.value;
-  }
-
-  ui.filterGain_ = function() {
-    return ui.filterGainRange_.value;
-  }
-
-  ui.filterLFOEnabled_ = function() {
-    return ui.filterLFOCheckBox_.checked;
-  }
-
-  ui.filterLFOFrequency_ = function() {
-    var rangeValue = ui.filterLFOFrequencyRange_.value;
-    rangeValue = rangeValue - (kMaxLFOFrequencyRangeValue / 2);
-    rangeValue = rangeValue * kLFOFrequencyExponentFactor;
-    return Math.pow(10, rangeValue);
-  }
-
-  ui.filterLFOGainFactor_ = function() {
-    return ui.filterLFOGainRange_.value / kMaxLFOGainRangeValue;
-  }
-
-  ui.filterLFOPhase_ = function() {
-    return 2 * Math.PI * ui.filterLFOPhaseRange_.value / kMaxLFOPhaseRangeValue;
-  }
-
-  ui.filterLFOPhaseDegrees_ = function() {
-    var value = 360 * ui.filterLFOPhaseRange_.value / kMaxLFOPhaseRangeValue;
-    if (value > 180)
-      value = value - 360;
-    return value;
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
   // Event handlers
 
   ui.waveTypeChanged = function() {
@@ -223,6 +155,74 @@ module.UI = function (instrument,
   ui.filterLFOFrequencyChanged();
   ui.filterLFOGainFactorChanged();
   ui.filterLFOPhaseChanged();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Utils
+module.UI.prototype.populateSelect_ = function(element, array) {
+  for (var i = 0; i < array.length; i++) {
+    var option = document.createElement('option');
+    option.value = i;
+    option.text = array[i];
+    element.add(option, null);
+  }
+}
+
+module.UI.prototype.roundForDisplay_ = function(number) {
+  return Math.round(number * 100) / 100;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Settings accessors
+
+module.UI.prototype.waveType_ = function() {
+  return this.waveTypeSelect_.value;
+}
+
+module.UI.prototype.filterEnabled_ = function() {
+  return this.filterCheckBox_.checked;
+}
+
+module.UI.prototype.filterType_ = function() {
+  return this.filterTypeSelect_.value;
+}
+
+module.UI.prototype.filterFrequencyFactor_ = function() {
+  return kFilterFrequencyFactors[this.filterFrequencyRange_.value];
+}
+
+module.UI.prototype.filterQ_ = function() {
+  return this.filterQRange_.value;
+}
+
+module.UI.prototype.filterGain_ = function() {
+  return this.filterGainRange_.value;
+}
+
+module.UI.prototype.filterLFOEnabled_ = function() {
+  return this.filterLFOCheckBox_.checked;
+}
+
+module.UI.prototype.filterLFOFrequency_ = function() {
+  var rangeValue = this.filterLFOFrequencyRange_.value;
+  rangeValue = rangeValue - (kMaxLFOFrequencyRangeValue / 2);
+  rangeValue = rangeValue * kLFOFrequencyExponentFactor;
+  return Math.pow(10, rangeValue);
+}
+
+module.UI.prototype.filterLFOGainFactor_ = function() {
+  return this.filterLFOGainRange_.value / kMaxLFOGainRangeValue;
+}
+
+module.UI.prototype.filterLFOPhase_ = function() {
+  return 2 * Math.PI * this.filterLFOPhaseRange_.value / kMaxLFOPhaseRangeValue;
+}
+
+module.UI.prototype.filterLFOPhaseDegrees_ = function() {
+  var value = 360 * this.filterLFOPhaseRange_.value / kMaxLFOPhaseRangeValue;
+  if (value > 180)
+    value = value - 360;
+  return value;
 }
 
 return module;

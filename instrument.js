@@ -1,9 +1,12 @@
+Instrument = (function() {
+
 "use strict";
+var module = [];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Instrument class
 
-function Instrument(context, destinationNode) {
+module.Instrument = function(context, destinationNode) {
   this.context_ = context;
   this.destinationNode_ = destinationNode;
   // Public fields
@@ -20,14 +23,14 @@ function Instrument(context, destinationNode) {
 }
 
 // Private methods
-Instrument.prototype.createOscillator_ = function(octave, note) {
+module.Instrument.prototype.createOscillator_ = function(octave, note) {
   var oscillator = this.context_.createOscillator();
   oscillator.frequency.value = ChromaticScale.frequencyForNote(octave, note);
   oscillator.type = this.oscillatorType;
   return oscillator;
 }
 
-Instrument.prototype.createFilter_ = function(octave, note) {
+module.Instrument.prototype.createFilter_ = function(octave, note) {
   var filterFrequency = ChromaticScale.frequencyForNote(octave, note) *
                         this.filterFrequencyFactor;
   var filter = this.context_.createBiquadFilter();
@@ -38,7 +41,7 @@ Instrument.prototype.createFilter_ = function(octave, note) {
   return filter;
 }
 
-Instrument.prototype.createFilterLFO_ = function(filter) {
+module.Instrument.prototype.createFilterLFO_ = function(filter) {
   return gControllerManager.newLFO(filter.frequency,
                                    this.filterLFOFrequency,
                                    this.filterLFOPhase,
@@ -46,7 +49,7 @@ Instrument.prototype.createFilterLFO_ = function(filter) {
                                    filter.frequency.value * this.filterLFOGainFactor);
 }
 
-Instrument.prototype.createGainNode_ = function() {
+module.Instrument.prototype.createGainNode_ = function() {
   var gainNode = this.context_.createGainNode();
   gainNode.gain.setValueAtTime(0, this.context_.currentTime);
   gainNode.gain.setTargetValueAtTime(1, this.context_.currentTime, 0.1);
@@ -54,7 +57,7 @@ Instrument.prototype.createGainNode_ = function() {
 }
 
 // Public methods
-Instrument.prototype.createPlayedNote = function(octave, note) {
+module.Instrument.prototype.createPlayedNote = function(octave, note) {
   var oscillator = this.createOscillator_(octave, note);
   var gainNode = this.createGainNode_();
   var allNodes = [oscillator, gainNode];
@@ -73,3 +76,7 @@ Instrument.prototype.createPlayedNote = function(octave, note) {
   gainNode.connect(this.destinationNode_);
   return new PlayedNote(this.context_, [oscillator], gainNode, allNodes, paramControllers);
 }
+
+return module;
+
+}());

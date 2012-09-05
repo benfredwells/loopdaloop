@@ -15,7 +15,7 @@ function init() {
   gControllerManager = new ControllerManager(gContext);
   var compressor = gContext.createDynamicsCompressor();
   compressor.connect(gContext.destination);
-  gInstrument = new Instrument(gContext, compressor);
+  gInstrument = new Instrument.Instrument(gContext, compressor);
 
   // Instrument UI setup
   gInstrumentUI = new InstrumentUI(

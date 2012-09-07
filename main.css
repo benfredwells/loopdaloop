@@ -34,21 +34,28 @@ div#keyboardTitle {
   color: #1A8;
 }
 
-div.instrSettings {
-  display: inline-block;
+div.instrument {
+}
+
+div.instrSettingGroup {
+  background-color: #EEE;
+  border-radius: 5px;
+  padding: 10px 5px;
+  margin-bottom: 5px;
+  width: 550px;
 }
 
 div.instrSettingBlock {
-  background-color: #EEE;
-  padding: 10px 5px;
-  margin-bottom: 5px;
+  display: inline-block;
   width: 300px;
 }
 
 div.instrSettingHeading {
+  font-size: medium;
 }
 
 div.instrSettingRow {
+  display: inline-block;
   margin-top: 3px;
 }
 
@@ -95,7 +102,7 @@ div.instrDisplay {
   vertical-align: top;
   background-color: #EEE;
   width: 200px;
-  height: 100px;
+  height: 200px;
 }
 
 div.keyboard {

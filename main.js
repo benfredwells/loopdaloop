@@ -41,8 +41,8 @@ function init() {
       document.getElementById('selectedFilterLFOFrequency'),
       document.getElementById('selectedFilterLFOGain'),
       document.getElementById('selectedFilterLFOPhase'));
-  gOscillatorUI = new OscillatorUI.Visualization(
-      document.getElementById('instrumentVis'));
+  gOscillatorUI = new OscillatorUI.UI(
+      document.getElementById('oscillator'));
 
   // Player setup
   document.getElementById('octave').onchange = octaveChanged;

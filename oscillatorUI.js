@@ -1,4 +1,4 @@
-InstrumentVis = (function() {
+OscillatorUI = (function() {
 
 "use strict";
 var module = [];

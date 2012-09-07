@@ -4,7 +4,7 @@ var gContext = null;
 var gCurrentNote = null;
 var gControllerManager = null;
 var gInstrumentUI = null;
-var gInstrumentVis = null;
+var gOscillatorUI = null;
 var gInstrument = null;
 var gKeyboard = null;
 
@@ -41,7 +41,7 @@ function init() {
       document.getElementById('selectedFilterLFOFrequency'),
       document.getElementById('selectedFilterLFOGain'),
       document.getElementById('selectedFilterLFOPhase'));
-  gInstrumentVis = new InstrumentVis.Visualization(
+  gOscillatorUI = new OscillatorUI.Visualization(
       document.getElementById('instrumentVis'));
 
   // Player setup

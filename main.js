@@ -21,7 +21,6 @@ function init() {
   // Instrument UI setup
   gInstrumentUI = new InstrumentUI.UI(
       gInstrument,
-      document.getElementById('waveTypes'),
       // filter settings
       document.getElementById('filterEnabled'),
       document.getElementById('filterTypes'),
@@ -42,6 +41,7 @@ function init() {
       document.getElementById('selectedFilterLFOGain'),
       document.getElementById('selectedFilterLFOPhase'));
   gOscillatorUI = new OscillatorUI.UI(
+      gInstrument,
       document.getElementById('oscillator'));
 
   // Player setup

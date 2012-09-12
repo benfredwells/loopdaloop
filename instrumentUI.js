@@ -4,10 +4,6 @@ InstrumentUI = (function() {
 module = [];
 
 ////////////////////////////////////////////////////////////////////////////////
-// Oscillator constants
-var kWaveTypes = ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE'];
-
-////////////////////////////////////////////////////////////////////////////////
 // Filter constants
 var kFilterTypes = ['LOWPASS', 'HIGHPASS', 'BANDPASS', 'LOWSHELF', 'HIGHSHELF',
                     'PEAKING', 'NOTCH', 'ALLPASS'];
@@ -22,8 +18,6 @@ var kMaxLFOGainRangeValue = 100;
 var kMaxLFOPhaseRangeValue = 36;
 
 module.UI = function (instrument,
-                      // oscillator settings
-                      waveTypeSelect,
                       // filter settings
                       filterCheckBox, filterTypeSelect, filterFrequencyRange,
                       filterQRange, filterGainRange,
@@ -39,10 +33,6 @@ module.UI = function (instrument,
 
   //////////////////////////////////////////////////////////////////////////////
   // Event handlers
-
-  ui.waveTypeChanged = function() {
-    ui.instrument_.oscillatorType = ui.waveType_();
-  }
 
   ui.filterEnabledChanged = function() {
     ui.instrument_.filterEnabled = ui.filterEnabled_();
@@ -115,7 +105,6 @@ module.UI = function (instrument,
   //////////////////////////////////////////////////////////////////////////////
   // Private fields
   ui.instrument_ = instrument;
-  ui.waveTypeSelect_ = waveTypeSelect;
   ui.filterCheckBox_ = filterCheckBox;
   ui.filterTypeSelect_ = filterTypeSelect;
   ui.filterFrequencyRange_ = filterFrequencyRange,
@@ -134,7 +123,6 @@ module.UI = function (instrument,
 
   //////////////////////////////////////////////////////////////////////////////
   // Setup event halders
-  ui.waveTypeSelect_.onchange = ui.waveTypeChanged;
   ui.filterCheckBox_.onchange = ui.filterEnabledChanged;
   ui.filterTypeSelect_.onchange = ui.filterTypeChanged;
   ui.filterFrequencyRange_.onchange = ui.filterFrequencyFactorChanged;
@@ -147,7 +135,6 @@ module.UI = function (instrument,
 
   //////////////////////////////////////////////////////////////////////////////
   // Initialize UI
-  ui.populateSelect_(ui.waveTypeSelect_, kWaveTypes);
   ui.populateSelect_(ui.filterTypeSelect_, kFilterTypes);
   ui.filterEnabledChanged(); // will update type, gain and lfo enabled
   ui.filterFrequencyFactorChanged();
@@ -174,10 +161,6 @@ module.UI.prototype.roundForDisplay_ = function(number) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Settings accessors
-
-module.UI.prototype.waveType_ = function() {
-  return this.waveTypeSelect_.value;
-}
 
 module.UI.prototype.filterEnabled_ = function() {
   return this.filterCheckBox_.checked;

@@ -45,13 +45,18 @@ div.instrSettingGroup {
   width: 550px;
 }
 
-div.instrSettingBlock {
-  display: inline-block;
-  width: 300px;
-}
-
 div.instrSettingHeading {
   font-size: medium;
+  overflow: hidden;
+}
+
+div.instrDisplay {
+  display: inline-block;
+  vertical-align: top;
+  background-color: #EEE;
+  width: 400px;
+  height: 50px;
+  float: right;
 }
 
 div.instrSettingRow {
@@ -95,14 +100,6 @@ div.instrSetting input[type="checkbox"] {
 
 div.instrSettingValue {
   display: inline-block;
-}
-
-div.instrDisplay {
-  display: inline-block;
-  vertical-align: top;
-  background-color: #EEE;
-  width: 200px;
-  height: 200px;
 }
 
 div.keyboard {

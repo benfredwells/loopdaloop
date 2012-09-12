@@ -1,7 +1,7 @@
 ParamController = (function() {
 
 "use strict";
-var module = [];
+var module = {};
 
 // This controls how often all param values get updated, in seconds.
 var kUpdateInterval = 5;

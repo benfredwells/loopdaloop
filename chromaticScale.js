@@ -1,7 +1,7 @@
 ChromaticScale = (function() {
 
 "use strict";
-var module = [];
+var module = {};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Exported globals

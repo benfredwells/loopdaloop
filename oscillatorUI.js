@@ -1,7 +1,7 @@
 OscillatorUI = (function() {
 
 "use strict";
-var module = [];
+var module = {};
 var svgns = "http://www.w3.org/2000/svg";
 
 ////////////////////////////////////////////////////////////////////////////////

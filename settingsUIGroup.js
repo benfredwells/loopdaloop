@@ -3,11 +3,23 @@ SettingsUIGroup = (function() {
 "use strict";
 var module = {};
 
+module.kDisplayBounds = {};
+module.kDisplayBounds.x = 401;
+module.kDisplayBounds.y = 51;
+
+module.kDisplayMid = {};
+module.kDisplayMid.x = 200.5;
+module.kDisplayMid.y = 25.5;
+
 module.Group = function(parent, title) {
   this.heading_ = document.createElement('div');
   this.heading_.classList.add('instrSettingHeading');
-  this.heading_.innerHTML = title;
   parent.appendChild(this.heading_);
+
+  var headingText = document.createElement('div');
+  headingText.classList.add('instrSettingHeadingText');
+  headingText.innerHTML = title;
+  this.heading_.appendChild(headingText);
 
   this.display_ = document.createElement('div');
   this.display_.classList.add('instrDisplay');

@@ -34,9 +34,6 @@ div#keyboardTitle {
   color: #1A8;
 }
 
-div.instrument {
-}
-
 div.instrSettingGroup {
   background-color: #EEE;
   border-radius: 5px;
@@ -46,16 +43,19 @@ div.instrSettingGroup {
 }
 
 div.instrSettingHeading {
-  font-size: medium;
   overflow: hidden;
+}
+
+div.instrSettingHeadingText {
+  display: inline-block;
+  font-size: medium;
+  padding-top: 15px;
 }
 
 div.instrDisplay {
   display: inline-block;
-  vertical-align: top;
-  background-color: #EEE;
   width: 400px;
-  height: 50px;
+  height: 51px;
   float: right;
 }
 

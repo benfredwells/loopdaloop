@@ -25,8 +25,8 @@ module.Group = function(parent, title) {
   this.display_.classList.add('instrDisplay');
   this.heading_.appendChild(this.display_);
 
-  this.svgDoc_ = document;
-  this.svg_ = SVGUtils.createSVG(this.svgDoc_, this.display_);
+  this.svgDoc = document;
+  this.svg = SVGUtils.createSVG(this.svgDoc, this.display_);
 
   this.details_ = document.createElement('div');
   this.details_.classList.add('instrSettingDetails');
@@ -47,16 +47,16 @@ module.Group.prototype.addSelectRow = function(title, array) {
   setting.classList.add('instrSetting');
   row.appendChild(setting);
 
-  var select = document.createElement('select');
-  setting.appendChild(select);
+  row.select = document.createElement('select');
+  setting.appendChild(row.select);
   for (var i = 0; i < array.length; i++) {
     var option = document.createElement('option');
     option.value = i;
     option.text = array[i];
-    select.add(option, null);
+    row.select.add(option, null);
   }
 
-  return select;
+  return row;
 }
 
 return module;

@@ -28,11 +28,6 @@ module.Group = function(parent, title) {
   this.details_ = document.createElement('div');
   this.details_.classList.add('instrSettingDetails');
   parent.appendChild(this.details_);
-
-  var ui = this;
-  this.heading_.onclick = function() {
-    ui.details_.hidden = !ui.details_.hidden;
-  }
 }
 
 module.Group.prototype.addSelectRow = function(title, array) {

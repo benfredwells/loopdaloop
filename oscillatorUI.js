@@ -6,14 +6,10 @@ var module = {};
 var kWaveTypes = ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE'];
 
 module.UI = function(instrument, element) {
-  this.element_ = element;
   this.instrument_ = instrument;
 
-  this.group_ = new SettingsUIGroup.Group(this.element_, 'Oscillator');
+  this.group_ = new SettingsUIGroup.Group(element, 'Oscillator');
   this.typeSelect_ = this.group_.addSelectRow('Type', kWaveTypes);
-
-  this.svgDoc_ = this.element_.ownerDocument;
-  this.svg_ = SVGUtils.createSVG(this.svgDoc_, this.group_.display_);
 
   var ui = this;
   this.typeChanged = function() {
@@ -62,7 +58,7 @@ module.UI.prototype.drawSineWave_ = function() {
                                  x + kWavePeriod / 2, kWaveYLow);
   this.waveform_ = SVGUtils.createPath(path,
                                        kWaveColor, kWaveWidth,
-                                       this.svgDoc_, this.svg_);
+                                       this.group_.svgDoc_, this.group_.svg_);
 }
 
 module.UI.prototype.drawSquareWave_ = function() {
@@ -88,7 +84,7 @@ module.UI.prototype.drawSquareWave_ = function() {
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
                                            kWaveColor, kWaveWidth,
-                                           this.svgDoc_, this.svg_);
+                                           this.group_.svgDoc_, this.group_.svg_);
 }
 
 module.UI.prototype.drawTriangleWave_ = function() {
@@ -105,7 +101,7 @@ module.UI.prototype.drawTriangleWave_ = function() {
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
                                            kWaveColor, kWaveWidth,
-                                           this.svgDoc_, this.svg_);
+                                           this.group_.svgDoc_, this.group_.svg_);
 }
 
 module.UI.prototype.drawSawtoothWave_ = function() {
@@ -125,7 +121,7 @@ module.UI.prototype.drawSawtoothWave_ = function() {
   SVGUtils.addPointToArray(x, yFinish, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
                                            kWaveColor, kWaveWidth,
-                                           this.svgDoc_, this.svg_);
+                                           this.group_.svgDoc_, this.group_.svg_);
 }
 
 module.UI.prototype.updateDisplay_ = function() {
@@ -133,12 +129,12 @@ module.UI.prototype.updateDisplay_ = function() {
     SVGUtils.createLine(0, kMid.y,
                         kBounds.x, kMid.y,
                         kAxisColor, 1,
-                        this.svgDoc_, this.svg_);
+                        this.group_.svgDoc_, this.group_.svg_);
     this.background_ = true;
   }
 
   if (this.waveform_)
-    this.svg_.removeChild(this.waveform_)
+    this.group_.svg_.removeChild(this.waveform_)
   switch (this.type_()) {
     case "0": this.drawSineWave_(); break;
     case "1": this.drawSquareWave_(); break;

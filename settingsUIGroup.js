@@ -25,6 +25,9 @@ module.Group = function(parent, title) {
   this.display_.classList.add('instrDisplay');
   this.heading_.appendChild(this.display_);
 
+  this.svgDoc_ = document;
+  this.svg_ = SVGUtils.createSVG(this.svgDoc_, this.display_);
+
   this.details_ = document.createElement('div');
   this.details_.classList.add('instrSettingDetails');
   parent.appendChild(this.details_);

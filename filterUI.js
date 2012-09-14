@@ -5,6 +5,7 @@ var module = {};
 
 var kFilterTypes = ['LOWPASS', 'HIGHPASS', 'BANDPASS', 'LOWSHELF', 'HIGHSHELF',
                     'PEAKING', 'NOTCH', 'ALLPASS'];
+var kFilterHasGain = [false, false, false, true, true, true, false, false];
 
 module.UI = function(instrument, element) {
   this.instrument_ = instrument;
@@ -69,6 +70,21 @@ module.UI.prototype.updateDisplay_ = function() {
   this.lfoPhaseRow_.setLabel(this.lfoPhaseRow_.value());
   this.qRow_.setLabel(this.qRow_.value());
   this.gainRow_.setLabel(this.gainRow_.value());
+  this.enableDisable_();
+}
+
+module.UI.prototype.enableDisable_ = function() {
+  var enabled = this.enabledRow_.value();
+  var lfoEnabled = enabled && this.lfoEnabledRow_.value();
+  var gainEnabled = enabled && kFilterHasGain[this.typeRow_.value()];
+  this.typeRow_.enableDisable(enabled);
+  this.frequencyRow_.enableDisable(enabled);
+  this.qRow_.enableDisable(enabled);
+  this.gainRow_.enableDisable(gainEnabled);
+  this.lfoEnabledRow_.enableDisable(enabled);
+  this.lfoFrequencyRow_.enableDisable(lfoEnabled);
+  this.lfoGainRow_.enableDisable(lfoEnabled);
+  this.lfoPhaseRow_.enableDisable(lfoEnabled);
 }
 
 return module;

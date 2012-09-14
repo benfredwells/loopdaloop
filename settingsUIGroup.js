@@ -47,9 +47,20 @@ module.Group.prototype.makeRow_ = function(title) {
   row.label_.innerHTML = title;
   row.appendChild(row.label_);
 
-    row.setting_ = document.createElement('div');
+  row.setting_ = document.createElement('div');
   row.setting_.classList.add('instrSetting');
   row.appendChild(row.setting_);
+
+  row.enableDisableDiv_ = function(div, value) {
+    if (value)
+      div.classList.remove('instrSettingDisabled');
+    else
+      div.classList.add('instrSettingDisabled');
+  }
+
+  row.enableDisable = function(value) {
+    row.enableDisableDiv_(row.label_, value);
+  }
 
   return row;
 }
@@ -61,6 +72,12 @@ module.Group.prototype.addValueLabel_ = function(row) {
 
   row.setLabel = function(newText) {
     row.valueLabel_.innerHTML = newText;
+  }
+
+  var prevEnableDisable = row.enableDisable;
+  row.enableDisable = function(value) {
+    prevEnableDisable(value);
+    row.enableDisableDiv_(row.valueLabel_, value);
   }
 }
 
@@ -84,6 +101,12 @@ module.Group.prototype.addSelectRow = function(title, array) {
     row.select.value = newValue;
   }
 
+  var prevEnableDisable = row.enableDisable;
+  row.enableDisable = function(value) {
+    prevEnableDisable(value);
+    row.select.disabled = !value;
+  }
+
   return row;
 }
 
@@ -101,6 +124,12 @@ module.Group.prototype.addCheckRow = function(title) {
 
   row.setValue = function(newValue) {
     row.check.checked = newValue;
+  }
+
+  var prevEnableDisable = row.enableDisable;
+  row.enableDisable = function(value) {
+    prevEnableDisable(value);
+    row.check.disabled = !value;
   }
 
   return row;
@@ -129,6 +158,12 @@ module.Group.prototype.addLinearRangeRow = function(title, min, max, steps) {
     row.range.value = rangeVal;
   }
 
+  var prevEnableDisable = row.enableDisable;
+  row.enableDisable = function(value) {
+    prevEnableDisable(value);
+    row.range.disabled = !value;
+  }
+
   return row;
 }
 
@@ -155,6 +190,12 @@ module.Group.prototype.addExponentialRangeRow = function(title, base, minExponen
     var exponent = Math.log(newValue) / Math.log(base);
     var rangeVal = Math.round((exponent - minExponent) / exponentFactor);
     row.range.value = rangeVal;
+  }
+
+  var prevEnableDisable = row.enableDisable;
+  row.enableDisable = function(value) {
+    prevEnableDisable(value);
+    row.range.disabled = !value;
   }
 
   return row;

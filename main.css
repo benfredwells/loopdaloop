@@ -68,14 +68,16 @@ div.instrSettingDescr {
   width: 100px;
 }
 
+div.instrSettingDisabled {
+  color: #999;
+}
+
 div.instrSubSettingDescr {
-  display: inline-block;
   width: 90px;
   padding-left: 10px;
 }
 
 div.instrSubSubSettingDescr {
-  display: inline-block;
   width: 80px;
   padding-left: 20px;
 }

@@ -39,7 +39,7 @@ div.instrSettingGroup {
   border-radius: 5px;
   padding: 10px 10px;
   margin-bottom: 5px;
-  width: 550px;
+  width: 300px;
 }
 
 div.instrSettingHeading {
@@ -54,13 +54,12 @@ div.instrSettingHeadingText {
 
 div.instrDisplay {
   display: inline-block;
-  width: 400px;
+  width: 200px;
   height: 51px;
   float: right;
 }
 
 div.instrSettingRow {
-  display: inline-block;
   margin-top: 3px;
 }
 

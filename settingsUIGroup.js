@@ -4,12 +4,16 @@ SettingsUIGroup = (function() {
 var module = {};
 
 module.kDisplayBounds = {};
-module.kDisplayBounds.x = 401;
+module.kDisplayBounds.x = 201;
 module.kDisplayBounds.y = 51;
 
 module.kDisplayMid = {};
-module.kDisplayMid.x = 200.5;
+module.kDisplayMid.x = 100.5;
 module.kDisplayMid.y = 25.5;
+
+module.roundForDisplay = function(number) {
+  return Math.round(number * 100) / 100;
+}
 
 module.Group = function(parent, title) {
   this.heading_ = document.createElement('div');
@@ -33,22 +37,38 @@ module.Group = function(parent, title) {
   parent.appendChild(this.details_);
 }
 
-module.Group.prototype.addSelectRow = function(title, array) {
+module.Group.prototype.makeRow_ = function(title) {
   var row = document.createElement('div');
   row.classList.add('instrSettingRow');
   this.details_.appendChild(row);
 
-  var label = document.createElement('div');
-  label.classList.add('instrSettingDescr');
-  label.innerHTML = 'Type';
-  row.appendChild(label);
+  row.label_ = document.createElement('div');
+  row.label_.classList.add('instrSettingDescr');
+  row.label_.innerHTML = title;
+  row.appendChild(row.label_);
 
-  var setting = document.createElement('div');
-  setting.classList.add('instrSetting');
-  row.appendChild(setting);
+    row.setting_ = document.createElement('div');
+  row.setting_.classList.add('instrSetting');
+  row.appendChild(row.setting_);
+
+  return row;
+}
+
+module.Group.prototype.addValueLabel_ = function(row) {
+  row.valueLabel_ = document.createElement('div');
+  row.valueLabel_.classList.add('instrSettingValue');
+  row.appendChild(row.valueLabel_);
+
+  row.setLabel = function(newText) {
+    row.valueLabel_.innerHTML = newText;
+  }
+}
+
+module.Group.prototype.addSelectRow = function(title, array) {
+  var row = this.makeRow_(title);
 
   row.select = document.createElement('select');
-  setting.appendChild(row.select);
+  row.setting_.appendChild(row.select);
   for (var i = 0; i < array.length; i++) {
     var option = document.createElement('option');
     option.value = i;
@@ -56,6 +76,97 @@ module.Group.prototype.addSelectRow = function(title, array) {
     row.select.add(option, null);
   }
 
+  row.value = function() {
+    return row.select.value;
+  }
+
+  row.setValue = function(newValue) {
+    row.select.value = newValue;
+  }
+
+  return row;
+}
+
+module.Group.prototype.addCheckRow = function(title) {
+  var row = this.makeRow_(title);
+
+  row.check = document.createElement('input');
+  row.check.type = 'checkbox';
+  row.check.classList.add('instrSetting');
+  row.setting_.appendChild(row.check);
+
+  row.value = function() {
+    return row.check.checked;
+  }
+
+  row.setValue = function(newValue) {
+    row.check.checked = newValue;
+  }
+
+  return row;
+}
+
+module.Group.prototype.addLinearRangeRow = function(title, min, max, steps) {
+  var row = this.makeRow_(title);
+
+  row.range = document.createElement('input');
+  row.range.type = 'range';
+  row.range.min = 0;
+  row.range.max = steps;
+  row.range.classList.add('instrSetting');
+  row.setting_.appendChild(row.range);
+
+  this.addValueLabel_(row);
+
+  var factor = (max - min) / steps;
+  row.value = function() {
+    var rangeVal = row.range.value;
+    return min + rangeVal * factor;
+  }
+
+  row.setValue = function(newValue) {
+    var rangeVal = Math.round((newValue - min) / factor);
+    row.range.value = rangeVal;
+  }
+
+  return row;
+}
+
+module.Group.prototype.addExponentialRangeRow = function(title, base, minExponent, maxExponent, steps) {
+  var row = this.makeRow_(title);
+
+  row.range = document.createElement('input');
+  row.range.type = 'range';
+  row.range.min = 0;
+  row.range.max = steps;
+  row.range.classList.add('instrSetting');
+  row.setting_.appendChild(row.range);
+
+  this.addValueLabel_(row);
+
+  var exponentFactor = (maxExponent - minExponent) / steps;
+  row.value = function() {
+    var exponent = row.range.value;
+    exponent = minExponent + exponent * exponentFactor;
+    return Math.pow(base, exponent);
+  }
+
+  row.setValue = function(newValue) {
+    var exponent = Math.log(newValue) / Math.log(base);
+    var rangeVal = Math.round((exponent - minExponent) / exponentFactor);
+    row.range.value = rangeVal;
+  }
+
+  return row;
+}
+
+module.makeSubRow = function(row) {
+  row.label_.classList.add('instrSubSettingDescr');
+  return row;
+}
+
+module.makeSubSubRow = function(row) {
+  row.label_.classList.add('instrSubSubSettingDescr');
   return row;
 }
 

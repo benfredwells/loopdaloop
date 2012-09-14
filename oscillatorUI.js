@@ -12,13 +12,14 @@ module.UI = function(instrument, element) {
   this.typeRow_ = this.group_.addSelectRow('Type', kWaveTypes);
 
   var ui = this;
-  this.typeChanged = function() {
+  var typeChanged = function() {
     ui.instrument_.oscillatorType = ui.type_();
     ui.updateDisplay_();
   }
-  this.typeRow_.select.onchange = this.typeChanged;
+  this.typeRow_.select.onchange = typeChanged;
 
-  this.updateDisplay_();
+  this.typeRow_.setValue(2);
+  typeChanged();
 }
 
 var kBounds = SettingsUIGroup.kDisplayBounds;

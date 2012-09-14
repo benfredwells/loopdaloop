@@ -3,8 +3,8 @@
 var gContext = null;
 var gCurrentNote = null;
 var gControllerManager = null;
-var gInstrumentUI = null;
 var gOscillatorUI = null;
+var gFilterUI = null;
 var gInstrument = null;
 var gKeyboard = null;
 
@@ -19,30 +19,12 @@ function init() {
   gInstrument = new Instrument.Instrument(gContext, compressor);
 
   // Instrument UI setup
-  gInstrumentUI = new InstrumentUI.UI(
-      gInstrument,
-      // filter settings
-      document.getElementById('filterEnabled'),
-      document.getElementById('filterTypes'),
-      document.getElementById('filterFrequency'),
-      document.getElementById('filterQ'),
-      document.getElementById('filterGain'),
-      // filterLFO settings
-      document.getElementById('filterLFOEnabled'),
-      document.getElementById('filterLFOFrequency'),
-      document.getElementById('filterLFOGain'),
-      document.getElementById('filterLFOPhase'),
-      // filter display
-      document.getElementById('selectedFilterFrequency'),
-      document.getElementById('selectedQ'),
-      document.getElementById('selectedFilterGain'),
-      // filterLFO display
-      document.getElementById('selectedFilterLFOFrequency'),
-      document.getElementById('selectedFilterLFOGain'),
-      document.getElementById('selectedFilterLFOPhase'));
   gOscillatorUI = new OscillatorUI.UI(
       gInstrument,
       document.getElementById('oscillator'));
+  gFilterUI = new FilterUI.UI(
+      gInstrument,
+      document.getElementById('filter'));
 
   // Player setup
   document.getElementById('octave').onchange = octaveChanged;

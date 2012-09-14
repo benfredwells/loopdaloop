@@ -13,10 +13,10 @@ module.UI = function(instrument, element) {
 
   var ui = this;
   var typeChanged = function() {
-    ui.instrument_.oscillatorType = ui.type_();
+    ui.instrument_.oscillatorType = ui.typeRow_.value();
     ui.updateDisplay_();
   }
-  this.typeRow_.select.onchange = typeChanged;
+  this.typeRow_.onchange = typeChanged;
 
   this.typeRow_.setValue(2);
   typeChanged();
@@ -135,7 +135,7 @@ module.UI.prototype.updateDisplay_ = function() {
 
   if (this.waveform_)
     this.group_.svg.removeChild(this.waveform_)
-  switch (this.type_()) {
+  switch (this.typeRow_.value()) {
     case "0": this.drawSineWave_(); break;
     case "1": this.drawSquareWave_(); break;
     case "2": this.drawSawtoothWave_(); break;

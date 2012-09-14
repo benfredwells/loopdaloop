@@ -37,6 +37,13 @@ module.Group = function(parent, title) {
   parent.appendChild(this.details_);
 }
 
+function setupOnchange(row, element) {
+  element.onchange = function() {
+    if (row.onchange)
+      row.onchange();
+  }
+}
+
 module.Group.prototype.makeRow_ = function(title) {
   var row = document.createElement('div');
   row.classList.add('instrSettingRow');
@@ -106,6 +113,8 @@ module.Group.prototype.addSelectRow = function(title, array) {
     prevEnableDisable(value);
     row.select.disabled = !value;
   }
+
+  setupOnchange(row, row.select);
 
   return row;
 }

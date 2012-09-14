@@ -141,6 +141,8 @@ module.Group.prototype.addCheckRow = function(title) {
     row.check.disabled = !value;
   }
 
+  setupOnchange(row, row.check);
+
   return row;
 }
 
@@ -172,6 +174,8 @@ module.Group.prototype.addLinearRangeRow = function(title, min, max, steps) {
     prevEnableDisable(value);
     row.range.disabled = !value;
   }
+
+  setupOnchange(row, row.range);
 
   return row;
 }
@@ -206,6 +210,8 @@ module.Group.prototype.addExponentialRangeRow = function(title, base, minExponen
     prevEnableDisable(value);
     row.range.disabled = !value;
   }
+
+  setupOnchange(row, row.range);
 
   return row;
 }

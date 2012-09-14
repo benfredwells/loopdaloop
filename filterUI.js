@@ -36,15 +36,15 @@ module.UI = function(instrument, element) {
     ui.instrument_.filterGain = ui.gainRow_.value();
     ui.updateDisplay_();
   }
-  this.enabledRow_.check.onchange = changeHandler;
-  this.typeRow_.select.onchange = changeHandler;
-  this.frequencyRow_.range.onchange = changeHandler;
-  this.lfoEnabledRow_.check.onchange = changeHandler;
-  this.lfoFrequencyRow_.range.onchange = changeHandler;
-  this.lfoGainRow_.range.onchange = changeHandler;
+  this.enabledRow_.onchange = changeHandler;
+  this.typeRow_.onchange = changeHandler;
+  this.frequencyRow_.onchange = changeHandler;
+  this.lfoEnabledRow_.onchange = changeHandler;
+  this.lfoFrequencyRow_.onchange = changeHandler;
+  this.lfoGainRow_.onchange = changeHandler;
   this.lfoPhaseRow_.onchange = changeHandler;
-  this.qRow_.range.onchange = changeHandler;
-  this.gainRow_.range.onchange = changeHandler;
+  this.qRow_.onchange = changeHandler;
+  this.gainRow_.onchange = changeHandler;
 
   this.setInitialValues_();
   changeHandler();
@@ -69,7 +69,7 @@ module.UI.prototype.updateDisplay_ = function() {
   this.lfoGainRow_.setLabel('+- ' + r(this.lfoGainRow_.value()));
   this.lfoPhaseRow_.setLabel(this.lfoPhaseRow_.value());
   this.qRow_.setLabel(this.qRow_.value());
-  this.gainRow_.setLabel(this.gainRow_.value());
+  this.gainRow_.setLabel(this.gainRow_.value() + ' dB');
   this.enableDisable_();
 }
 

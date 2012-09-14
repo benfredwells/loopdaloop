@@ -8,7 +8,7 @@ var kWaveTypes = ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE'];
 module.UI = function(instrument, element) {
   this.instrument_ = instrument;
 
-  this.group_ = new SettingsUIGroup.Group(element, 'Oscillator');
+  this.group_ = new SettingsUI.Group(element, 'Oscillator');
   this.typeRow_ = this.group_.addSelectRow('Type', kWaveTypes);
 
   var ui = this;
@@ -22,8 +22,8 @@ module.UI = function(instrument, element) {
   typeChanged();
 }
 
-var kBounds = SettingsUIGroup.kDisplayBounds;
-var kMid = SettingsUIGroup.kDisplayMid;
+var kBounds = SettingsUI.kDisplayBounds;
+var kMid = SettingsUI.kDisplayMid;
 var kAxisColor = "#999";
 var kWaveColor = "#080";
 var kWaveWidth = 2;
@@ -141,10 +141,6 @@ module.UI.prototype.updateDisplay_ = function() {
     case "2": this.drawSawtoothWave_(); break;
     case "3": this.drawTriangleWave_(); break;
   }
-}
-
-module.UI.prototype.type_ = function() {
-  return this.typeRow_.select.value;
 }
 
 return module;

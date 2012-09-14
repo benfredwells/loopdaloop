@@ -1,4 +1,4 @@
-SettingsUIGroup = (function() {
+SettingsUI = (function() {
 
 "use strict";
 var module = {};

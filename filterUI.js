@@ -10,9 +10,9 @@ var kFilterHasGain = [false, false, false, true, true, true, false, false];
 module.UI = function(instrument, element) {
   this.instrument_ = instrument;
 
-  var s = SettingsUIGroup.makeSubRow;
-  var ss = SettingsUIGroup.makeSubSubRow;
-  this.group_ = new SettingsUIGroup.Group(element, 'Filter');
+  var s = SettingsUI.makeSubRow;
+  var ss = SettingsUI.makeSubSubRow;
+  this.group_ = new SettingsUI.Group(element, 'Filter');
   this.enabledRow_ = this.group_.addCheckRow('Enabled');
   this.typeRow_ = s(this.group_.addSelectRow('Type', kFilterTypes));
   this.frequencyRow_ = s(this.group_.addLinearRangeRow('Frequency', 0.5, 3, 10));
@@ -63,7 +63,7 @@ module.UI.prototype.setInitialValues_ = function() {
 }
 
 module.UI.prototype.updateDisplay_ = function() {
-  var r = SettingsUIGroup.roundForDisplay;
+  var r = SettingsUI.roundForDisplay;
   this.frequencyRow_.setLabel('x ' + r(this.frequencyRow_.value()));
   this.lfoFrequencyRow_.setLabel(r(this.lfoFrequencyRow_.value()) + ' Hz');
   this.lfoGainRow_.setLabel('+- ' + r(this.lfoGainRow_.value()));

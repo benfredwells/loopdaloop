@@ -2,12 +2,11 @@ body {
   font-family: arial, sans-serif;
   font-size: small;
   color: #555;
-  background-color: #DDD;
+  background-color: #FFF;
   margin: 0px;
 }
 
 div.page {
-  width: 800px;
   margin-left: auto;
   margin-right: auto;
   background-color: #FFF;

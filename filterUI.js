@@ -47,6 +47,7 @@ module.UI = function(instrument, element) {
   this.gainRow_.onchange = changeHandler;
 
   this.setInitialValues_();
+  this.response_ = [];
   changeHandler();
 }
 
@@ -71,6 +72,7 @@ module.UI.prototype.updateDisplay_ = function() {
   this.qRow_.setLabel(this.qRow_.value());
   this.gainRow_.setLabel(this.gainRow_.value() + ' dB');
   this.enableDisable_();
+  this.drawResponse_();
 }
 
 module.UI.prototype.enableDisable_ = function() {
@@ -85,6 +87,57 @@ module.UI.prototype.enableDisable_ = function() {
   this.lfoFrequencyRow_.enableDisable(lfoEnabled);
   this.lfoGainRow_.enableDisable(lfoEnabled);
   this.lfoPhaseRow_.enableDisable(lfoEnabled);
+}
+
+var kBounds = SettingsUI.kDisplayBounds;
+var kMid = SettingsUI.kDisplayMid;
+var kXPadding = 12.5;
+var kYPadding = 9.5;
+var kXRange = kBounds.x - (2 * kXPadding);
+var kYRange = kBounds.y - (2 * kYPadding);
+var kYMaxMag = 2;
+var kFreqStart = 10;
+var kFreqEnd = 15000;
+var kAxisColor = "#999";
+var kResponseColor = "blue";
+var kResponseWidth = 2;
+var kResponseFill = "#E0EAFF";
+
+module.UI.prototype.drawBackground_ = function() {
+  this.response_.push(SVGUtils.createLine(0, kBounds.y - kYPadding,
+                                          kBounds.x, kBounds.y - kYPadding,
+                                          kAxisColor, 1,
+                                          this.group_.svgDoc, this.group_.svg));
+  this.response_.push(SVGUtils.createLine(kXPadding, 0,
+                                          kXPadding, kBounds.y,
+                                          kAxisColor, 1,
+                                          this.group_.svgDoc, this.group_.svg));
+}
+
+module.UI.prototype.drawResponse_ = function() {
+  var points = [];
+  var response = this.instrument_.filter.getFrequencyResponse(kFreqStart, kFreqEnd, kXRange);
+  for (var i = 0; i < response.mag.length; i++) {
+    var x = kXPadding + i;
+    var y = kYPadding + (kYRange * (1 - response.mag[i] / kYMaxMag));
+    SVGUtils.addPointToArray(x, y, points);
+  }
+  var ui = this;
+  this.response_.forEach(function(child) {
+    ui.group_.svg.removeChild(child)
+  });
+  this.response_ = [];
+  SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y - kYPadding, points);
+  SVGUtils.addPointToArray(kXPadding, kBounds.y - kYPadding, points);
+  this.response_.push(SVGUtils.createPolyLine(points,
+                                              "none", 0, kResponseFill,
+                                              this.group_.svgDoc, this.group_.svg));
+  this.drawBackground_();
+  points.pop();
+  points.pop();
+  this.response_.push(SVGUtils.createPolyLine(points,
+                                              kResponseColor, kResponseWidth, "none",
+                                              this.group_.svgDoc, this.group_.svg));
 }
 
 return module;

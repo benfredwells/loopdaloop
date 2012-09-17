@@ -83,7 +83,7 @@ module.UI.prototype.drawSquareWave_ = function() {
     x = x - 0.5;
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           kWaveColor, kWaveWidth,
+                                           kWaveColor, kWaveWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
@@ -100,7 +100,7 @@ module.UI.prototype.drawTriangleWave_ = function() {
   }
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           kWaveColor, kWaveWidth,
+                                           kWaveColor, kWaveWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
@@ -120,7 +120,7 @@ module.UI.prototype.drawSawtoothWave_ = function() {
   var yFinish = kWaveYLow + (1 - kLeadingPeriod) * (kWaveYHigh - kWaveYLow);
   SVGUtils.addPointToArray(x, yFinish, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           kWaveColor, kWaveWidth,
+                                           kWaveColor, kWaveWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 

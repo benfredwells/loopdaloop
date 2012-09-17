@@ -63,12 +63,12 @@ module.createLine = function(x1, y1, x2, y2, color, width, doc, svg) {
   return line;
 }
 
-module.createPolyLine = function(points, color, width, doc, svg) {
+module.createPolyLine = function(points, color, width, fill, doc, svg) {
   var line = doc.createElementNS(svgns, "polyline");
   line.setAttributeNS(null, "points", svgPointArrayVal(points));
   line.setAttributeNS(null, "stroke", color);
   line.setAttributeNS(null, "stroke-width", svgNumberVal(width));
-  line.setAttributeNS(null, "fill", "none");
+  line.setAttributeNS(null, "fill", fill);
   svg.appendChild(line);
   return line;
 }

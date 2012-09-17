@@ -13,7 +13,7 @@ module.UI = function(instrument, element) {
 
   var ui = this;
   var typeChanged = function() {
-    ui.instrument_.oscillatorType = ui.typeRow_.value();
+    ui.instrument_.oscillator.type = ui.typeRow_.value();
     ui.updateDisplay_();
   }
   this.typeRow_.onchange = typeChanged;

@@ -25,15 +25,15 @@ module.UI = function(instrument, element) {
 
   var ui = this;
   var changeHandler = function() {
-    ui.instrument_.filterEnabled = ui.enabledRow_.check.value;
-    ui.instrument_.filterType = ui.typeRow_.select.value;
-    ui.instrument_.filterFrequencyFactor = ui.frequencyRow_.value();
-    ui.instrument_.filterLFOEnabled = ui.lfoEnabledRow_.value();
-    ui.instrument_.filterLFOFrequency = ui.lfoFrequencyRow_.value();
-    ui.instrument_.filterLFOPhase = 2 * Math.PI * ui.lfoPhaseRow_.value() / 360;
-    ui.instrument_.filterLFOGainFactor = ui.lfoGainRow_.value();
-    ui.instrument_.filterQ = ui.qRow_.value();
-    ui.instrument_.filterGain = ui.gainRow_.value();
+    ui.instrument_.filter.enabled = ui.enabledRow_.check.value;
+    ui.instrument_.filter.type = ui.typeRow_.select.value;
+    ui.instrument_.filter.frequencyFactor = ui.frequencyRow_.value();
+    ui.instrument_.filter.lfo.enabled = ui.lfoEnabledRow_.value();
+    ui.instrument_.filter.lfo.frequencyFactor = ui.lfoFrequencyRow_.value();
+    ui.instrument_.filter.lfo.phase = 2 * Math.PI * ui.lfoPhaseRow_.value() / 360;
+    ui.instrument_.filter.lfo.gain = ui.lfoGainRow_.value();
+    ui.instrument_.filter.q = ui.qRow_.value();
+    ui.instrument_.filter.gain = ui.gainRow_.value();
     ui.updateDisplay_();
   }
   this.enabledRow_.onchange = changeHandler;

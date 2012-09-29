@@ -29,7 +29,7 @@ module.UI = function(instrument, element) {
     ui.instrument_.filter.type = ui.typeRow_.select.value;
     ui.instrument_.filter.frequencyFactor = ui.frequencyRow_.value();
     ui.instrument_.filter.lfo.enabled = ui.lfoEnabledRow_.value();
-    ui.instrument_.filter.lfo.frequencyFactor = ui.lfoFrequencyRow_.value();
+    ui.instrument_.filter.lfo.frequency = ui.lfoFrequencyRow_.value();
     ui.instrument_.filter.lfo.phase = 2 * Math.PI * ui.lfoPhaseRow_.value() / 360;
     ui.instrument_.filter.lfo.gain = ui.lfoGainRow_.value();
     ui.instrument_.filter.q = ui.qRow_.value();
@@ -99,19 +99,58 @@ var kYMaxMag = 2;
 var kFreqStart = 10;
 var kFreqEnd = 15000;
 var kAxisColor = "#999";
+var kAxisWidth = 1;
 var kResponseColor = "blue";
 var kResponseWidth = 2;
-var kResponseFill = "#E0EAFF";
+var kResponseMin = "#A0A0FF";
+var kResponseMax = "#E0E0FF";
+var kResponseFlat = "#C0C0C0";
 
-module.UI.prototype.drawBackground_ = function() {
+module.UI.prototype.drawBackground_ = function(noteIndex) {
   this.response_.push(SVGUtils.createLine(0, kBounds.y - kYPadding,
                                           kBounds.x, kBounds.y - kYPadding,
-                                          kAxisColor, 1,
+                                          kAxisColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
   this.response_.push(SVGUtils.createLine(kXPadding, 0,
                                           kXPadding, kBounds.y,
-                                          kAxisColor, 1,
+                                          kAxisColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
+  this.response_.push(SVGUtils.createLine(kXPadding + noteIndex, 0,
+                                          kXPadding + noteIndex, kBounds.y - kYPadding,
+                                          kAxisColor, kAxisWidth,
+                                          this.group_.svgDoc, this.group_.svg));
+}
+
+function linearValue(value, valueMin, valueMax, linearMin, linearMax) {
+  var exponent = Math.log(value) / Math.log(10);
+  var factor = (linearMax - linearMin) / (valueMax - valueMin);
+  return (exponent - valueMin) * factor + linearMin;
+}
+
+function pcntToStr(val) {
+  return val.toString() + '%';
+}
+
+module.UI.prototype.findGradient_ = function() {
+  if (this.gradient_)
+    this.group_.svg.defs.removeChild(this.gradient_);
+  if (this.instrument_.filter.lfo.enabled) {
+    var gainPos = linearValue(this.instrument_.filter.lfo.gain, -2, 0, 0.05, 0.5);
+    var begin = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 - gainPos);
+    var end = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 + gainPos);
+    var frequencyPcnt = linearValue(this.instrument_.filter.lfo.frequency, -1, 1, 50, 2);
+    var phasePcnt = (this.instrument_.filter.lfo.phase) * frequencyPcnt / Math.PI;
+    this.gradient_ = SVGUtils.createLinearGradient(
+        "filterGradient", pcntToStr(phasePcnt), "0%",
+        pcntToStr(phasePcnt + frequencyPcnt), "0", "reflect",
+        this.group_.svgDoc, this.group_.svg);
+    SVGUtils.addStopToGradient("0", begin, this.gradient_, this.group_.svgDoc);
+    SVGUtils.addStopToGradient("1", end, this.gradient_, this.group_.svgDoc);
+    return "url(#filterGradient)";
+  } else {
+    delete this.gradient_;
+    return kResponseFlat;
+  }
 }
 
 module.UI.prototype.drawResponse_ = function() {
@@ -124,15 +163,19 @@ module.UI.prototype.drawResponse_ = function() {
   }
   var ui = this;
   this.response_.forEach(function(child) {
-    ui.group_.svg.removeChild(child)
+    ui.group_.svg.removeChild(child);
   });
   this.response_ = [];
   SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y - kYPadding, points);
   SVGUtils.addPointToArray(kXPadding, kBounds.y - kYPadding, points);
   this.response_.push(SVGUtils.createPolyLine(points,
-                                              "none", 0, kResponseFill,
+                                              "none", 0, this.findGradient_(),
                                               this.group_.svgDoc, this.group_.svg));
-  this.drawBackground_();
+  this.drawBackground_(response.noteIndex);
+  this.response_.push(SVGUtils.createLine(kXPadding + response.filterIndex, 0,
+                                          kXPadding + response.filterIndex, kBounds.y - kYPadding,
+                                          kResponseColor, kAxisWidth,
+                                          this.group_.svgDoc, this.group_.svg));
   points.pop();
   points.pop();
   this.response_.push(SVGUtils.createPolyLine(points,

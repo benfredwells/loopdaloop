@@ -15,7 +15,7 @@ module.LFO = function (context) {
 
 module.LFO.prototype.createController = function(param) {
   return gControllerManager.newLFO(param,
-                                   this.frequencyFactor,
+                                   this.frequency,
                                    this.phase,
                                    param.value,
                                    param.value * this.gain);
@@ -55,29 +55,34 @@ module.Filter.prototype.createNode = function(octave, note, paramControllers) {
   filter.frequency.value = frequency;
   filter.Q.value = this.q;
   filter.gain.value = this.gain;
-  if (this.lfo.enabled) {
+  if (this.lfo.enabled && paramControllers) {
     paramControllers.push(this.lfo.createController(filter.frequency));
   }
   return filter;
 }
 
 module.Filter.prototype.getFrequencyResponse = function(minHz, maxHz, steps) {
-  // We don't want lfo here, so just disable temporarily.
-  var lfoWasEnabled = this.lfo.enabled;
-  this.lfo.enabled = false;
   // For purposes of getting frequency response, assume middle C.
-  var node = this.createNode(4, 0, []);
-  this.lfo.enabled = lfoWasEnabled;
+  var octave = 4;
+  var note = 0;
+  var node = this.createNode(octave, note);
   // Set up buffers
-  var factor = Math.pow(maxHz / minHz, 1 / steps);
   var response = {};
   response.frequencies = new Float32Array(steps);
   response.mag = new Float32Array(steps);
   response.phase = new Float32Array(steps);
+  // Calculate frequencies
+  var factor = Math.pow(maxHz / minHz, 1 / steps);
   var currentHz = minHz;
+  response.noteFrequency = ChromaticScale.frequencyForNote(octave, note);
+  response.filterFrequency = response.noteFrequency * this.frequencyFactor;
   for (var i = 0; i < steps; ++i) {
     response.frequencies[i] = currentHz;
     currentHz = currentHz * factor;
+    if (currentHz < response.noteFrequency)
+      response.noteIndex = i;
+    if (currentHz < response.filterFrequency)
+      response.filterIndex = i;
   }
   node.getFrequencyResponse(response.frequencies, response.mag, response.phase);
   return response;

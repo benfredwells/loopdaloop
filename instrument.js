@@ -85,6 +85,11 @@ module.Filter.prototype.getFrequencyResponse = function(minHz, maxHz, steps) {
       response.filterIndex = i;
   }
   node.getFrequencyResponse(response.frequencies, response.mag, response.phase);
+  response.maxMag = 0;
+  for (var i = 0; i < steps; ++i) {
+    if (response.mag[i] > response.maxMag)
+      response.maxMag = response.mag[i];
+  }
   return response;
 }
 

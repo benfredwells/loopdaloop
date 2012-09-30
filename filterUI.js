@@ -118,28 +118,27 @@ module.UI.prototype.enableDisable_ = function() {
 var kBounds = SettingsUI.kDisplayBounds;
 var kMid = SettingsUI.kDisplayMid;
 var kXPadding = 12.5;
-var kYPadding = 9.5;
 var kXRange = kBounds.x - (2 * kXPadding);
-var kYRange = kBounds.y - (2 * kYPadding);
-var kYMaxMag = 2;
+var kMaxMagPadding = 1;
+var kMinMag = -20;
 var kFreqStart = 10;
 var kFreqEnd = 15000;
 var kAxisColor = "#999";
 var kAxisWidth = 1;
-var kResponseColor = "blue";
+var kResponseColor = "green";
 var kResponseWidth = 2;
-var kResponseMin = "#5050FF";
-var kResponseMax = "#FFFFFF";
+var kResponseMin = "#80F080";
+var kResponseMax = "#F0F0F0";
 var kResponseMinVar = 0.05;
-var kResponseFlat = "#C0C0C0";
-var kMinFreqPcnt = 50;  // Min is greater than max, as low frequency maps to
+var kResponseFlat = "#E0E0E0";
+var kMinFreqPcnt = 25;  // Min is greater than max, as low frequency maps to
 var kMaxFreqPcnt = 2;   // a large period.
 var kPhaseWidth = 1;
 var kPhaseColor = "magenta";
 
-module.UI.prototype.drawBackground_ = function(noteIndex) {
-  this.response_.push(SVGUtils.createLine(0, kBounds.y - kYPadding,
-                                          kBounds.x, kBounds.y - kYPadding,
+module.UI.prototype.drawBackground_ = function(noteIndex, xAxisY) {
+  this.response_.push(SVGUtils.createLine(0, xAxisY,
+                                          kBounds.x, xAxisY,
                                           kAxisColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
   this.response_.push(SVGUtils.createLine(kXPadding, 0,
@@ -147,7 +146,7 @@ module.UI.prototype.drawBackground_ = function(noteIndex) {
                                           kAxisColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
   this.response_.push(SVGUtils.createLine(kXPadding + noteIndex, 0,
-                                          kXPadding + noteIndex, kBounds.y - kYPadding,
+                                          kXPadding + noteIndex, kBounds.y,
                                           kAxisColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
 }
@@ -184,6 +183,12 @@ module.UI.prototype.findGradient_ = function() {
   }
 }
 
+function gainToDB(gain) {
+  // 10dB = gain of 2 (is that right? or is it 20?)
+  // so db = logbase2(gain) * 10
+  return 10 * Math.log(gain) / Math.log(2);
+}
+
 module.UI.prototype.drawResponse_ = function() {
   var ui = this;
   this.response_.forEach(function(child) {
@@ -196,21 +201,24 @@ module.UI.prototype.drawResponse_ = function() {
   var magPoints = [];
   var phasePoints = [];
   var response = this.instrument_.filter.getFrequencyResponse(kFreqStart, kFreqEnd, kXRange);
+  var maxMag = gainToDB(response.maxMag) + kMaxMagPadding;
+  var magRange = maxMag - kMinMag;
   for (var i = 0; i < response.mag.length; i++) {
     var x = kXPadding + i;
-    var magY = kYPadding + (kYRange * (1 - response.mag[i] / kYMaxMag));
+    var magY = kBounds.y * (maxMag - gainToDB(response.mag[i])) / magRange;
     SVGUtils.addPointToArray(x, magY, magPoints);
-    var phaseY = kYPadding + (kYRange * (Math.PI - response.phase[i]) / (2 * Math.PI));
+    var phaseY = kBounds.y * (Math.PI - response.phase[i]) / (2 * Math.PI);
     SVGUtils.addPointToArray(x, phaseY, phasePoints);
   }
-  SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y - kYPadding, magPoints);
-  SVGUtils.addPointToArray(kXPadding, kBounds.y - kYPadding, magPoints);
+  var xAxisY = kBounds.y * maxMag / magRange;
+  SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y, magPoints);
+  SVGUtils.addPointToArray(kXPadding, kBounds.y, magPoints);
   this.response_.push(SVGUtils.createPolyLine(magPoints,
                                               "none", 0, this.findGradient_(),
                                               this.group_.svgDoc, this.group_.svg));
-  this.drawBackground_(response.noteIndex);
+  this.drawBackground_(response.noteIndex, xAxisY);
   this.response_.push(SVGUtils.createLine(kXPadding + response.filterIndex, 0,
-                                          kXPadding + response.filterIndex, kBounds.y - kYPadding,
+                                          kXPadding + response.filterIndex, kBounds.y,
                                           kResponseColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
   magPoints.pop();

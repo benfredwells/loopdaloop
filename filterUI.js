@@ -51,8 +51,8 @@ module.UI = function(instrument, element) {
 
   var ui = this;
   var changeHandler = function() {
-    ui.instrument_.filter.enabled = ui.enabledRow_.check.value;
-    ui.instrument_.filter.type = ui.typeRow_.select.value;
+    ui.instrument_.filter.enabled = ui.enabledRow_.value();
+    ui.instrument_.filter.type = ui.typeRow_.value();
     ui.instrument_.filter.frequencyFactor = ui.frequencyRow_.value();
     ui.instrument_.filter.lfo.enabled = ui.lfoEnabledRow_.value();
     ui.instrument_.filter.lfo.frequency = ui.lfoFrequencyRow_.value();
@@ -134,6 +134,8 @@ var kResponseMinVar = 0.05;
 var kResponseFlat = "#C0C0C0";
 var kMinFreqPcnt = 50;  // Min is greater than max, as low frequency maps to
 var kMaxFreqPcnt = 2;   // a large period.
+var kPhaseWidth = 1;
+var kPhaseColor = "magenta";
 
 module.UI.prototype.drawBackground_ = function(noteIndex) {
   this.response_.push(SVGUtils.createLine(0, kBounds.y - kYPadding,
@@ -183,21 +185,27 @@ module.UI.prototype.findGradient_ = function() {
 }
 
 module.UI.prototype.drawResponse_ = function() {
-  var points = [];
-  var response = this.instrument_.filter.getFrequencyResponse(kFreqStart, kFreqEnd, kXRange);
-  for (var i = 0; i < response.mag.length; i++) {
-    var x = kXPadding + i;
-    var y = kYPadding + (kYRange * (1 - response.mag[i] / kYMaxMag));
-    SVGUtils.addPointToArray(x, y, points);
-  }
   var ui = this;
   this.response_.forEach(function(child) {
     ui.group_.svg.removeChild(child);
   });
   this.response_ = [];
-  SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y - kYPadding, points);
-  SVGUtils.addPointToArray(kXPadding, kBounds.y - kYPadding, points);
-  this.response_.push(SVGUtils.createPolyLine(points,
+  if (!this.instrument_.filter.enabled)
+    return;
+
+  var magPoints = [];
+  var phasePoints = [];
+  var response = this.instrument_.filter.getFrequencyResponse(kFreqStart, kFreqEnd, kXRange);
+  for (var i = 0; i < response.mag.length; i++) {
+    var x = kXPadding + i;
+    var magY = kYPadding + (kYRange * (1 - response.mag[i] / kYMaxMag));
+    SVGUtils.addPointToArray(x, magY, magPoints);
+    var phaseY = kYPadding + (kYRange * (Math.PI - response.phase[i]) / (2 * Math.PI));
+    SVGUtils.addPointToArray(x, phaseY, phasePoints);
+  }
+  SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y - kYPadding, magPoints);
+  SVGUtils.addPointToArray(kXPadding, kBounds.y - kYPadding, magPoints);
+  this.response_.push(SVGUtils.createPolyLine(magPoints,
                                               "none", 0, this.findGradient_(),
                                               this.group_.svgDoc, this.group_.svg));
   this.drawBackground_(response.noteIndex);
@@ -205,10 +213,13 @@ module.UI.prototype.drawResponse_ = function() {
                                           kXPadding + response.filterIndex, kBounds.y - kYPadding,
                                           kResponseColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
-  points.pop();
-  points.pop();
-  this.response_.push(SVGUtils.createPolyLine(points,
+  magPoints.pop();
+  magPoints.pop();
+  this.response_.push(SVGUtils.createPolyLine(magPoints,
                                               kResponseColor, kResponseWidth, "none",
+                                              this.group_.svgDoc, this.group_.svg));
+  this.response_.push(SVGUtils.createPolyLine(phasePoints,
+                                              kPhaseColor, kPhaseWidth, "none",
                                               this.group_.svgDoc, this.group_.svg));
 }
 

@@ -21,10 +21,10 @@ function init() {
   // Instrument UI setup
   gOscillatorUI = new OscillatorUI.UI(
       gInstrument,
-      document.getElementById('oscillator'));
+      document.getElementById('settings'));
   gFilterUI = new FilterUI.UI(
       gInstrument,
-      document.getElementById('filter'));
+      document.getElementById('settings'));
 
   // Player setup
   document.getElementById('octave').onchange = octaveChanged;

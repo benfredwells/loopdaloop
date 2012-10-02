@@ -5,10 +5,10 @@ var module = {};
 
 var kWaveTypes = ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE'];
 
-module.UI = function(instrument, element) {
+module.UI = function(instrument, parent) {
   this.instrument_ = instrument;
 
-  this.group_ = new SettingsUI.Group(element, 'Oscillator');
+  this.group_ = new SettingsUI.Group(parent, 'Oscillator');
   this.typeRow_ = this.group_.addSelectRow('Type', kWaveTypes);
 
   var ui = this;

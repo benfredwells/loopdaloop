@@ -16,9 +16,13 @@ module.roundForDisplay = function(number) {
 }
 
 module.Group = function(parent, title) {
+  this.element_ = document.createElement('div');
+  this.element_.classList.add('instrSettingGroup');
+  parent.appendChild(this.element_);
+
   this.heading_ = document.createElement('div');
   this.heading_.classList.add('instrSettingHeading');
-  parent.appendChild(this.heading_);
+  this.element_.appendChild(this.heading_);
 
   var headingText = document.createElement('div');
   headingText.classList.add('instrSettingHeadingText');
@@ -34,7 +38,7 @@ module.Group = function(parent, title) {
 
   this.details_ = document.createElement('div');
   this.details_.classList.add('instrSettingDetails');
-  parent.appendChild(this.details_);
+  this.element_.appendChild(this.details_);
 }
 
 function setupOnchange(row, element) {

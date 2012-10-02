@@ -27,12 +27,12 @@ var kGainMin = -20;
 var kGainMax = 20;
 var kGainSteps = 40;
 
-module.UI = function(instrument, element) {
+module.UI = function(instrument, parent) {
   this.instrument_ = instrument;
 
   var s = SettingsUI.makeSubRow;
   var ss = SettingsUI.makeSubSubRow;
-  this.group_ = new SettingsUI.Group(element, 'Filter');
+  this.group_ = new SettingsUI.Group(parent, 'Filter');
   this.enabledRow_ = this.group_.addCheckRow('Enabled');
   this.typeRow_ = s(this.group_.addSelectRow('Type', kFilterTypes));
   this.frequencyRow_ = s(this.group_.addLinearRangeRow(

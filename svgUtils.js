@@ -122,6 +122,19 @@ module.createLine = function(x1, y1, x2, y2, color, width, doc, svg) {
   return line;
 }
 
+module.createRect = function(x, y, width, height, color, strokeWidth, fill, doc, svg) {
+  var line = doc.createElementNS(svgns, "rect");
+  line.setAttribute("x", svgNumberVal(x));
+  line.setAttribute("y", svgNumberVal(y));
+  line.setAttribute("width", svgNumberVal(width));
+  line.setAttribute("height", svgNumberVal(height));
+  line.setAttribute("stroke", color);
+  line.setAttribute("stroke-width", svgNumberVal(strokeWidth));
+  line.setAttribute("fill", fill);
+  svg.appendChild(line);
+  return line;
+}
+
 module.createPolyLine = function(points, color, width, fill, doc, svg) {
   var line = doc.createElementNS(svgns, "polyline");
   line.setAttribute("points", svgPointArrayVal(points));

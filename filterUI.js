@@ -127,18 +127,18 @@ var kAxisColor = "#999";
 var kAxisWidth = 1;
 var kResponseColor = "green";
 var kResponseWidth = 2;
-var kResponseMin = "#80F080";
+var kResponseMin = "#408040";
 var kResponseMax = "#F0F0F0";
 var kResponseMinVar = 0.05;
-var kResponseFlat = "#E0E0E0";
+var kResponseFlat = "#90B090";
 var kMinFreqPcnt = 25;  // Min is greater than max, as low frequency maps to
 var kMaxFreqPcnt = 2;   // a large period.
 var kPhaseWidth = 1;
 var kPhaseColor = "magenta";
 
 module.UI.prototype.drawBackground_ = function(noteIndex, xAxisY) {
-  this.response_.push(SVGUtils.createLine(0, xAxisY,
-                                          kBounds.x, xAxisY,
+  this.response_.push(SVGUtils.createLine(0, xAxisY + 0.5,
+                                          kBounds.x, xAxisY + 0.5,
                                           kAxisColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
   this.response_.push(SVGUtils.createLine(kXPadding, 0,

@@ -92,15 +92,16 @@ module.Group.prototype.addValueLabel_ = function(row) {
   }
 }
 
-module.Group.prototype.addSelectRow = function(title, array) {
-  var row = this.makeRow_(title);
+// selectRowDef is {title, array}
+module.Group.prototype.addSelectRow = function(selectRowDef) {
+  var row = this.makeRow_(selectRowDef.title);
 
   row.select = document.createElement('select');
   row.setting_.appendChild(row.select);
-  for (var i = 0; i < array.length; i++) {
+  for (var i = 0; i < selectRowDef.array.length; i++) {
     var option = document.createElement('option');
     option.value = i;
-    option.text = array[i];
+    option.text = selectRowDef.array[i];
     row.select.add(option, null);
   }
 
@@ -123,8 +124,9 @@ module.Group.prototype.addSelectRow = function(title, array) {
   return row;
 }
 
-module.Group.prototype.addCheckRow = function(title) {
-  var row = this.makeRow_(title);
+// checkRowDef is {title}
+module.Group.prototype.addCheckRow = function(checkRowDef) {
+  var row = this.makeRow_(checkRowDef.title);
 
   row.check = document.createElement('input');
   row.check.type = 'checkbox';
@@ -150,7 +152,13 @@ module.Group.prototype.addCheckRow = function(title) {
   return row;
 }
 
-module.Group.prototype.addLinearRangeRow = function(title, min, max, steps) {
+// linearRangeDef is {title, min, max, steps}
+module.Group.prototype.addLinearRangeRow = function(linearRangeDef) {
+  var title = linearRangeDef.title;
+  var min = linearRangeDef.min;
+  var max = linearRangeDef.max;
+  var steps = linearRangeDef.steps;
+
   var row = this.makeRow_(title);
 
   row.range = document.createElement('input');
@@ -184,7 +192,14 @@ module.Group.prototype.addLinearRangeRow = function(title, min, max, steps) {
   return row;
 }
 
-module.Group.prototype.addExponentialRangeRow = function(title, base, minExponent, maxExponent, steps) {
+// exponentialRangeDef is {title, base, minExponent, maxExponent, steps}
+module.Group.prototype.addExponentialRangeRow = function(exponentialRangeDef) {
+  var title = exponentialRangeDef.title;
+  var base = exponentialRangeDef.base;
+  var minExponent = exponentialRangeDef.minExponent;
+  var maxExponent = exponentialRangeDef.maxExponent;
+  var steps = exponentialRangeDef.steps;
+
   var row = this.makeRow_(title);
 
   row.range = document.createElement('input');

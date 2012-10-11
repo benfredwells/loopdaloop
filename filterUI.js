@@ -6,48 +6,34 @@ var module = {};
 var kFilterTypes = ['LOWPASS', 'HIGHPASS', 'BANDPASS', 'LOWSHELF', 'HIGHSHELF',
                     'PEAKING', 'NOTCH', 'ALLPASS'];
 var kFilterHasGain = [false, false, false, true, true, true, false, false];
-var kFreqFactorMin = 0.5;
-var kFreqFactorMax = 3;
-var kFreqFactorSteps = 10;
-var kLFOFreqBase = 10;
-var kLFOFreqMinExp = -1;  // 10^-1 = 0.1
-var kLFOFreqMaxExp = 1;  // 10^1 = 10
-var kLFOFreqSteps = 20;
-var kLFOGainBase = 10;
-var kLFOGainMinExp = -2;  // 10^-2 = 0.01
-var kLFOGainMaxExp = 0;  // 10^0 = 1
-var kLFOGainSteps = 10;
-var kLFOPhaseMin = -180;
-var kLFOPhaseMax = 180;
-var kLFOPhaseSteps = 36;
-var kQMin = 1;
-var kQMax = 20;
-var kQSteps = 19;
-var kGainMin = -20;
-var kGainMax = 20;
-var kGainSteps = 40;
+
+var kEnabledRowDef = {title: 'Enabled'};
+var kTypeRowDef = {title: 'Type', array: kFilterTypes};
+var kFreqFactorRowDef = {title: 'Frequency', min: 0.5, max: 3, steps: 10};
+var kLFOEnabledRowDef = {title: 'Oscillate'};
+var kLFOFreqRowDef = {title: 'Speed', base: 10, minExponent: -1, maxExponent: 1, steps: 20};
+var kLFOGainRowDef = {title: 'Amplitude', base: 10, minExponent: -2, maxExponent: 0, steps: 10};
+var kLFOPhaseRowDef = {title: 'Phase', min: -180, max: 180, steps: 36};
+var kQRowDef = {title: 'Q', min: 1, max: 20, steps: 19};
+var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 
 module.UI = function(instrument, parent) {
   this.instrument_ = instrument;
 
+  this.group_ = new SettingsUI.Group(parent, 'Filter');
   var s = SettingsUI.makeSubRow;
   var ss = SettingsUI.makeSubSubRow;
-  this.group_ = new SettingsUI.Group(parent, 'Filter');
-  this.enabledRow_ = this.group_.addCheckRow('Enabled');
-  this.typeRow_ = s(this.group_.addSelectRow('Type', kFilterTypes));
-  this.frequencyRow_ = s(this.group_.addLinearRangeRow(
-      'Frequency', kFreqFactorMin, kFreqFactorMax, kFreqFactorSteps));
-  this.lfoEnabledRow_ = ss(this.group_.addCheckRow('Oscillate'));
-  this.lfoFrequencyRow_ = ss(this.group_.addExponentialRangeRow(
-      'Speed', kLFOFreqBase, kLFOFreqMinExp, kLFOFreqMaxExp, kLFOFreqSteps));
-  this.lfoGainRow_ = ss(this.group_.addExponentialRangeRow(
-      'Amplitude', kLFOGainBase, kLFOGainMinExp, kLFOGainMaxExp, kLFOGainSteps));
-  this.lfoPhaseRow_ = ss(this.group_.addLinearRangeRow(
-      'Phase', kLFOPhaseMin, kLFOPhaseMax, kLFOPhaseSteps));
-  this.qRow_ = s(this.group_.addLinearRangeRow(
-      'Q', kQMin, kQMax, kQSteps))
-  this.gainRow_ = s(this.group_.addLinearRangeRow(
-      'Gain', kGainMin, kGainMax, kGainSteps));
+  var g = this.group_;
+
+  this.enabledRow_ = g.addCheckRow(kEnabledRowDef);
+  this.typeRow_ = s(g.addSelectRow(kTypeRowDef));
+  this.frequencyRow_ = s(g.addLinearRangeRow(kFreqFactorRowDef));
+  this.lfoEnabledRow_ = ss(g.addCheckRow(kLFOEnabledRowDef));
+  this.lfoFrequencyRow_ = ss(g.addExponentialRangeRow(kLFOFreqRowDef));
+  this.lfoGainRow_ = ss(g.addExponentialRangeRow(kLFOGainRowDef));
+  this.lfoPhaseRow_ = ss(g.addLinearRangeRow(kLFOPhaseRowDef));
+  this.qRow_ = s(g.addLinearRangeRow(kQRowDef));
+  this.gainRow_ = s(g.addLinearRangeRow(kGainRowDef));
 
   var ui = this;
   var changeHandler = function() {
@@ -151,10 +137,12 @@ module.UI.prototype.drawBackground_ = function(noteIndex, xAxisY) {
                                           this.group_.svgDoc, this.group_.svg));
 }
 
-function linearValue(value, valueMin, valueMax, linearMin, linearMax) {
-  var exponent = Math.log(value) / Math.log(10);
-  var factor = (linearMax - linearMin) / (valueMax - valueMin);
-  return (exponent - valueMin) * factor + linearMin;
+function linearValue(value, exponentialRowDef, linearMin, linearMax) {
+  var exponent = Math.log(value) / Math.log(exponentialRowDef.base);
+  var expMin = exponentialRowDef.minExponent;
+  var expMax = exponentialRowDef.maxExponent;
+  var factor = (linearMax - linearMin) / (expMax - expMin);
+  return (exponent - expMin) * factor + linearMin;
 }
 
 function pcntToStr(val) {
@@ -165,10 +153,10 @@ module.UI.prototype.findGradient_ = function() {
   if (this.gradient_)
     this.group_.svg.defs.removeChild(this.gradient_);
   if (this.instrument_.filter.lfo.enabled) {
-    var gainPos = linearValue(this.instrument_.filter.lfo.gain, kLFOGainMinExp, kLFOGainMaxExp, kResponseMinVar, 0.5);
+    var gainPos = linearValue(this.instrument_.filter.lfo.gain, kLFOGainRowDef, kResponseMinVar, 0.5);
     var begin = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 - gainPos);
     var end = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 + gainPos);
-    var frequencyPcnt = linearValue(this.instrument_.filter.lfo.frequency, kLFOFreqMinExp, kLFOFreqMaxExp, kMinFreqPcnt, kMaxFreqPcnt);
+    var frequencyPcnt = linearValue(this.instrument_.filter.lfo.frequency, kLFOFreqRowDef, kMinFreqPcnt, kMaxFreqPcnt);
     var phasePcnt = (this.instrument_.filter.lfo.phase) * frequencyPcnt / Math.PI;
     this.gradient_ = SVGUtils.createLinearGradient(
         "filterGradient", pcntToStr(phasePcnt), "0%",

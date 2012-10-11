@@ -3,13 +3,14 @@ OscillatorUI = (function() {
 "use strict";
 var module = {};
 
-var kWaveTypes = ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE'];
+var kTypeRowDef = {title: 'Type',
+                   array: ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE']};
 
 module.UI = function(instrument, parent) {
   this.instrument_ = instrument;
 
   this.group_ = new SettingsUI.Group(parent, 'Oscillator');
-  this.typeRow_ = this.group_.addSelectRow('Type', kWaveTypes);
+  this.typeRow_ = this.group_.addSelectRow(kTypeRowDef);
 
   var ui = this;
   var typeChanged = function() {

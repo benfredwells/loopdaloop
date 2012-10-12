@@ -10,10 +10,7 @@ var kFilterHasGain = [false, false, false, true, true, true, false, false];
 var kEnabledRowDef = {title: 'Enabled'};
 var kTypeRowDef = {title: 'Type', array: kFilterTypes};
 var kFreqFactorRowDef = {title: 'Frequency', min: 0.5, max: 3, steps: 10};
-var kLFOEnabledRowDef = {title: 'Oscillate'};
-var kLFOFreqRowDef = {title: 'Speed', base: 10, minExponent: -1, maxExponent: 1, steps: 20};
-var kLFOGainRowDef = {title: 'Amplitude', base: 10, minExponent: -2, maxExponent: 0, steps: 10};
-var kLFOPhaseRowDef = {title: 'Phase', min: -180, max: 180, steps: 36};
+var kLFOControllerDef = {title: 'Oscillate', indent: 1};
 var kQRowDef = {title: 'Q', min: 1, max: 20, steps: 19};
 var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 
@@ -28,10 +25,7 @@ module.UI = function(instrument, parent) {
   this.enabledRow_ = g.addCheckRow(kEnabledRowDef);
   this.typeRow_ = s(g.addSelectRow(kTypeRowDef));
   this.frequencyRow_ = s(g.addLinearRangeRow(kFreqFactorRowDef));
-  this.lfoEnabledRow_ = s(g.addCheckRow(kLFOEnabledRowDef));
-  this.lfoFrequencyRow_ = ss(g.addExponentialRangeRow(kLFOFreqRowDef));
-  this.lfoGainRow_ = ss(g.addExponentialRangeRow(kLFOGainRowDef));
-  this.lfoPhaseRow_ = ss(g.addLinearRangeRow(kLFOPhaseRowDef));
+  this.lfoController_ = g.addLFOController(kLFOControllerDef, instrument.filter.lfo);
   this.qRow_ = s(g.addLinearRangeRow(kQRowDef));
   this.gainRow_ = s(g.addLinearRangeRow(kGainRowDef));
 
@@ -40,37 +34,32 @@ module.UI = function(instrument, parent) {
     ui.instrument_.filter.enabled = ui.enabledRow_.value();
     ui.instrument_.filter.type = ui.typeRow_.value();
     ui.instrument_.filter.frequencyFactor = ui.frequencyRow_.value();
-    ui.instrument_.filter.lfo.enabled = ui.lfoEnabledRow_.value();
-    ui.instrument_.filter.lfo.frequency = ui.lfoFrequencyRow_.value();
-    ui.instrument_.filter.lfo.phase = 2 * Math.PI * ui.lfoPhaseRow_.value() / 360;
-    ui.instrument_.filter.lfo.gain = ui.lfoGainRow_.value();
     ui.instrument_.filter.q = ui.qRow_.value();
     ui.instrument_.filter.gain = ui.gainRow_.value();
     ui.updateDisplay_();
   }
-  this.enabledRow_.onchange = changeHandler;
-  this.typeRow_.onchange = changeHandler;
-  this.frequencyRow_.onchange = changeHandler;
-  this.lfoEnabledRow_.onchange = changeHandler;
-  this.lfoFrequencyRow_.onchange = changeHandler;
-  this.lfoGainRow_.onchange = changeHandler;
-  this.lfoPhaseRow_.onchange = changeHandler;
-  this.qRow_.onchange = changeHandler;
-  this.gainRow_.onchange = changeHandler;
 
   this.setInitialValues_();
   this.response_ = [];
+  this.lfoController_.changeHandler();
   changeHandler();
+
+  this.enabledRow_.onchange = changeHandler;
+  this.lfoController_.onchange = changeHandler;
+  this.typeRow_.onchange = changeHandler;
+  this.frequencyRow_.onchange = changeHandler;
+  this.qRow_.onchange = changeHandler;
+  this.gainRow_.onchange = changeHandler;
 }
 
 module.UI.prototype.setInitialValues_ = function() {
   this.enabledRow_.setValue(true);
   this.typeRow_.setValue(0);
   this.frequencyRow_.setValue(1.2);
-  this.lfoEnabledRow_.setValue(true);
-  this.lfoFrequencyRow_.setValue(3);
-  this.lfoGainRow_.setValue(0.1);
-  this.lfoPhaseRow_.setValue(90);
+  this.lfoController_.enabledRow.setValue(true);
+  this.lfoController_.frequencyRow.setValue(3);
+  this.lfoController_.gainRow.setValue(0.1);
+  this.lfoController_.phaseRow.setValue(90);
   this.qRow_.setValue(6);
   this.gainRow_.setValue(10);
 }
@@ -78,9 +67,7 @@ module.UI.prototype.setInitialValues_ = function() {
 module.UI.prototype.updateDisplay_ = function() {
   var r = SettingsUI.roundForDisplay;
   this.frequencyRow_.setLabel('x ' + r(this.frequencyRow_.value()));
-  this.lfoFrequencyRow_.setLabel(r(this.lfoFrequencyRow_.value()) + ' Hz');
-  this.lfoGainRow_.setLabel('+- ' + r(this.lfoGainRow_.value()));
-  this.lfoPhaseRow_.setLabel(this.lfoPhaseRow_.value());
+  this.lfoController_.updateDisplay();
   this.qRow_.setLabel(this.qRow_.value());
   this.gainRow_.setLabel(this.gainRow_.value() + ' dB');
   this.enableDisable_();
@@ -89,16 +76,12 @@ module.UI.prototype.updateDisplay_ = function() {
 
 module.UI.prototype.enableDisable_ = function() {
   var enabled = this.enabledRow_.value();
-  var lfoEnabled = enabled && this.lfoEnabledRow_.value();
   var gainEnabled = enabled && kFilterHasGain[this.typeRow_.value()];
   this.typeRow_.enableDisable(enabled);
   this.frequencyRow_.enableDisable(enabled);
+  this.lfoController_.enableDisable(enabled);
   this.qRow_.enableDisable(enabled);
   this.gainRow_.enableDisable(gainEnabled);
-  this.lfoEnabledRow_.enableDisable(enabled);
-  this.lfoFrequencyRow_.enableDisable(lfoEnabled);
-  this.lfoGainRow_.enableDisable(lfoEnabled);
-  this.lfoPhaseRow_.enableDisable(lfoEnabled);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;
@@ -153,10 +136,10 @@ module.UI.prototype.findGradient_ = function() {
   if (this.gradient_)
     this.group_.svg.defs.removeChild(this.gradient_);
   if (this.instrument_.filter.lfo.enabled) {
-    var gainPos = linearValue(this.instrument_.filter.lfo.gain, kLFOGainRowDef, kResponseMinVar, 0.5);
+    var gainPos = linearValue(this.instrument_.filter.lfo.gain, this.lfoController_.gainRowDef, kResponseMinVar, 0.5);
     var begin = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 - gainPos);
     var end = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 + gainPos);
-    var frequencyPcnt = linearValue(this.instrument_.filter.lfo.frequency, kLFOFreqRowDef, kMinFreqPcnt, kMaxFreqPcnt);
+    var frequencyPcnt = linearValue(this.instrument_.filter.lfo.frequency, this.lfoController_.freqRowDef, kMinFreqPcnt, kMaxFreqPcnt);
     var phasePcnt = (this.instrument_.filter.lfo.phase) * frequencyPcnt / Math.PI;
     this.gradient_ = SVGUtils.createLinearGradient(
         "filterGradient", pcntToStr(phasePcnt), "0%",

@@ -6,11 +6,8 @@ var module = {};
 var kTypeRowDef = {title: 'Type',
                    array: ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE']};
 
-var kVibratoEnabledRowDef = {title: 'Vibrato'};
-var kTremoloEnabledRowDef = {title: 'Vibrato'};
-var kLFOFreqRowDef = {title: 'Speed', base: 10, minExponent: -1, maxExponent: 1, steps: 20};
-var kLFOGainRowDef = {title: 'Amplitude', base: 10, minExponent: -2, maxExponent: 0, steps: 10};
-var kLFOPhaseRowDef = {title: 'Phase', min: -180, max: 180, steps: 36};
+var kVibratoRowDef = {title: 'Vibrato', indent: 0};
+var kTremoloRowDef = {title: 'Vibrato', indent: 0};
 
 module.UI = function(instrument, parent) {
   this.instrument_ = instrument;
@@ -21,43 +18,27 @@ module.UI = function(instrument, parent) {
   var s = SettingsUI.makeSubRow;
   var g = this.group_;
 
-  this.vibratoEnabledRow_ = g.addCheckRow(kVibratoEnabledRowDef);
-  this.vibratoFrequencyRow_ = s(g.addExponentialRangeRow(kLFOFreqRowDef));
-  this.vibratoGainRow_ = s(g.addExponentialRangeRow(kLFOGainRowDef));
-  this.vibratoPhaseRow_ = s(g.addLinearRangeRow(kLFOPhaseRowDef));
-  this.tremoloEnabledRow_ = g.addCheckRow(kTremoloEnabledRowDef);
-  this.tremoloFrequencyRow_ = s(g.addExponentialRangeRow(kLFOFreqRowDef));
-  this.tremoloGainRow_ = s(g.addExponentialRangeRow(kLFOGainRowDef));
-  this.tremoloPhaseRow_ = s(g.addLinearRangeRow(kLFOPhaseRowDef));
+  this.vibratoController_ = g.addLFOController(kVibratoRowDef, instrument.oscillator.lfo);
 
   var ui = this;
-  var typeChanged = function() {
+  var changeHandler = function() {
     ui.instrument_.oscillator.type = ui.typeRow_.value();
     ui.updateDisplay_();
   }
-  this.typeRow_.onchange = typeChanged;
-  this.vibratoEnabledRow_.onchange = typeChanged;
-  this.vibratoFrequencyRow_.onchange = typeChanged;
-  this.vibratoGainRow_.onchange = typeChanged;
-  this.vibratoPhaseRow_.onchange = typeChanged;
-  this.tremoloEnabledRow_.onchange = typeChanged;
-  this.tremoloFrequencyRow_.onchange = typeChanged;
-  this.tremoloGainRow_.onchange = typeChanged;
-  this.tremoloPhaseRow_.onchange = typeChanged;
-
+  this.typeRow_.onchange = changeHandler;
+  this.vibratoController_.onchange = changeHandler;
   this.typeRow_.setValue(2);
-  typeChanged();
+  changeHandler();
 }
 
 module.UI.prototype.updateDisplay_ = function() {
-  var r = SettingsUI.roundForDisplay;
-  this.vibratoFrequencyRow_.setLabel(r(this.vibratoFrequencyRow_.value()) + ' Hz');
-  this.vibratoGainRow_.setLabel('+- ' + r(this.vibratoGainRow_.value()));
-  this.vibratoPhaseRow_.setLabel(this.vibratoPhaseRow_.value());
-  this.tremoloFrequencyRow_.setLabel(r(this.tremoloFrequencyRow_.value()) + ' Hz');
-  this.tremoloGainRow_.setLabel('+- ' + r(this.tremoloGainRow_.value()));
-  this.tremoloPhaseRow_.setLabel(this.tremoloPhaseRow_.value());
+  this.vibratoController_.updateDisplay();
+  this.enableDisable_();
   this.drawWave_();
+}
+
+module.UI.prototype.enableDisable_ = function() {
+  this.vibratoController_.enableDisable(true);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

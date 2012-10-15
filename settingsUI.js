@@ -255,7 +255,7 @@ module.Group.prototype.addLFOController = function(lfoControllerDef, lfo) {
 
   var enableIndent, controlIndent;
   if (lfoControllerDef.indent == 0) {
-    enableIndent = function(row) {};
+    enableIndent = function(row) {return row};
     controlIndent = module.makeSubRow;
   } else {
     enableIndent = module.makeSubRow;

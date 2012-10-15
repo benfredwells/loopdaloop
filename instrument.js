@@ -26,12 +26,16 @@ module.LFO.prototype.createController = function(param) {
 module.Oscillator = function(context) {
   this.context_ = context;
   this.type = 0;
+  this.lfo = new module.LFO(context);
 }
 
-module.Oscillator.prototype.createNode = function(octave, note) {
+module.Oscillator.prototype.createNode = function(octave, note, paramControllers) {
   var oscillator = this.context_.createOscillator();
   oscillator.frequency.value = ChromaticScale.frequencyForNote(octave, note);
   oscillator.type = this.type;
+  if (this.lfo.enabled) {
+    paramControllers.push(this.lfo.createController(oscillator.frequency));
+  }
   return oscillator;
 }
 
@@ -112,10 +116,10 @@ module.Instrument.prototype.createGainNode_ = function() {
 
 // Public methods
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
-  var oscillator = this.oscillator.createNode(octave, note);
+  var paramControllers = [];
+  var oscillator = this.oscillator.createNode(octave, note, paramControllers);
   var gainNode = this.createGainNode_();
   var allNodes = [oscillator, gainNode];
-  var paramControllers = [];
   if (this.filter.enabled) {
     var filter = this.filter.createNode(octave, note, paramControllers);
     allNodes.push(filter);

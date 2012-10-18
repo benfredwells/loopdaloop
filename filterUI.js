@@ -17,7 +17,7 @@ var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 module.UI = function(instrument, parent) {
   this.instrument_ = instrument;
 
-  this.group_ = new SettingsUI.Group(parent, 'Filter');
+  this.group_ = new SettingsUI.Group(parent, 'Filter', this);
   var s = SettingsUI.makeSubRow;
   var ss = SettingsUI.makeSubSubRow;
   var g = this.group_;

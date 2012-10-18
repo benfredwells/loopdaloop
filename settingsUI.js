@@ -15,10 +15,11 @@ module.roundForDisplay = function(number) {
   return Math.round(number * 100) / 100;
 }
 
-module.Group = function(parent, title) {
+module.Group = function(parent, title, owner) {
   this.element_ = document.createElement('div');
   this.element_.classList.add('instrSettingGroup');
   parent.appendChild(this.element_);
+  owner.element = this.element_;
 
   this.heading_ = document.createElement('div');
   this.heading_.classList.add('instrSettingHeading');
@@ -38,7 +39,15 @@ module.Group = function(parent, title) {
 
   this.details_ = document.createElement('div');
   this.details_.classList.add('instrSettingDetails');
+  this.details_.hidden = true;
   this.element_.appendChild(this.details_);
+
+  var ui = this;
+  this.heading_.onclick = function() {
+    ui.details_.hidden = !ui.details_.hidden;
+    if (owner.onresize)
+      owner.onresize();
+  }
 }
 
 module.makeSubRow = function(row) {

@@ -12,7 +12,7 @@ var kTremoloRowDef = {title: 'Vibrato', indent: 0};
 module.UI = function(instrument, parent) {
   this.instrument_ = instrument;
 
-  this.group_ = new SettingsUI.Group(parent, 'Oscillator');
+  this.group_ = new SettingsUI.Group(parent, 'Oscillator', this);
   this.typeRow_ = this.group_.addSelectRow(kTypeRowDef);
 
   var s = SettingsUI.makeSubRow;

@@ -4,10 +4,6 @@ chrome.app.runtime.onLaunched.addListener(function() {
   var instrumentParams = {
     width: 360,
     height: 500,
-    minWidth: 360,
-    maxWidth: 360,
-    minHeight: 500,
-    maxHeight: 500,
     left: 20,
     top: 100
   };

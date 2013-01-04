@@ -309,6 +309,45 @@ module.Group.prototype.addLFOController = function(lfoControllerDef, lfo) {
   return lfoController;
 }
 
+function linearValue(value, exponentialRowDef, linearMin, linearMax) {
+  var exponent = Math.log(value) / Math.log(exponentialRowDef.base);
+  var expMin = exponentialRowDef.minExponent;
+  var expMax = exponentialRowDef.maxExponent;
+  var factor = (linearMax - linearMin) / (expMax - expMin);
+  return (exponent - expMin) * factor + linearMin;
+}
+
+function pcntToStr(val) {
+  return val.toString() + '%';
+}
+
+var kMinVar = 0.05;
+var kMinFreqPcnt = 25;  // Min is greater than max, as low frequency maps to
+var kMaxFreqPcnt = 2;   // a large period.
+
+module.Group.prototype.defineLFOGradientOrSolid = function(name, lfo, controller, min, max, flat) {
+  if (this[name])
+    this.svg.defs.removeChild(this[name]);
+  if (lfo.enabled) {
+    var gainPos = linearValue(lfo.gain, controller.gainRowDef, kMinVar, 0.5);
+    var begin = SVGUtils.interpolateColors(min, max, 0.5 - gainPos);
+    var end = SVGUtils.interpolateColors(min, max, 0.5 + gainPos);
+    var frequencyPcnt = linearValue(lfo.frequency, controller.freqRowDef, kMinFreqPcnt, kMaxFreqPcnt);
+    var phasePcnt = lfo.phase * frequencyPcnt / Math.PI;
+    var gradient = SVGUtils.createLinearGradient(
+        name, pcntToStr(phasePcnt), '0%',
+        pcntToStr(phasePcnt + frequencyPcnt), '0', 'reflect',
+        this.svgDoc, this.svg);
+    SVGUtils.addStopToGradient('0', begin, gradient, this.svgDoc);
+    SVGUtils.addStopToGradient('1', end, gradient, this.svgDoc);
+    this[name] = gradient;
+    return 'url(#' + name + ')';
+  } else {
+    delete this[name];
+    return flat;
+  }
+}
+
 return module;
 
 })();

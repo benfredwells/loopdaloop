@@ -100,10 +100,7 @@ var kResponseColor = "green";
 var kResponseWidth = 2;
 var kResponseMin = "#408040";
 var kResponseMax = "#F0F0F0";
-var kResponseMinVar = 0.05;
 var kResponseFlat = "#90B090";
-var kMinFreqPcnt = 25;  // Min is greater than max, as low frequency maps to
-var kMaxFreqPcnt = 2;   // a large period.
 var kPhaseWidth = 1;
 var kPhaseColor = "magenta";
 
@@ -120,40 +117,6 @@ module.UI.prototype.drawBackground_ = function(noteIndex, xAxisY) {
                                           kXPadding + noteIndex, kBounds.y,
                                           kAxisColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
-}
-
-function linearValue(value, exponentialRowDef, linearMin, linearMax) {
-  var exponent = Math.log(value) / Math.log(exponentialRowDef.base);
-  var expMin = exponentialRowDef.minExponent;
-  var expMax = exponentialRowDef.maxExponent;
-  var factor = (linearMax - linearMin) / (expMax - expMin);
-  return (exponent - expMin) * factor + linearMin;
-}
-
-function pcntToStr(val) {
-  return val.toString() + '%';
-}
-
-module.UI.prototype.findGradient_ = function() {
-  if (this.gradient_)
-    this.group_.svg.defs.removeChild(this.gradient_);
-  if (this.instrument_.filter.lfo.enabled) {
-    var gainPos = linearValue(this.instrument_.filter.lfo.gain, this.lfoController_.gainRowDef, kResponseMinVar, 0.5);
-    var begin = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 - gainPos);
-    var end = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 + gainPos);
-    var frequencyPcnt = linearValue(this.instrument_.filter.lfo.frequency, this.lfoController_.freqRowDef, kMinFreqPcnt, kMaxFreqPcnt);
-    var phasePcnt = (this.instrument_.filter.lfo.phase) * frequencyPcnt / Math.PI;
-    this.gradient_ = SVGUtils.createLinearGradient(
-        "filterGradient", pcntToStr(phasePcnt), "0%",
-        pcntToStr(phasePcnt + frequencyPcnt), "0", "reflect",
-        this.group_.svgDoc, this.group_.svg);
-    SVGUtils.addStopToGradient("0", begin, this.gradient_, this.group_.svgDoc);
-    SVGUtils.addStopToGradient("1", end, this.gradient_, this.group_.svgDoc);
-    return "url(#filterGradient)";
-  } else {
-    delete this.gradient_;
-    return kResponseFlat;
-  }
 }
 
 function gainToDB(gain) {
@@ -186,8 +149,14 @@ module.UI.prototype.drawResponse_ = function() {
   var xAxisY = kBounds.y * maxMag / magRange;
   SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y, magPoints);
   SVGUtils.addPointToArray(kXPadding, kBounds.y, magPoints);
+  var gradient = this.group_.defineLFOGradientOrSolid('filterGradient',
+                                                      this.instrument_.filter.lfo,
+                                                      this.lfoController_,
+                                                      kResponseMin,
+                                                      kResponseMax,
+                                                      kResponseColor);
   this.response_.push(SVGUtils.createPolyLine(magPoints,
-                                              "none", 0, this.findGradient_(),
+                                              "none", 0, gradient,
                                               this.group_.svgDoc, this.group_.svg));
   this.drawBackground_(response.noteIndex, xAxisY);
   this.response_.push(SVGUtils.createLine(kXPadding + response.filterIndex, 0,

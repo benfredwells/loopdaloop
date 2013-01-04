@@ -26,17 +26,25 @@ module.LFO.prototype.createController = function(param) {
 module.Oscillator = function(context) {
   this.context_ = context;
   this.type = 'sine';
-  this.lfo = new module.LFO(context);
+  this.vibrato = new module.LFO(context);
+  this.tremolo = new module.LFO(context);
 }
 
 module.Oscillator.prototype.createNode = function(octave, note, paramControllers) {
   var oscillator = this.context_.createOscillator();
   oscillator.frequency.value = ChromaticScale.frequencyForNote(octave, note);
   oscillator.type = this.type;
-  if (this.lfo.enabled) {
-    paramControllers.push(this.lfo.createController(oscillator.frequency));
+  if (this.vibrato.enabled) {
+    paramControllers.push(this.vibrato.createController(oscillator.frequency));
   }
   return oscillator;
+}
+
+module.Oscillator.prototype.createTremoloNode = function(paramControllers) {
+  var gainNode = this.context_.createGainNode();
+//  gainNode.gain.value = 1;
+  paramControllers.push(this.tremolo.createController(gainNode.gain));
+  return gainNode;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,13 +128,19 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
   var oscillator = this.oscillator.createNode(octave, note, paramControllers);
   var gainNode = this.createGainNode_();
   var allNodes = [oscillator, gainNode];
+  var oscillatorOut = oscillator;
+  if (this.oscillator.tremolo.enabled) {
+    oscillatorOut = this.oscillator.createTremoloNode(paramControllers);
+    oscillator.connect(oscillatorOut);
+    allNodes.push(oscillatorOut);
+  }
   if (this.filter.enabled) {
     var filter = this.filter.createNode(octave, note, paramControllers);
     allNodes.push(filter);
-    oscillator.connect(filter);
+    oscillatorOut.connect(filter);
     filter.connect(gainNode);
   } else {
-    oscillator.connect(gainNode);
+    oscillatorOut.connect(gainNode);
   }
   gainNode.connect(this.destinationNode_);
   return new PlayedNote.Note(this.context_, [oscillator], gainNode, allNodes, paramControllers);

@@ -8,7 +8,7 @@ var kTypeRowDef = {title: 'Type',
                    values: ['sine', 'square', 'sawtooth', 'triangle']};
 
 var kVibratoRowDef = {title: 'Vibrato', indent: 0};
-var kTremoloRowDef = {title: 'Vibrato', indent: 0};
+var kTremoloRowDef = {title: 'Tremolo', indent: 0};
 
 module.UI = function(instrument, parent) {
   this.instrument_ = instrument;
@@ -19,7 +19,8 @@ module.UI = function(instrument, parent) {
   var s = SettingsUI.makeSubRow;
   var g = this.group_;
 
-  this.vibratoController_ = g.addLFOController(kVibratoRowDef, instrument.oscillator.lfo);
+  this.vibratoController_ = g.addLFOController(kVibratoRowDef, instrument.oscillator.vibrato);
+  this.tremoloController_ = g.addLFOController(kTremoloRowDef, instrument.oscillator.tremolo);
 
   var ui = this;
   var changeHandler = function() {
@@ -28,18 +29,21 @@ module.UI = function(instrument, parent) {
   }
   this.typeRow_.onchange = changeHandler;
   this.vibratoController_.onchange = changeHandler;
+  this.tremoloController_.onchange = changeHandler;
   this.typeRow_.setValue('sawtooth');
   changeHandler();
 }
 
 module.UI.prototype.updateDisplay_ = function() {
   this.vibratoController_.updateDisplay();
+  this.tremoloController_.updateDisplay();
   this.enableDisable_();
   this.drawWave_();
 }
 
 module.UI.prototype.enableDisable_ = function() {
   this.vibratoController_.enableDisable(true);
+  this.tremoloController_.enableDisable(true);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

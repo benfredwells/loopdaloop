@@ -3,12 +3,14 @@ FilterUI = (function() {
 "use strict";
 var module = {};
 
-var kFilterTypes = ['LOWPASS', 'HIGHPASS', 'BANDPASS', 'LOWSHELF', 'HIGHSHELF',
-                    'PEAKING', 'NOTCH', 'ALLPASS'];
+var kFilterCaptions = ['Low pass', 'High pass', 'Band pass', 'Low shelf',
+                       'High shelf', 'Peaking', 'Notch', 'All pass'];
+var kFilterValues = ['lowpass', 'highpass', 'bandpass', 'lowshelf', 'highshelf',
+                    'peaking', 'notch', 'allpass'];
 var kFilterHasGain = [false, false, false, true, true, true, false, false];
 
 var kEnabledRowDef = {title: 'Enabled'};
-var kTypeRowDef = {title: 'Type', array: kFilterTypes};
+var kTypeRowDef = {title: 'Type', captions: kFilterCaptions, values: kFilterValues};
 var kFreqFactorRowDef = {title: 'Frequency', min: 0.1, max: 10, steps: 10};
 var kLFOControllerDef = {title: 'Oscillate', indent: 1};
 var kQRowDef = {title: 'Q', min: 1, max: 20, steps: 19};
@@ -54,7 +56,7 @@ module.UI = function(instrument, parent) {
 
 module.UI.prototype.setInitialValues_ = function() {
   this.enabledRow_.setValue(true);
-  this.typeRow_.setValue(0);
+  this.typeRow_.setValue('lowpass');
   this.frequencyRow_.setValue(1.2);
   this.lfoController_.enabledRow.setValue(true);
   this.lfoController_.frequencyRow.setValue(3);

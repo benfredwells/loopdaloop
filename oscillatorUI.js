@@ -4,7 +4,8 @@ OscillatorUI = (function() {
 var module = {};
 
 var kTypeRowDef = {title: 'Type',
-                   array: ['SINE', 'SQUARE', 'SAWTOOTH', 'TRIANGLE']};
+                   captions: ['Sine', 'Square', 'Sawtooth', 'Triangle'],
+                   values: ['sine', 'square', 'sawtooth', 'triangle']};
 
 var kVibratoRowDef = {title: 'Vibrato', indent: 0};
 var kTremoloRowDef = {title: 'Vibrato', indent: 0};
@@ -27,7 +28,7 @@ module.UI = function(instrument, parent) {
   }
   this.typeRow_.onchange = changeHandler;
   this.vibratoController_.onchange = changeHandler;
-  this.typeRow_.setValue(2);
+  this.typeRow_.setValue('sawtooth');
   changeHandler();
 }
 
@@ -155,10 +156,10 @@ module.UI.prototype.drawWave_ = function() {
   if (this.waveform_)
     this.group_.svg.removeChild(this.waveform_)
   switch (this.typeRow_.value()) {
-    case "0": this.drawSineWave_(); break;
-    case "1": this.drawSquareWave_(); break;
-    case "2": this.drawSawtoothWave_(); break;
-    case "3": this.drawTriangleWave_(); break;
+    case "sine": this.drawSineWave_(); break;
+    case "square": this.drawSquareWave_(); break;
+    case "sawtooth": this.drawSawtoothWave_(); break;
+    case "triangle": this.drawTriangleWave_(); break;
   }
 }
 

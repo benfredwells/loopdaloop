@@ -117,10 +117,10 @@ module.Group.prototype.addSelectRow = function(selectRowDef) {
 
   row.select = document.createElement('select');
   row.setting_.appendChild(row.select);
-  for (var i = 0; i < selectRowDef.array.length; i++) {
+  for (var i = 0; i < selectRowDef.captions.length; i++) {
     var option = document.createElement('option');
-    option.value = i;
-    option.text = selectRowDef.array[i];
+    option.value = selectRowDef.values[i];
+    option.text = selectRowDef.captions[i];
     row.select.add(option, null);
   }
 

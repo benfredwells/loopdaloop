@@ -25,7 +25,7 @@ module.LFO.prototype.createController = function(param) {
 // Oscillator class
 module.Oscillator = function(context) {
   this.context_ = context;
-  this.type = 0;
+  this.type = 'sine';
   this.lfo = new module.LFO(context);
 }
 
@@ -44,7 +44,7 @@ module.Oscillator.prototype.createNode = function(octave, note, paramControllers
 module.Filter = function(context) {
   this.context_ = context;
   this.enabled = false;
-  this.type = 0;
+  this.type = 'lowpass';
   this.frequencyFactor = 0;
   this.q = 0;
   this.gain = 0;

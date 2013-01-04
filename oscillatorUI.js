@@ -59,6 +59,46 @@ var kWavePeriod = Math.round((kBounds.x - 2 * kWaveXPadding) / kWavePeriods);
 var kWaveYLow = kWaveYPadding + kWaveWidth / 2;
 var kWaveYHigh = kBounds.y - kWaveYPadding - kWaveWidth / 2;
 var kWaveXStart = kWaveXPadding;
+var kResponseMin = "#408040";
+var kResponseMax = "#F0F0F0";
+var kResponseMinVar = 0.05;
+var kResponseFlat = "#90B090";
+var kMinFreqPcnt = 25;  // Min is greater than max, as low frequency maps to
+var kMaxFreqPcnt = 2;   // a large period.
+
+function linearValue(value, exponentialRowDef, linearMin, linearMax) {
+  var exponent = Math.log(value) / Math.log(exponentialRowDef.base);
+  var expMin = exponentialRowDef.minExponent;
+  var expMax = exponentialRowDef.maxExponent;
+  var factor = (linearMax - linearMin) / (expMax - expMin);
+  return (exponent - expMin) * factor + linearMin;
+}
+
+function pcntToStr(val) {
+  return val.toString() + '%';
+}
+
+module.UI.prototype.findGradient_ = function() {
+  if (this.gradient_)
+    this.group_.svg.defs.removeChild(this.gradient_);
+  if (this.instrument_.oscillator.vibrato.enabled) {
+    var gainPos = linearValue(this.instrument_.oscillator.vibrato.gain, this.vibratoController_.gainRowDef, kResponseMinVar, 0.5);
+    var begin = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 - gainPos);
+    var end = SVGUtils.interpolateColors(kResponseMin, kResponseMax, 0.5 + gainPos);
+    var frequencyPcnt = linearValue(this.instrument_.oscillator.vibrato.frequency, this.vibratoController_.freqRowDef, kMinFreqPcnt, kMaxFreqPcnt);
+    var phasePcnt = (this.instrument_.oscillator.vibrato.phase) * frequencyPcnt / Math.PI;
+    this.gradient_ = SVGUtils.createLinearGradient(
+        "vibratoGradient", pcntToStr(phasePcnt), "0%",
+        pcntToStr(phasePcnt + frequencyPcnt), "0", "reflect",
+        this.group_.svgDoc, this.group_.svg);
+    SVGUtils.addStopToGradient("0", begin, this.gradient_, this.group_.svgDoc);
+    SVGUtils.addStopToGradient("1", end, this.gradient_, this.group_.svgDoc);
+    return "url(#vibratoGradient)";
+  } else {
+    delete this.gradient_;
+    return kResponseFlat;
+  }
+}
 
 module.UI.prototype.drawSineWave_ = function() {
   var x = kWaveXStart;
@@ -81,7 +121,7 @@ module.UI.prototype.drawSineWave_ = function() {
                                  x + kWavePeriod / 2 - kCubicFactor, kWaveYLow,
                                  x + kWavePeriod / 2, kWaveYLow);
   this.waveform_ = SVGUtils.createPath(path,
-                                       kWaveColor, kWaveWidth,
+                                       this.findGradient_(), kWaveWidth,
                                        this.group_.svgDoc, this.group_.svg);
 }
 
@@ -107,7 +147,7 @@ module.UI.prototype.drawSquareWave_ = function() {
     x = x - 0.5;
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           kWaveColor, kWaveWidth, "none",
+                                           this.findGradient_(), kWaveWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
@@ -124,7 +164,7 @@ module.UI.prototype.drawTriangleWave_ = function() {
   }
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           kWaveColor, kWaveWidth, "none",
+                                           this.findGradient_(), kWaveWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
@@ -144,7 +184,7 @@ module.UI.prototype.drawSawtoothWave_ = function() {
   var yFinish = kWaveYLow + (1 - kLeadingPeriod) * (kWaveYHigh - kWaveYLow);
   SVGUtils.addPointToArray(x, yFinish, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           kWaveColor, kWaveWidth, "none",
+                                           this.findGradient_(), kWaveWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 

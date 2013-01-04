@@ -3,7 +3,7 @@ var gInstrumentWindow = null;
 chrome.app.runtime.onLaunched.addListener(function() {
   var instrumentParams = {
     width: 360,
-    height: 500,
+    height: 220,
     left: 20,
     top: 100
   };

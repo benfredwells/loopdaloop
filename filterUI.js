@@ -9,7 +9,7 @@ var kFilterHasGain = [false, false, false, true, true, true, false, false];
 
 var kEnabledRowDef = {title: 'Enabled'};
 var kTypeRowDef = {title: 'Type', array: kFilterTypes};
-var kFreqFactorRowDef = {title: 'Frequency', min: 0.5, max: 3, steps: 10};
+var kFreqFactorRowDef = {title: 'Frequency', min: 0.1, max: 10, steps: 10};
 var kLFOControllerDef = {title: 'Oscillate', indent: 1};
 var kQRowDef = {title: 'Q', min: 1, max: 20, steps: 19};
 var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};

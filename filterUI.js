@@ -100,6 +100,7 @@ var kResponseColor = "green";
 var kResponseWidth = 2;
 var kResponseMin = "#408040";
 var kResponseMax = "#F0F0F0";
+var kResponseCenter = 0.5;
 var kResponseFlat = "#90B090";
 var kPhaseWidth = 1;
 var kPhaseColor = "magenta";
@@ -154,6 +155,7 @@ module.UI.prototype.drawResponse_ = function() {
                                                       this.lfoController_,
                                                       kResponseMin,
                                                       kResponseMax,
+                                                      kResponseCenter,
                                                       kResponseColor);
   this.response_.push(SVGUtils.createPolyLine(magPoints,
                                               "none", 0, gradient,

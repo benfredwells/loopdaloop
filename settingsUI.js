@@ -325,13 +325,15 @@ var kMinVar = 0.05;
 var kMinFreqPcnt = 25;  // Min is greater than max, as low frequency maps to
 var kMaxFreqPcnt = 2;   // a large period.
 
-module.Group.prototype.defineLFOGradientOrSolid = function(name, lfo, controller, min, max, flat) {
+module.Group.prototype.defineLFOGradientOrSolid = function(name, lfo, controller, min, max, center, flat) {
   if (this[name])
     this.svg.defs.removeChild(this[name]);
   if (lfo.enabled) {
-    var gainPos = linearValue(lfo.gain, controller.gainRowDef, kMinVar, 0.5);
-    var begin = SVGUtils.interpolateColors(min, max, 0.5 - gainPos);
-    var end = SVGUtils.interpolateColors(min, max, 0.5 + gainPos);
+    var gainPos = linearValue(lfo.gain, controller.gainRowDef, kMinVar, 1);
+    var beginInt = center * (1 - gainPos);
+    var begin = SVGUtils.interpolateColors(min, max, beginInt);
+    var endInt = gainPos - center * (gainPos - 1);
+    var end = SVGUtils.interpolateColors(min, max, endInt);
     var frequencyPcnt = linearValue(lfo.frequency, controller.freqRowDef, kMinFreqPcnt, kMaxFreqPcnt);
     var phasePcnt = lfo.phase * frequencyPcnt / Math.PI;
     var gradient = SVGUtils.createLinearGradient(

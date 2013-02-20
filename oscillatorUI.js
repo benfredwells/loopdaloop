@@ -58,8 +58,9 @@ var kWavePeriod = Math.round((kBounds.x - 2 * kWaveXPadding) / kWavePeriods);
 var kWaveYLow = kWaveYPadding + kWaveWidth / 2;
 var kWaveYHigh = kBounds.y - kWaveYPadding - kWaveWidth / 2;
 var kWaveXStart = kWaveXPadding;
-var kWaveColorMin = "#004000";
-var kWaveColorMax = "#80E080";
+var kWaveColorMin = "#0000F0";
+var kWaveColorMax = "#F08000";
+var kWaveCenter = 0.5;
 var kWaveColorFlat = "#008000";
 
 module.UI.prototype.drawSineWave_ = function(gradient) {
@@ -151,27 +152,29 @@ module.UI.prototype.drawSawtoothWave_ = function(gradient) {
 }
 
 module.UI.prototype.drawWave_ = function() {
-  if (!this.background_) {
-    SVGUtils.createLine(0, kMid.y,
-                        kBounds.x, kMid.y,
-                        kAxisColor, 1,
-                        this.group_.svgDoc, this.group_.svg);
-    this.background_ = true;
-  }
+  if (this.axis_)
+    this.group_.svg.removeChild(this.axis_);
+
+  this.axis_ = SVGUtils.createLine(0, kMid.y,
+                                   kBounds.x, kMid.y,
+                                   kAxisColor, 1,
+                                   this.group_.svgDoc, this.group_.svg);
 
   if (this.waveform_)
-    this.group_.svg.removeChild(this.waveform_)
-  var gradient = this.group_.defineLFOGradientOrSolid('tremoloGradient',
-                                                      this.instrument_.oscillator.vibrato,
-                                                      this.vibratoController_,
-                                                      kWaveColorMin,
-                                                      kWaveColorMax,
-                                                      kWaveColorFlat);
+    this.group_.svg.removeChild(this.waveform_);
+  var vibratoGradient = this.group_.defineLFOGradientOrSolid(
+      'vibratoGradient',
+      this.instrument_.oscillator.vibrato,
+      this.vibratoController_,
+      kWaveColorMin,
+      kWaveColorMax,
+      kWaveCenter,
+      kWaveColorFlat);
   switch (this.typeRow_.value()) {
-    case "sine": this.drawSineWave_(gradient); break;
-    case "square": this.drawSquareWave_(gradient); break;
-    case "sawtooth": this.drawSawtoothWave_(gradient); break;
-    case "triangle": this.drawTriangleWave_(gradient); break;
+    case "sine": this.drawSineWave_(vibratoGradient); break;
+    case "square": this.drawSquareWave_(vibratoGradient); break;
+    case "sawtooth": this.drawSawtoothWave_(vibratoGradient); break;
+    case "triangle": this.drawTriangleWave_(vibratoGradient); break;
   }
 }
 

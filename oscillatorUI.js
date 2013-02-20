@@ -49,19 +49,26 @@ module.UI.prototype.enableDisable_ = function() {
 var kBounds = SettingsUI.kDisplayBounds;
 var kMid = SettingsUI.kDisplayMid;
 var kAxisColor = "#999";
-var kWaveWidth = 2;
+var kWaveStrokeWidth = 2;
 var kWaveXPadding = 12.5;
 var kWaveYPadding = 10;
 // The code assumes the periods is not integral but has an extra half period.
 var kWavePeriods = 7.5;
 var kWavePeriod = Math.round((kBounds.x - 2 * kWaveXPadding) / kWavePeriods);
-var kWaveYLow = kWaveYPadding + kWaveWidth / 2;
-var kWaveYHigh = kBounds.y - kWaveYPadding - kWaveWidth / 2;
+var kWaveWidth = kWavePeriod * kWavePeriods;
+var kWaveYLow = kWaveYPadding + kWaveStrokeWidth / 2;
+var kWaveYHigh = kBounds.y - kWaveYPadding - kWaveStrokeWidth / 2;
 var kWaveXStart = kWaveXPadding;
-var kWaveColorMin = "#0000F0";
-var kWaveColorMax = "#F08000";
+var kWaveColorMin = "#4040FF";
+var kWaveColorMax = "#FF4040";
 var kWaveCenter = 0.5;
 var kWaveColorFlat = "#008000";
+var kBackgroundColorMin = "#F0F0F0";
+var kBackgroundColorMax = "#C0C0C0";
+var kBackgroundCenter = 0.1;
+var kBackgroundColorFlat = "#EEEEEE";
+var kBackgroundXPadding = 4;
+var kBackgroundYPadding = 5;
 
 module.UI.prototype.drawSineWave_ = function(gradient) {
   var x = kWaveXStart;
@@ -84,7 +91,7 @@ module.UI.prototype.drawSineWave_ = function(gradient) {
                                  x + kWavePeriod / 2 - kCubicFactor, kWaveYLow,
                                  x + kWavePeriod / 2, kWaveYLow);
   this.waveform_ = SVGUtils.createPath(path,
-                                       gradient, kWaveWidth,
+                                       gradient, kWaveStrokeWidth,
                                        this.group_.svgDoc, this.group_.svg);
 }
 
@@ -93,7 +100,7 @@ module.UI.prototype.drawSquareWave_ = function(gradient) {
   var points = [];
   SVGUtils.addPointToArray(x, kWaveYHigh, points);
   x = x + kWavePeriod / 4;
-  if (kWaveWidth%2)
+  if (kWaveStrokeWidth%2)
     x = x + 0.5;
   for (var i = 0; i < Math.floor(kWavePeriods); i++) {
     SVGUtils.addPointToArray(x, kWaveYHigh, points);
@@ -106,11 +113,11 @@ module.UI.prototype.drawSquareWave_ = function(gradient) {
   SVGUtils.addPointToArray(x, kWaveYHigh, points);
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   x = x + kWavePeriod / 4;
-  if (kWaveWidth%2)
+  if (kWaveStrokeWidth%2)
     x = x - 0.5;
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           gradient, kWaveWidth, "none",
+                                           gradient, kWaveStrokeWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
@@ -127,7 +134,7 @@ module.UI.prototype.drawTriangleWave_ = function(gradient) {
   }
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           gradient, kWaveWidth, "none",
+                                           gradient, kWaveStrokeWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
@@ -147,11 +154,28 @@ module.UI.prototype.drawSawtoothWave_ = function(gradient) {
   var yFinish = kWaveYLow + (1 - kLeadingPeriod) * (kWaveYHigh - kWaveYLow);
   SVGUtils.addPointToArray(x, yFinish, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           gradient, kWaveWidth, "none",
+                                           gradient, kWaveStrokeWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
 module.UI.prototype.drawWave_ = function() {
+  if (this.background_)
+    this.group_.svg.removeChild(this.background_)
+  var tremoloGradient = this.group_.defineLFOGradientOrSolid(
+      'tremoloGradient',
+      this.instrument_.oscillator.tremolo,
+      this.tremoloController_,
+      kBackgroundColorMin,
+      kBackgroundColorMax,
+      kBackgroundCenter,
+      kBackgroundColorFlat);
+  this.background_ = SVGUtils.createRect(kWaveXStart - kBackgroundYPadding,
+                                         kWaveYLow - kBackgroundYPadding,
+                                         kWaveWidth + kBackgroundXPadding * 2,
+                                         kWaveYHigh - kWaveYLow + kBackgroundYPadding * 2,
+                                         kBackgroundColorFlat, 0, tremoloGradient,
+                                         this.group_.svgDoc, this.group_.svg);
+
   if (this.axis_)
     this.group_.svg.removeChild(this.axis_);
 

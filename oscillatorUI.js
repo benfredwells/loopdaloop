@@ -58,8 +58,8 @@ var kWavePeriod = Math.round((kBounds.x - 2 * kWaveXPadding) / kWavePeriods);
 var kWaveYLow = kWaveYPadding + kWaveWidth / 2;
 var kWaveYHigh = kBounds.y - kWaveYPadding - kWaveWidth / 2;
 var kWaveXStart = kWaveXPadding;
-var kWaveColorMin = "#408040";
-var kWaveColorMax = "#F0F0F0";
+var kWaveColorMin = "#004000";
+var kWaveColorMax = "#80E080";
 var kWaveColorFlat = "#008000";
 
 module.UI.prototype.drawSineWave_ = function(gradient) {

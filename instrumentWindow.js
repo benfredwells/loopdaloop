@@ -5,6 +5,7 @@ var gCurrentNote = null;
 var gControllerManager = null;
 var gOscillatorUI = null;
 var gFilterUI = null;
+var gEnvelopeUI = null;
 var gInstrument = null;
 
 var cHeightPadding = 100;
@@ -26,9 +27,13 @@ function init() {
   gFilterUI = new FilterUI.UI(
       gInstrument,
       document.getElementById('settings'));
+  gEnvelopeUI = new EnvelopeUI.UI(
+      gInstrument,
+      document.getElementById('settings'));
 
   gOscillatorUI.onresize = updateSize;
   gFilterUI.onresize = updateSize;
+  gEnvelopeUI.onresize = updateSize;
   updateSize();
 
   // Defined by background page.
@@ -38,6 +43,7 @@ function init() {
 function updateSize() {
   var height = gOscillatorUI.element.clientHeight +
                gFilterUI.element.clientHeight +
+               gEnvelopeUI.element.clientHeight +
                cHeightPadding;
   window.resizeTo(window.outerWidth, height);
 }

@@ -3,7 +3,7 @@ var gInstrumentWindow = null;
 chrome.app.runtime.onLaunched.addListener(function() {
   var instrumentParams = {
     width: 360,
-    height: 220,
+    height: 320,
     left: 20,
     top: 100
   };
@@ -33,6 +33,7 @@ function showKeyboard() {
     win.contentWindow.gControllerManager = c.gControllerManager;
     win.contentWindow.gOscillatorUI = c.gOscillatorUI;
     win.contentWindow.gFilterUI = c.gFilterUI;
+    win.contentWindow.gEnvelopeUI = c.gEnvelopeUI;
     win.contentWindow.gInstrument = c.gInstrument;
   });
 }

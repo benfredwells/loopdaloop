@@ -106,6 +106,17 @@ module.Filter.prototype.getFrequencyResponse = function(minHz, maxHz, steps) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+module.Envelope = function() {
+  this.attackDelay = 0;
+  this.attack = 0;
+  this.attackHold = 0;
+  this.decay = 0;
+  this.sustain = 1;
+  this.sustainHold = 0;
+  this.release = 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Instrument class
 
 module.Instrument = function(context, destinationNode) {
@@ -113,6 +124,7 @@ module.Instrument = function(context, destinationNode) {
   this.destinationNode_ = destinationNode;
   this.oscillator = new module.Oscillator(context);
   this.filter = new module.Filter(context);
+  this.envelope = new module.Envelope();
 }
 
 module.Instrument.prototype.createGainNode_ = function() {

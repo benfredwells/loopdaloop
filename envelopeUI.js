@@ -3,27 +3,63 @@ EnvelopeUI = (function() {
 "use strict";
 var module = {};
 
-var kAttackDelayRowDef = {title: 'AttackDelay', base: 10, minExponent: -1, maxExponent:1, steps: 10};
+var kAttackDelayRowDef = {title: 'Attack Delay', base: 10, minExponent: -2, maxExponent:1, steps: 10};
+var kAttackRowDef = {title: 'Attack', base: 10, minExponent: -2, maxExponent:1, steps: 10};
+var kAttackHoldRowDef = {title: 'Attack Hold', base: 10, minExponent: -2, maxExponent:1, steps: 10};
+var kDecayRowDef = {title: 'Decay', base: 10, minExponent: -2, maxExponent:1, steps: 10};
+var kSustainRowDef = {title: 'Sustain', min: 0, max: 1, steps: 20};
+var kSustainHoldRowDef = {title: 'Sustain Hold', base: 10, minExponent: -2, maxExponent:1, steps: 10};
+var kReleaseRowDef = {title: 'Release', base: 10, minExponent: -2, maxExponent:1, steps: 10};
 
 module.UI = function(instrument, parent) {
   this.instrument_ = instrument;
 
   this.group_ = new SettingsUI.Group(parent, 'Envelope', this);
   this.attackDelayRow_ = this.group_.addExponentialRangeRow(kAttackDelayRowDef);
+  this.attackRow_ = this.group_.addExponentialRangeRow(kAttackRowDef);
+  this.attackHoldRow_ = this.group_.addExponentialRangeRow(kAttackHoldRowDef);
+  this.decayRow_ = this.group_.addExponentialRangeRow(kDecayRowDef);
+  this.sustainRow_ = this.group_.addLinearRangeRow(kSustainRowDef);
+  this.sustainHoldRow_ = this.group_.addExponentialRangeRow(kSustainHoldRowDef);
+  this.releaseRow_ = this.group_.addExponentialRangeRow(kReleaseRowDef);
 
   var ui = this;
   var changeHandler = function() {
     ui.instrument_.envelope.attackDelay = ui.attackDelayRow_.value();
+    ui.instrument_.envelope.attack = ui.attackRow_.value();
+    ui.instrument_.envelope.attackHold = ui.attackHoldRow_.value();
+    ui.instrument_.envelope.decay = ui.decayRow_.value();
+    ui.instrument_.envelope.sustain = ui.sustainRow_.value();
+    ui.instrument_.envelope.sustainHold = ui.sustainHoldRow_.value();
+    ui.instrument_.envelope.release = ui.releaseRow_.value();
     ui.updateDisplay_();
   }
   this.attackDelayRow_.onchange = changeHandler;
-  this.attackDelayRow_.setValue('0.1');
+  this.attackRow_.onchange = changeHandler;
+  this.attackHoldRow_.onchange = changeHandler;
+  this.decayRow_.onchange = changeHandler;
+  this.sustainRow_.onchange = changeHandler;
+  this.sustainHoldRow_.onchange = changeHandler;
+  this.releaseRow_.onchange = changeHandler;
+  this.attackDelayRow_.setValue('0.01');
+  this.attackRow_.setValue('0.01');
+  this.attackHoldRow_.setValue('0.01');
+  this.decayRow_.setValue('0.01');
+  this.sustainRow_.setValue('0.5');
+  this.sustainHoldRow_.setValue('0.01');
+  this.releaseRow_.setValue('0.01');
   changeHandler();
 }
 
 module.UI.prototype.updateDisplay_ = function() {
   var r = SettingsUI.roundForDisplay;
   this.attackDelayRow_.setLabel(r(this.attackDelayRow_.value()) + ' s');
+  this.attackRow_.setLabel(r(this.attackRow_.value()) + ' s');
+  this.attackHoldRow_.setLabel(r(this.attackHoldRow_.value()) + ' s');
+  this.decayRow_.setLabel(r(this.decayRow_.value()) + ' s');
+  this.sustainRow_.setLabel(r(this.sustainRow_.value() * 100) + '%');
+  this.sustainHoldRow_.setLabel(r(this.sustainHoldRow_.value()) + ' s');
+  this.releaseRow_.setLabel(r(this.releaseRow_.value()) + ' s');
 //  this.drawWave_();
 }
 

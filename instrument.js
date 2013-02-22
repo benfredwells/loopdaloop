@@ -106,17 +106,6 @@ module.Filter.prototype.getFrequencyResponse = function(minHz, maxHz, steps) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-module.Envelope = function() {
-  this.attackDelay = 0;
-  this.attack = 0;
-  this.attackHold = 0;
-  this.decay = 0;
-  this.sustain = 1;
-  this.sustainHold = 0;
-  this.release = 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // Instrument class
 
 module.Instrument = function(context, destinationNode) {
@@ -124,21 +113,15 @@ module.Instrument = function(context, destinationNode) {
   this.destinationNode_ = destinationNode;
   this.oscillator = new module.Oscillator(context);
   this.filter = new module.Filter(context);
-  this.envelope = new module.Envelope();
-}
-
-module.Instrument.prototype.createGainNode_ = function() {
-  var gainNode = this.context_.createGainNode();
-  gainNode.gain.setValueAtTime(0, this.context_.currentTime);
-  gainNode.gain.setTargetValueAtTime(1, this.context_.currentTime, 0.1);
-  return gainNode;
+  this.envelope = new PlayedNote.Envelope();
+  console.log(this.envelope);
 }
 
 // Public methods
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
   var paramControllers = [];
   var oscillator = this.oscillator.createNode(octave, note, paramControllers);
-  var gainNode = this.createGainNode_();
+  var gainNode = this.context_.createGainNode();
   var allNodes = [oscillator, gainNode];
   var oscillatorOut = oscillator;
   if (this.oscillator.tremolo.enabled) {
@@ -155,7 +138,8 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
     oscillatorOut.connect(gainNode);
   }
   gainNode.connect(this.destinationNode_);
-  return new PlayedNote.Note(this.context_, [oscillator], gainNode, allNodes, paramControllers);
+  console.log(this.envelope);
+  return new PlayedNote.Note(this.context_, [oscillator], gainNode, allNodes, this.envelope, paramControllers);
 }
 
 return module;

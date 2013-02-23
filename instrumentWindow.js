@@ -4,7 +4,8 @@ var gContext = null;
 var gCurrentNote = null;
 var gControllerManager = null;
 var gOscillatorUI = null;
-var gFilterUI = null;
+var gFilter0UI = null;
+var gFilter1UI = null;
 var gEnvelopeUI = null;
 var gInstrument = null;
 
@@ -24,15 +25,19 @@ function init() {
   gOscillatorUI = new OscillatorUI.UI(
       gInstrument,
       document.getElementById('settings'));
-  gFilterUI = new FilterUI.UI(
-      gInstrument,
+  gFilter0UI = new FilterUI.UI(
+      gInstrument.filters[0],
+      document.getElementById('settings'));
+  gFilter1UI = new FilterUI.UI(
+      gInstrument.filters[1],
       document.getElementById('settings'));
   gEnvelopeUI = new EnvelopeUI.UI(
       gInstrument,
       document.getElementById('settings'));
 
   gOscillatorUI.onresize = updateSize;
-  gFilterUI.onresize = updateSize;
+  gFilter0UI.onresize = updateSize;
+  gFilter1UI.onresize = updateSize;
   gEnvelopeUI.onresize = updateSize;
   updateSize();
 
@@ -42,7 +47,8 @@ function init() {
 
 function updateSize() {
   var height = gOscillatorUI.element.clientHeight +
-               gFilterUI.element.clientHeight +
+               gFilter0UI.element.clientHeight +
+               gFilter1UI.element.clientHeight +
                gEnvelopeUI.element.clientHeight +
                cHeightPadding;
   window.resizeTo(window.outerWidth, height);

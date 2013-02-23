@@ -3,6 +3,8 @@ Instrument = (function() {
 "use strict";
 var module = {};
 
+var kFilterCount = 2;
+
 ////////////////////////////////////////////////////////////////////////////////
 // LFO class
 module.LFO = function (context) {
@@ -112,9 +114,11 @@ module.Instrument = function(context, destinationNode) {
   this.context_ = context;
   this.destinationNode_ = destinationNode;
   this.oscillator = new module.Oscillator(context);
-  this.filter = new module.Filter(context);
+  this.filters = [];
+  for (var i = 0; i < kFilterCount; i++) {
+    this.filters.push(new module.Filter(context));
+  }
   this.envelope = new PlayedNote.Envelope();
-  console.log(this.envelope);
 }
 
 module.Instrument.prototype._addFilterNodes = function(filter, octave, note, allNodes, paramControllers, lastNode) {
@@ -140,10 +144,11 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
     oscillator.connect(oscillatorOut);
     allNodes.push(oscillatorOut);
   }
-  var nextNode = this._addFilterNodes(this.filter, octave, note, allNodes, paramControllers, oscillatorOut);
+  var nextNode = this._addFilterNodes(this.filters[0], octave, note, allNodes, paramControllers, oscillatorOut);
+  nextNode.connect(gainNode);
+  nextNode = this._addFilterNodes(this.filters[1], octave, note, allNodes, paramControllers, oscillatorOut);
   nextNode.connect(gainNode);
   gainNode.connect(this.destinationNode_);
-  console.log(this.envelope);
   return new PlayedNote.Note(this.context_, [oscillator], gainNode, allNodes, this.envelope, paramControllers);
 }
 

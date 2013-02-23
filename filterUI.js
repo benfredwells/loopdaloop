@@ -11,13 +11,13 @@ var kFilterHasGain = [false, false, false, true, true, true, false, false];
 
 var kEnabledRowDef = {title: 'Enabled'};
 var kTypeRowDef = {title: 'Type', captions: kFilterCaptions, values: kFilterValues};
-var kFreqFactorRowDef = {title: 'Frequency', min: 0.1, max: 10, steps: 10};
+var kFreqFactorRowDef = {title: 'Frequency', min: 0.1, max: 10, steps: 100};
 var kLFOControllerDef = {title: 'Oscillate', indent: 1};
 var kQRowDef = {title: 'Q', min: 0, max: 20, steps: 20};
 var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 
-module.UI = function(instrument, parent) {
-  this.instrument_ = instrument;
+module.UI = function(filter, parent) {
+  this.filter_ = filter;
 
   this.group_ = new SettingsUI.Group(parent, 'Filter', this);
   var s = SettingsUI.makeSubRow;
@@ -27,17 +27,17 @@ module.UI = function(instrument, parent) {
   this.enabledRow_ = g.addCheckRow(kEnabledRowDef);
   this.typeRow_ = s(g.addSelectRow(kTypeRowDef));
   this.frequencyRow_ = s(g.addLinearRangeRow(kFreqFactorRowDef));
-  this.lfoController_ = g.addLFOController(kLFOControllerDef, instrument.filter.lfo);
+  this.lfoController_ = g.addLFOController(kLFOControllerDef, filter.lfo);
   this.qRow_ = s(g.addLinearRangeRow(kQRowDef));
   this.gainRow_ = s(g.addLinearRangeRow(kGainRowDef));
 
   var ui = this;
-  var changeHandler = function() {
-    ui.instrument_.filter.enabled = ui.enabledRow_.value();
-    ui.instrument_.filter.type = ui.typeRow_.value();
-    ui.instrument_.filter.frequencyFactor = ui.frequencyRow_.value();
-    ui.instrument_.filter.q = ui.qRow_.value();
-    ui.instrument_.filter.gain = ui.gainRow_.value();
+  var changeHandler = function  () {
+    ui.filter_.enabled = ui.enabledRow_.value();
+    ui.filter_.type = ui.typeRow_.value();
+    ui.filter_.frequencyFactor = ui.frequencyRow_.value();
+    ui.filter_.q = ui.qRow_.value();
+    ui.filter_.gain = ui.gainRow_.value();
     ui.updateDisplay_();
   }
 
@@ -132,12 +132,12 @@ module.UI.prototype.drawResponse_ = function() {
     ui.group_.svg.removeChild(child);
   });
   this.response_ = [];
-  if (!this.instrument_.filter.enabled)
+  if (!this.filter_.enabled)
     return;
 
   var magPoints = [];
   var phasePoints = [];
-  var response = this.instrument_.filter.getFrequencyResponse(kFreqStart, kFreqEnd, kXRange);
+  var response = this.filter_.getFrequencyResponse(kFreqStart, kFreqEnd, kXRange);
   var maxMag = gainToDB(response.maxMag) + kMaxMagPadding;
   var magRange = maxMag - kMinMag;
   for (var i = 0; i < response.mag.length; i++) {
@@ -151,7 +151,7 @@ module.UI.prototype.drawResponse_ = function() {
   SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y, magPoints);
   SVGUtils.addPointToArray(kXPadding, kBounds.y, magPoints);
   var gradient = this.group_.defineLFOGradientOrSolid('filterGradient',
-                                                      this.instrument_.filter.lfo,
+                                                      this.filter_.lfo,
                                                       this.lfoController_,
                                                       kResponseMin,
                                                       kResponseMax,

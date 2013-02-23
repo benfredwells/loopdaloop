@@ -117,6 +117,17 @@ module.Instrument = function(context, destinationNode) {
   console.log(this.envelope);
 }
 
+module.Instrument.prototype._addFilterNodes = function(filter, octave, note, allNodes, paramControllers, lastNode) {
+  if (filter.enabled) {
+    var filterNode = filter.createNode(octave, note, paramControllers);
+    allNodes.push(filterNode);
+    lastNode.connect(filterNode);
+    return filterNode;
+  } else {
+    return lastNode;
+  }
+}
+
 // Public methods
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
   var paramControllers = [];
@@ -129,14 +140,8 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
     oscillator.connect(oscillatorOut);
     allNodes.push(oscillatorOut);
   }
-  if (this.filter.enabled) {
-    var filter = this.filter.createNode(octave, note, paramControllers);
-    allNodes.push(filter);
-    oscillatorOut.connect(filter);
-    filter.connect(gainNode);
-  } else {
-    oscillatorOut.connect(gainNode);
-  }
+  var nextNode = this._addFilterNodes(this.filter, octave, note, allNodes, paramControllers, oscillatorOut);
+  nextNode.connect(gainNode);
   gainNode.connect(this.destinationNode_);
   console.log(this.envelope);
   return new PlayedNote.Note(this.context_, [oscillator], gainNode, allNodes, this.envelope, paramControllers);

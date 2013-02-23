@@ -16,10 +16,11 @@ var kLFOControllerDef = {title: 'Oscillate', indent: 1};
 var kQRowDef = {title: 'Q', min: 0, max: 20, steps: 20};
 var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 
-module.UI = function(filter, parent) {
+module.UI = function(filter, title, parent) {
   this.filter_ = filter;
+  this.title_ = title;
 
-  this.group_ = new SettingsUI.Group(parent, 'Filter', this);
+  this.group_ = new SettingsUI.Group(parent, title, this);
   var s = SettingsUI.makeSubRow;
   var ss = SettingsUI.makeSubSubRow;
   var g = this.group_;
@@ -150,7 +151,9 @@ module.UI.prototype.drawResponse_ = function() {
   var xAxisY = kBounds.y * maxMag / magRange;
   SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y, magPoints);
   SVGUtils.addPointToArray(kXPadding, kBounds.y, magPoints);
-  var gradient = this.group_.defineLFOGradientOrSolid('filterGradient',
+  var gradientName = this.title_ + 'Gradient';
+  gradientName = gradientName.replace(' ', '');
+  var gradient = this.group_.defineLFOGradientOrSolid(gradientName,
                                                       this.filter_.lfo,
                                                       this.lfoController_,
                                                       kResponseMin,

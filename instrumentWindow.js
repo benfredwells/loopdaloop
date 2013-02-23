@@ -26,10 +26,10 @@ function init() {
       gInstrument,
       document.getElementById('settings'));
   gFilter0UI = new FilterUI.UI(
-      gInstrument.filters[0],
+      gInstrument.filters[0], 'Filter A',
       document.getElementById('settings'));
   gFilter1UI = new FilterUI.UI(
-      gInstrument.filters[1],
+      gInstrument.filters[1], 'Filter B',
       document.getElementById('settings'));
   gEnvelopeUI = new EnvelopeUI.UI(
       gInstrument,

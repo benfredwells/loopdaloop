@@ -13,7 +13,7 @@ var kEnabledRowDef = {title: 'Enabled'};
 var kTypeRowDef = {title: 'Type', captions: kFilterCaptions, values: kFilterValues};
 var kFreqFactorRowDef = {title: 'Frequency', min: 0.1, max: 10, steps: 10};
 var kLFOControllerDef = {title: 'Oscillate', indent: 1};
-var kQRowDef = {title: 'Q', min: 1, max: 20, steps: 19};
+var kQRowDef = {title: 'Q', min: 0, max: 20, steps: 20};
 var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 
 module.UI = function(instrument, parent) {

@@ -3,10 +3,7 @@
 var gContext = null;
 var gCurrentNote = null;
 var gControllerManager = null;
-var gOscillatorUI = null;
-var gFilter0UI = null;
-var gFilter1UI = null;
-var gEnvelopeUI = null;
+var gInstrumentUIs = [];
 var gInstrument = null;
 
 var cHeightPadding = 100;
@@ -22,23 +19,22 @@ function init() {
   gInstrument = new Instrument.Instrument(gContext, compressor);
 
   // Instrument UI setup
-  gOscillatorUI = new OscillatorUI.UI(
+  gInstrumentUIs.push(new OscillatorUI.UI(
       gInstrument,
-      document.getElementById('settings'));
-  gFilter0UI = new FilterUI.UI(
+      document.getElementById('settings')));
+  gInstrumentUIs.push(new FilterUI.UI(
       gInstrument.filters[0], 'Filter A',
-      document.getElementById('settings'));
-  gFilter1UI = new FilterUI.UI(
+      document.getElementById('settings')));
+  gInstrumentUIs.push(new FilterUI.UI(
       gInstrument.filters[1], 'Filter B',
-      document.getElementById('settings'));
-  gEnvelopeUI = new EnvelopeUI.UI(
+      document.getElementById('settings')));
+  gInstrumentUIs.push(new EnvelopeUI.UI(
       gInstrument,
-      document.getElementById('settings'));
+      document.getElementById('settings')));
 
-  gOscillatorUI.onCollapseChanged = collapseChanged;
-  gFilter0UI.onCollapseChanged = collapseChanged;
-  gFilter1UI.onCollapseChanged = collapseChanged;
-  gEnvelopeUI.onCollapseChanged = collapseChanged;
+  gInstrumentUIs.forEach(function (ui) {
+    ui.onCollapseChanged = collapseChanged;
+  });
   updateSize();
 
   // Defined by background page.
@@ -46,23 +42,19 @@ function init() {
 }
 
 function collapseChanged(sender) {
-  if (gOscillatorUI != sender)
-    gOscillatorUI.setCollapsed(true);
-  if (gFilter0UI != sender)
-    gFilter0UI.setCollapsed(true);
-  if (gFilter1UI != sender)
-    gFilter1UI.setCollapsed(true);
-  if (gEnvelopeUI != sender)
-    gEnvelopeUI.setCollapsed(true);
+  gInstrumentUIs.forEach(function (ui) {
+    if (ui != sender)
+      ui.setCollapsed(true);
+  });
   updateSize();
 }
 
 function updateSize() {
-  var height = gOscillatorUI.element.clientHeight +
-               gFilter0UI.element.clientHeight +
-               gFilter1UI.element.clientHeight +
-               gEnvelopeUI.element.clientHeight +
-               cHeightPadding;
+  var height = 0;
+  gInstrumentUIs.forEach(function(ui) {
+    height = height + ui.element.clientHeight;
+  });
+  height = height + cHeightPadding;
   window.resizeTo(window.outerWidth, height);
 }
 

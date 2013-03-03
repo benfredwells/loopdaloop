@@ -45,8 +45,12 @@ module.Group = function(parent, title, owner) {
   var ui = this;
   this.heading_.onclick = function() {
     ui.details_.hidden = !ui.details_.hidden;
-    if (owner.onresize)
-      owner.onresize();
+    if (owner.onCollapseChanged)
+      owner.onCollapseChanged(owner);
+  }
+
+  owner.setCollapsed = function(collapsed) {
+    ui.details_.hidden = collapsed;
   }
 }
 

@@ -28,12 +28,6 @@ function showKeyboard() {
 
   chrome.app.window.create('keyboardWindow.html', keyboardParams, function(win) {
     c = gInstrumentWindow.contentWindow;
-    win.contentWindow.gContext = c.gContext;
-    win.contentWindow.gCurrentNote = c.gCurrentNote;
-    win.contentWindow.gControllerManager = c.gControllerManager;
-    win.contentWindow.gOscillatorUI = c.gOscillatorUI;
-    win.contentWindow.gFilterUI = c.gFilterUI;
-    win.contentWindow.gEnvelopeUI = c.gEnvelopeUI;
     win.contentWindow.gInstrument = c.gInstrument;
   });
 }

@@ -35,14 +35,26 @@ function init() {
       gInstrument,
       document.getElementById('settings'));
 
-  gOscillatorUI.onresize = updateSize;
-  gFilter0UI.onresize = updateSize;
-  gFilter1UI.onresize = updateSize;
-  gEnvelopeUI.onresize = updateSize;
+  gOscillatorUI.onCollapseChanged = collapseChanged;
+  gFilter0UI.onCollapseChanged = collapseChanged;
+  gFilter1UI.onCollapseChanged = collapseChanged;
+  gEnvelopeUI.onCollapseChanged = collapseChanged;
   updateSize();
 
   // Defined by background page.
   window.showKeyboard();
+}
+
+function collapseChanged(sender) {
+  if (gOscillatorUI != sender)
+    gOscillatorUI.setCollapsed(true);
+  if (gFilter0UI != sender)
+    gFilter0UI.setCollapsed(true);
+  if (gFilter1UI != sender)
+    gFilter1UI.setCollapsed(true);
+  if (gEnvelopeUI != sender)
+    gEnvelopeUI.setCollapsed(true);
+  updateSize();
 }
 
 function updateSize() {

@@ -3,8 +3,8 @@ var gKeyboardWindow = null;
 
 chrome.app.runtime.onLaunched.addListener(function() {
   if (gInstrumentWindow && gKeyboardWindow) {
-    gInstrumentWindow.contentWindow.focus();
-    gKeyboardWindow.contentWindow.focus();
+    gInstrumentWindow.focus();
+    gKeyboardWindow.focus();
   }
 
   var instrumentParams = {

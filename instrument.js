@@ -44,7 +44,6 @@ module.Oscillator.prototype.createNode = function(octave, note, paramControllers
 
 module.Oscillator.prototype.createTremoloNode = function(paramControllers) {
   var gainNode = this.context_.createGainNode();
-//  gainNode.gain.value = 1;
   paramControllers.push(this.tremolo.createController(gainNode.gain));
   return gainNode;
 }
@@ -75,10 +74,7 @@ module.Filter.prototype.createNode = function(octave, note, paramControllers) {
   return filter;
 }
 
-module.Filter.prototype.getFrequencyResponse = function(minHz, maxHz, steps) {
-  // For purposes of getting frequency response, assume middle C.
-  var octave = 4;
-  var note = 0;
+module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, maxHz, steps) {
   var node = this.createNode(octave, note);
   // Set up buffers
   var response = {};
@@ -90,6 +86,8 @@ module.Filter.prototype.getFrequencyResponse = function(minHz, maxHz, steps) {
   var currentHz = minHz;
   response.noteFrequency = ChromaticScale.frequencyForNote(octave, note);
   response.filterFrequency = response.noteFrequency * this.frequencyFactor;
+  response.numHarmonics = 0;
+  response.harmonics = [];
   for (var i = 0; i < steps; ++i) {
     response.frequencies[i] = currentHz;
     currentHz = currentHz * factor;
@@ -97,6 +95,10 @@ module.Filter.prototype.getFrequencyResponse = function(minHz, maxHz, steps) {
       response.noteIndex = i;
     if (currentHz < response.filterFrequency)
       response.filterIndex = i;
+    if (currentHz > (response.numHarmonics + 1) * response.noteFrequency) {
+      response.harmonics.push(i - 1);
+      response.numHarmonics++;
+    }
   }
   node.getFrequencyResponse(response.frequencies, response.mag, response.phase);
   response.maxMag = 0;

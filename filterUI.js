@@ -93,20 +93,21 @@ var kXPadding = 12.5;
 var kXRange = kBounds.x - (2 * kXPadding);
 var kMaxMagPadding = 1;
 var kMinMag = -20;
-var kFreqStart = 10;
-var kFreqEnd = 15000;
+var kFreqStart = 200;
+var kFreqEnd = 5000;
+var kFreqOctave = 4;
+var kFreqNote = 0;
 var kAxisColor = "#999";
 var kAxisWidth = 1;
+var kOddHarmonicColor = "#BBB";
+var kEvenHarmonicColor = "#AAA";
 var kResponseColor = "green";
 var kResponseWidth = 2;
-var kResponseMin = "#408040";
-var kResponseMax = "#F0F0F0";
-var kResponseCenter = 0.5;
 var kResponseFlat = "#90B090";
 var kPhaseWidth = 1;
 var kPhaseColor = "magenta";
 
-module.UI.prototype.drawBackground_ = function(noteIndex, xAxisY) {
+module.UI.prototype.drawBackground_ = function(response, xAxisY) {
   this.response_.push(SVGUtils.createLine(0, xAxisY + 0.5,
                                           kBounds.x, xAxisY + 0.5,
                                           kAxisColor, kAxisWidth,
@@ -115,10 +116,16 @@ module.UI.prototype.drawBackground_ = function(noteIndex, xAxisY) {
                                           kXPadding, kBounds.y,
                                           kAxisColor, kAxisWidth,
                                           this.group_.svgDoc, this.group_.svg));
-  this.response_.push(SVGUtils.createLine(kXPadding + noteIndex, 0,
-                                          kXPadding + noteIndex, kBounds.y,
-                                          kAxisColor, kAxisWidth,
-                                          this.group_.svgDoc, this.group_.svg));
+  for (var i = 0; i < response.numHarmonics; i++) {
+    var noteIndex = response.harmonics[i];
+    var color = kEvenHarmonicColor;
+    if (i % 2 == 1)
+      color = kOddHarmonicColor;
+    this.response_.push(SVGUtils.createLine(kXPadding + noteIndex, 0,
+                                            kXPadding + noteIndex, kBounds.y,
+                                            color, kAxisWidth,
+                                            this.group_.svgDoc, this.group_.svg));
+  }
 }
 
 function gainToDB(gain) {
@@ -138,7 +145,11 @@ module.UI.prototype.drawResponse_ = function() {
 
   var magPoints = [];
   var phasePoints = [];
-  var response = this.filter_.getFrequencyResponse(kFreqStart, kFreqEnd, kXRange);
+  var response = this.filter_.getFrequencyResponse(kFreqOctave,
+                                                   kFreqNote,
+                                                   kFreqStart,
+                                                   kFreqEnd,
+                                                   kXRange);
   var maxMag = gainToDB(response.maxMag) + kMaxMagPadding;
   var magRange = maxMag - kMinMag;
   for (var i = 0; i < response.mag.length; i++) {
@@ -153,17 +164,10 @@ module.UI.prototype.drawResponse_ = function() {
   SVGUtils.addPointToArray(kXPadding, kBounds.y, magPoints);
   var gradientName = this.title_ + 'Gradient';
   gradientName = gradientName.replace(' ', '');
-  var gradient = this.group_.defineLFOGradientOrSolid(gradientName,
-                                                      this.filter_.lfo,
-                                                      this.lfoController_,
-                                                      kResponseMin,
-                                                      kResponseMax,
-                                                      kResponseCenter,
-                                                      kResponseColor);
   this.response_.push(SVGUtils.createPolyLine(magPoints,
-                                              "none", 0, gradient,
+                                              "none", 0, kResponseFlat,
                                               this.group_.svgDoc, this.group_.svg));
-  this.drawBackground_(response.noteIndex, xAxisY);
+  this.drawBackground_(response, xAxisY);
   this.response_.push(SVGUtils.createLine(kXPadding + response.filterIndex, 0,
                                           kXPadding + response.filterIndex, kBounds.y,
                                           kResponseColor, kAxisWidth,

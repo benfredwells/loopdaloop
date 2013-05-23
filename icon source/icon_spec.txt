@@ -1,0 +1,13 @@
+all details for 128
+
+icon gradient: start at 16, 16, go to 24, 48.
+bg color: 00a500
+highlight layer mask: 30%
+border width: 4
+corner outer radius: 24
+top height (incl. border): 48
+edge white key width: 24
+white key width: 16
+white key gap width: 2
+black key width: 14
+black key height: 52

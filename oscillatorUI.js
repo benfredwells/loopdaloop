@@ -169,7 +169,7 @@ module.UI.prototype.drawWave_ = function() {
       kBackgroundColorMax,
       kBackgroundCenter,
       kBackgroundColorFlat);
-  this.background_ = SVGUtils.createRect(kWaveXStart - kBackgroundYPadding,
+  this.background_ = SVGUtils.createRect(kWaveXStart - kBackgroundXPadding,
                                          kWaveYLow - kBackgroundYPadding,
                                          kWaveWidth + kBackgroundXPadding * 2,
                                          kWaveYHigh - kWaveYLow + kBackgroundYPadding * 2,

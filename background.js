@@ -31,9 +31,7 @@ function showKeyboard() {
     width: 800,
     height: 400,
     minWidth: 800,
-    maxWidth: 800,
     minHeight: 400,
-    maxHeight: 400,
     left: 400,
     top: 100,
     id: 'keyboard'

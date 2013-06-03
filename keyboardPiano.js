@@ -10,6 +10,7 @@ var kKeyIsWhite = [true, false, true, false, true, true, false,
 var kKeyOffset = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12];
 var kKeyOctaveOffset = 14;
 var kTextOffset = 30;
+var kKeyboardHeightGap = 150;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private
@@ -19,6 +20,26 @@ function asPixels(num) {
 
 function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
   var key = this;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Sizing
+  key.resize = function() {
+    var isWhite = kKeyIsWhite[note];
+    var offset = octaveDelta * kKeyOctaveOffset + kKeyOffset[note % 12];
+    offset = (offset + 1) * (key.keyboard_.whiteKeyWidth_ / 2) + keyboard.left_;
+    var height;
+    if (isWhite) {
+      height = key.keyboard_.whiteKeyHeight_;
+      key.element_.style.width = asPixels(key.keyboard_.whiteKeyWidth_);
+      key.element_.style.left = asPixels(offset - (key.keyboard_.whiteKeyWidth_ / 2));
+    } else {
+      height = key.keyboard_.blackKeyHeight_;
+      key.element_.style.width = asPixels(key.keyboard_.blackKeyWidth_);
+      key.element_.style.left = asPixels(offset - (key.keyboard_.blackKeyWidth_ / 2));
+    }
+    key.element_.style.height = asPixels(height);
+    key.text_.style.top = asPixels(height - kTextOffset);
+  }
 
   //////////////////////////////////////////////////////////////////////////////
   // Key events
@@ -78,32 +99,24 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
   // Create UI
   var isWhite = kKeyIsWhite[note];
   var offset = octaveDelta * kKeyOctaveOffset + kKeyOffset[note % 12];
-  offset = (offset + 1) * (key.keyboard_.whiteKeyWidth_ / 2) + keyboard.left_;
   var el = document.createElement('div');
   el.classList.add('key');
-  var height;
   if (isWhite) {
     el.classList.add('white');
-    height = key.keyboard_.whiteKeyHeight_;
-    el.style.width = asPixels(key.keyboard_.whiteKeyWidth_);
-    el.style.left = asPixels(offset - (key.keyboard_.whiteKeyWidth_ / 2));
   } else {
     el.classList.add('black');
-    height = key.keyboard_.blackKeyHeight_;
-    el.style.width = asPixels(key.keyboard_.blackKeyWidth_);
-    el.style.left = asPixels(offset - (key.keyboard_.blackKeyWidth_ / 2));
   }
-  el.style.height = asPixels(height);
   var text = document.createElement('span');
   text.innerHTML = keyChar;
-  text.style.top = asPixels(height - kTextOffset);
+  text.key_ = key;
   el.appendChild(text);
   el.onmouseover = key.mouseOver;
   el.onmousedown = key.mouseDown;
   el.onmouseup = key.mouseUp;
+  el.key_ = key;
   key.keyboard_.div_.appendChild(el);
-
   key.element_ = el;
+  key.text_ = text;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,22 +152,72 @@ module.Piano = function(startOctave, instrument, div) {
 
   //////////////////////////////////////////////////////////////////////////////
   // Keyboard events.
-  keyboard.onKeyDown = function(event) {
+  keyboard.keyDown = function(event) {
     keyboard.keys_.forEach(function(key) {
       key.down(event);
     });
   }
 
-  keyboard.onKeyUp = function(event) {
+  keyboard.keyUp = function(event) {
     keyboard.keys_.forEach(function(key) {
       key.up(event);
     });
   }
 
-  keyboard.onMouseUp = function(event) {
+  keyboard.mouseUp = function(event) {
     keyboard.mouseDown_ = false;
     if (keyboard.mouseKey_)
       keyboard.mouseKey_.stopPlaying();
+  }
+  
+  keyboard.updateTouchKeys = function(event) {
+    var oldTouchKeys = keyboard.touchKeys_;
+    keyboard.touchKeys_ = [];
+    for (var i = 0; i < event.touches.length; i++) {
+      var touch = event.touches[i];
+      var el = document.elementFromPoint(touch.pageX, touch.pageY);
+      if (el && el.key_) {
+        el.key_.startPlaying();
+        var oldIndex = oldTouchKeys.indexOf(el.key_);
+        if (oldIndex != -1)
+          oldTouchKeys.splice(oldIndex, 1);
+        keyboard.touchKeys_.push(el.key_);
+      }
+    }
+    oldTouchKeys.forEach(function(key) {
+      key.stopPlaying();
+    });
+  }
+  
+  keyboard.touchStart = function(event) {
+    keyboard.updateTouchKeys(event);
+    event.preventDefault();
+  }
+
+  keyboard.touchEnd = function(event) {
+    keyboard.updateTouchKeys(event);
+    event.preventDefault();
+  }
+
+  keyboard.touchMove = function(event) {
+    keyboard.updateTouchKeys(event);
+    event.preventDefault();
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Resizing.
+  keyboard.resize = function(event) {
+    keyboard.div_.style.height = asPixels(window.innerHeight - kKeyboardHeightGap);
+    var maxWidth = keyboard.div_.clientWidth;
+    keyboard.whiteKeyHeight_ = keyboard.div_.clientHeight - 2;
+    keyboard.blackKeyHeight_ = Math.round(keyboard.div_.clientHeight * 0.8);
+    keyboard.whiteKeyWidth_ = (maxWidth / numWhites) - 2;
+    keyboard.blackKeyWidth_ = keyboard.whiteKeyWidth_ - 10;
+    var gap = maxWidth - numWhites * keyboard.whiteKeyWidth_;
+    keyboard.left_ = keyboard.div_.offsetLeft + gap / 2;
+    keyboard.keys_.forEach(function(key) {
+      key.resize();
+    });
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -162,21 +225,19 @@ module.Piano = function(startOctave, instrument, div) {
   keyboard.keys_ = [];
   keyboard.div_ = div;
   var numWhites = 17;
-  var maxWidth = div.clientWidth;
-  keyboard.whiteKeyHeight_ = div.clientHeight - 2;
-  keyboard.blackKeyHeight_ = Math.round(div.clientHeight * 0.8);
-  keyboard.whiteKeyWidth_ = (maxWidth / numWhites) - 2;
-  keyboard.blackKeyWidth_ = keyboard.whiteKeyWidth_ - 10;
-  var gap = maxWidth - numWhites * keyboard.whiteKeyWidth_;
-  keyboard.left_ = div.offsetLeft + gap / 2;
   keyboard.mouseDown_ = false;
   keyboard.mouseKey_ = null;
+  keyboard.touchKeys_ = [];
 
   //////////////////////////////////////////////////////////////////////////////
-  // Setup keyboard events.
-  window.onkeydown = keyboard.onKeyDown;
-  window.onkeyup = keyboard.onKeyUp;
-  window.onmouseup = keyboard.onMouseUp;
+  // Setup events.
+  window.onkeydown = keyboard.keyDown;
+  window.onkeyup = keyboard.keyUp;
+  window.onmouseup = keyboard.mouseUp;
+  window.onresize = keyboard.resize;
+  keyboard.div_.ontouchstart = keyboard.touchStart;
+  keyboard.div_.ontouchend = keyboard.touchEnd;
+  keyboard.div_.ontouchmove = keyboard.touchMove;
 
   //////////////////////////////////////////////////////////////////////////////
   // Setup keys.
@@ -209,6 +270,8 @@ module.Piano = function(startOctave, instrument, div) {
   keyboard.keys_.push(new KeyboardPianoKey('O',  2, 2, keyboard, instrument));
   keyboard.keys_.push(new KeyboardPianoKey('0',  3, 2, keyboard, instrument));
   keyboard.keys_.push(new KeyboardPianoKey('P',  4, 2, keyboard, instrument));
+  
+  keyboard.resize();
 }
 
 return module;

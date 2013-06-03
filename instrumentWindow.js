@@ -6,7 +6,9 @@ var gControllerManager = null;
 var gInstrumentUIs = [];
 var gInstrument = null;
 
-var cHeightPadding = 100;
+var kHeightPadding = 100;
+var kCompressorThreshold = -30;
+var kCompressorKnee = 10;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
@@ -15,6 +17,8 @@ function init() {
   gContext = new webkitAudioContext();
   gControllerManager = new ParamController.Manager(gContext);
   var compressor = gContext.createDynamicsCompressor();
+  compressor.threshold.value = kCompressorThreshold;
+  compressor.knee.value = kCompressorKnee;
   compressor.connect(gContext.destination);
   gInstrument = new Instrument.Instrument(gContext, compressor);
 
@@ -54,7 +58,7 @@ function updateSize() {
   gInstrumentUIs.forEach(function(ui) {
     height = height + ui.element.clientHeight;
   });
-  height = height + cHeightPadding;
+  height = height + kHeightPadding;
   window.resizeTo(window.outerWidth, height);
 }
 

@@ -2,14 +2,23 @@
 
 var gKeyboard = null;
 
+var kOctaveKey = 'keyboardWindowOctaveField';
+
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 
 function init() {
   // Player setup
-  document.getElementById('octave').onchange = octaveChanged;
-  gKeyboard = new KeyboardPiano.Piano(4, gInstrument, document.getElementById('keyboard'));
-  octaveChanged();
+  chrome.storage.local.get(kOctaveKey, function(items) {
+    gKeyboard = new KeyboardPiano.Piano(gInstrument, document.getElementById('keyboard'));
+    var octave = items[kOctaveKey];
+    if (!octave)
+      octave = 4;
+    var el = document.getElementById('octave');
+    el.onchange = octaveChanged;
+    el.value = octave;
+    setOctave();
+  });
 }
 
 window.onload = init;
@@ -24,10 +33,21 @@ function octave() {
 ////////////////////////////////////////////////////////////////////////////////
 // Event handlers
 
-function octaveChanged() {
+function saveState() {
+  var setting = {};
+  setting[kOctaveKey] = octave();
+  chrome.storage.local.set(setting);
+}
+
+function setOctave() {
   gKeyboard.octave = octave();
 
   var el = document.getElementById('octave');
   var outEl = document.getElementById('selectedOctave');
   outEl.innerHTML = el.value;
+}
+
+function octaveChanged() {
+  setOctave();
+  saveState();
 }

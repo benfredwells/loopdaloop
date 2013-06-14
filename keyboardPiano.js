@@ -143,12 +143,12 @@ KeyboardPianoKey.prototype.stopPlaying = function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Public
-module.Piano = function(startOctave, instrument, div) {
+module.Piano = function(instrument, div) {
   var keyboard = this;
 
   //////////////////////////////////////////////////////////////////////////////
   // Public fields
-  keyboard.octave = startOctave;
+  keyboard.octave = 4;
 
   //////////////////////////////////////////////////////////////////////////////
   // Keyboard events.
@@ -207,6 +207,7 @@ module.Piano = function(startOctave, instrument, div) {
   //////////////////////////////////////////////////////////////////////////////
   // Resizing.
   keyboard.resize = function(event) {
+    var numWhites = 17;
     keyboard.div_.style.height = asPixels(window.innerHeight - kKeyboardHeightGap);
     var maxWidth = keyboard.div_.clientWidth;
     keyboard.whiteKeyHeight_ = keyboard.div_.clientHeight - 2;
@@ -224,7 +225,6 @@ module.Piano = function(startOctave, instrument, div) {
   // Private fields.
   keyboard.keys_ = [];
   keyboard.div_ = div;
-  var numWhites = 17;
   keyboard.mouseDown_ = false;
   keyboard.mouseKey_ = null;
   keyboard.touchKeys_ = [];

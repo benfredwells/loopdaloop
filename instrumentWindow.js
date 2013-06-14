@@ -10,6 +10,13 @@ var kHeightPadding = 100;
 var kCompressorThreshold = -30;
 var kCompressorKnee = 10;
 
+var kOscillatorID = 'oscillator';
+var kFilterAID = 'fitlera';
+var kFilterBID = 'filterb';
+var kEnvelopeID = 'envelope';
+
+var kExpandedFieldKey = 'instrumentWindowExpandedField';
+
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 
@@ -22,27 +29,50 @@ function init() {
   compressor.connect(gContext.destination);
   gInstrument = new Instrument.Instrument(gContext, compressor);
 
-  // Instrument UI setup
-  gInstrumentUIs.push(new OscillatorUI.UI(
-      gInstrument,
-      document.getElementById('settings')));
-  gInstrumentUIs.push(new FilterUI.UI(
-      gInstrument.filters[0], 'Filter A',
-      document.getElementById('settings')));
-  gInstrumentUIs.push(new FilterUI.UI(
-      gInstrument.filters[1], 'Filter B',
-      document.getElementById('settings')));
-  gInstrumentUIs.push(new EnvelopeUI.UI(
-      gInstrument,
-      document.getElementById('settings')));
+  chrome.storage.local.get(kExpandedFieldKey, function(items) {
+    var expandedID = items[kExpandedFieldKey];
+    // Instrument UI setup
+    gInstrumentUIs.push(new OscillatorUI.UI(
+        kOscillatorID,
+        gInstrument,
+        document.getElementById('settings'),
+        kOscillatorID != expandedID));
+    gInstrumentUIs.push(new FilterUI.UI(
+        kFilterAID,
+        gInstrument.filters[0], 'Filter A',
+        document.getElementById('settings'),
+        kFilterAID != expandedID));
+    gInstrumentUIs.push(new FilterUI.UI(
+        kFilterBID,
+        gInstrument.filters[1], 'Filter B',
+        document.getElementById('settings'),
+        kFilterBID != expandedID));
+    gInstrumentUIs.push(new EnvelopeUI.UI(
+        kEnvelopeID,
+        gInstrument,
+        document.getElementById('settings'),
+        kEnvelopeID != expandedID));
 
-  gInstrumentUIs.forEach(function (ui) {
-    ui.onCollapseChanged = collapseChanged;
+    gInstrumentUIs.forEach(function (ui) {
+      ui.onCollapseChanged = collapseChanged;
+    });
+
+    updateSize();
   });
-  updateSize();
 
-  // Defined by background page.
+// Defined by background page.
   window.showKeyboard();
+}
+
+function saveState() {
+  var expandedID = '';
+  gInstrumentUIs.forEach(function (ui) {
+    if (!ui.isCollapsed())
+      expandedID = ui.id;
+  });
+  var setting = {};
+  setting[kExpandedFieldKey] = expandedID;
+  chrome.storage.local.set(setting);
 }
 
 function collapseChanged(sender) {
@@ -51,6 +81,7 @@ function collapseChanged(sender) {
       ui.setCollapsed(true);
   });
   updateSize();
+  saveState();
 }
 
 function updateSize() {

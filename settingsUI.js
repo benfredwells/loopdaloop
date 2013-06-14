@@ -15,7 +15,7 @@ module.roundForDisplay = function(number) {
   return Math.round(number * 100) / 100;
 }
 
-module.Group = function(parent, title, owner) {
+module.Group = function(parent, title, owner, collapsed) {
   this.element_ = document.createElement('div');
   this.element_.classList.add('instrSettingGroup');
   parent.appendChild(this.element_);
@@ -39,7 +39,7 @@ module.Group = function(parent, title, owner) {
 
   this.details_ = document.createElement('div');
   this.details_.classList.add('instrSettingDetails');
-  this.details_.hidden = true;
+  this.details_.hidden = collapsed;
   this.element_.appendChild(this.details_);
 
   var ui = this;
@@ -51,6 +51,10 @@ module.Group = function(parent, title, owner) {
 
   owner.setCollapsed = function(collapsed) {
     ui.details_.hidden = collapsed;
+  }
+  
+  owner.isCollapsed = function() {
+    return ui.details_.hidden;
   }
 }
 

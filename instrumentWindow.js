@@ -39,7 +39,7 @@ function init() {
     var detailsEl = document.getElementById('details');
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorID,
-        gInstrument,
+        gInstrument, 'Oscillator',
         categoriesEl,
         detailsEl,
         kOscillatorID != expandedID));
@@ -57,7 +57,7 @@ function init() {
         kFilterBID != expandedID));
     gInstrumentUIs.push(new EnvelopeUI.UI(
         kEnvelopeID,
-        gInstrument,
+        gInstrument, 'Envelope',
         categoriesEl,
         detailsEl,
         kEnvelopeID != expandedID));
@@ -87,8 +87,15 @@ function saveState() {
 
 function collapseChanged(sender) {
   gInstrumentUIs.forEach(function (ui) {
-    if (ui != sender)
+    if (ui != sender) {
       ui.setCollapsed(true);
+    } else {
+      var itemTitle = document.getElementById('synthesizerItemTitle');
+      if (ui.isCollapsed())
+        itemTitle.innerHTML = '';
+      else
+        itemTitle.innerHTML = ui.title;
+    }
   });
   updateSize();
   saveState();

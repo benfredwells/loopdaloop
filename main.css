@@ -10,14 +10,19 @@ div.page {
   margin-left: auto;
   margin-right: auto;
   background-color: #FFF;
-}
-
-div.section {
   padding: 20px;
 }
 
-div.first {
-  padding-bottom: 0px;
+div#categories {
+  display: inline-block;
+  width: 340px;
+}
+
+div#details {
+  display: inline-block;
+  position: absolute;
+  top: 60px;
+  width: 320px;
 }
 
 div.title {
@@ -31,6 +36,11 @@ div#synthesizerTitle {
 
 div#keyboardTitle {
   color: #1A8;
+}
+
+div#synthesizerItemTitle {
+  font-size: medium;
+  padding-top: 5px;
 }
 
 div.instrCategory {

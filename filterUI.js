@@ -19,7 +19,7 @@ var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.id = id;
   this.filter_ = filter;
-  this.title_ = title;
+  this.title = title;
 
   this.group_ = new SettingsUI.Group(categoryEl, detailsEl, title, this, collapsed);
   var s = SettingsUI.makeSubRow;
@@ -163,8 +163,6 @@ module.UI.prototype.drawResponse_ = function() {
   var xAxisY = kBounds.y * maxMag / magRange;
   SVGUtils.addPointToArray(kBounds.x - kXPadding, kBounds.y, magPoints);
   SVGUtils.addPointToArray(kXPadding, kBounds.y, magPoints);
-  var gradientName = this.title_ + 'Gradient';
-  gradientName = gradientName.replace(' ', '');
   this.response_.push(SVGUtils.createPolyLine(magPoints,
                                               "none", 0, kResponseFlat,
                                               this.group_.svgDoc, this.group_.svg));

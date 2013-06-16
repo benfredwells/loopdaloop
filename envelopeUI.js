@@ -10,9 +10,10 @@ var kSustainRowDef = {title: 'Sustain', min: 0, max: 1, steps: 20};
 var kSustainHoldRowDef = {title: 'Sustain Hold', base: 10, minExponent: -2, maxExponent:1, steps: 10};
 var kReleaseRowDef = {title: 'Release', base: 10, minExponent: -2, maxExponent:1, steps: 10};
 
-module.UI = function(id, instrument, categoriesEl, detailsEl, collapsed) {
+module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) {
   this.id = id;
   this.instrument_ = instrument;
+  this.title = title;
 
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, 'Envelope', this, collapsed);
   this.attackRow_ = this.group_.addExponentialRangeRow(kAttackRowDef);

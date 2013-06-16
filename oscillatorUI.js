@@ -10,9 +10,10 @@ var kTypeRowDef = {title: 'Type',
 var kVibratoRowDef = {title: 'Vibrato', indent: 0};
 var kTremoloRowDef = {title: 'Tremolo', indent: 0};
 
-module.UI = function(id, instrument, categoriesEl, detailsEl, collapsed) {
+module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) {
   this.id = id;
   this.instrument_ = instrument;
+  this.title = title;
 
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, 'Oscillator', this, collapsed);
   this.typeRow_ = this.group_.addSelectRow(kTypeRowDef);

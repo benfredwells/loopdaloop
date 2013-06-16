@@ -91,25 +91,6 @@ module.createSVG = function(doc, parent) {
   return svg;
 }
 
-module.createLinearGradient = function(id, x1, y1, x2, y2, spread, doc, svg) {
-  var gradient = doc.createElementNS(svgns, "linearGradient");
-  gradient.setAttribute("id", id);
-  gradient.setAttribute("x1", x1);
-  gradient.setAttribute("x2", x2);
-  gradient.setAttribute("y1", y1);
-  gradient.setAttribute("y2", y2);
-  gradient.setAttribute("spreadMethod", spread);
-  svg.defs.appendChild(gradient);
-  return gradient;
-}
-
-module.addStopToGradient = function(offset, stopColor, gradient, doc) {
-  var stop = doc.createElementNS(svgns, "stop");
-  stop.setAttribute("offset", offset);
-  stop.setAttribute("stop-color", stopColor);
-  gradient.appendChild(stop);
-}
-
 module.createLine = function(x1, y1, x2, y2, color, width, doc, svg) {
   var line = doc.createElementNS(svgns, "line");
   line.setAttribute("x1", svgNumberVal(x1));

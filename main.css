@@ -33,7 +33,7 @@ div#keyboardTitle {
   color: #1A8;
 }
 
-div.instrSettingGroup {
+div.instrCategory {
   background-color: #EEE;
   border-radius: 5px;
   padding: 10px 10px;
@@ -41,11 +41,11 @@ div.instrSettingGroup {
   width: 300px;
 }
 
-div.instrSettingHeading {
+div.instrCategoryHeading {
   overflow: hidden;
 }
 
-div.instrSettingHeadingText {
+div.instrCategoryHeadingText {
   display: inline-block;
   font-size: medium;
   padding-top: 15px;
@@ -58,47 +58,47 @@ div.instrDisplay {
   float: right;
 }
 
-div.instrSettingRow {
+div.instrDetailRow {
   margin-top: 3px;
 }
 
-div.instrSettingDescr {
+div.instrDetailDescr {
   display: inline-block;
   width: 100px;
 }
 
-div.instrSettingDisabled {
+div.instrDetailDisabled {
   color: #999;
 }
 
-div.instrSubSettingDescr {
+div.instrSubDetailDescr {
   width: 90px;
   padding-left: 10px;
 }
 
-div.instrSubSubSettingDescr {
+div.instrSubSubDetailDescr {
   width: 80px;
   padding-left: 20px;
 }
 
-div.instrSetting {
+div.instrDetail {
   display: inline-block;
   width: 130px;
 }
 
-div.instrSetting select {
+div.instrDetail select {
   width: 120px;
 }
 
-div.instrSetting input {
+div.instrDetail input {
   width: 120px;
 }
 
-div.instrSetting input[type="checkbox"] {
+div.instrDetail input[type="checkbox"] {
   width: auto;
 }
 
-div.instrSettingValue {
+div.instrDetailValue {
   display: inline-block;
 }
 

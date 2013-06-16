@@ -17,16 +17,16 @@ module.roundForDisplay = function(number) {
 
 module.Group = function(categoryParentEl, detailsParentEl, title, owner, collapsed) {
   this.categoryEl_ = document.createElement('div');
-  this.categoryEl_.classList.add('instrSettingGroup');
+  this.categoryEl_.classList.add('instrCategory');
   categoryParentEl.appendChild(this.categoryEl_);
   owner.categoryEl = this.categoryEl_;
 
   this.heading_ = document.createElement('div');
-  this.heading_.classList.add('instrSettingHeading');
+  this.heading_.classList.add('instrCategoryHeading');
   this.categoryEl_.appendChild(this.heading_);
 
   var headingText = document.createElement('div');
-  headingText.classList.add('instrSettingHeadingText');
+  headingText.classList.add('instrCategoryHeadingText');
   headingText.innerHTML = title;
   this.heading_.appendChild(headingText);
 
@@ -38,7 +38,7 @@ module.Group = function(categoryParentEl, detailsParentEl, title, owner, collaps
   this.svg = SVGUtils.createSVG(this.svgDoc, this.display_);
 
   this.detailsEl_ = document.createElement('div');
-  this.detailsEl_.classList.add('instrSettingDetails');
+  this.detailsEl_.classList.add('instrDetails');
   this.detailsEl_.hidden = collapsed;
   detailsParentEl.appendChild(this.detailsEl_);
   owner.detailsEl = this.detailsEl_;
@@ -60,12 +60,12 @@ module.Group = function(categoryParentEl, detailsParentEl, title, owner, collaps
 }
 
 module.makeSubRow = function(row) {
-  row.label_.classList.add('instrSubSettingDescr');
+  row.label_.classList.add('instrSubDetailDescr');
   return row;
 }
 
 module.makeSubSubRow = function(row) {
-  row.label_.classList.add('instrSubSubSettingDescr');
+  row.label_.classList.add('instrSubSubDetailDescr');
   return row;
 }
 
@@ -78,23 +78,23 @@ function setupOnchange(row, element) {
 
 module.Group.prototype.makeRow_ = function(title) {
   var row = document.createElement('div');
-  row.classList.add('instrSettingRow');
+  row.classList.add('instrDetailRow');
   this.detailsEl_.appendChild(row);
 
   row.label_ = document.createElement('div');
-  row.label_.classList.add('instrSettingDescr');
+  row.label_.classList.add('instrDetailDescr');
   row.label_.innerHTML = title;
   row.appendChild(row.label_);
 
   row.setting_ = document.createElement('div');
-  row.setting_.classList.add('instrSetting');
+  row.setting_.classList.add('instrDetail');
   row.appendChild(row.setting_);
 
   row.enableDisableDiv_ = function(div, value) {
     if (value)
-      div.classList.remove('instrSettingDisabled');
+      div.classList.remove('instrDetailDisabled');
     else
-      div.classList.add('instrSettingDisabled');
+      div.classList.add('instrDetailDisabled');
   }
 
   row.enableDisable = function(value) {
@@ -106,7 +106,7 @@ module.Group.prototype.makeRow_ = function(title) {
 
 module.Group.prototype.addValueLabel_ = function(row) {
   row.valueLabel_ = document.createElement('div');
-  row.valueLabel_.classList.add('instrSettingValue');
+  row.valueLabel_.classList.add('instrDetailValue');
   row.appendChild(row.valueLabel_);
 
   row.setLabel = function(newText) {
@@ -158,7 +158,7 @@ module.Group.prototype.addCheckRow = function(checkRowDef) {
 
   row.check = document.createElement('input');
   row.check.type = 'checkbox';
-  row.check.classList.add('instrSetting');
+  row.check.classList.add('instrDetail');
   row.setting_.appendChild(row.check);
 
   row.value = function() {
@@ -193,7 +193,7 @@ module.Group.prototype.addLinearRangeRow = function(linearRangeDef) {
   row.range.type = 'range';
   row.range.min = 0;
   row.range.max = steps;
-  row.range.classList.add('instrSetting');
+  row.range.classList.add('instrDetail');
   row.setting_.appendChild(row.range);
 
   this.addValueLabel_(row);
@@ -234,7 +234,7 @@ module.Group.prototype.addExponentialRangeRow = function(exponentialRangeDef) {
   row.range.type = 'range';
   row.range.min = 0;
   row.range.max = steps;
-  row.range.classList.add('instrSetting');
+  row.range.classList.add('instrDetail');
   row.setting_.appendChild(row.range);
 
   this.addValueLabel_(row);

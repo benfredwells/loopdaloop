@@ -45,7 +45,9 @@ module.Group = function(categoryParentEl, detailsParentEl, title, owner, collaps
 
   var ui = this;
   this.heading_.onclick = function() {
-    ui.detailsEl_.hidden = !ui.detailsEl_.hidden;
+    if (!owner.isCollapsed())
+      return;
+    ui.detailsEl_.hidden = false;
     if (owner.onCollapseChanged)
       owner.onCollapseChanged(owner);
   }

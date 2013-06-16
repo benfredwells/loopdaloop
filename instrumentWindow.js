@@ -32,7 +32,7 @@ function init() {
 // Temporarily turned off because debugging with this sucks
 //  chrome.storage.local.get(kExpandedFieldKey, function(items) {
 //    var expandedID = items[kExpandedFieldKey];
-    var expandedID = '';
+    var expandedID = kOscillatorID;
 // End temporary hack
     // Instrument UI setup
     var categoriesEl = document.getElementById('categories');
@@ -67,6 +67,7 @@ function init() {
 // Temporary hack continued
 //    });
 
+    updateTitle();
     updateSize();
   });
 
@@ -85,18 +86,20 @@ function saveState() {
   chrome.storage.local.set(setting);
 }
 
+function updateTitle(ui) {
+  gInstrumentUIs.forEach(function (ui) {
+    if (!ui.isCollapsed())
+      document.getElementById('synthesizerItemTitle').innerHTML = ui.title;
+  });
+}
+
 function collapseChanged(sender) {
   gInstrumentUIs.forEach(function (ui) {
     if (ui != sender) {
       ui.setCollapsed(true);
-    } else {
-      var itemTitle = document.getElementById('synthesizerItemTitle');
-      if (ui.isCollapsed())
-        itemTitle.innerHTML = '';
-      else
-        itemTitle.innerHTML = ui.title;
     }
   });
+  updateTitle();
   updateSize();
   saveState();
 }

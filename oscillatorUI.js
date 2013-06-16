@@ -72,7 +72,7 @@ var kBackgroundColorFlat = "#EEEEEE";
 var kBackgroundXPadding = 4;
 var kBackgroundYPadding = 5;
 
-module.UI.prototype.drawSineWave_ = function(gradient) {
+module.UI.prototype.drawSineWave_ = function() {
   var x = kWaveXStart;
   var kCubicFactor = kWavePeriod * 0.25;
   var path = SVGUtils.startPath(x, kWaveYHigh);
@@ -93,11 +93,11 @@ module.UI.prototype.drawSineWave_ = function(gradient) {
                                  x + kWavePeriod / 2 - kCubicFactor, kWaveYLow,
                                  x + kWavePeriod / 2, kWaveYLow);
   this.waveform_ = SVGUtils.createPath(path,
-                                       gradient, kWaveStrokeWidth,
+                                       kWaveColorFlat, kWaveStrokeWidth,
                                        this.group_.svgDoc, this.group_.svg);
 }
 
-module.UI.prototype.drawSquareWave_ = function(gradient) {
+module.UI.prototype.drawSquareWave_ = function() {
   var x = kWaveXStart;
   var points = [];
   SVGUtils.addPointToArray(x, kWaveYHigh, points);
@@ -119,11 +119,11 @@ module.UI.prototype.drawSquareWave_ = function(gradient) {
     x = x - 0.5;
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           gradient, kWaveStrokeWidth, "none",
+                                           kWaveColorFlat, kWaveStrokeWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
-module.UI.prototype.drawTriangleWave_ = function(gradient) {
+module.UI.prototype.drawTriangleWave_ = function() {
   var x = kWaveXStart;
   var points = [];
   SVGUtils.addPointToArray(x, kWaveYHigh, points);
@@ -136,11 +136,11 @@ module.UI.prototype.drawTriangleWave_ = function(gradient) {
   }
   SVGUtils.addPointToArray(x, kWaveYLow, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           gradient, kWaveStrokeWidth, "none",
+                                           kWaveColorFlat, kWaveStrokeWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
-module.UI.prototype.drawSawtoothWave_ = function(gradient) {
+module.UI.prototype.drawSawtoothWave_ = function() {
   var x = kWaveXStart;
   var points = [];
   var kLeadingPeriod = 0.25;
@@ -156,26 +156,18 @@ module.UI.prototype.drawSawtoothWave_ = function(gradient) {
   var yFinish = kWaveYLow + (1 - kLeadingPeriod) * (kWaveYHigh - kWaveYLow);
   SVGUtils.addPointToArray(x, yFinish, points);
   this.waveform_ = SVGUtils.createPolyLine(points,
-                                           gradient, kWaveStrokeWidth, "none",
+                                           kWaveColorFlat, kWaveStrokeWidth, "none",
                                            this.group_.svgDoc, this.group_.svg);
 }
 
 module.UI.prototype.drawWave_ = function() {
   if (this.background_)
     this.group_.svg.removeChild(this.background_)
-  var tremoloGradient = this.group_.defineLFOGradientOrSolid(
-      'tremoloGradient',
-      this.instrument_.oscillator.tremolo,
-      this.tremoloController_,
-      kBackgroundColorMin,
-      kBackgroundColorMax,
-      kBackgroundCenter,
-      kBackgroundColorFlat);
   this.background_ = SVGUtils.createRect(kWaveXStart - kBackgroundXPadding,
                                          kWaveYLow - kBackgroundYPadding,
                                          kWaveWidth + kBackgroundXPadding * 2,
                                          kWaveYHigh - kWaveYLow + kBackgroundYPadding * 2,
-                                         kBackgroundColorFlat, 0, tremoloGradient,
+                                         kBackgroundColorFlat, 0, kBackgroundColorFlat,
                                          this.group_.svgDoc, this.group_.svg);
 
   if (this.axis_)
@@ -188,19 +180,11 @@ module.UI.prototype.drawWave_ = function() {
 
   if (this.waveform_)
     this.group_.svg.removeChild(this.waveform_);
-  var vibratoGradient = this.group_.defineLFOGradientOrSolid(
-      'vibratoGradient',
-      this.instrument_.oscillator.vibrato,
-      this.vibratoController_,
-      kWaveColorMin,
-      kWaveColorMax,
-      kWaveCenter,
-      kWaveColorFlat);
   switch (this.typeRow_.value()) {
-    case "sine": this.drawSineWave_(vibratoGradient); break;
-    case "square": this.drawSquareWave_(vibratoGradient); break;
-    case "sawtooth": this.drawSawtoothWave_(vibratoGradient); break;
-    case "triangle": this.drawTriangleWave_(vibratoGradient); break;
+    case "sine": this.drawSineWave_(); break;
+    case "square": this.drawSquareWave_(); break;
+    case "sawtooth": this.drawSawtoothWave_(); break;
+    case "triangle": this.drawTriangleWave_; break;
   }
 }
 

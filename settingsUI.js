@@ -15,15 +15,15 @@ module.roundForDisplay = function(number) {
   return Math.round(number * 100) / 100;
 }
 
-module.Group = function(parent, title, owner, collapsed) {
-  this.element_ = document.createElement('div');
-  this.element_.classList.add('instrSettingGroup');
-  parent.appendChild(this.element_);
-  owner.element = this.element_;
+module.Group = function(categoryParentEl, detailsParentEl, title, owner, collapsed) {
+  this.categoryEl_ = document.createElement('div');
+  this.categoryEl_.classList.add('instrSettingGroup');
+  categoryParentEl.appendChild(this.categoryEl_);
+  owner.categoryEl = this.categoryEl_;
 
   this.heading_ = document.createElement('div');
   this.heading_.classList.add('instrSettingHeading');
-  this.element_.appendChild(this.heading_);
+  this.categoryEl_.appendChild(this.heading_);
 
   var headingText = document.createElement('div');
   headingText.classList.add('instrSettingHeadingText');
@@ -37,24 +37,25 @@ module.Group = function(parent, title, owner, collapsed) {
   this.svgDoc = document;
   this.svg = SVGUtils.createSVG(this.svgDoc, this.display_);
 
-  this.details_ = document.createElement('div');
-  this.details_.classList.add('instrSettingDetails');
-  this.details_.hidden = collapsed;
-  this.element_.appendChild(this.details_);
+  this.detailsEl_ = document.createElement('div');
+  this.detailsEl_.classList.add('instrSettingDetails');
+  this.detailsEl_.hidden = collapsed;
+  detailsParentEl.appendChild(this.detailsEl_);
+  owner.detailsEl = this.detailsEl_;
 
   var ui = this;
   this.heading_.onclick = function() {
-    ui.details_.hidden = !ui.details_.hidden;
+    ui.detailsEl_.hidden = !ui.detailsEl_.hidden;
     if (owner.onCollapseChanged)
       owner.onCollapseChanged(owner);
   }
 
   owner.setCollapsed = function(collapsed) {
-    ui.details_.hidden = collapsed;
+    ui.detailsEl_.hidden = collapsed;
   }
   
   owner.isCollapsed = function() {
-    return ui.details_.hidden;
+    return ui.detailsEl_.hidden;
   }
 }
 
@@ -78,7 +79,7 @@ function setupOnchange(row, element) {
 module.Group.prototype.makeRow_ = function(title) {
   var row = document.createElement('div');
   row.classList.add('instrSettingRow');
-  this.details_.appendChild(row);
+  this.detailsEl_.appendChild(row);
 
   row.label_ = document.createElement('div');
   row.label_.classList.add('instrSettingDescr');

@@ -29,33 +29,43 @@ function init() {
   compressor.connect(gContext.destination);
   gInstrument = new Instrument.Instrument(gContext, compressor);
 
-  chrome.storage.local.get(kExpandedFieldKey, function(items) {
-    var expandedID = items[kExpandedFieldKey];
+// Temporarily turned off because debugging with this sucks
+//  chrome.storage.local.get(kExpandedFieldKey, function(items) {
+//    var expandedID = items[kExpandedFieldKey];
+    var expandedID = '';
+// End temporary hack
     // Instrument UI setup
+    var categoriesEl = document.getElementById('categories');
+    var detailsEl = document.getElementById('details');
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorID,
         gInstrument,
-        document.getElementById('settings'),
+        categoriesEl,
+        detailsEl,
         kOscillatorID != expandedID));
     gInstrumentUIs.push(new FilterUI.UI(
         kFilterAID,
         gInstrument.filters[0], 'Filter A',
-        document.getElementById('settings'),
+        categoriesEl,
+        detailsEl,
         kFilterAID != expandedID));
     gInstrumentUIs.push(new FilterUI.UI(
         kFilterBID,
         gInstrument.filters[1], 'Filter B',
-        document.getElementById('settings'),
+        categoriesEl,
+        detailsEl,
         kFilterBID != expandedID));
     gInstrumentUIs.push(new EnvelopeUI.UI(
         kEnvelopeID,
         gInstrument,
-        document.getElementById('settings'),
+        categoriesEl,
+        detailsEl,
         kEnvelopeID != expandedID));
 
     gInstrumentUIs.forEach(function (ui) {
       ui.onCollapseChanged = collapseChanged;
-    });
+// Temporary hack continued
+//    });
 
     updateSize();
   });
@@ -85,12 +95,12 @@ function collapseChanged(sender) {
 }
 
 function updateSize() {
-  var height = 0;
-  gInstrumentUIs.forEach(function(ui) {
-    height = height + ui.element.clientHeight;
-  });
-  height = height + kHeightPadding;
-  window.resizeTo(window.outerWidth, height);
+  //var height = 0;
+  //gInstrumentUIs.forEach(function(ui) {
+  //  height = height + ui.element.clientHeight;
+  //});
+  //height = height + kHeightPadding;
+  //window.resizeTo(window.outerWidth, height);
 }
 
 window.onload = init;

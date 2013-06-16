@@ -16,12 +16,12 @@ var kLFOControllerDef = {title: 'Oscillate', indent: 1};
 var kQRowDef = {title: 'Q', min: 0, max: 20, steps: 20};
 var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 
-module.UI = function(id, filter, title, parent, collapsed) {
+module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.id = id;
   this.filter_ = filter;
   this.title_ = title;
 
-  this.group_ = new SettingsUI.Group(parent, title, this, collapsed);
+  this.group_ = new SettingsUI.Group(categoryEl, detailsEl, title, this, collapsed);
   var s = SettingsUI.makeSubRow;
   var ss = SettingsUI.makeSubSubRow;
   var g = this.group_;

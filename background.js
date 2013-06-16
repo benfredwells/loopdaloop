@@ -8,11 +8,11 @@ chrome.app.runtime.onLaunched.addListener(function() {
   }
 
   var instrumentParams = {
-    width: 360,
-    height: 320,
+    width: 1000,
+    height: 1000,
     left: 20,
     top: 100,
-    id: 'instrument'
+    id: 'instrumentv2'
   };
 
   chrome.app.window.create('instrumentWindow.html', instrumentParams, function(win) {

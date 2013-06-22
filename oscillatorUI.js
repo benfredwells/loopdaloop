@@ -10,23 +10,23 @@ var kTypeRowDef = {title: 'Type',
 var kVibratoRowDef = {title: 'Vibrato', indent: 0};
 var kTremoloRowDef = {title: 'Tremolo', indent: 0};
 
-module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) {
+module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) {
   this.id = id;
-  this.instrument_ = instrument;
+  this.oscillator_ = oscillator;
   this.title = title;
 
-  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, 'Oscillator', this, collapsed);
+  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
   this.typeRow_ = this.group_.addSelectRow(kTypeRowDef);
 
   var s = SettingsUI.makeSubRow;
   var g = this.group_;
 
-  this.vibratoController_ = g.addLFOController(kVibratoRowDef, instrument.oscillator.vibrato);
-  this.tremoloController_ = g.addLFOController(kTremoloRowDef, instrument.oscillator.tremolo);
+  this.vibratoController_ = g.addLFOController(kVibratoRowDef, oscillator.vibrato);
+  this.tremoloController_ = g.addLFOController(kTremoloRowDef, oscillator.tremolo);
 
   var ui = this;
   var changeHandler = function() {
-    ui.instrument_.oscillator.type = ui.typeRow_.value();
+    ui.oscillator_.type = ui.typeRow_.value();
     ui.updateDisplay_();
   }
   this.typeRow_.onchange = changeHandler;

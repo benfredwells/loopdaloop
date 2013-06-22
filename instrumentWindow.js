@@ -10,7 +10,9 @@ var kHeightPadding = 100;
 var kCompressorThreshold = -30;
 var kCompressorKnee = 10;
 
-var kOscillatorID = 'oscillator';
+var kOscillatorAID = 'oscillatora';
+var kOscillatorBID = 'oscillatorb';
+var kOscillatorCID = 'oscillatorc';
 var kFilterAID = 'fitlera';
 var kFilterBID = 'filterb';
 var kEnvelopeID = 'envelope';
@@ -32,17 +34,29 @@ function init() {
 // Temporarily turned off because debugging with this sucks
 //  chrome.storage.local.get(kExpandedFieldKey, function(items) {
 //    var expandedID = items[kExpandedFieldKey];
-    var expandedID = kOscillatorID;
+    var expandedID = kOscillatorAID;
 // End temporary hack
     // Instrument UI setup
     var categoriesEl = document.getElementById('categories');
     var detailsEl = document.getElementById('details');
     gInstrumentUIs.push(new OscillatorUI.UI(
-        kOscillatorID,
-        gInstrument, 'Oscillator',
+        kOscillatorAID,
+        gInstrument.oscillators[0], 'Oscillator A',
         categoriesEl,
         detailsEl,
-        kOscillatorID != expandedID));
+        kOscillatorAID != expandedID));
+    gInstrumentUIs.push(new OscillatorUI.UI(
+        kOscillatorBID,
+        gInstrument.oscillators[1], 'Oscillator B',
+        categoriesEl,
+        detailsEl,
+        kOscillatorBID != expandedID));
+    gInstrumentUIs.push(new OscillatorUI.UI(
+        kOscillatorCID,
+        gInstrument.oscillators[2], 'Oscillator C',
+        categoriesEl,
+        detailsEl,
+        kOscillatorCID != expandedID));
     gInstrumentUIs.push(new FilterUI.UI(
         kFilterAID,
         gInstrument.filters[0], 'Filter A',

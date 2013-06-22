@@ -9,6 +9,8 @@ var gInstrument = null;
 var kHeightPadding = 100;
 var kCompressorThreshold = -30;
 var kCompressorKnee = 10;
+var kCompressorAttack = 0.1;
+var kCompressorRelease = 1;
 
 var kOscillatorAID = 'oscillatora';
 var kOscillatorBID = 'oscillatorb';
@@ -28,6 +30,8 @@ function init() {
   var compressor = gContext.createDynamicsCompressor();
   compressor.threshold.value = kCompressorThreshold;
   compressor.knee.value = kCompressorKnee;
+  compressor.attack.value = kCompressorAttack;
+  compressor.release.value = kCompressorRelease;
   compressor.connect(gContext.destination);
   gInstrument = new Instrument.Instrument(gContext, compressor);
 

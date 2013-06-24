@@ -6,6 +6,18 @@ var module = {};
 var kTypeRowDef = {title: 'Type',
                    captions: ['Sine', 'Square', 'Sawtooth', 'Triangle'],
                    values: ['sine', 'square', 'sawtooth', 'triangle']};
+var kOctaveOffsetRowDef = {title: 'Octave offset',
+                           min: -4,
+                           max: 4,
+                           steps: 8}
+var kNoteOffsetRowDef = {title: 'Semitone offset',
+                        min: -8,
+                        max: 8,
+                        steps: 16};
+var kDetuneRowDef = {title: 'Detune',
+                     min: -50,
+                     max: 50,
+                     steps: 100};
 
 var kVibratoRowDef = {title: 'Vibrato', indent: 0};
 var kTremoloRowDef = {title: 'Tremolo', indent: 0};
@@ -17,6 +29,9 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
 
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
   this.typeRow_ = this.group_.addSelectRow(kTypeRowDef);
+  this.octaveOffsetRow_ = this.group_.addLinearRangeRow(kOctaveOffsetRowDef);
+  this.noteOffsetRow_ = this.group_.addLinearRangeRow(kNoteOffsetRowDef);
+  this.detuneRow_ = this.group_.addLinearRangeRow(kDetuneRowDef);
 
   var s = SettingsUI.makeSubRow;
   var g = this.group_;
@@ -27,16 +42,32 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
   var ui = this;
   var changeHandler = function() {
     ui.oscillator_.type = ui.typeRow_.value();
+    ui.oscillator_.octaveOffset = ui.octaveOffsetRow_.value();
+    ui.oscillator_.noteOffset = ui.noteOffsetRow_.value();
+    ui.oscillator_.detune = ui.detuneRow_.value();
     ui.updateDisplay_();
   }
   this.typeRow_.onchange = changeHandler;
+  this.octaveOffsetRow_.onchange = changeHandler;
+  this.noteOffsetRow_.onchange = changeHandler;
+  this.detuneRow_.onchange = changeHandler;
   this.vibratoController_.onchange = changeHandler;
   this.tremoloController_.onchange = changeHandler;
-  this.typeRow_.setValue('sawtooth');
+  this.setInitialValues_();
   changeHandler();
 }
 
+module.UI.prototype.setInitialValues_ = function() {
+  this.typeRow_.setValue('sawtooth');
+  this.octaveOffsetRow_.setValue(0);
+  this.noteOffsetRow_.setValue(0);
+  this.detuneRow_.setValue(0);
+}
+
 module.UI.prototype.updateDisplay_ = function() {
+  this.octaveOffsetRow_.setLabel(this.octaveOffsetRow_.value());
+  this.noteOffsetRow_.setLabel(this.noteOffsetRow_.value());
+  this.detuneRow_.setLabel(this.detuneRow_.value());
   this.vibratoController_.updateDisplay();
   this.tremoloController_.updateDisplay();
   this.enableDisable_();
@@ -184,7 +215,7 @@ module.UI.prototype.drawWave_ = function() {
     case "sine": this.drawSineWave_(); break;
     case "square": this.drawSquareWave_(); break;
     case "sawtooth": this.drawSawtoothWave_(); break;
-    case "triangle": this.drawTriangleWave_; break;
+    case "triangle": this.drawTriangleWave_(); break;
   }
 }
 

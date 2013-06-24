@@ -35,6 +35,7 @@ module.Oscillator = function(context) {
   this.octaveOffset = 0;
   this.noteOffset = 0;
   this.detune = 0;
+  this.gain = 1;
 }
 
 module.Oscillator.prototype.createNode = function(octave, note, paramControllers) {
@@ -42,9 +43,8 @@ module.Oscillator.prototype.createNode = function(octave, note, paramControllers
   oscillator.frequency.value = Math.round(
       ChromaticScale.frequencyForNote(octave + this.octaveOffset,
                                       note + this.noteOffset));
-  //oscillator.detune.value = this.detune;
+  oscillator.detune.value = this.detune;
   oscillator.type = this.type;
-  console.log('Frequency is ' + oscillator.frequency.value);
   if (this.vibrato.enabled) {
     paramControllers.push(this.vibrato.createController(oscillator.frequency));
   }
@@ -65,7 +65,6 @@ module.Filter = function(context) {
   this.type = 'lowpass';
   this.frequencyFactor = 0;
   this.q = 0;
-  this.gain = 0;
   this.lfo = new module.LFO(context);
 }
 

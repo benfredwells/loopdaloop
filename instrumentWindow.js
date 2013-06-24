@@ -9,7 +9,7 @@ var gInstrument = null;
 var kHeightPadding = 100;
 var kCompressorThreshold = -30;
 var kCompressorKnee = 10;
-var kCompressorAttack = 0.1;
+var kCompressorAttack = 0.01;
 var kCompressorRelease = 1;
 
 var kOscillatorAID = 'oscillatora';

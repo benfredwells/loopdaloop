@@ -149,15 +149,13 @@ module.Instrument.prototype._addFilterNodes = function(filter, octave, note, all
 
 // Public methods
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
-  var paramControllers = [];
-  var oscillatorNodes = [];
+  var note = new PlayedNote.Note(this.context_, this.envelope);
   var oscillatorOutNodes = [];
-  var gainNode = this.context_.createGainNode();
-  var allNodes = [gainNode];
+  note.gainNode = this.context_.createGainNode();
   this.oscillators.forEach(function(oscillator) {
-    var oscillatorNode = oscillator.createNode(octave, note, paramControllers);
-    allNodes.push(oscillatorNode);
-    oscillatorNodes.push(oscillatorNode);
+    var oscillatorNode = oscillator.createNode(octave, note, note.paramControllers);
+    note.allNodes.push(oscillatorNode);
+    note.oscillatorNodes.push(oscillatorNode);
     var oscillatorOutNode = oscillatorNode;
     if (oscillator.tremolo.enabled) {
       oscillatorOutNode = oscillator.createTremoloNode(paramControllers);
@@ -167,16 +165,16 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
     oscillatorOutNodes.push(oscillatorOutNode);
   });
   // These should be in series, not parallel.
-  var nextNodes = this._addFilterNodes(this.filters[0], octave, note, allNodes, paramControllers, oscillatorOutNodes);
+  var nextNodes = this._addFilterNodes(this.filters[0], octave, note, note.allNodes, note.paramControllers, oscillatorOutNodes);
   nextNodes.forEach(function(nextNode) {
-    nextNode.connect(gainNode);
+    nextNode.connect(note.gainNode);
   });
-  nextNodes = this._addFilterNodes(this.filters[1], octave, note, allNodes, paramControllers, oscillatorOutNodes);
+  nextNodes = this._addFilterNodes(this.filters[1], octave, note, note.allNodes, note.paramControllers, oscillatorOutNodes);
   nextNodes.forEach(function(nextNode) {
-    nextNode.connect(gainNode);
+    nextNode.connect(note.gainNode);
   });
-  gainNode.connect(this.destinationNode_);
-  return new PlayedNote.Note(this.context_, oscillatorNodes, gainNode, allNodes, this.envelope, paramControllers);
+  note.gainNode.connect(this.destinationNode_);
+  return note;
 }
 
 return module;

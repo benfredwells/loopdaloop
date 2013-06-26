@@ -20,28 +20,24 @@ module.Envelope = function() {
 // PlayedNote class
 
 module.Note = function(context,
-                       oscillatorNodes,
-                       gainNode,
-                       allNodes,
-                       envelope,
-                       paramControllers) {
+                       envelope) {
   this.context_ = context;
-  this.oscillatorNodes_ = oscillatorNodes;
-  this.gainNode_ = gainNode;
-  this.allNodes_ = allNodes;
+  this.oscillatorNodes = [];
+  this.gainNode = null;
+  this.allNodes = [];
+  this.paramControllers = [];
   this.envelope_ = envelope;
-  this.paramControllers_ = paramControllers;
 }
 
 module.Note.prototype.start = function() {
   var nextTime = this.context_.currentTime;
-  this.gainNode_.gain.setValueAtTime(0, nextTime); nextTime += this.envelope_.attackDelay;
-  this.gainNode_.gain.setValueAtTime(0, nextTime); nextTime += this.envelope_.attack;
-  this.gainNode_.gain.linearRampToValueAtTime(1, nextTime); nextTime += this.envelope_.attackHold;
-  this.gainNode_.gain.setValueAtTime(1, nextTime); nextTime += this.envelope_.decay;
-  this.gainNode_.gain.linearRampToValueAtTime(this.envelope_.sustain, nextTime);
+  this.gainNode.gain.setValueAtTime(0, nextTime); nextTime += this.envelope_.attackDelay;
+  this.gainNode.gain.setValueAtTime(0, nextTime); nextTime += this.envelope_.attack;
+  this.gainNode.gain.linearRampToValueAtTime(1, nextTime); nextTime += this.envelope_.attackHold;
+  this.gainNode.gain.setValueAtTime(1, nextTime); nextTime += this.envelope_.decay;
+  this.gainNode.gain.linearRampToValueAtTime(this.envelope_.sustain, nextTime);
   this.sustainStart_ = nextTime;
-  this.oscillatorNodes_.forEach(function (oscillator) {
+  this.oscillatorNodes.forEach(function (oscillator) {
     oscillator.noteOn(0);
   });
 }
@@ -51,17 +47,17 @@ module.Note.prototype.stop = function() {
   if (nextTime < this.sustainStart_)
     nextTime = this.sustainStart_;
   nextTime += this.envelope_.sustainHold;
-  this.gainNode_.gain.setValueAtTime(this.envelope_.sustain, nextTime); nextTime += this.envelope_.release;
-  this.gainNode_.gain.linearRampToValueAtTime(0, nextTime);
+  this.gainNode.gain.setValueAtTime(this.envelope_.sustain, nextTime); nextTime += this.envelope_.release;
+  this.gainNode.gain.linearRampToValueAtTime(0, nextTime);
   var thisNote = this;
   setTimeout(function() {
-    thisNote.oscillatorNodes_.forEach(function(oscillator) {
+    thisNote.oscillatorNodes.forEach(function(oscillator) {
       oscillator.noteOff(0);
     });
-    thisNote.allNodes_.forEach(function(node) {
+    thisNote.allNodes.forEach(function(node) {
       node.disconnect();
     });
-    thisNote.paramControllers_.forEach(function (paramController) {
+    thisNote.paramControllers.forEach(function (paramController) {
       gControllerManager.removeController(paramController);
     })
   }, (this.envelope_.sustainHold + this.envelope_.release) * 1000 + 3000);

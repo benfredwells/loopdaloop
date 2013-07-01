@@ -24,7 +24,6 @@ module.NoteSection = function() {
   this.outputNode = null;
   this.allNodes = [];
   this.oscillatorNodes = [];
-  this.paramControllers = [];
 }
 
 module.NoteSection.prototype.pushNode = function(node, isOscillator) {
@@ -58,9 +57,6 @@ module.NoteSection.prototype.noteOff = function(when) {
 module.NoteSection.prototype.dismantle = function() {
   this.allNodes.forEach(function (node) {
     node.disconnect();
-  });
-  this.paramControllers.forEach(function (paramController) {
-    gControllerManager.removeController(paramController);
   });
 }
 

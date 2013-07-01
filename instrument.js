@@ -38,23 +38,35 @@ module.Oscillator = function(context) {
   this.gain = 1;
 }
 
-module.Oscillator.prototype.createNode = function(octave, note, paramControllers) {
+module.Oscillator.prototype.createTremoloNode_ = function(paramControllers) {
+  var gainNode = this.context_.createGainNode();
+  paramControllers.push(this.tremolo.createController(gainNode.gain));
+  return gainNode;
+}
+
+module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
   var oscillator = this.context_.createOscillator();
   oscillator.frequency.value = Math.round(
       ChromaticScale.frequencyForNote(octave + this.octaveOffset,
                                       note + this.noteOffset));
   oscillator.detune.value = this.detune;
   oscillator.type = this.type;
-  if (this.vibrato.enabled) {
-    paramControllers.push(this.vibrato.createController(oscillator.frequency));
-  }
   return oscillator;
 }
 
-module.Oscillator.prototype.createTremoloNode = function(paramControllers) {
-  var gainNode = this.context_.createGainNode();
-  paramControllers.push(this.tremolo.createController(gainNode.gain));
-  return gainNode;
+module.Oscillator.prototype.createNoteSection_ = function(octave, note, playedNote) {
+  var section = new PlayedNote.NoteSection();
+  var oscillator = this.createOscillatorNode_(octave, note);
+  section.pushNode(oscillator, true);
+  if (this.vibrato.enabled) {
+    section.paramControllers.push(this.vibrato.createController(oscillator.frequency));
+  }
+  if (this.tremolo.enabled) {
+    gainNode = this.createTremoloNode_(section.paramControllers);
+    section.pushNode(gainNode, false);
+  }
+  playedNote.sections.push(section);
+  return section;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +80,7 @@ module.Filter = function(context) {
   this.lfo = new module.LFO(context);
 }
 
-module.Filter.prototype.createNode = function(octave, note, paramControllers) {
+module.Filter.prototype.createNode_ = function(octave, note, paramControllers) {
   var frequency = ChromaticScale.frequencyForNote(octave, note) *
                         this.frequencyFactor;
   var filter = this.context_.createBiquadFilter();
@@ -83,7 +95,7 @@ module.Filter.prototype.createNode = function(octave, note, paramControllers) {
 }
 
 module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, maxHz, steps) {
-  var node = this.createNode(octave, note);
+  var node = this.createNode_(octave, note, null);
   // Set up buffers
   var response = {};
   response.frequencies = new Float32Array(steps);
@@ -134,47 +146,31 @@ module.Instrument = function(context, destinationNode) {
   this.envelope = new PlayedNote.Envelope();
 }
 
-module.Instrument.prototype._addFilterNodes = function(filter, octave, note, allNodes, paramControllers, lastNodes) {
-  if (filter.enabled) {
-    var filterNode = filter.createNode(octave, note, paramControllers);
-    allNodes.push(filterNode);
-    lastNodes.forEach(function(lastNode) {
-      lastNode.connect(filterNode);
-    });
-    return [filterNode];
-  } else {
-    return lastNodes;
-  }
-}
-
-// Public methods
+// Public metho(ds
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
-  var note = new PlayedNote.Note(this.context_, this.envelope);
-  var oscillatorOutNodes = [];
-  note.gainNode = this.context_.createGainNode();
+  var playedNote = new PlayedNote.Note(this.context_, this.envelope);
+  var currentSections = [];
+  playedNote.gainNode = this.context_.createGainNode();
   this.oscillators.forEach(function(oscillator) {
-    var oscillatorNode = oscillator.createNode(octave, note, note.paramControllers);
-    note.allNodes.push(oscillatorNode);
-    note.oscillatorNodes.push(oscillatorNode);
-    var oscillatorOutNode = oscillatorNode;
-    if (oscillator.tremolo.enabled) {
-      oscillatorOutNode = oscillator.createTremoloNode(paramControllers);
-      oscillatorNode.connect(oscillatorOutNode);
-      allNodes.push(oscillatorOutNode);
+    currentSections.push(oscillator.createNoteSection_(octave, note, playedNote));
+  });
+  this.filters.forEach(function(filter) {
+    if (filter.enabled) {
+      var filterSection = new PlayedNote.NoteSection();
+      var filterNode = filter.createNode_(octave, note, filterSection.paramControllers);
+      filterSection.pushNode(filterNode, false);
+      currentSections.forEach(function(section) {
+        section.connect(filterSection);
+      });
+      playedNote.sections.push(filterSection);
+      currentSections = [filterSection];
     }
-    oscillatorOutNodes.push(oscillatorOutNode);
   });
-  // These should be in series, not parallel.
-  var nextNodes = this._addFilterNodes(this.filters[0], octave, note, note.allNodes, note.paramControllers, oscillatorOutNodes);
-  nextNodes.forEach(function(nextNode) {
-    nextNode.connect(note.gainNode);
+  currentSections.forEach(function(section) {
+    section.outputNode.connect(playedNote.gainNode);
   });
-  nextNodes = this._addFilterNodes(this.filters[1], octave, note, note.allNodes, note.paramControllers, oscillatorOutNodes);
-  nextNodes.forEach(function(nextNode) {
-    nextNode.connect(note.gainNode);
-  });
-  note.gainNode.connect(this.destinationNode_);
-  return note;
+  playedNote.gainNode.connect(this.destinationNode_);
+  return playedNote;
 }
 
 return module;

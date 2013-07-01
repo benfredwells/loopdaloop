@@ -17,15 +17,61 @@ module.Envelope = function() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// NoteSection class
+
+module.NoteSection = function() {
+  this.inputNode = null;
+  this.outputNode = null;
+  this.allNodes = [];
+  this.oscillatorNodes = [];
+  this.paramControllers = [];
+}
+
+module.NoteSection.prototype.pushNode = function(node, isOscillator) {
+  if (!this.inputNode)
+    this.inputNode = node;
+  if (this.outputNode)
+    this.outputNode.connect(node);
+  this.outputNode = node;
+  this.allNodes.push(node);
+  if (isOscillator)
+    this.oscillatorNodes.push(node);
+}
+
+module.NoteSection.prototype.connect = function(otherSection) {
+  if (this.outputNode && otherSection.inputNode)
+    this.outputNode.connect(otherSection.inputNode);
+}
+
+module.NoteSection.prototype.noteOn = function(when) {
+  this.oscillatorNodes.forEach(function (oscillator) {
+    oscillator.noteOn(when);
+  });
+}
+
+module.NoteSection.prototype.noteOff = function(when) {
+  this.oscillatorNodes.forEach(function (oscillator) {
+    oscillator.noteOff(when);
+  });
+}
+
+module.NoteSection.prototype.dismantle = function() {
+  this.allNodes.forEach(function (node) {
+    node.disconnect();
+  });
+  this.paramControllers.forEach(function (paramController) {
+    gControllerManager.removeController(paramController);
+  });
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // PlayedNote class
 
 module.Note = function(context,
                        envelope) {
   this.context_ = context;
-  this.oscillatorNodes = [];
+  this.sections = [];
   this.gainNode = null;
-  this.allNodes = [];
-  this.paramControllers = [];
   this.envelope_ = envelope;
 }
 
@@ -37,8 +83,8 @@ module.Note.prototype.start = function() {
   this.gainNode.gain.setValueAtTime(1, nextTime); nextTime += this.envelope_.decay;
   this.gainNode.gain.linearRampToValueAtTime(this.envelope_.sustain, nextTime);
   this.sustainStart_ = nextTime;
-  this.oscillatorNodes.forEach(function (oscillator) {
-    oscillator.noteOn(0);
+  this.sections.forEach(function (section) {
+    section.noteOn(0);
   });
 }
 
@@ -51,15 +97,10 @@ module.Note.prototype.stop = function() {
   this.gainNode.gain.linearRampToValueAtTime(0, nextTime);
   var thisNote = this;
   setTimeout(function() {
-    thisNote.oscillatorNodes.forEach(function(oscillator) {
-      oscillator.noteOff(0);
+    thisNote.sections.forEach(function(section) {
+      section.noteOff(0);
+      section.dismantle();
     });
-    thisNote.allNodes.forEach(function(node) {
-      node.disconnect();
-    });
-    thisNote.paramControllers.forEach(function (paramController) {
-      gControllerManager.removeController(paramController);
-    })
   }, (this.envelope_.sustainHold + this.envelope_.release) * 1000 + 3000);
 }
 

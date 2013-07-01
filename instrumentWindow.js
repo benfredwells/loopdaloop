@@ -2,7 +2,6 @@
 
 var gContext = null;
 var gCurrentNote = null;
-var gControllerManager = null;
 var gInstrumentUIs = [];
 var gInstrument = null;
 
@@ -26,7 +25,6 @@ var kExpandedFieldKey = 'instrumentWindowExpandedField';
 
 function init() {
   gContext = new webkitAudioContext();
-  gControllerManager = new ParamController.Manager(gContext);
   var compressor = gContext.createDynamicsCompressor();
   compressor.threshold.value = kCompressorThreshold;
   compressor.knee.value = kCompressorKnee;

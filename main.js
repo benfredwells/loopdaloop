@@ -2,7 +2,6 @@
 
 var gContext = null;
 var gCurrentNote = null;
-var gControllerManager = null;
 var gOscillatorUI = null;
 var gFilterUI = null;
 var gInstrument = null;
@@ -13,7 +12,6 @@ var gKeyboard = null;
 
 function init() {
   gContext = new webkitAudioContext();
-  gControllerManager = new ParamController.Manager(gContext);
   var compressor = gContext.createDynamicsCompressor();
   compressor.connect(gContext.destination);
   gInstrument = new Instrument.Instrument(gContext, compressor);

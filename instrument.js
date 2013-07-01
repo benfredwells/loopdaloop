@@ -13,15 +13,19 @@ module.LFO = function (context) {
   this.enabled = false;
   this.frequency = 0;
   this.gain = 0;
-  this.phase = 0;
 }
 
-module.LFO.prototype.createController = function(param) {
-  return gControllerManager.newLFO(param,
-                                   this.frequency,
-                                   this.phase,
-                                   param.value,
-                                   param.value * this.gain);
+module.LFO.prototype.addNodes = function(param, noteSection) {
+  var oscillator = this.context_.createOscillator();
+  oscillator.type = 'sine';
+  oscillator.frequency.value = this.frequency;
+  noteSection.oscillatorNodes.push(oscillator);
+  noteSection.allNodes.push(oscillator);
+  var gain = this.context_.createGainNode();
+  gain.gain.value = param.value * this.gain;
+  noteSection.allNodes.push(gain);
+  oscillator.connect(gain);
+  gain.connect(param);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,9 +42,9 @@ module.Oscillator = function(context) {
   this.gain = 1;
 }
 
-module.Oscillator.prototype.createTremoloNode_ = function(paramControllers) {
+module.Oscillator.prototype.createTremoloNode_ = function(noteSection) {
   var gainNode = this.context_.createGainNode();
-  paramControllers.push(this.tremolo.createController(gainNode.gain));
+  this.tremolo.addNodes(gainNode.gain, noteSection);
   return gainNode;
 }
 
@@ -59,10 +63,10 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note, playedNo
   var oscillator = this.createOscillatorNode_(octave, note);
   section.pushNode(oscillator, true);
   if (this.vibrato.enabled) {
-    section.paramControllers.push(this.vibrato.createController(oscillator.frequency));
+    this.vibrato.addNodes(oscillator.frequency, section);
   }
   if (this.tremolo.enabled) {
-    gainNode = this.createTremoloNode_(section.paramControllers);
+    gainNode = this.createTremoloNode_(section);
     section.pushNode(gainNode, false);
   }
   playedNote.sections.push(section);
@@ -80,7 +84,7 @@ module.Filter = function(context) {
   this.lfo = new module.LFO(context);
 }
 
-module.Filter.prototype.createNode_ = function(octave, note, paramControllers) {
+module.Filter.prototype.createNode_ = function(octave, note, noteSection) {
   var frequency = ChromaticScale.frequencyForNote(octave, note) *
                         this.frequencyFactor;
   var filter = this.context_.createBiquadFilter();
@@ -88,8 +92,8 @@ module.Filter.prototype.createNode_ = function(octave, note, paramControllers) {
   filter.frequency.value = frequency;
   filter.Q.value = this.q;
   filter.gain.value = this.gain;
-  if (this.lfo.enabled && paramControllers) {
-    paramControllers.push(this.lfo.createController(filter.frequency));
+  if (this.lfo.enabled && noteSection) {
+    this.lfo.addNodes(filter.frequency, noteSection);
   }
   return filter;
 }
@@ -146,7 +150,7 @@ module.Instrument = function(context, destinationNode) {
   this.envelope = new PlayedNote.Envelope();
 }
 
-// Public metho(ds
+// Public methods
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
   var playedNote = new PlayedNote.Note(this.context_, this.envelope);
   var currentSections = [];
@@ -157,7 +161,7 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
   this.filters.forEach(function(filter) {
     if (filter.enabled) {
       var filterSection = new PlayedNote.NoteSection();
-      var filterNode = filter.createNode_(octave, note, filterSection.paramControllers);
+      var filterNode = filter.createNode_(octave, note, filterSection);
       filterSection.pushNode(filterNode, false);
       currentSections.forEach(function(section) {
         section.connect(filterSection);

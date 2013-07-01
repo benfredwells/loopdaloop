@@ -271,7 +271,6 @@ module.Group.prototype.addLFOController = function(lfoControllerDef, lfo) {
   var lfoController = {};
   lfoController.freqRowDef = {title: 'Speed', base: 10, minExponent: -1, maxExponent: 1, steps: 20};
   lfoController.gainRowDef = {title: 'Amplitude', base: 10, minExponent: -2, maxExponent: 0, steps: 10};
-  lfoController.phaseRowDef = {title: 'Phase', min: -180, max: 180, steps: 36};
 
   var enableIndent, controlIndent;
   if (lfoControllerDef.indent == 0) {
@@ -285,12 +284,10 @@ module.Group.prototype.addLFOController = function(lfoControllerDef, lfo) {
   lfoController.enabledRow = enableIndent(this.addCheckRow({title: lfoControllerDef.title}));
   lfoController.frequencyRow = controlIndent(this.addExponentialRangeRow(lfoController.freqRowDef));
   lfoController.gainRow = controlIndent(this.addExponentialRangeRow(lfoController.gainRowDef));
-  lfoController.phaseRow = controlIndent(this.addLinearRangeRow(lfoController.phaseRowDef));
 
   var changeHandler = function() {
     lfo.enabled = lfoController.enabledRow.value();
     lfo.frequency = lfoController.frequencyRow.value();
-    lfo.phase = 2 * Math.PI * lfoController.phaseRow.value() / 360;
     lfo.gain = lfoController.gainRow.value();
     if (lfoController.onchange)
       lfoController.onchange();
@@ -299,14 +296,12 @@ module.Group.prototype.addLFOController = function(lfoControllerDef, lfo) {
   lfoController.enabledRow.onchange = changeHandler;
   lfoController.frequencyRow.onchange = changeHandler;
   lfoController.gainRow.onchange = changeHandler;
-  lfoController.phaseRow.onchange = changeHandler;
   lfoController.changeHandler = changeHandler;
 
   lfoController.updateDisplay = function () {
     var r = SettingsUI.roundForDisplay;
     lfoController.frequencyRow.setLabel(r(lfoController.frequencyRow.value()) + ' Hz');
     lfoController.gainRow.setLabel('+- ' + r(lfoController.gainRow.value()));
-    lfoController.phaseRow.setLabel(lfoController.phaseRow.value());
   }
 
   lfoController.enableDisable = function(value) {
@@ -314,7 +309,6 @@ module.Group.prototype.addLFOController = function(lfoControllerDef, lfo) {
     var lfoEnabled = value && lfoController.enabledRow.value();
     lfoController.frequencyRow.enableDisable(lfoEnabled);
     lfoController.gainRow.enableDisable(lfoEnabled);
-    lfoController.phaseRow.enableDisable(lfoEnabled);
   }
 
   return lfoController;

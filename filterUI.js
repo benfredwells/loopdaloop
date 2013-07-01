@@ -63,7 +63,6 @@ module.UI.prototype.setInitialValues_ = function() {
   this.lfoController_.enabledRow.setValue(true);
   this.lfoController_.frequencyRow.setValue(3);
   this.lfoController_.gainRow.setValue(0.1);
-  this.lfoController_.phaseRow.setValue(90);
   this.qRow_.setValue(6);
   this.gainRow_.setValue(10);
 }

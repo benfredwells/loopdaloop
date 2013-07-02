@@ -67,14 +67,33 @@ module.NoteSection.prototype.dismantle = function() {
 // PlayedNote class
 
 module.Note = function(context,
+                       destinationNode,
                        envelope) {
   this.context_ = context;
   this.sections = [];
+  this.currentSections = [];
   this.gainNode = null;
+  this.destinationNode = destinationNode;
   this.envelope_ = envelope;
 }
 
+module.Note.prototype.pushSections = function(sectionArray) {
+  var note = this;
+  sectionArray.forEach(function (newSection) {
+    note.sections.push(newSection);
+    note.currentSections.forEach(function (currentSection) {
+      currentSection.connect(newSection);
+    });
+  });
+  this.currentSections = sectionArray;
+}
+
 module.Note.prototype.start = function() {
+  var note = this;
+  this.currentSections.forEach(function(section) {
+    section.outputNode.connect(note.gainNode);
+  });
+  this.gainNode.connect(this.destinationNode);
   var nextTime = this.context_.currentTime;
   this.gainNode.gain.setValueAtTime(0, nextTime); nextTime += this.envelope_.attackDelay;
   this.gainNode.gain.setValueAtTime(0, nextTime); nextTime += this.envelope_.attack;

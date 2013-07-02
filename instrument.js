@@ -58,7 +58,7 @@ module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
   return oscillator;
 }
 
-module.Oscillator.prototype.createNoteSection_ = function(octave, note, playedNote) {
+module.Oscillator.prototype.createNoteSection_ = function(octave, note) {
   var section = new PlayedNote.NoteSection(null);
   var oscillator = this.createOscillatorNode_(octave, note);
   section.pushOscillator(oscillator);
@@ -69,7 +69,6 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note, playedNo
     gainNode = this.createTremoloNode_(section);
     section.pushNode(gainNode);
   }
-  playedNote.sections.push(section);
   return section;
 }
 
@@ -95,13 +94,12 @@ module.Filter.prototype.createFilterNode_ = function(octave, note) {
   return filter;
 }
 
-module.Filter.prototype.createNoteSection_ = function(octave, note, playedNote) {
+module.Filter.prototype.createNoteSection_ = function(octave, note) {
   var filterNode = this.createFilterNode_(octave, note);
   var filterSection = new PlayedNote.NoteSection(filterNode);
   if (this.lfo.enabled) {
     this.lfo.addNodes(filterNode.frequency, filterSection);
   }
-  playedNote.sections.push(filterSection);
   return filterSection;
 }
 
@@ -159,25 +157,19 @@ module.Instrument = function(context, destinationNode) {
 
 // Public methods
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
-  var playedNote = new PlayedNote.Note(this.context_, this.envelope);
-  var currentSections = [];
+  var playedNote = new PlayedNote.Note(this.context_, this.destinationNode_, this.envelope);
+  var oscillatorSections = [];
   playedNote.gainNode = this.context_.createGainNode();
   this.oscillators.forEach(function(oscillator) {
-    currentSections.push(oscillator.createNoteSection_(octave, note, playedNote));
+    oscillatorSections.push(oscillator.createNoteSection_(octave, note));
   });
+  playedNote.pushSections(oscillatorSections);
   this.filters.forEach(function(filter) {
     if (filter.enabled) {
-      var filterSection = filter.createNoteSection_(octave, note, playedNote);
-      currentSections.forEach(function(section) {
-        section.connect(filterSection);
-      });
-      currentSections = [filterSection];
+      var filterSection = filter.createNoteSection_(octave, note);
+      playedNote.pushSections([filterSection]);
     }
   });
-  currentSections.forEach(function(section) {
-    section.outputNode.connect(playedNote.gainNode);
-  });
-  playedNote.gainNode.connect(this.destinationNode_);
   return playedNote;
 }
 

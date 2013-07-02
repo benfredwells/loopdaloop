@@ -59,15 +59,15 @@ module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
 }
 
 module.Oscillator.prototype.createNoteSection_ = function(octave, note, playedNote) {
-  var section = new PlayedNote.NoteSection();
+  var section = new PlayedNote.NoteSection(null);
   var oscillator = this.createOscillatorNode_(octave, note);
-  section.pushNode(oscillator, true);
+  section.pushOscillator(oscillator);
   if (this.vibrato.enabled) {
     this.vibrato.addNodes(oscillator.frequency, section);
   }
   if (this.tremolo.enabled) {
     gainNode = this.createTremoloNode_(section);
-    section.pushNode(gainNode, false);
+    section.pushNode(gainNode);
   }
   playedNote.sections.push(section);
   return section;
@@ -84,22 +84,29 @@ module.Filter = function(context) {
   this.lfo = new module.LFO(context);
 }
 
-module.Filter.prototype.createNode_ = function(octave, note, noteSection) {
+module.Filter.prototype.createFilterNode_ = function(octave, note) {
   var frequency = ChromaticScale.frequencyForNote(octave, note) *
-                        this.frequencyFactor;
+                  this.frequencyFactor;
   var filter = this.context_.createBiquadFilter();
   filter.type = this.type;
   filter.frequency.value = frequency;
   filter.Q.value = this.q;
   filter.gain.value = this.gain;
-  if (this.lfo.enabled && noteSection) {
-    this.lfo.addNodes(filter.frequency, noteSection);
-  }
   return filter;
 }
 
+module.Filter.prototype.createNoteSection_ = function(octave, note, playedNote) {
+  var filterNode = this.createFilterNode_(octave, note);
+  var filterSection = new PlayedNote.NoteSection(filterNode);
+  if (this.lfo.enabled) {
+    this.lfo.addNodes(filterNode.frequency, filterSection);
+  }
+  playedNote.sections.push(filterSection);
+  return filterSection;
+}
+
 module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, maxHz, steps) {
-  var node = this.createNode_(octave, note, null);
+  var node = this.createFilterNode_(octave, note);
   // Set up buffers
   var response = {};
   response.frequencies = new Float32Array(steps);
@@ -160,13 +167,10 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
   });
   this.filters.forEach(function(filter) {
     if (filter.enabled) {
-      var filterSection = new PlayedNote.NoteSection();
-      var filterNode = filter.createNode_(octave, note, filterSection);
-      filterSection.pushNode(filterNode, false);
+      var filterSection = filter.createNoteSection_(octave, note, playedNote);
       currentSections.forEach(function(section) {
         section.connect(filterSection);
       });
-      playedNote.sections.push(filterSection);
       currentSections = [filterSection];
     }
   });

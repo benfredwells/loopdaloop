@@ -19,22 +19,25 @@ module.Envelope = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // NoteSection class
 
-module.NoteSection = function() {
-  this.inputNode = null;
-  this.outputNode = null;
+module.NoteSection = function(inputNode) {
+  this.inputNode = inputNode;
+  this.outputNode = inputNode;
   this.allNodes = [];
+  if (inputNode)
+    this.allNodes.push(inputNode);
   this.oscillatorNodes = [];
 }
 
-module.NoteSection.prototype.pushNode = function(node, isOscillator) {
-  if (!this.inputNode)
-    this.inputNode = node;
+module.NoteSection.prototype.pushNode = function(node) {
   if (this.outputNode)
     this.outputNode.connect(node);
   this.outputNode = node;
   this.allNodes.push(node);
-  if (isOscillator)
-    this.oscillatorNodes.push(node);
+}
+
+module.NoteSection.prototype.pushOscillator = function(node) {
+  this.pushNode(node);
+  this.oscillatorNodes.push(node);
 }
 
 module.NoteSection.prototype.connect = function(otherSection) {

@@ -8,7 +8,7 @@ var kOscillatorCount = 3;
 
 ////////////////////////////////////////////////////////////////////////////////
 // LFO class
-module.LFO = function (context) {
+module.LFO = function(context) {
   this.context_ = context;
   this.enabled = false;
   this.frequency = 0;
@@ -26,6 +26,67 @@ module.LFO.prototype.addNodes = function(param, noteSection) {
   noteSection.allNodes.push(gain);
   oscillator.connect(gain);
   gain.connect(param);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// EnvelopeContourer class
+
+module.EnvelopeContourer = function(context, envelope, gainNode) {
+  this.context_ = context;
+  this.envelope_ = envelope;
+  this.gainNode_ = gainNode;
+}
+
+module.EnvelopeContourer.prototype.contourOn = function(onTime) {
+  var nextTime = this.context_.currentTime + onTime;
+  this.gainNode_.gain.setValueAtTime(0, nextTime);
+  nextTime += this.envelope_.attackDelay;
+  this.gainNode_.gain.setValueAtTime(0, nextTime);
+  nextTime += this.envelope_.attack;
+  this.gainNode_.gain.linearRampToValueAtTime(1, nextTime);
+  nextTime += this.envelope_.attackHold;
+  this.gainNode_.gain.setValueAtTime(1, nextTime);
+  nextTime += this.envelope_.decay;
+  this.gainNode_.gain.linearRampToValueAtTime(this.envelope_.sustain, nextTime);
+  this.sustainStart_ = nextTime;
+}
+
+module.EnvelopeContourer.prototype.contourOff = function(offTime) {
+  var nextTime = this.context_.currentTime + offTime;
+  if (nextTime < this.sustainStart_)
+    nextTime = this.sustainStart_;
+  nextTime += this.envelope_.sustainHold;
+  this.gainNode_.gain.setValueAtTime(this.envelope_.sustain, nextTime);
+  nextTime += this.envelope_.release;
+  this.gainNode_.gain.linearRampToValueAtTime(0, nextTime);
+}
+
+module.EnvelopeContourer.prototype.contourFinishTime = function(offTime) {
+  var releaseTime = offTime;
+  if (this.sustainStart_ > releaseTime)
+    releaseTime = this.sustainStart_;
+  return releaseTime + this.envelope_.sustainHold + this.envelope_.release;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Envelope class
+
+module.Envelope = function(context) {
+  this.context_ = context;
+  this.attackDelay = 0;
+  this.attack = 0;
+  this.attackHold = 0;
+  this.decay = 0;
+  this.sustain = 1;
+  this.sustainHold = 0;
+  this.release = 0;
+}
+
+module.Envelope.prototype.createNoteSection_ = function() {
+  var gainNode = this.context_.createGainNode();
+  var section = new PlayedNote.NoteSection(gainNode);
+  section.addContour(new module.EnvelopeContourer(this.context_, this, gainNode));
+  return section;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -152,14 +213,13 @@ module.Instrument = function(context, destinationNode) {
   for (var i = 0; i < kFilterCount; i++) {
     this.filters.push(new module.Filter(context));
   }
-  this.envelope = new PlayedNote.Envelope();
+  this.envelope = new module.Envelope(context);
 }
 
 // Public methods
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
-  var playedNote = new PlayedNote.Note(this.context_, this.destinationNode_, this.envelope);
+  var playedNote = new PlayedNote.Note(this.context_, this.destinationNode_);
   var oscillatorSections = [];
-  playedNote.gainNode = this.context_.createGainNode();
   this.oscillators.forEach(function(oscillator) {
     oscillatorSections.push(oscillator.createNoteSection_(octave, note));
   });
@@ -170,6 +230,7 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
       playedNote.pushSections([filterSection]);
     }
   });
+  playedNote.pushSections([this.envelope.createNoteSection_()]);
   return playedNote;
 }
 

@@ -4,28 +4,17 @@ PlayedNote = (function() {
 var module = {};
 
 ////////////////////////////////////////////////////////////////////////////////
-// Envelope class
-
-module.Envelope = function() {
-  this.attackDelay = 0;
-  this.attack = 0;
-  this.attackHold = 0;
-  this.decay = 0;
-  this.sustain = 1;
-  this.sustainHold = 0;
-  this.release = 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // NoteSection class
 
 module.NoteSection = function(inputNode) {
+  // TODO: make these all private.
   this.inputNode = inputNode;
   this.outputNode = inputNode;
   this.allNodes = [];
   if (inputNode)
     this.allNodes.push(inputNode);
   this.oscillatorNodes = [];
+  this.contours = [];
 }
 
 module.NoteSection.prototype.pushNode = function(node) {
@@ -40,6 +29,10 @@ module.NoteSection.prototype.pushOscillator = function(node) {
   this.oscillatorNodes.push(node);
 }
 
+module.NoteSection.prototype.addContour = function(contour) {
+  this.contours.push(contour);
+}
+
 module.NoteSection.prototype.connect = function(otherSection) {
   if (this.outputNode && otherSection.inputNode)
     this.outputNode.connect(otherSection.inputNode);
@@ -49,32 +42,45 @@ module.NoteSection.prototype.noteOn = function(when) {
   this.oscillatorNodes.forEach(function (oscillator) {
     oscillator.noteOn(when);
   });
+  this.contours.forEach(function (contour) {
+    contour.contourOn(when);
+  });
 }
 
-module.NoteSection.prototype.noteOff = function(when) {
-  this.oscillatorNodes.forEach(function (oscillator) {
-    oscillator.noteOff(when);
+module.NoteSection.prototype.releaseTrigger = function(when) {
+  this.contours.forEach(function (contour) {
+    contour.contourOff(when);
   });
 }
 
 module.NoteSection.prototype.dismantle = function() {
-  this.allNodes.forEach(function (node) {
-    node.disconnect();
+  this.oscillatorNodes.forEach(function (oscillator) {
+    oscillator.noteOff(0);
   });
+  this.allNodes.forEach(function (node) {
+    node.disconnect();  
+  });
+}
+
+module.NoteSection.prototype.finishTime = function(offTime) {
+  var result = offTime;
+  this.contours.forEach(function (contour) {
+    var contourFinish = contour.contourFinishTime(offTime);
+    if (contourFinish > result)
+      result = contourFinish;
+  });
+  return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // PlayedNote class
 
 module.Note = function(context,
-                       destinationNode,
-                       envelope) {
+                       destinationNode) {
   this.context_ = context;
   this.sections = [];
   this.currentSections = [];
-  this.gainNode = null;
   this.destinationNode = destinationNode;
-  this.envelope_ = envelope;
 }
 
 module.Note.prototype.pushSections = function(sectionArray) {
@@ -88,38 +94,39 @@ module.Note.prototype.pushSections = function(sectionArray) {
   this.currentSections = sectionArray;
 }
 
-module.Note.prototype.start = function() {
+module.Note.prototype.noteOn = function(time) {
   var note = this;
   this.currentSections.forEach(function(section) {
-    section.outputNode.connect(note.gainNode);
+    section.outputNode.connect(note.destinationNode);
   });
-  this.gainNode.connect(this.destinationNode);
-  var nextTime = this.context_.currentTime;
-  this.gainNode.gain.setValueAtTime(0, nextTime); nextTime += this.envelope_.attackDelay;
-  this.gainNode.gain.setValueAtTime(0, nextTime); nextTime += this.envelope_.attack;
-  this.gainNode.gain.linearRampToValueAtTime(1, nextTime); nextTime += this.envelope_.attackHold;
-  this.gainNode.gain.setValueAtTime(1, nextTime); nextTime += this.envelope_.decay;
-  this.gainNode.gain.linearRampToValueAtTime(this.envelope_.sustain, nextTime);
-  this.sustainStart_ = nextTime;
   this.sections.forEach(function (section) {
-    section.noteOn(0);
+    section.noteOn(time);
   });
 }
 
-module.Note.prototype.stop = function() {
-  var nextTime = this.context_.currentTime;
-  if (nextTime < this.sustainStart_)
-    nextTime = this.sustainStart_;
-  nextTime += this.envelope_.sustainHold;
-  this.gainNode.gain.setValueAtTime(this.envelope_.sustain, nextTime); nextTime += this.envelope_.release;
-  this.gainNode.gain.linearRampToValueAtTime(0, nextTime);
+// This will be longer than needed.
+module.Note.prototype.finishTime_ = function(releaseTime) {
+  var result = releaseTime;
+  this.sections.forEach(function (section) {
+    var sectionFinish = section.finishTime(releaseTime);
+    if (sectionFinish > result)
+      result = sectionFinish;
+  });
+  return result;
+}
+
+module.Note.prototype.noteOff = function(time) {
   var thisNote = this;
+  thisNote.sections.forEach(function(section) {
+    section.releaseTrigger(time);
+  });
+  // TODO: get rid of timeout here. Instead just one series of
+  // timeouts.
   setTimeout(function() {
     thisNote.sections.forEach(function(section) {
-      section.noteOff(0);
       section.dismantle();
     });
-  }, (this.envelope_.sustainHold + this.envelope_.release) * 1000 + 3000);
+  }, (this.finishTime_(time)) * 1000);
 }
 
 return module;

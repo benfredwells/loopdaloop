@@ -128,7 +128,7 @@ KeyboardPianoKey.prototype.startPlaying = function() {
   this.playingNote_ = this.instrument_.createPlayedNote(
       this.keyboard_.octave + this.octaveDelta_,
       this.note_);
-  this.playingNote_.start();
+  this.playingNote_.noteOn(0);
   this.element_.classList.add('playing');
 }
 
@@ -136,7 +136,7 @@ KeyboardPianoKey.prototype.stopPlaying = function() {
   if (!this.playingNote_)
     return;
 
-  this.playingNote_.stop();
+  this.playingNote_.noteOff(0);
   this.playingNote_ = null;
   this.element_.classList.remove('playing');
 }

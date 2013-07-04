@@ -4,6 +4,26 @@ PlayedNote = (function() {
 var module = {};
 
 ////////////////////////////////////////////////////////////////////////////////
+// Private note cleanup code
+
+var releasedNotes = [];
+
+function isNextFinishedNote() {
+  if (releasedNotes.length == 0)
+    return false;
+
+  return releasedNotes[0].isFinished();
+}
+
+function dismantleFinishedNotes() {
+  while (isNextFinishedNote()) {
+    var note = releasedNotes.shift();
+    note.dismantle();
+    console.log('Dismantled!');
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // NoteSection class
 
 module.NoteSection = function(inputNode) {
@@ -105,14 +125,15 @@ module.Note.prototype.noteOn = function(time) {
 }
 
 // This will be longer than needed.
-module.Note.prototype.finishTime_ = function(releaseTime) {
-  var result = releaseTime;
+// TODO: clarify naming for relative times versus absolute
+module.Note.prototype.updateFinishTime_ = function(releaseTime) {
+  var finishDelay = releaseTime;
   this.sections.forEach(function (section) {
     var sectionFinish = section.finishTime(releaseTime);
-    if (sectionFinish > result)
-      result = sectionFinish;
+    if (sectionFinish > finishDelay)
+      finishDelay = sectionFinish;
   });
-  return result;
+  this.finishTime = this.context_.currentTime + finishDelay;
 }
 
 module.Note.prototype.noteOff = function(time) {
@@ -120,13 +141,22 @@ module.Note.prototype.noteOff = function(time) {
   thisNote.sections.forEach(function(section) {
     section.releaseTrigger(time);
   });
-  // TODO: get rid of timeout here. Instead just one series of
-  // timeouts.
-  setTimeout(function() {
-    thisNote.sections.forEach(function(section) {
-      section.dismantle();
-    });
-  }, (this.finishTime_(time)) * 1000);
+  this.updateFinishTime_(time);
+  releasedNotes.push(this);
+  dismantleFinishedNotes(this.context);
+}
+
+module.Note.prototype.isFinished = function() {
+  if (!this.finishTime)
+    return false;
+
+  return (this.finishTime < this.context_.currentTime);
+}
+
+module.Note.prototype.dismantle = function() {
+  this.sections.forEach(function(section) {
+    section.dismantle();
+  });
 }
 
 return module;

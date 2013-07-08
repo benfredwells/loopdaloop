@@ -19,6 +19,10 @@ module.FlatContouredValue.prototype.addContour = function(valueFunction, param, 
   param.value = valueFunction(this.value);
 }
 
+module.FlatContouredValue.prototype.averageValue = function(valueFunction) {
+  return valueFunction(this.value);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillating contoured value
 module.OscillatingContouredValue = function(context) {
@@ -42,6 +46,10 @@ module.OscillatingContouredValue.prototype.addContour = function(valueFunction, 
   noteSection.allNodes.push(gain);
   oscillator.connect(gain);
   gain.connect(param);
+}
+
+module.OscillatingContouredValue.prototype.averageValue = function(valueFunction) {
+  return valueFunction(this.centerValue);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

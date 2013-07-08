@@ -142,14 +142,15 @@ module.Filter = function(context) {
   this.frequencyFactor = 0;
   this.q = 0;
   this.lfo = new module.LFO(context);
+  this.frequency = new Contour.ContouredValue(context);
 }
 
 module.Filter.prototype.createFilterNode_ = function(octave, note) {
-  var frequency = ChromaticScale.frequencyForNote(octave, note) *
-                  this.frequencyFactor;
+  //var frequency = ChromaticScale.frequencyForNote(octave, note) *
+  //                this.frequencyFactor;
   var filter = this.context_.createBiquadFilter();
   filter.type = this.type;
-  filter.frequency.value = frequency;
+  //filter.frequency.value = frequency;
   filter.Q.value = this.q;
   filter.gain.value = this.gain;
   return filter;
@@ -158,9 +159,14 @@ module.Filter.prototype.createFilterNode_ = function(octave, note) {
 module.Filter.prototype.createNoteSection_ = function(octave, note) {
   var filterNode = this.createFilterNode_(octave, note);
   var filterSection = new PlayedNote.NoteSection(filterNode);
-  if (this.lfo.enabled) {
-    this.lfo.addNodes(filterNode.frequency, filterSection);
+  var noteFrequency = ChromaticScale.frequencyForNote(octave, note);
+  var frequencyValueFunction = function(value) {
+    return noteFrequency * value;
   }
+  this.frequency.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection)
+  //if (this.lfo.enabled) {
+  //  this.lfo.addNodes(filterNode.frequency, filterSection);
+  //}
   return filterSection;
 }
 

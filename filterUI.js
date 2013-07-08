@@ -13,6 +13,7 @@ var kEnabledRowDef = {title: 'Enabled'};
 var kTypeRowDef = {title: 'Type', captions: kFilterCaptions, values: kFilterValues};
 var kFreqFactorRowDef = {title: 'Frequency', min: 0.1, max: 10, steps: 100};
 var kLFOControllerDef = {title: 'Oscillate', indent: 1};
+var kFrequencyControllerDef = {title: 'Frequency', indent: 1, min: 0.5, max: 10, steps: 190, prefix: 'x', suffix:''};
 var kQRowDef = {title: 'Q', min: 0, max: 20, steps: 20};
 var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 
@@ -30,6 +31,7 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.typeRow_ = s(g.addSelectRow(kTypeRowDef));
   this.frequencyRow_ = s(g.addLinearRangeRow(kFreqFactorRowDef));
   this.lfoController_ = g.addLFOController(kLFOControllerDef, filter.lfo);
+  this.frequencyController_ = new ContourUI.ContourController(g, kFrequencyControllerDef, filter.frequency);
   this.qRow_ = s(g.addLinearRangeRow(kQRowDef));
   this.gainRow_ = s(g.addLinearRangeRow(kGainRowDef));
 
@@ -83,6 +85,7 @@ module.UI.prototype.enableDisable_ = function() {
   this.typeRow_.enableDisable(enabled);
   this.frequencyRow_.enableDisable(enabled);
   this.lfoController_.enableDisable(enabled);
+  this.frequencyController_.enableDisable(enabled);
   this.qRow_.enableDisable(enabled);
   this.gainRow_.enableDisable(gainEnabled);
 }

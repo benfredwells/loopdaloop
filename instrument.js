@@ -38,7 +38,7 @@ module.EnvelopeContourer = function(context, envelope, gainNode) {
 }
 
 module.EnvelopeContourer.prototype.contourOn = function(onTime) {
-  var nextTime = this.context_.currentTime + onTime;
+  var nextTime = onTime;
   this.gainNode_.gain.setValueAtTime(0, nextTime);
   nextTime += this.envelope_.attackDelay;
   this.gainNode_.gain.setValueAtTime(0, nextTime);
@@ -52,7 +52,7 @@ module.EnvelopeContourer.prototype.contourOn = function(onTime) {
 }
 
 module.EnvelopeContourer.prototype.contourOff = function(offTime) {
-  var nextTime = this.context_.currentTime + offTime;
+  var nextTime = offTime;
   if (nextTime < this.sustainStart_)
     nextTime = this.sustainStart_;
   nextTime += this.envelope_.sustainHold;
@@ -70,7 +70,6 @@ module.EnvelopeContourer.prototype.contourFinishTime = function(offTime) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Envelope class
-
 module.Envelope = function(context) {
   this.context_ = context;
   this.attackDelay = 0;
@@ -177,8 +176,10 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, max
     return response.noteFrequency * (value);
   }
   response.filterFrequency = this.frequency.currentContour().averageValue(frequencyValueFunction);
+  node.frequency.value = response.filterFrequency;
   response.numHarmonics = 0;
   response.harmonics = [];
+  response.filterIndex = 0;
   for (var i = 0; i < steps; ++i) {
     response.frequencies[i] = currentHz;
     currentHz = currentHz * factor;

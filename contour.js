@@ -62,7 +62,7 @@ module.ADSRContourer = function(context, ADSR, param, valueFunction) {
 }
 
 module.ADSRContourer.prototype.contourOn = function(onTime) {
-  var nextTime = this.context_.currentTime + onTime;
+  var nextTime = onTime;
   var v = this.valueFunction_;
   this.param_.setValueAtTime(v(this.ADSR_.initialValue), nextTime);
   nextTime += this.ADSR_.attackDelay;
@@ -77,21 +77,21 @@ module.ADSRContourer.prototype.contourOn = function(onTime) {
 }
 
 module.ADSRContourer.prototype.contourOff = function(offTime) {
-  var nextTime = this.context_.currentTime + offTime;
+  var nextTime = offTime;
   if (nextTime < this.sustainStart_)
     nextTime = this.sustainStart_;
   nextTime += this.ADSR_.sustainHold;
-  v = this.valueFunction_;
-  this.param.setValueAtTime(v(this.ADSR_.sustainValue), nextTime);
-  nextTime += this.envelope_.releaseTime;
-  this.param.linearRampToValueAtTime(v(this.ADSR_.releaseValue_), nextTime);
+  var v = this.valueFunction_;
+  this.param_.setValueAtTime(v(this.ADSR_.sustainValue), nextTime);
+  nextTime += this.ADSR_.releaseTime;
+  this.param_.linearRampToValueAtTime(v(this.ADSR_.finalValue), nextTime);
 }
 
 module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
   var releaseTime = offTime;
   if (this.sustainStart_ > releaseTime)
     releaseTime = this.sustainStart_;
-  return releaseTime + this.ADSR_.sustainHold + this.envelope_.releaseTime;
+  return releaseTime + this.ADSR_.sustainHold + this.ADSR_.releaseTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,6 +114,10 @@ module.ADSRContouredValue.prototype.addContour = function(valueFunction, param, 
   noteSection.addContour(new module.ADSRContourer(this.context_, this, param, valueFunction));
 }
 
+module.ADSRContouredValue.prototype.averageValue = function(valueFunction) {
+  return valueFunction(this.sustainValue);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Identifiers for contour types
 module.kFlatContour = 'flat';
@@ -128,6 +132,7 @@ module.ContouredValue = function(context) {
   this.contoursByIdentifier = {};
   this.initContour_(module.kFlatContour, new module.FlatContouredValue());
   this.initContour_(module.kOscillatingContour, new module.OscillatingContouredValue(context));
+  this.initContour_(module.kADSRContour, new module.ADSRContouredValue(context));
 }
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {

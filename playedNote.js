@@ -19,7 +19,6 @@ function dismantleFinishedNotes() {
   while (isNextFinishedNote()) {
     var note = releasedNotes.shift();
     note.dismantle();
-    console.log('Dismantled!');
   }
 }
 
@@ -58,18 +57,18 @@ module.NoteSection.prototype.connect = function(otherSection) {
     this.outputNode.connect(otherSection.inputNode);
 }
 
-module.NoteSection.prototype.noteOn = function(when) {
+module.NoteSection.prototype.noteOn = function(time) {
   this.oscillatorNodes.forEach(function (oscillator) {
-    oscillator.noteOn(when);
+    oscillator.noteOn(time);
   });
   this.contours.forEach(function (contour) {
-    contour.contourOn(when);
+    contour.contourOn(time);
   });
 }
 
-module.NoteSection.prototype.releaseTrigger = function(when) {
+module.NoteSection.prototype.releaseTrigger = function(time) {
   this.contours.forEach(function (contour) {
-    contour.contourOff(when);
+    contour.contourOff(time);
   });
 }
 
@@ -114,34 +113,35 @@ module.Note.prototype.pushSections = function(sectionArray) {
   this.currentSections = sectionArray;
 }
 
-module.Note.prototype.noteOn = function(time) {
+module.Note.prototype.noteOn = function(delay) {
   var note = this;
+  var onTime = this.context_.currentTime + delay;
   this.currentSections.forEach(function(section) {
     section.outputNode.connect(note.destinationNode);
   });
   this.sections.forEach(function (section) {
-    section.noteOn(time);
+    section.noteOn(onTime);
   });
 }
 
 // This will be longer than needed.
-// TODO: clarify naming for relative times versus absolute
 module.Note.prototype.updateFinishTime_ = function(releaseTime) {
-  var finishDelay = releaseTime;
-  this.sections.forEach(function (section) {
-    var sectionFinish = section.finishTime(releaseTime);
-    if (sectionFinish > finishDelay)
-      finishDelay = sectionFinish;
+  var note = this;
+  note.finishTime = releaseTime;
+  note.sections.forEach(function (section) {
+    var sectionFinish = section.finishTime(note.finishTime);
+    if (sectionFinish > note.finishTime)
+      note.finishTime = sectionFinish;
   });
-  this.finishTime = this.context_.currentTime + finishDelay;
 }
 
-module.Note.prototype.noteOff = function(time) {
+module.Note.prototype.noteOff = function(delay) {
   var thisNote = this;
+  var releaseTime = this.context_.currentTime + delay;
   thisNote.sections.forEach(function(section) {
-    section.releaseTrigger(time);
+    section.releaseTrigger(releaseTime);
   });
-  this.updateFinishTime_(time);
+  this.updateFinishTime_(releaseTime);
   releasedNotes.push(this);
   dismantleFinishedNotes(this.context);
 }

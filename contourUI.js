@@ -13,8 +13,8 @@ var kTypeRowDef = {captions: kTypeCaptions, values: kTypeValues};
 
 // contourControllerDef is {title, indent, textSuffix, min, max, steps, prefix, suffix}
 // indent can be 0 or 1
-module.ContourController = function(group, controllerDef, contour) {
-  this.contour_ = contour;
+module.ContourController = function(group, controllerDef, contouredValue) {
+  this.contouredValue_ = contouredValue;
   this.rowDef_ = controllerDef;
   this.group_ = group;
 
@@ -38,7 +38,7 @@ module.ContourController = function(group, controllerDef, contour) {
 
   var controller = this;
   var changeHandler = function() {
-    controller.contour_.currentContourIdentifier = controller.typeRow_.value();
+    controller.contouredValue_.currentContourIdentifier = controller.typeRow_.value();
     controller.showHideControls_();
     if (controller.onchange)
       controller.onchange();
@@ -65,7 +65,7 @@ module.ContourController.prototype.showHideControls_ = function() {
   this.allRows_.forEach(function(row) {
     row.hidden = true;
   });
-  showRows(this.rowsByContour_[this.contour_.currentContourIdentifier]);
+  showRows(this.rowsByContour_[this.contouredValue_.currentContourIdentifier]);
 }
 
 module.ContourController.prototype.addValueRow = function(title, indent) {
@@ -99,7 +99,7 @@ module.ContourController.prototype.addFlatControls_ = function(indent) {
   this.rowsByContour_[Contour.kFlatContour] = [this.flatValueRow_];
 
   var controller = this;
-  var flatContour = this.contour_.contoursByIdentifier[Contour.kFlatContour];
+  var flatContour = this.contouredValue_.contoursByIdentifier[Contour.kFlatContour];
 
   var updateDisplay = function () {
     controller.updateValueRow(controller.flatValueRow_);
@@ -131,7 +131,7 @@ module.ContourController.prototype.addOscillatingControls_ = function(indent) {
   this.rowsByContour_[Contour.kOscillatingContour] = oscillatingRows;
 
   var controller = this;
-  var oscillatingContour = this.contour_.contoursByIdentifier[Contour.kOscillatingContour];
+  var oscillatingContour = this.contouredValue_.contoursByIdentifier[Contour.kOscillatingContour];
 
   var updateDisplay = function () {
     controller.updateValueRow(controller.oscillatingCenterValueRow_);
@@ -189,7 +189,7 @@ module.ContourController.prototype.addADSRControls_ = function(indent) {
   this.rowsByContour_[Contour.kADSRContour] = adsrRows;
 
   var controller = this;
-  var adsrContour = this.contour_.contoursByIdentifier[Contour.kADSRContour];
+  var adsrContour = this.contouredValue_.contoursByIdentifier[Contour.kADSRContour];
 
   var updateDisplay = function () {
     controller.updateValueRow(controller.adsrInitialValueRow_);

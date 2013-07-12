@@ -10,22 +10,22 @@ var module = {};
 //   contourFinishTime = function(offTime) returns time
 
 ////////////////////////////////////////////////////////////////////////////////
-// Flat contoured value
-module.FlatContouredValue = function() {
+// Flat contour
+module.FlatContour = function() {
   this.value = 1;
 }
 
-module.FlatContouredValue.prototype.addContour = function(valueFunction, param, noteSection) {
+module.FlatContour.prototype.addContour = function(valueFunction, param, noteSection) {
   param.value = valueFunction(this.value);
 }
 
-module.FlatContouredValue.prototype.averageValue = function(valueFunction) {
+module.FlatContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Oscillating contoured value
-module.OscillatingContouredValue = function(context) {
+// Oscillating contour
+module.OscillatingContour = function(context) {
   this.context_ = context;
   this.centerValue = 1;
   this.type = 'sine';
@@ -33,7 +33,7 @@ module.OscillatingContouredValue = function(context) {
   this.frequency = 1;
 }
 
-module.OscillatingContouredValue.prototype.addContour = function(valueFunction, param, noteSection) {
+module.OscillatingContour.prototype.addContour = function(valueFunction, param, noteSection) {
   param.value = valueFunction(this.centerValue);
 
   var oscillator = this.context_.createOscillator();
@@ -48,7 +48,7 @@ module.OscillatingContouredValue.prototype.addContour = function(valueFunction, 
   gain.connect(param);
 }
 
-module.OscillatingContouredValue.prototype.averageValue = function(valueFunction) {
+module.OscillatingContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.centerValue);
 }
 
@@ -96,7 +96,7 @@ module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // ADSR contoured value
-module.ADSRContouredValue = function(context) {
+module.ADSRContour = function(context) {
   this.context_ = context;
   this.initialValue = 0;
   this.attackDelay = 0;
@@ -110,11 +110,11 @@ module.ADSRContouredValue = function(context) {
   this.finalValue = 0;
 }
 
-module.ADSRContouredValue.prototype.addContour = function(valueFunction, param, noteSection) {
+module.ADSRContour.prototype.addContour = function(valueFunction, param, noteSection) {
   noteSection.addContour(new module.ADSRContourer(this.context_, this, param, valueFunction));
 }
 
-module.ADSRContouredValue.prototype.averageValue = function(valueFunction) {
+module.ADSRContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.sustainValue);
 }
 
@@ -130,9 +130,9 @@ module.ContouredValue = function(context) {
   this.currentContourIdentifier = module.kFlatContour;
   this.contours = [];
   this.contoursByIdentifier = {};
-  this.initContour_(module.kFlatContour, new module.FlatContouredValue());
-  this.initContour_(module.kOscillatingContour, new module.OscillatingContouredValue(context));
-  this.initContour_(module.kADSRContour, new module.ADSRContouredValue(context));
+  this.initContour_(module.kFlatContour, new module.FlatContour());
+  this.initContour_(module.kOscillatingContour, new module.OscillatingContour(context));
+  this.initContour_(module.kADSRContour, new module.ADSRContour(context));
 }
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {

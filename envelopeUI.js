@@ -3,12 +3,12 @@ EnvelopeUI = (function() {
 "use strict";
 var module = {};
 
-var kAttackRowDef = {title: 'Attack', base: 10, minExponent: -2, maxExponent:1, steps: 10};
-var kAttackHoldRowDef = {title: 'Attack Hold', base: 10, minExponent: -2, maxExponent:1, steps: 10};
-var kDecayRowDef = {title: 'Decay', base: 10, minExponent: -2, maxExponent:1, steps: 10};
+var kAttackRowDef = {title: 'Attack', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
+var kAttackHoldRowDef = {title: 'Attack Hold', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
+var kDecayRowDef = {title: 'Decay', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
 var kSustainRowDef = {title: 'Sustain', min: 0, max: 1, steps: 20};
-var kSustainHoldRowDef = {title: 'Sustain Hold', base: 10, minExponent: -2, maxExponent:1, steps: 10};
-var kReleaseRowDef = {title: 'Release', base: 10, minExponent: -2, maxExponent:1, steps: 10};
+var kSustainHoldRowDef = {title: 'Sustain Hold', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
+var kReleaseRowDef = {title: 'Release', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
 
 module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) {
   this.id = id;

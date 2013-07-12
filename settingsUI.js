@@ -222,35 +222,49 @@ module.Group.prototype.addLinearRangeRow = function(linearRangeDef) {
   return row;
 }
 
-// exponentialRangeDef is {title, base, minExponent, maxExponent, steps}
+// exponentialRangeDef is {title, base, minExponent, maxExponent, expSteps, includeZero}
 module.Group.prototype.addExponentialRangeRow = function(exponentialRangeDef) {
   var title = exponentialRangeDef.title;
   var base = exponentialRangeDef.base;
   var minExponent = exponentialRangeDef.minExponent;
   var maxExponent = exponentialRangeDef.maxExponent;
-  var steps = exponentialRangeDef.steps;
-
+  var expSteps = exponentialRangeDef.expSteps;
+  var includeZero = exponentialRangeDef.includeZero;
+  var totalSteps = expSteps;
+  if (includeZero)
+    totalSteps++;
   var row = this.makeRow_(title);
 
   row.range = document.createElement('input');
   row.range.type = 'range';
   row.range.min = 0;
-  row.range.max = steps;
+  row.range.max = totalSteps;
   row.range.classList.add('instrDetail');
   row.setting_.appendChild(row.range);
 
   this.addValueLabel_(row);
 
-  var exponentFactor = (maxExponent - minExponent) / steps;
+  var exponentFactor = (maxExponent - minExponent) / expSteps;
   row.value = function() {
     var exponent = row.range.value;
+    if (includeZero) {
+      if (exponent == 0)
+        return 0;
+      exponent--;
+    }
     exponent = minExponent + exponent * exponentFactor;
     return Math.pow(base, exponent);
   }
 
   row.setValue = function(newValue) {
+    if (newValue == 0 && includeZero) {
+      row.range.value = 0;
+      return;
+    }
     var exponent = Math.log(newValue) / Math.log(base);
     var rangeVal = Math.round((exponent - minExponent) / exponentFactor);
+    if (includeZero)
+      rangeVal++;
     row.range.value = rangeVal;
   }
 
@@ -269,8 +283,8 @@ module.Group.prototype.addExponentialRangeRow = function(exponentialRangeDef) {
 // indent can be 0 or 1
 module.Group.prototype.addLFOController = function(lfoControllerDef, lfo) {
   var lfoController = {};
-  lfoController.freqRowDef = {title: 'Speed', base: 10, minExponent: -1, maxExponent: 1, steps: 20};
-  lfoController.gainRowDef = {title: 'Amplitude', base: 10, minExponent: -2, maxExponent: 0, steps: 10};
+  lfoController.freqRowDef = {title: 'Speed', base: 10, minExponent: -1, maxExponent: 1, expSteps: 20, includeZero: false};
+  lfoController.gainRowDef = {title: 'Amplitude', base: 10, minExponent: -2, maxExponent: 0, expSteps: 10, includeZero: false};
 
   var enableIndent, controlIndent;
   if (lfoControllerDef.indent == 0) {

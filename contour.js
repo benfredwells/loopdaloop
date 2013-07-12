@@ -12,33 +12,23 @@ var kMinChangeTime = 0.01;
 //   contourFinishTime = function(offTime) returns time
 
 ////////////////////////////////////////////////////////////////////////////////
-// FlatContourer class
-module.FlatContourer = function(contour, param, valueFunction) {
-  this.contour_ = contour;
+// BasicEnvelopeContourer class
+module.BasicEnvelopeContourer = function(param, value) {
   this.param_ = param;
-  this.valueFunction_ = valueFunction;
+  this.value_ = value;
 }
 
-module.FlatContourer.prototype.contourOn = function(onTime) {
-  var v = this.valueFunction_;
-  if (this.contour_.isEnvelope) {
-    this.param_.setValueAtTime(v(0), onTime);
-    this.param_.setValueAtTime(v(this.contour_.value), onTime + kMinChangeTime);
-  } else {
-    this.param_.value = v(this.contour_.value);
-  }
+module.BasicEnvelopeContourer.prototype.contourOn = function(onTime) {
+  this.param_.setValueAtTime(0, onTime);
+  this.param_.setValueAtTime(this.value_, onTime + kMinChangeTime);
 }
 
-module.FlatContourer.prototype.contourOff = function(offTime) {
-  if (this.contour_.isEnvelope)
-    this.param_.setValueAtTime(this.valueFunction_(0), offTime + kMinChangeTime);
+module.BasicEnvelopeContourer.prototype.contourOff = function(offTime) {
+  this.param_.setValueAtTime(0, offTime + kMinChangeTime);
 }
 
-module.FlatContourer.prototype.contourFinishTime = function(offTime) {
-  var releaseTime = offTime;
-  if (this.contour_.isEnvelope)
-    releaseTime += kMinChangeTime;
-  return releaseTime;
+module.BasicEnvelopeContourer.prototype.contourFinishTime = function(offTime) {
+  return releaseTime + kMinChangeTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +39,11 @@ module.FlatContour = function(contouredValue) {
 }
 
 module.FlatContour.prototype.addContour = function(valueFunction, param, noteSection) {
-  noteSection.addContour(new module.FlatContourer(this, param, valueFunction));
+  var flatValue = valueFunction(this.value);
+  if (this.contouredValue_.isEnvelope)
+    noteSection.addContour(new module.BasicEnvelopeContourer(param, flatValue));
+  else
+    param.value = flatValue;
 }
 
 module.FlatContour.prototype.averageValue = function(valueFunction) {
@@ -67,7 +61,11 @@ module.OscillatingContour = function(contouredValue) {
 }
 
 module.OscillatingContour.prototype.addContour = function(valueFunction, param, noteSection) {
-  param.value = valueFunction(this.centerValue);
+  var centerValue = valueFunction(this.centerValue);
+  if (this.contouredValue_.isEnvelope)
+    noteSection.addContour(new module.BasicEnvelopeContourer(param, centerValue));
+  else
+    param.value = valueFunction(this.centerValue);
 
   var oscillator = this.contouredValue_.context_.createOscillator();
   oscillator.type = 'sine';
@@ -75,7 +73,11 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
   noteSection.oscillatorNodes.push(oscillator);
   noteSection.allNodes.push(oscillator);
   var gain = this.contouredValue_.context_.createGainNode();
-  gain.gain.value = this.amplitude * param.value;
+  var amplitudeValue = this.amplitude * centerValue;
+  if (this.contouredValue_.isEnvelope)
+    noteSection.addContour(new module.BasicEnvelopeContourer(gain.gain, amplitudeValue));
+  else
+    gain.gain.value = amplitudeValue;
   noteSection.allNodes.push(gain);
   oscillator.connect(gain);
   gain.connect(param);

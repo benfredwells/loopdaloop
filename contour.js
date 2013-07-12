@@ -3,11 +3,43 @@ Contour = (function() {
 "use strict";
 var module = {};
 
+var kMinChangeTime = 0.01;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Contourer interface
 //   contourOn = function(onTime)
 //   contourOff = function(offTime)
 //   contourFinishTime = function(offTime) returns time
+
+////////////////////////////////////////////////////////////////////////////////
+// FlatContourer class
+module.FlatContourer = function(contour, param, valueFunction) {
+  this.contour_ = contour;
+  this.param_ = param;
+  this.valueFunction_ = valueFunction;
+}
+
+module.FlatContourer.prototype.contourOn = function(onTime) {
+  var v = this.valueFunction_;
+  if (this.contour_.isEnvelope) {
+    this.param_.setValueAtTime(v(0), onTime);
+    this.param_.setValueAtTime(v(this.contour_.value), onTime + kMinChangeTime);
+  } else {
+    this.param_.value = v(this.contour_.value);
+  }
+}
+
+module.FlatContourer.prototype.contourOff = function(offTime) {
+  if (this.contour_.isEnvelope)
+    this.param_.setValueAtTime(this.valueFunction_(0), offTime + kMinChangeTime);
+}
+
+module.FlatContourer.prototype.contourFinishTime = function(offTime) {
+  var releaseTime = offTime;
+  if (this.contour_.isEnvelope)
+    releaseTime += kMinChangeTime;
+  return releaseTime;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Flat contour
@@ -17,7 +49,7 @@ module.FlatContour = function(contouredValue) {
 }
 
 module.FlatContour.prototype.addContour = function(valueFunction, param, noteSection) {
-  param.value = valueFunction(this.value);
+  noteSection.addContour(new module.FlatContourer(this, param, valueFunction));
 }
 
 module.FlatContour.prototype.averageValue = function(valueFunction) {
@@ -55,9 +87,8 @@ module.OscillatingContour.prototype.averageValue = function(valueFunction) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // ADSRContourer class
-module.ADSRContourer = function(context, ADSR, param, valueFunction) {
-  this.context_ = context;
-  this.ADSR_ = ADSR;
+module.ADSRContourer = function(contour, param, valueFunction) {
+  this.contour_ = contour;
   this.param_ = param;
   this.valueFunction_ = valueFunction;
 }
@@ -65,15 +96,15 @@ module.ADSRContourer = function(context, ADSR, param, valueFunction) {
 module.ADSRContourer.prototype.contourOn = function(onTime) {
   var nextTime = onTime;
   var v = this.valueFunction_;
-  this.param_.setValueAtTime(v(this.ADSR_.initialValue), nextTime);
-  nextTime += this.ADSR_.attackDelay;
-  this.param_.setValueAtTime(v(this.ADSR_.initialValue), nextTime);
-  nextTime += this.ADSR_.attackTime;
-  this.param_.linearRampToValueAtTime(v(this.ADSR_.attackValue), nextTime);
-  nextTime += this.ADSR_.attackHold;
-  this.param_.setValueAtTime(v(this.ADSR_.attackValue), nextTime);
-  nextTime += this.ADSR_.decayTime;
-  this.param_.linearRampToValueAtTime(v(this.ADSR_.sustainValue), nextTime);
+  this.param_.setValueAtTime(v(this.contour_.initialValue), nextTime);
+  nextTime += this.contour_.attackDelay;
+  this.param_.setValueAtTime(v(this.contour_.initialValue), nextTime);
+  nextTime += this.contour_.attackTime;
+  this.param_.linearRampToValueAtTime(v(this.contour_.attackValue), nextTime);
+  nextTime += this.contour_.attackHold;
+  this.param_.setValueAtTime(v(this.contour_.attackValue), nextTime);
+  nextTime += this.contour_.decayTime;
+  this.param_.linearRampToValueAtTime(v(this.contour_.sustainValue), nextTime);
   this.sustainStart_ = nextTime;
 }
 
@@ -81,18 +112,18 @@ module.ADSRContourer.prototype.contourOff = function(offTime) {
   var nextTime = offTime;
   if (nextTime < this.sustainStart_)
     nextTime = this.sustainStart_;
-  nextTime += this.ADSR_.sustainHold;
+  nextTime += this.contour_.sustainHold;
   var v = this.valueFunction_;
-  this.param_.setValueAtTime(v(this.ADSR_.sustainValue), nextTime);
-  nextTime += this.ADSR_.releaseTime;
-  this.param_.linearRampToValueAtTime(v(this.ADSR_.finalValue), nextTime);
+  this.param_.setValueAtTime(v(this.contour_.sustainValue), nextTime);
+  nextTime += this.contour_.releaseTime;
+  this.param_.linearRampToValueAtTime(v(this.contour_.finalValue), nextTime);
 }
 
 module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
   var releaseTime = offTime;
   if (this.sustainStart_ > releaseTime)
     releaseTime = this.sustainStart_;
-  return releaseTime + this.ADSR_.sustainHold + this.ADSR_.releaseTime;
+  return releaseTime + this.contour_.sustainHold + this.contour_.releaseTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -112,7 +143,7 @@ module.ADSRContour = function(contouredValue) {
 }
 
 module.ADSRContour.prototype.addContour = function(valueFunction, param, noteSection) {
-  noteSection.addContour(new module.ADSRContourer(this.contouredValue_.context_, this, param, valueFunction));
+  noteSection.addContour(new module.ADSRContourer(this, param, valueFunction));
 }
 
 module.ADSRContour.prototype.averageValue = function(valueFunction) {

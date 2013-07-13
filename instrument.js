@@ -7,105 +7,15 @@ var kFilterCount = 2;
 var kOscillatorCount = 3;
 
 ////////////////////////////////////////////////////////////////////////////////
-// LFO class
-module.LFO = function(context) {
-  this.context_ = context;
-  this.enabled = false;
-  this.frequency = 0;
-  this.gain = 0;
-}
-
-module.LFO.prototype.addNodes = function(param, noteSection) {
-  var oscillator = this.context_.createOscillator();
-  oscillator.type = 'sine';
-  oscillator.frequency.value = this.frequency;
-  noteSection.oscillatorNodes.push(oscillator);
-  noteSection.allNodes.push(oscillator);
-  var gain = this.context_.createGainNode();
-  gain.gain.value = param.value * this.gain;
-  noteSection.allNodes.push(gain);
-  oscillator.connect(gain);
-  gain.connect(param);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// EnvelopeContourer class
-
-module.EnvelopeContourer = function(context, envelope, gainNode) {
-  this.context_ = context;
-  this.envelope_ = envelope;
-  this.gainNode_ = gainNode;
-}
-
-module.EnvelopeContourer.prototype.contourOn = function(onTime) {
-  var nextTime = onTime;
-  this.gainNode_.gain.setValueAtTime(0, nextTime);
-  nextTime += this.envelope_.attackDelay;
-  this.gainNode_.gain.setValueAtTime(0, nextTime);
-  nextTime += this.envelope_.attack;
-  this.gainNode_.gain.linearRampToValueAtTime(1, nextTime);
-  nextTime += this.envelope_.attackHold;
-  this.gainNode_.gain.setValueAtTime(1, nextTime);
-  nextTime += this.envelope_.decay;
-  this.gainNode_.gain.linearRampToValueAtTime(this.envelope_.sustain, nextTime);
-  this.sustainStart_ = nextTime;
-}
-
-module.EnvelopeContourer.prototype.contourOff = function(offTime) {
-  var nextTime = offTime;
-  if (nextTime < this.sustainStart_)
-    nextTime = this.sustainStart_;
-  nextTime += this.envelope_.sustainHold;
-  this.gainNode_.gain.setValueAtTime(this.envelope_.sustain, nextTime);
-  nextTime += this.envelope_.release;
-  this.gainNode_.gain.linearRampToValueAtTime(0, nextTime);
-}
-
-module.EnvelopeContourer.prototype.contourFinishTime = function(offTime) {
-  var releaseTime = offTime;
-  if (this.sustainStart_ > releaseTime)
-    releaseTime = this.sustainStart_;
-  return releaseTime + this.envelope_.sustainHold + this.envelope_.release;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Envelope class
-module.Envelope = function(context) {
-  this.context_ = context;
-  this.attackDelay = 0;
-  this.attack = 0;
-  this.attackHold = 0;
-  this.decay = 0;
-  this.sustain = 1;
-  this.sustainHold = 0;
-  this.release = 0;
-}
-
-module.Envelope.prototype.createNoteSection_ = function() {
-  var gainNode = this.context_.createGainNode();
-  var section = new PlayedNote.NoteSection(gainNode);
-  section.addContour(new module.EnvelopeContourer(this.context_, this, gainNode));
-  return section;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // Oscillator class
 module.Oscillator = function(context) {
   this.context_ = context;
   this.enabled = true;
   this.type = 'sine';
-  this.vibrato = new module.LFO(context);
-  this.tremolo = new module.LFO(context);
   this.octaveOffset = 0;
   this.noteOffset = 0;
   this.detune = 0;
   this.gain = 1;
-}
-
-module.Oscillator.prototype.createTremoloNode_ = function(noteSection) {
-  var gainNode = this.context_.createGainNode();
-  this.tremolo.addNodes(gainNode.gain, noteSection);
-  return gainNode;
 }
 
 module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
@@ -122,13 +32,6 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note) {
   var section = new PlayedNote.NoteSection(null);
   var oscillator = this.createOscillatorNode_(octave, note);
   section.pushOscillator(oscillator);
-  if (this.vibrato.enabled) {
-    this.vibrato.addNodes(oscillator.frequency, section);
-  }
-  if (this.tremolo.enabled) {
-    gainNode = this.createTremoloNode_(section);
-    section.pushNode(gainNode);
-  }
   return section;
 }
 
@@ -206,6 +109,7 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, max
 
 module.Instrument = function(context, destinationNode) {
   this.context_ = context;
+  this.envelope = new Contour.ContouredValue(context, true);
   this.destinationNode_ = destinationNode;
   this.oscillators = [];
   for (var i = 0; i < kOscillatorCount; i++) {
@@ -215,7 +119,16 @@ module.Instrument = function(context, destinationNode) {
   for (var i = 0; i < kFilterCount; i++) {
     this.filters.push(new module.Filter(context));
   }
-  this.envelope = new module.Envelope(context);
+}
+
+module.Instrument.prototype.createEnvelope_ = function() {
+  var gainNode = this.context_.createGainNode();
+  var section = new PlayedNote.NoteSection(gainNode);
+  var gainValueFunction = function(value) {
+    return value;
+  }
+  this.envelope.currentContour().addContour(gainValueFunction, gainNode.gain, section)
+  return section;
 }
 
 // Public methods
@@ -232,7 +145,7 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
       playedNote.pushSections([filterSection]);
     }
   });
-  playedNote.pushSections([this.envelope.createNoteSection_()]);
+  playedNote.pushSections([this.createEnvelope_()]);
   return playedNote;
 }
 

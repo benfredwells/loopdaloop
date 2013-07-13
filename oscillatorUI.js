@@ -19,9 +19,6 @@ var kDetuneRowDef = {title: 'Detune',
                      max: 50,
                      steps: 100};
 
-var kVibratoRowDef = {title: 'Vibrato', indent: 0};
-var kTremoloRowDef = {title: 'Tremolo', indent: 0};
-
 module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) {
   this.id = id;
   this.oscillator_ = oscillator;
@@ -36,9 +33,6 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
   var s = SettingsUI.makeSubRow;
   var g = this.group_;
 
-  this.vibratoController_ = g.addLFOController(kVibratoRowDef, oscillator.vibrato);
-  this.tremoloController_ = g.addLFOController(kTremoloRowDef, oscillator.tremolo);
-
   var ui = this;
   var changeHandler = function() {
     ui.oscillator_.type = ui.typeRow_.value();
@@ -51,8 +45,6 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
   this.octaveOffsetRow_.onchange = changeHandler;
   this.noteOffsetRow_.onchange = changeHandler;
   this.detuneRow_.onchange = changeHandler;
-  this.vibratoController_.onchange = changeHandler;
-  this.tremoloController_.onchange = changeHandler;
   this.setInitialValues_();
   changeHandler();
 }
@@ -68,15 +60,11 @@ module.UI.prototype.updateDisplay_ = function() {
   this.octaveOffsetRow_.setLabel(this.octaveOffsetRow_.value());
   this.noteOffsetRow_.setLabel(this.noteOffsetRow_.value());
   this.detuneRow_.setLabel(this.detuneRow_.value());
-  this.vibratoController_.updateDisplay();
-  this.tremoloController_.updateDisplay();
   this.enableDisable_();
   this.drawWave_();
 }
 
 module.UI.prototype.enableDisable_ = function() {
-  this.vibratoController_.enableDisable(true);
-  this.tremoloController_.enableDisable(true);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

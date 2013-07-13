@@ -3,7 +3,7 @@ Contour = (function() {
 "use strict";
 var module = {};
 
-var kMinChangeTime = 0.01;
+var kMinChangeTime = 0.05;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Contourer interface
@@ -20,15 +20,15 @@ module.BasicEnvelopeContourer = function(param, value) {
 
 module.BasicEnvelopeContourer.prototype.contourOn = function(onTime) {
   this.param_.setValueAtTime(0, onTime);
-  this.param_.setValueAtTime(this.value_, onTime + kMinChangeTime);
+  this.param_.linearRampToValueAtTime(this.value_, onTime + kMinChangeTime);
 }
 
 module.BasicEnvelopeContourer.prototype.contourOff = function(offTime) {
-  this.param_.setValueAtTime(0, offTime + kMinChangeTime);
+  this.param_.linearRampToValueAtTime(0, offTime + kMinChangeTime);
 }
 
 module.BasicEnvelopeContourer.prototype.contourFinishTime = function(offTime) {
-  return releaseTime + kMinChangeTime;
+  return offTime + kMinChangeTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -11,11 +11,17 @@ var kTypeRowDef = {captions: kTypeCaptions, values: kTypeValues};
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, generic code
 
-// contourControllerDef is {title, indent, textSuffix, min, max, steps, prefix, suffix}
+// contourControllerDef is {title, indent, min, max, steps, prefix, suffix}
 // indent can be 0 or 1
 module.ContourController = function(group, controllerDef, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.rowDef_ = controllerDef;
+  this.rowDef_ = {};
+  this.rowDef_.min = controllerDef.min;
+  this.rowDef_.max = controllerDef.max;
+  this.rowDef_.steps = controllerDef.steps;
+  this.prefix_ = controllerDef.prefix;
+  this.suffix_ = controllerDef.suffix;
+  controllerDef;
   this.group_ = group;
 
   var typeIndent, controlIndent;
@@ -76,7 +82,7 @@ module.ContourController.prototype.addValueRow = function(title, indent) {
 
 module.ContourController.prototype.updateValueRow = function(row) {
   var value = row.value();
-  row.setLabel(this.rowDef_.prefix + SettingsUI.roundForDisplay(value) + this.rowDef_.suffix);
+  row.setLabel(this.prefix_ + SettingsUI.roundForDisplay(value) + this.suffix_);
 }
 
 module.ContourController.prototype.updateTimeRow = function(row) {

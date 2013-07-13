@@ -3,12 +3,7 @@ EnvelopeUI = (function() {
 "use strict";
 var module = {};
 
-var kAttackRowDef = {title: 'Attack', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
-var kAttackHoldRowDef = {title: 'Attack Hold', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
-var kDecayRowDef = {title: 'Decay', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
-var kSustainRowDef = {title: 'Sustain', min: 0, max: 1, steps: 20};
-var kSustainHoldRowDef = {title: 'Sustain Hold', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
-var kReleaseRowDef = {title: 'Release', base: 10, minExponent: -2, maxExponent:1, expSteps: 10, includeZero: false};
+var kControllerDef = {title: 'Type', indent: 0, min: 0, max: 1, steps: 100, prefix: '', suffix:''};
 
 module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) {
   this.id = id;
@@ -16,47 +11,18 @@ module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) 
   this.title = title;
 
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, 'Envelope', this, collapsed);
-  this.attackRow_ = this.group_.addExponentialRangeRow(kAttackRowDef);
-  this.attackHoldRow_ = this.group_.addExponentialRangeRow(kAttackHoldRowDef);
-  this.decayRow_ = this.group_.addExponentialRangeRow(kDecayRowDef);
-  this.sustainRow_ = this.group_.addLinearRangeRow(kSustainRowDef);
-  this.sustainHoldRow_ = this.group_.addExponentialRangeRow(kSustainHoldRowDef);
-  this.releaseRow_ = this.group_.addExponentialRangeRow(kReleaseRowDef);
+  this.controller_ = new ContourUI.ContourController(this.group_, kControllerDef, instrument.envelope);
 
   var ui = this;
   var changeHandler = function() {
-    ui.instrument_.envelope.attackDelay = 0;
-    ui.instrument_.envelope.attack = ui.attackRow_.value();
-    ui.instrument_.envelope.attackHold = ui.attackHoldRow_.value();
-    ui.instrument_.envelope.decay = ui.decayRow_.value();
-    ui.instrument_.envelope.sustain = ui.sustainRow_.value();
-    ui.instrument_.envelope.sustainHold = ui.sustainHoldRow_.value();
-    ui.instrument_.envelope.release = ui.releaseRow_.value();
     ui.updateDisplay_();
   }
-  this.attackRow_.onchange = changeHandler;
-  this.attackHoldRow_.onchange = changeHandler;
-  this.decayRow_.onchange = changeHandler;
-  this.sustainRow_.onchange = changeHandler;
-  this.sustainHoldRow_.onchange = changeHandler;
-  this.releaseRow_.onchange = changeHandler;
-  this.attackRow_.setValue('0.1');
-  this.attackHoldRow_.setValue('0.1');
-  this.decayRow_.setValue('0.1');
-  this.sustainRow_.setValue('0.5');
-  this.sustainHoldRow_.setValue('0.01');
-  this.releaseRow_.setValue('0.1');
+  this.controller_.onchange = changeHandler;
   changeHandler();
 }
 
 module.UI.prototype.updateDisplay_ = function() {
   var r = SettingsUI.roundForDisplay;
-  this.attackRow_.setLabel(r(this.attackRow_.value()) + ' s');
-  this.attackHoldRow_.setLabel(r(this.attackHoldRow_.value()) + ' s');
-  this.decayRow_.setLabel(r(this.decayRow_.value()) + ' s');
-  this.sustainRow_.setLabel(r(this.sustainRow_.value() * 100) + '%');
-  this.sustainHoldRow_.setLabel(r(this.sustainHoldRow_.value()) + ' s');
-  this.releaseRow_.setLabel(r(this.releaseRow_.value()) + ' s');
   this.drawEnvelope_();
 }
 
@@ -104,33 +70,36 @@ module.UI.prototype.drawEnvelope_ = function() {
                                     kAxisColor, 1,
                                     this.group_.svgDoc, this.group_.svg);
 
+  // TODO: draw all envelope types.
+  return;
+
   if (this.envelope_)
     this.group_.svg.removeChild(this.envelope_);
 
   var x = kEnvelopeXStart + (kEnvelopeStrokeWidth / 2);
-  var totalTime = this.instrument_.envelope.attack +
+  var totalTime = this.instrument_.envelope.attackTime +
                   this.instrument_.envelope.attackHold +
-                  this.instrument_.envelope.decay +
+                  this.instrument_.envelope.decayTime +
                   kSustainTime +
                   this.instrument_.envelope.sustainHold +
-                  this.instrument_.envelope.release;
+                  this.instrument_.envelope.releaseTime;
   if (totalTime < kMinTime)
     totalTime = kMinTime;
   var xFactor = kEnvelopeWidth / totalTime;
-  var ySustain = kEnvelopeYLow + (1 - this.instrument_.envelope.sustain) * (kEnvelopeYHigh - kEnvelopeYLow);
+  var ySustain = kEnvelopeYLow + (1 - this.instrument_.envelope.sustainValue) * (kEnvelopeYHigh - kEnvelopeYLow);
 
   var points = [];
   SVGUtils.addPointToArray(x, kEnvelopeYHigh, points);
-  x += this.instrument_.envelope.attack * xFactor;
+  x += this.instrument_.envelope.attackTime * xFactor;
   SVGUtils.addPointToArray(x, kEnvelopeYLow, points);
   x += this.instrument_.envelope.attackHold * xFactor;
   SVGUtils.addPointToArray(x, kEnvelopeYLow, points);
-  x += this.instrument_.envelope.decay * xFactor;
+  x += this.instrument_.envelope.decayTime * xFactor;
   SVGUtils.addPointToArray(x, ySustain, points);
   var sustainStart = x;
   x += (this.instrument_.envelope.sustainHold + kSustainTime) * xFactor;
   SVGUtils.addPointToArray(x, ySustain, points);
-  x += this.instrument_.envelope.release * xFactor;
+  x += this.instrument_.envelope.releaseTime * xFactor;
   SVGUtils.addPointToArray(x, kEnvelopeYHigh, points);
   this.envelope_ = SVGUtils.createPolyLine(points,
                                            kEnvelopeColor, kEnvelopeStrokeWidth,

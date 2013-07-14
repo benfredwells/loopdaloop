@@ -11,8 +11,15 @@ module.kDisplayMid = {};
 module.kDisplayMid.x = 100.5;
 module.kDisplayMid.y = 25.5;
 
+//TODO: make this private to the module. 
 module.roundForDisplay = function(number) {
   return Math.round(number * 100) / 100;
+}
+
+module.Formatter = function(prefix, suffix) {
+  this.format = function(string) {
+    return prefix + string + suffix;
+  }
 }
 
 module.Group = function(categoryParentEl, detailsParentEl, title, owner, collapsed) {
@@ -215,58 +222,55 @@ module.Group.prototype.addLinearRangeRow = function(linearRangeDef) {
 }
 
 // exponentialRangeDef is {title, base, minExponent, maxExponent, expSteps, includeZero}
-module.Group.prototype.addExponentialRangeRow = function(exponentialRangeDef) {
-  var title = exponentialRangeDef.title;
-  var base = exponentialRangeDef.base;
-  var minExponent = exponentialRangeDef.minExponent;
-  var maxExponent = exponentialRangeDef.maxExponent;
-  var expSteps = exponentialRangeDef.expSteps;
-  var includeZero = exponentialRangeDef.includeZero;
-  var totalSteps = expSteps;
-  if (includeZero)
-    totalSteps++;
+module.Group.prototype.addExponentialRangeRow = function(title, exponentialValue, steps, formatter) {
+  var base = exponentialValue.base;
+  var minExponent = exponentialValue.minExponent;
+  var maxExponent = exponentialValue.maxExponent;
   var row = this.makeRow_(title);
 
-  row.range = document.createElement('input');
-  row.range.type = 'range';
-  row.range.min = 0;
-  row.range.max = totalSteps;
-  row.range.classList.add('instrDetail');
-  row.setting_.appendChild(row.range);
+  var range = document.createElement('input');
+  range.type = 'range';
+  range.min = 0;
+  range.max = steps;
+  range.classList.add('instrDetail');
+  row.setting_.appendChild(range);
 
   this.addValueLabel_(row);
-
-  var exponentFactor = (maxExponent - minExponent) / expSteps;
-  row.value = function() {
-    var exponent = row.range.value;
-    if (includeZero) {
-      if (exponent == 0)
-        return 0;
-      exponent--;
-    }
-    exponent = minExponent + exponent * exponentFactor;
-    return Math.pow(base, exponent);
-  }
-
-  row.setValue = function(newValue) {
-    if (newValue == 0 && includeZero) {
-      row.range.value = 0;
-      return;
-    }
-    var exponent = Math.log(newValue) / Math.log(base);
-    var rangeVal = Math.round((exponent - minExponent) / exponentFactor);
-    if (includeZero)
-      rangeVal++;
-    row.range.value = rangeVal;
-  }
 
   var prevEnableDisable = row.enableDisable;
   row.enableDisable = function(value) {
     prevEnableDisable(value);
-    row.range.disabled = !value;
+    range.disabled = !value;
   }
 
-  setupOnchange(row, row.range);
+  var exponentFactor = (maxExponent - minExponent) / steps;
+  var value = function() {
+    var exponent = range.value;
+    exponent = minExponent + exponent * exponentFactor;
+    return Math.pow(base, exponent);
+  }
+
+  var setValue = function(newValue) {
+    var exponent = Math.log(newValue) / Math.log(base);
+    var rangeVal = Math.round((exponent - minExponent) / exponentFactor);
+    range.value = rangeVal;
+  }
+
+  var setLabel = function() {
+    var label = module.roundForDisplay(exponentialValue.value);
+    if (formatter)
+      label = formatter.format(label);
+    row.setLabel(label);
+  }
+
+  range.onchange = function() {
+    exponentialValue.value = value();
+    setLabel();
+    if (row.onchange)
+      row.onchange();
+  }
+  setValue(exponentialValue.value);
+  setLabel();
 
   return row;
 }

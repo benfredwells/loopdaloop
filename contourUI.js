@@ -87,14 +87,6 @@ module.ContourController.prototype.updateTimeRow = function(row) {
   row.setLabel(SettingsUI.roundForDisplay(row.value()) + ' s');
 }
 
-module.ContourController.prototype.updateFrequencyRow = function(row) {
-  row.setLabel(SettingsUI.roundForDisplay(row.value()) + ' Hz');
-}
-
-module.ContourController.prototype.updateRow = function(row, prefix, suffix) {
-  row.setLabel(prefix + SettingsUI.roundForDisplay(row.value()) + suffix);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, flat contour code
 module.ContourController.prototype.addFlatControls_ = function(indent) {
@@ -123,11 +115,15 @@ module.ContourController.prototype.addFlatControls_ = function(indent) {
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, oscillating contour code
 module.ContourController.prototype.addOscillatingControls_ = function(indent) {
-  var freqRowDef = {title: 'Speed', base: 10, minExponent: -1, maxExponent: 1, expSteps: 20, includeZero: false};
-  var gainRowDef = {title: 'Amplitude', base: 10, minExponent: -2, maxExponent: 0, expSteps: 10, includeZero: false};
+  var oscillatingContour = this.contouredValue_.contoursByIdentifier[Contour.kOscillatingContour];
   this.oscillatingCenterValueRow_ = this.addValueRow('Center Value', indent);
-  this.oscillatingFrequencyRow_ = indent(this.group_.addExponentialRangeRow(freqRowDef));
-  this.oscillatingAmplitudeRow_ = indent(this.group_.addExponentialRangeRow(gainRowDef));
+  this.oscillatingFrequencyRow_ = indent(this.group_.addExponentialRangeRow(Strings.kSpeed,
+                                                                            oscillatingContour.frequency,
+                                                                            20));
+  this.oscillatingAmplitudeRow_ = indent(this.group_.addExponentialRangeRow(Strings.kAmplitude,
+                                                                            oscillatingContour.amplitude,
+                                                                            10,
+                                                                            new SettingsUI.Formatter('', ' of max')));
   var oscillatingRows = [];
   oscillatingRows.push(this.oscillatingCenterValueRow_);
   oscillatingRows.push(this.oscillatingFrequencyRow_);
@@ -135,18 +131,13 @@ module.ContourController.prototype.addOscillatingControls_ = function(indent) {
   this.rowsByContour_[Contour.kOscillatingContour] = oscillatingRows;
 
   var controller = this;
-  var oscillatingContour = this.contouredValue_.contoursByIdentifier[Contour.kOscillatingContour];
 
   var updateDisplay = function () {
     controller.updateValueRow(controller.oscillatingCenterValueRow_);
-    controller.updateFrequencyRow(controller.oscillatingFrequencyRow_);
-    controller.updateRow(controller.oscillatingAmplitudeRow_, '', ' of max');
   }
 
   var changeHandler = function() {
     oscillatingContour.centerValue = controller.oscillatingCenterValueRow_.value();
-    oscillatingContour.frequency = controller.oscillatingFrequencyRow_.value();
-    oscillatingContour.amplitude = controller.oscillatingAmplitudeRow_.value();
     updateDisplay();
     if (controller.onchange)
       controller.onchange();
@@ -164,10 +155,10 @@ module.ContourController.prototype.addOscillatingControls_ = function(indent) {
 module.ContourController.prototype.addADSRControls_ = function(indent) {
   var controller = this;
   var addTimeRow = function(title, includeZero) {
-    var timeRowDef = {base: 10, minExponent: -2, maxExponent:1, expSteps: 100};
+    var timeRowDef = {min: 0, max: 10, steps: 100};
     timeRowDef.title = title;
     timeRowDef.includeZero = includeZero;
-    return indent(controller.group_.addExponentialRangeRow(timeRowDef));
+    return indent(controller.group_.addLinearRangeRow(timeRowDef));
   }
   this.adsrInitialValueRow_ = this.addValueRow('Initial Value', indent);
   this.adsrAttackDelayRow_ = addTimeRow('Attack Delay', true);

@@ -55,9 +55,8 @@ module.FlatContour.prototype.averageValue = function(valueFunction) {
 module.OscillatingContour = function(contouredValue) {
   this.contouredValue_ = contouredValue;
   this.centerValue = 1;
-  this.type = 'sine';
-  this.amplitude = 1;
-  this.frequency = 1;
+  this.amplitude = new Value.ExponentialValue(0.1, 10, -2, 0);
+  this.frequency = new Value.ExponentialValue(1, 10, -1, 1);
 }
 
 module.OscillatingContour.prototype.addContour = function(valueFunction, param, noteSection) {
@@ -69,11 +68,11 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
 
   var oscillator = this.contouredValue_.context_.createOscillator();
   oscillator.type = 'sine';
-  oscillator.frequency.value = this.frequency;
+  oscillator.frequency.value = this.frequency.value;
   noteSection.oscillatorNodes.push(oscillator);
   noteSection.allNodes.push(oscillator);
   var gain = this.contouredValue_.context_.createGainNode();
-  var amplitudeValue = this.amplitude * centerValue;
+  var amplitudeValue = this.amplitude.value * centerValue;
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(gain.gain, amplitudeValue));
   else

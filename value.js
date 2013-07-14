@@ -20,11 +20,11 @@ module.NumberValue = function(value, min, max) {
   this.max = max;
 }
 
-module.ExponentialValue = function(value, base, minExp, maxExp) {
+module.ExponentialValue = function(value, base, minExponent, maxExponent) {
   this.value = value;
   this.base = base;
-  this.minExp = minExp;
-  this.maxExp = maxExp;
+  this.minExponent = minExponent;
+  this.maxExponent = maxExponent;
 }
 
 return module;

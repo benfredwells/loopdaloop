@@ -111,7 +111,7 @@ module.UI.prototype.drawResponse_ = function() {
     ui.group_.svg.removeChild(child);
   });
   this.response_ = [];
-  if (!this.filter_.enabled)
+  if (!this.filter_.enabled.value)
     return;
 
   var magPoints = [];

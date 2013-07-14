@@ -5,6 +5,8 @@ var module = {};
 
 module.kEnabled = 'Enabled';
 module.kType = 'Type';
+module.kSpeed = 'Speed';
+module.kAmplitude = 'Amplitude';
 
 module.kFlat = 'Flat';
 module.kOscillating = 'Oscillating';

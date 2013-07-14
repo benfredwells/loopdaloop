@@ -55,6 +55,7 @@ module.FlatContour.prototype.averageValue = function(valueFunction) {
 module.OscillatingContour = function(contouredValue) {
   this.contouredValue_ = contouredValue;
   this.centerValue = 1;
+  // TODO: make amplitude a constrained value
   this.amplitude = new Value.ExponentialValue(0.1, 10, -2, 0);
   this.frequency = new Value.ExponentialValue(1, 10, -1, 1);
 }
@@ -67,6 +68,7 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
     param.value = valueFunction(this.centerValue);
 
   var oscillator = this.contouredValue_.context_.createOscillator();
+  // TODO: make this controllable.
   oscillator.type = 'sine';
   oscillator.frequency.value = this.frequency.value;
   noteSection.oscillatorNodes.push(oscillator);

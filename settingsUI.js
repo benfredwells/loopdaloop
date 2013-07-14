@@ -279,63 +279,6 @@ module.Group.prototype.addExponentialRangeRow = function(exponentialRangeDef) {
   return row;
 }
 
-// lfoControllerDef is {title, indent}
-// indent can be 0 or 1
-module.Group.prototype.addLFOController = function(lfoControllerDef, lfo) {
-  var lfoController = {};
-  lfoController.freqRowDef = {title: 'Speed', base: 10, minExponent: -1, maxExponent: 1, expSteps: 20, includeZero: false};
-  lfoController.gainRowDef = {title: 'Amplitude', base: 10, minExponent: -2, maxExponent: 0, expSteps: 10, includeZero: false};
-
-  var enableIndent, controlIndent;
-  if (lfoControllerDef.indent == 0) {
-    enableIndent = function(row) {return row};
-    controlIndent = module.makeSubRow;
-  } else {
-    enableIndent = module.makeSubRow;
-    controlIndent = module.makeSubSubRow;
-  }
-
-  lfoController.enabledRow = enableIndent(this.addCheckRow({title: lfoControllerDef.title}));
-  lfoController.frequencyRow = controlIndent(this.addExponentialRangeRow(lfoController.freqRowDef));
-  lfoController.gainRow = controlIndent(this.addExponentialRangeRow(lfoController.gainRowDef));
-
-  var changeHandler = function() {
-    lfo.enabled = lfoController.enabledRow.value();
-    lfo.frequency = lfoController.frequencyRow.value();
-    lfo.gain = lfoController.gainRow.value();
-    if (lfoController.onchange)
-      lfoController.onchange();
-  }
-
-  lfoController.enabledRow.onchange = changeHandler;
-  lfoController.frequencyRow.onchange = changeHandler;
-  lfoController.gainRow.onchange = changeHandler;
-  lfoController.changeHandler = changeHandler;
-
-  lfoController.updateDisplay = function () {
-    var r = SettingsUI.roundForDisplay;
-    lfoController.frequencyRow.setLabel(r(lfoController.frequencyRow.value()) + ' Hz');
-    lfoController.gainRow.setLabel('+- ' + r(lfoController.gainRow.value()));
-  }
-
-  lfoController.enableDisable = function(value) {
-    lfoController.enabledRow.enableDisable(value);
-    var lfoEnabled = value && lfoController.enabledRow.value();
-    lfoController.frequencyRow.enableDisable(lfoEnabled);
-    lfoController.gainRow.enableDisable(lfoEnabled);
-  }
-
-  return lfoController;
-}
-
-function linearValue(value, exponentialRowDef, linearMin, linearMax) {
-  var exponent = Math.log(value) / Math.log(exponentialRowDef.base);
-  var expMin = exponentialRowDef.minExponent;
-  var expMax = exponentialRowDef.maxExponent;
-  var factor = (linearMax - linearMin) / (expMax - expMin);
-  return (exponent - expMin) * factor + linearMin;
-}
-
 return module;
 
 })();

@@ -15,6 +15,9 @@ module.kSquare = 'Square';
 module.kSawtooth = 'Sawtooth';
 module.kTriangle = 'Triangle';
 
+module.kLowPass = 'Low Pass';
+module.kHighPass = 'High Pass';
+
 return module;
 
 }());

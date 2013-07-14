@@ -21,7 +21,6 @@ module.ContourController = function(group, controllerDef, contouredValue) {
   this.rowDef_.steps = controllerDef.steps;
   this.prefix_ = controllerDef.prefix;
   this.suffix_ = controllerDef.suffix;
-  controllerDef;
   this.group_ = group;
 
   var typeIndent, controlIndent;
@@ -33,9 +32,7 @@ module.ContourController = function(group, controllerDef, contouredValue) {
     controlIndent = SettingsUI.makeSubSubRow;
   }
 
-  var typeRowDef = kTypeRowDef;
-  typeRowDef.title = controllerDef.title;
-  this.typeRow_ = typeIndent(group.addSelectRow(Strings.kType,
+  this.typeRow_ = typeIndent(group.addSelectRow(controllerDef.title,
                                                 contouredValue.currentContourIdentifier,
                                                 kTypeDescriptions));
   this.allRows_ = [];
@@ -46,7 +43,6 @@ module.ContourController = function(group, controllerDef, contouredValue) {
 
   var controller = this;
   var changeHandler = function() {
-    controller.contouredValue_.currentContourIdentifier = controller.typeRow_.value();
     controller.showHideControls_();
     if (controller.onchange)
       controller.onchange();
@@ -73,7 +69,7 @@ module.ContourController.prototype.showHideControls_ = function() {
   this.allRows_.forEach(function(row) {
     row.hidden = true;
   });
-  showRows(this.rowsByContour_[this.contouredValue_.currentContourIdentifier]);
+  showRows(this.rowsByContour_[this.contouredValue_.currentContourIdentifier.value]);
 }
 
 module.ContourController.prototype.addValueRow = function(title, indent) {

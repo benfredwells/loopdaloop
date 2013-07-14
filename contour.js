@@ -178,7 +178,7 @@ module.ContouredValue.prototype.initContour_ = function(identifier, contour) {
 }
 
 module.ContouredValue.prototype.currentContour = function() {
-  return this.contoursByIdentifier[this.currentContourIdentifier];
+  return this.contoursByIdentifier[this.currentContourIdentifier.value];
 }
 
 return module;

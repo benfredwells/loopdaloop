@@ -3,16 +3,12 @@ FilterUI = (function() {
 "use strict";
 var module = {};
 
-var kFilterCaptions = ['Low pass', 'High pass', 'Band pass', 'Low shelf',
-                       'High shelf', 'Peaking', 'Notch', 'All pass'];
-var kFilterValues = ['lowpass', 'highpass', 'bandpass', 'lowshelf', 'highshelf',
-                    'peaking', 'notch', 'allpass'];
-var kFilterHasGain = [false, false, false, true, true, true, false, false];
+var kTypeDescriptions = {};
+kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
+kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
 
-var kTypeRowDef = {title: 'Type', captions: kFilterCaptions, values: kFilterValues};
 var kFrequencyControllerDef = {title: 'Frequency', indent: 1, min: 0.5, max: 10, steps: 190, prefix: 'x', suffix:''};
 var kQRowDef = {title: 'Q', min: 0, max: 20, steps: 20};
-var kGainRowDef = {title: 'Gain', min: -20, max: 20, steps: 40};
 
 module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.id = id;
@@ -25,16 +21,13 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   var g = this.group_;
 
   this.enabledRow_ = g.addCheckRow(Strings.kEnabled, filter.enabled);
-  this.typeRow_ = s(g.addSelectRow(kTypeRowDef));
+  this.typeRow_ = s(g.addSelectRow(Strings.kType, filter.type, kTypeDescriptions));
   this.frequencyController_ = new ContourUI.ContourController(g, kFrequencyControllerDef, filter.frequency);
   this.qRow_ = s(g.addLinearRangeRow(kQRowDef));
-  this.gainRow_ = s(g.addLinearRangeRow(kGainRowDef));
 
   var ui = this;
   var changeHandler = function  () {
-    ui.filter_.type = ui.typeRow_.value();
     ui.filter_.q = ui.qRow_.value();
-    ui.filter_.gain = ui.gainRow_.value();
     ui.updateDisplay_();
   }
 
@@ -46,30 +39,23 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.typeRow_.onchange = changeHandler;
   this.frequencyController_.onchange = changeHandler;
   this.qRow_.onchange = changeHandler;
-  this.gainRow_.onchange = changeHandler;
 }
 
 module.UI.prototype.setInitialValues_ = function() {
-  this.typeRow_.setValue('lowpass');
   this.qRow_.setValue(6);
-  this.gainRow_.setValue(10);
 }
 
 module.UI.prototype.updateDisplay_ = function() {
   var r = SettingsUI.roundForDisplay;
   this.qRow_.setLabel(this.qRow_.value());
-  this.gainRow_.setLabel(this.gainRow_.value() + ' dB');
   this.enableDisable_();
   this.drawResponse_();
 }
 
 module.UI.prototype.enableDisable_ = function() {
   var enabled = this.filter_.enabled.value;
-  var gainEnabled = enabled && kFilterHasGain[this.typeRow_.value()];
-  this.typeRow_.enableDisable(enabled);
   this.frequencyController_.enableDisable(enabled);
   this.qRow_.enableDisable(enabled);
-  this.gainRow_.enableDisable(gainEnabled);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

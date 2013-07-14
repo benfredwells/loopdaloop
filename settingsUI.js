@@ -16,12 +16,6 @@ module.roundForDisplay = function(number) {
   return Math.round(number * 100) / 100;
 }
 
-module.Formatter = function(prefix, suffix) {
-  this.format = function(string) {
-    return prefix + string + suffix;
-  }
-}
-
 module.Group = function(categoryParentEl, detailsParentEl, title, owner, collapsed) {
   this.categoryEl_ = document.createElement('div');
   this.categoryEl_.classList.add('instrCategory');

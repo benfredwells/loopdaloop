@@ -123,7 +123,7 @@ module.ContourController.prototype.addOscillatingControls_ = function(indent) {
   this.oscillatingAmplitudeRow_ = indent(this.group_.addExponentialRangeRow(Strings.kAmplitude,
                                                                             oscillatingContour.amplitude,
                                                                             10,
-                                                                            new SettingsUI.Formatter('', ' of max')));
+                                                                            Strings.kMaxFormatter));
   var oscillatingRows = [];
   oscillatingRows.push(this.oscillatingCenterValueRow_);
   oscillatingRows.push(this.oscillatingFrequencyRow_);

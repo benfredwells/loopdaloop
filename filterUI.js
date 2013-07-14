@@ -9,7 +9,6 @@ var kFilterValues = ['lowpass', 'highpass', 'bandpass', 'lowshelf', 'highshelf',
                     'peaking', 'notch', 'allpass'];
 var kFilterHasGain = [false, false, false, true, true, true, false, false];
 
-var kEnabledRowDef = {title: 'Enabled'};
 var kTypeRowDef = {title: 'Type', captions: kFilterCaptions, values: kFilterValues};
 var kFrequencyControllerDef = {title: 'Frequency', indent: 1, min: 0.5, max: 10, steps: 190, prefix: 'x', suffix:''};
 var kQRowDef = {title: 'Q', min: 0, max: 20, steps: 20};
@@ -25,7 +24,7 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   var ss = SettingsUI.makeSubSubRow;
   var g = this.group_;
 
-  this.enabledRow_ = g.addCheckRow(kEnabledRowDef);
+  this.enabledRow_ = g.addCheckRow('Enabled', filter.enabled);
   this.typeRow_ = s(g.addSelectRow(kTypeRowDef));
   this.frequencyController_ = new ContourUI.ContourController(g, kFrequencyControllerDef, filter.frequency);
   this.qRow_ = s(g.addLinearRangeRow(kQRowDef));
@@ -33,7 +32,6 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
 
   var ui = this;
   var changeHandler = function  () {
-    ui.filter_.enabled = ui.enabledRow_.value();
     ui.filter_.type = ui.typeRow_.value();
     ui.filter_.q = ui.qRow_.value();
     ui.filter_.gain = ui.gainRow_.value();
@@ -52,7 +50,6 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
 }
 
 module.UI.prototype.setInitialValues_ = function() {
-  this.enabledRow_.setValue(true);
   this.typeRow_.setValue('lowpass');
   this.qRow_.setValue(6);
   this.gainRow_.setValue(10);
@@ -67,7 +64,7 @@ module.UI.prototype.updateDisplay_ = function() {
 }
 
 module.UI.prototype.enableDisable_ = function() {
-  var enabled = this.enabledRow_.value();
+  var enabled = this.filter_.enabled.value;
   var gainEnabled = enabled && kFilterHasGain[this.typeRow_.value()];
   this.typeRow_.enableDisable(enabled);
   this.frequencyController_.enableDisable(enabled);

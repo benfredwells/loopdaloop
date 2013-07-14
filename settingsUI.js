@@ -154,22 +154,14 @@ module.Group.prototype.addSelectRow = function(selectRowDef) {
   return row;
 }
 
-// checkRowDef is {title}
-module.Group.prototype.addCheckRow = function(checkRowDef) {
-  var row = this.makeRow_(checkRowDef.title);
+module.Group.prototype.addCheckRow = function(title, boolValue) {
+  var row = this.makeRow_(title);
 
   row.check = document.createElement('input');
   row.check.type = 'checkbox';
   row.check.classList.add('instrDetail');
   row.setting_.appendChild(row.check);
-
-  row.value = function() {
-    return row.check.checked;
-  }
-
-  row.setValue = function(newValue) {
-    row.check.checked = newValue;
-  }
+  row.boolValue = boolValue;
 
   var prevEnableDisable = row.enableDisable;
   row.enableDisable = function(value) {
@@ -177,8 +169,13 @@ module.Group.prototype.addCheckRow = function(checkRowDef) {
     row.check.disabled = !value;
   }
 
-  setupOnchange(row, row.check);
+  row.check.onchange = function() {
+    boolValue.value = row.check.checked;
+    if (row.onchange)
+      row.onchange();
+  }
 
+  row.check.checked = boolValue.value;
   return row;
 }
 

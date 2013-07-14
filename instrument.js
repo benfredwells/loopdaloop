@@ -39,7 +39,7 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note) {
 // Filter class
 module.Filter = function(context) {
   this.context_ = context;
-  this.enabled = false;
+  this.enabled = new Value.BoolValue(true);
   this.type = 'lowpass';
   this.q = 0;
   this.frequency = new Contour.ContouredValue(context);
@@ -140,7 +140,7 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
   });
   playedNote.pushSections(oscillatorSections);
   this.filters.forEach(function(filter) {
-    if (filter.enabled) {
+    if (filter.enabled.value) {
       var filterSection = filter.createNoteSection_(octave, note);
       playedNote.pushSections([filterSection]);
     }

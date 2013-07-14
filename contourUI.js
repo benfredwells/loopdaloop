@@ -3,10 +3,10 @@ ContourUI = (function() {
 "use strict";
 var module = {};
 
-var kTypeCaptions = ['Flat', 'Oscillating', 'ADSR'];
-var kTypeValues = [Contour.kFlatContour, Contour.kOscillatingContour, Contour.kADSRContour];
-
-var kTypeRowDef = {captions: kTypeCaptions, values: kTypeValues};
+var kTypeDescriptions = {};
+kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
+kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
+kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, generic code
@@ -35,7 +35,9 @@ module.ContourController = function(group, controllerDef, contouredValue) {
 
   var typeRowDef = kTypeRowDef;
   typeRowDef.title = controllerDef.title;
-  this.typeRow_ = typeIndent(group.addSelectRow(typeRowDef));
+  this.typeRow_ = typeIndent(group.addSelectRow(Strings.kType,
+                                                contouredValue.currentContourIdentifier,
+                                                kTypeDescriptions));
   this.allRows_ = [];
   this.rowsByContour_ = {};
   this.addFlatControls_(controlIndent);

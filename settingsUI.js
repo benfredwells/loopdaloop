@@ -122,25 +122,16 @@ module.Group.prototype.addValueLabel_ = function(row) {
   }
 }
 
-// selectRowDef is {title, array}
-module.Group.prototype.addSelectRow = function(selectRowDef) {
-  var row = this.makeRow_(selectRowDef.title);
+module.Group.prototype.addSelectRow = function(title, choiceValue, descriptions) {
+  var row = this.makeRow_(title);
 
   row.select = document.createElement('select');
   row.setting_.appendChild(row.select);
-  for (var i = 0; i < selectRowDef.captions.length; i++) {
+  for (var i = 0; i < choiceValue.choices.length; i++) {
     var option = document.createElement('option');
-    option.value = selectRowDef.values[i];
-    option.text = selectRowDef.captions[i];
+    option.value = choiceValue.choices[i];
+    option.text = descriptions[option.value];
     row.select.add(option, null);
-  }
-
-  row.value = function() {
-    return row.select.value;
-  }
-
-  row.setValue = function(newValue) {
-    row.select.value = newValue;
   }
 
   var prevEnableDisable = row.enableDisable;
@@ -149,7 +140,12 @@ module.Group.prototype.addSelectRow = function(selectRowDef) {
     row.select.disabled = !value;
   }
 
-  setupOnchange(row, row.select);
+  row.select.onchange = function() {
+    choiceValue.value = row.select.value;
+    if (row.onchange)
+      row.onchange();
+  }
+  row.select.value = choiceValue.value;
 
   return row;
 }
@@ -161,7 +157,6 @@ module.Group.prototype.addCheckRow = function(title, boolValue) {
   row.check.type = 'checkbox';
   row.check.classList.add('instrDetail');
   row.setting_.appendChild(row.check);
-  row.boolValue = boolValue;
 
   var prevEnableDisable = row.enableDisable;
   row.enableDisable = function(value) {

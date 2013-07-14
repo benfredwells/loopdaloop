@@ -7,11 +7,19 @@ var kFilterCount = 2;
 var kOscillatorCount = 3;
 
 ////////////////////////////////////////////////////////////////////////////////
+// Identifiers for waves
+module.kSineWave = 'sine';
+module.kSquareWave = 'square';
+module.kSawtoothWave = 'sawtooth';
+module.kTriangeWave = 'triangle';
+module.kWaveTypes = [module.kSineWave, module.kSquareWave, module.kSawtoothWave, module.kTriangleWave];
+
+////////////////////////////////////////////////////////////////////////////////
 // Oscillator class
 module.Oscillator = function(context) {
   this.context_ = context;
   this.enabled = true;
-  this.type = 'sine';
+  this.type = new Value.ChoiceValue(module.kSineWave, module.kWaveTypes);
   this.octaveOffset = 0;
   this.noteOffset = 0;
   this.detune = 0;
@@ -24,7 +32,7 @@ module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
       ChromaticScale.frequencyForNote(octave + this.octaveOffset,
                                       note + this.noteOffset));
   oscillator.detune.value = this.detune;
-  oscillator.type = this.type;
+  oscillator.type = this.type.value;
   return oscillator;
 }
 
@@ -36,20 +44,25 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Identifiers for filter types
+module.kLowPassFilter = 'lowpass';
+module.kHighPassFilter = 'highpass';
+module.kFilterTypes = [module.kLowPassFilter, module.kHighPassFilter];
+
+////////////////////////////////////////////////////////////////////////////////
 // Filter class
 module.Filter = function(context) {
   this.context_ = context;
   this.enabled = new Value.BoolValue(true);
-  this.type = 'lowpass';
+  this.type = new Value.ChoiceValue(module.kLowPassFilter, module.kFilterTypes);
   this.q = 0;
   this.frequency = new Contour.ContouredValue(context);
 }
 
 module.Filter.prototype.createFilterNode_ = function(octave, note) {
   var filter = this.context_.createBiquadFilter();
-  filter.type = this.type;
+  filter.type = this.type.value;
   filter.Q.value = this.q;
-  filter.gain.value = this.gain;
   return filter;
 }
 

@@ -3,9 +3,12 @@ OscillatorUI = (function() {
 "use strict";
 var module = {};
 
-var kTypeRowDef = {title: 'Type',
-                   captions: ['Sine', 'Square', 'Sawtooth', 'Triangle'],
-                   values: ['sine', 'square', 'sawtooth', 'triangle']};
+var kTypeDescriptions = {};
+kTypeDescriptions[Instrument.kSineWave] = Strings.kSine;
+kTypeDescriptions[Instrument.kSquareWave] = Strings.kSquare;
+kTypeDescriptions[Instrument.kSawtoothWave] = Strings.kSawtooth;
+kTypeDescriptions[Instrument.kTriangleWave] = Strings.kTriangle;
+
 var kOctaveOffsetRowDef = {title: 'Octave offset',
                            min: -4,
                            max: 4,
@@ -25,7 +28,7 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
   this.title = title;
 
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
-  this.typeRow_ = this.group_.addSelectRow(kTypeRowDef);
+  this.typeRow_ = this.group_.addSelectRow(Strings.kType, oscillator.type, kTypeDescriptions);
   this.octaveOffsetRow_ = this.group_.addLinearRangeRow(kOctaveOffsetRowDef);
   this.noteOffsetRow_ = this.group_.addLinearRangeRow(kNoteOffsetRowDef);
   this.detuneRow_ = this.group_.addLinearRangeRow(kDetuneRowDef);
@@ -35,7 +38,6 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
 
   var ui = this;
   var changeHandler = function() {
-    ui.oscillator_.type = ui.typeRow_.value();
     ui.oscillator_.octaveOffset = ui.octaveOffsetRow_.value();
     ui.oscillator_.noteOffset = ui.noteOffsetRow_.value();
     ui.oscillator_.detune = ui.detuneRow_.value();
@@ -50,7 +52,6 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
 }
 
 module.UI.prototype.setInitialValues_ = function() {
-  this.typeRow_.setValue('sawtooth');
   this.octaveOffsetRow_.setValue(0);
   this.noteOffsetRow_.setValue(0);
   this.detuneRow_.setValue(0);
@@ -199,11 +200,11 @@ module.UI.prototype.drawWave_ = function() {
 
   if (this.waveform_)
     this.group_.svg.removeChild(this.waveform_);
-  switch (this.typeRow_.value()) {
-    case "sine": this.drawSineWave_(); break;
-    case "square": this.drawSquareWave_(); break;
-    case "sawtooth": this.drawSawtoothWave_(); break;
-    case "triangle": this.drawTriangleWave_(); break;
+  switch (this.oscillator_.type.value) {
+    case Instrument.kSineWave: this.drawSineWave_(); break;
+    case Instrument.kSquareWave: this.drawSquareWave_(); break;
+    case Instrument.kSawtoothWave: this.drawSawtoothWave_(); break;
+    case Instrument.kTriangleWave: this.drawTriangleWave_(); break;
   }
 }
 

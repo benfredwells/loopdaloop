@@ -157,13 +157,14 @@ module.ADSRContour.prototype.averageValue = function(valueFunction) {
 module.kFlatContour = 'flat';
 module.kOscillatingContour = 'oscillating';
 module.kADSRContour = 'adsr';
+module.kContourTypes = [module.kFlatContour, module.kOscillatingContour, module.kADSRContour];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Contoured value
 module.ContouredValue = function(context, isEnvelope) {
   this.isEnvelope = isEnvelope;
   this.context_ = context;
-  this.currentContourIdentifier = module.kFlatContour;
+  this.currentContourIdentifier = new Value.ChoiceValue(module.kFlatContour, module.kContourTypes);
   this.contours = [];
   this.contoursByIdentifier = {};
   this.initContour_(module.kFlatContour, new module.FlatContour(this));

@@ -5,9 +5,9 @@ var module = {};
 
 var kControllerDef = {title: 'Type', indent: 0, min: 0, max: 1, steps: 100, prefix: '', suffix:''};
 
-module.SelectValue = function(value, choices) {
+module.ChoiceValue = function(value, choices) {
   this.value = value;
-  this.choices - choices;
+  this.choices = choices;
 }
 
 module.BoolValue = function(value) {

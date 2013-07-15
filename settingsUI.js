@@ -123,14 +123,14 @@ module.Group.prototype.addValueLabel_ = function(row) {
   }
 }
 
-module.Group.prototype.addSelectRow = function(title, choice, descriptions) {
+module.Group.prototype.addSelectRow = function(title, choiceSetting, descriptions) {
   var row = this.makeRow_(title);
 
   row.select = document.createElement('select');
   row.setting_.appendChild(row.select);
-  for (var i = 0; i < choice.choices.length; i++) {
+  for (var i = 0; i < choiceSetting.choices.length; i++) {
     var option = document.createElement('option');
-    option.value = choice.choices[i];
+    option.value = choiceSetting.choices[i];
     option.text = descriptions[option.value];
     row.select.add(option, null);
   }
@@ -142,11 +142,11 @@ module.Group.prototype.addSelectRow = function(title, choice, descriptions) {
   }
 
   row.select.onchange = function() {
-    choice.value = row.select.value;
+    choiceSetting.value = row.select.value;
     if (row.onchange)
       row.onchange();
   }
-  row.select.value = choice.value;
+  row.select.value = choiceSetting.value;
 
   return row;
 }
@@ -216,10 +216,10 @@ module.Group.prototype.addLinearRangeRow = function(linearRangeDef) {
 }
 
 // exponentialRangeDef is {title, base, minExponent, maxExponent, expSteps, includeZero}
-module.Group.prototype.addExponentialRangeRow = function(title, exponentialValue, steps, formatter) {
-  var base = exponentialValue.base;
-  var minExponent = exponentialValue.minExponent;
-  var maxExponent = exponentialValue.maxExponent;
+module.Group.prototype.addExponentialRangeRow = function(title, exponentialSetting, steps, formatter) {
+  var base = exponentialSetting.base;
+  var minExponent = exponentialSetting.minExponent;
+  var maxExponent = exponentialSetting.maxExponent;
   var row = this.makeRow_(title);
 
   var range = document.createElement('input');
@@ -251,19 +251,19 @@ module.Group.prototype.addExponentialRangeRow = function(title, exponentialValue
   }
 
   var setLabel = function() {
-    var label = module.roundForDisplay(exponentialValue.value);
+    var label = module.roundForDisplay(exponentialSetting.value);
     if (formatter)
       label = formatter.format(label);
     row.setLabel(label);
   }
 
   range.onchange = function() {
-    exponentialValue.value = value();
+    exponentialSetting.value = value();
     setLabel();
     if (row.onchange)
       row.onchange();
   }
-  setValue(exponentialValue.value);
+  setValue(exponentialSetting.value);
   setLabel();
 
   return row;

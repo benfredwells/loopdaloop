@@ -33,7 +33,7 @@ module.ContourController = function(group, controllerDef, contouredValue) {
   }
 
   this.typeRow_ = typeIndent(group.addSelectRow(controllerDef.title,
-                                                contouredValue.currentContourChoice,
+                                                contouredValue.currentContourSetting,
                                                 kTypeDescriptions));
   this.allRows_ = [];
   this.rowsByContour_ = {};
@@ -69,7 +69,7 @@ module.ContourController.prototype.showHideControls_ = function() {
   this.allRows_.forEach(function(row) {
     row.hidden = true;
   });
-  showRows(this.rowsByContour_[this.contouredValue_.currentContourChoice.value]);
+  showRows(this.rowsByContour_[this.contouredValue_.currentContourSetting.value]);
 }
 
 module.ContourController.prototype.addValueRow = function(title, indent) {
@@ -118,10 +118,10 @@ module.ContourController.prototype.addOscillatingControls_ = function(indent) {
   var oscillatingContour = this.contouredValue_.contoursByIdentifier[Contour.kOscillatingContour];
   this.oscillatingCenterValueRow_ = this.addValueRow('Center Value', indent);
   this.oscillatingFrequencyRow_ = indent(this.group_.addExponentialRangeRow(Strings.kSpeed,
-                                                                            oscillatingContour.frequency,
+                                                                            oscillatingContour.frequencySetting,
                                                                             20));
   this.oscillatingAmplitudeRow_ = indent(this.group_.addExponentialRangeRow(Strings.kAmplitude,
-                                                                            oscillatingContour.amplitude,
+                                                                            oscillatingContour.amplitudeSetting,
                                                                             10,
                                                                             Strings.kMaxFormatter));
   var oscillatingRows = [];

@@ -28,7 +28,7 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
   this.title = title;
 
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
-  this.typeRow_ = this.group_.addSelectRow(Strings.kType, oscillator.type, kTypeDescriptions);
+  this.typeRow_ = this.group_.addSelectRow(Strings.kType, oscillator.typeSetting, kTypeDescriptions);
   this.octaveOffsetRow_ = this.group_.addLinearRangeRow(kOctaveOffsetRowDef);
   this.noteOffsetRow_ = this.group_.addLinearRangeRow(kNoteOffsetRowDef);
   this.detuneRow_ = this.group_.addLinearRangeRow(kDetuneRowDef);
@@ -200,7 +200,7 @@ module.UI.prototype.drawWave_ = function() {
 
   if (this.waveform_)
     this.group_.svg.removeChild(this.waveform_);
-  switch (this.oscillator_.type.value) {
+  switch (this.oscillator_.typeSetting.value) {
     case Instrument.kSineWave: this.drawSineWave_(); break;
     case Instrument.kSquareWave: this.drawSquareWave_(); break;
     case Instrument.kSawtoothWave: this.drawSawtoothWave_(); break;

@@ -19,7 +19,7 @@ module.kWaveTypes = [module.kSineWave, module.kSquareWave, module.kSawtoothWave,
 module.Oscillator = function(context) {
   this.context_ = context;
   this.enabled = true;
-  this.type = new Setting.Choice(module.kSawtoothWave, module.kWaveTypes);
+  this.typeSetting = new Setting.Choice(module.kSawtoothWave, module.kWaveTypes);
   this.octaveOffset = 0;
   this.noteOffset = 0;
   this.detune = 0;
@@ -32,7 +32,7 @@ module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
       ChromaticScale.frequencyForNote(octave + this.octaveOffset,
                                       note + this.noteOffset));
   oscillator.detune.value = this.detune;
-  oscillator.type = this.type.value;
+  oscillator.type = this.typeSetting.value;
   return oscillator;
 }
 
@@ -53,15 +53,15 @@ module.kFilterTypes = [module.kLowPassFilter, module.kHighPassFilter];
 // Filter class
 module.Filter = function(context) {
   this.context_ = context;
-  this.enabled = new Setting.Boolean(true);
-  this.type = new Setting.Choice(module.kLowPassFilter, module.kFilterTypes);
+  this.enabledSetting = new Setting.Boolean(true);
+  this.typeSetting = new Setting.Choice(module.kLowPassFilter, module.kFilterTypes);
   this.q = 0;
   this.frequency = new Contour.ContouredValue(context);
 }
 
 module.Filter.prototype.createFilterNode_ = function(octave, note) {
   var filter = this.context_.createBiquadFilter();
-  filter.type = this.type.value;
+  filter.type = this.typeSetting.value;
   filter.Q.value = this.q;
   return filter;
 }
@@ -153,7 +153,7 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
   });
   playedNote.pushSections(oscillatorSections);
   this.filters.forEach(function(filter) {
-    if (filter.enabled.value) {
+    if (filter.enabledSetting.value) {
       var filterSection = filter.createNoteSection_(octave, note);
       playedNote.pushSections([filterSection]);
     }

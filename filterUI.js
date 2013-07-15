@@ -20,8 +20,8 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   var ss = SettingsUI.makeSubSubRow;
   var g = this.group_;
 
-  this.enabledRow_ = g.addCheckRow(Strings.kEnabled, filter.enabled);
-  this.typeRow_ = s(g.addSelectRow(Strings.kType, filter.type, kTypeDescriptions));
+  this.enabledRow_ = g.addCheckRow(Strings.kEnabled, filter.enabledSetting);
+  this.typeRow_ = s(g.addSelectRow(Strings.kType, filter.typeSetting, kTypeDescriptions));
   this.frequencyController_ = new ContourUI.ContourController(g, kFrequencyControllerDef, filter.frequency);
   this.qRow_ = s(g.addLinearRangeRow(kQRowDef));
 
@@ -53,7 +53,7 @@ module.UI.prototype.updateDisplay_ = function() {
 }
 
 module.UI.prototype.enableDisable_ = function() {
-  var enabled = this.filter_.enabled.value;
+  var enabled = this.filter_.enabledSetting.value;
   this.frequencyController_.enableDisable(enabled);
   this.qRow_.enableDisable(enabled);
 }
@@ -111,7 +111,7 @@ module.UI.prototype.drawResponse_ = function() {
     ui.group_.svg.removeChild(child);
   });
   this.response_ = [];
-  if (!this.filter_.enabled.value)
+  if (!this.filter_.enabledSetting.value)
     return;
 
   var magPoints = [];

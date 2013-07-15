@@ -56,8 +56,8 @@ module.OscillatingContour = function(contouredValue) {
   this.contouredValue_ = contouredValue;
   this.centerValue = 1;
   // TODO: make amplitude a constrained value
-  this.amplitude = new Setting.ExponentialValue(0.1, 10, -2, 0);
-  this.frequency = new Setting.ExponentialValue(1, 10, -1, 1);
+  this.amplitudeSetting = new Setting.ExponentialValue(0.1, 10, -2, 0);
+  this.frequencySetting = new Setting.ExponentialValue(1, 10, -1, 1);
 }
 
 module.OscillatingContour.prototype.addContour = function(valueFunction, param, noteSection) {
@@ -70,11 +70,11 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
   var oscillator = this.contouredValue_.context_.createOscillator();
   // TODO: make this controllable.
   oscillator.type = 'sine';
-  oscillator.frequency.value = this.frequency.value;
+  oscillator.frequency.value = this.frequencySetting.value;
   noteSection.oscillatorNodes.push(oscillator);
   noteSection.allNodes.push(oscillator);
   var gain = this.contouredValue_.context_.createGainNode();
-  var amplitudeValue = this.amplitude.value * centerValue;
+  var amplitudeValue = this.amplitudeSetting.value * centerValue;
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(gain.gain, amplitudeValue));
   else
@@ -165,8 +165,8 @@ module.kContourTypes = [module.kFlatContour, module.kOscillatingContour, module.
 module.ContouredValue = function(context, isEnvelope) {
   this.isEnvelope = isEnvelope;
   this.context_ = context;
-  this.currentContourChoice = new Setting.Choice(module.kFlatContour, module.kContourTypes);
-  this.contours = [];
+  this.currentContourSetting = new Setting.Choice(module.kFlatContour, module.kContourTypes);
+  this.contours_ = [];
   this.contoursByIdentifier = {};
   this.initContour_(module.kFlatContour, new module.FlatContour(this));
   this.initContour_(module.kOscillatingContour, new module.OscillatingContour(this));
@@ -174,12 +174,12 @@ module.ContouredValue = function(context, isEnvelope) {
 }
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {
-  this.contours.push(contour);
+  this.contours_.push(contour);
   this.contoursByIdentifier[identifier] = contour;
 }
 
 module.ContouredValue.prototype.currentContour = function() {
-  return this.contoursByIdentifier[this.currentContourChoice.value];
+  return this.contoursByIdentifier[this.currentContourSetting.value];
 }
 
 return module;

@@ -248,8 +248,10 @@ module.Group.prototype.addExponentialRangeRow = function(title, numberSetting, s
   }
 
   var setValue = function(newValue) {
-    if (newValue == numberSetting.min)
+    if (newValue == numberSetting.min) {
       range.value = 0;
+      return;
+    }
     var exponent = (newValue - numberSetting.min) / constant;
     var index = Math.log(exponent) / Math.log(base);
     var index = Math.round((index - minExponent) / exponentFactor) + 1;

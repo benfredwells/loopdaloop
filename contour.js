@@ -100,13 +100,13 @@ module.ADSRContourer.prototype.contourOn = function(onTime) {
   var nextTime = onTime;
   var v = this.valueFunction_;
   this.param_.setValueAtTime(v(this.contour_.initialValue), nextTime);
-  nextTime += this.contour_.attackDelay;
+  nextTime += this.contour_.attackDelaySetting.value;
   this.param_.setValueAtTime(v(this.contour_.initialValue), nextTime);
-  nextTime += this.contour_.attackTime;
+  nextTime += this.contour_.attackTimeSetting.value;
   this.param_.linearRampToValueAtTime(v(this.contour_.attackValue), nextTime);
-  nextTime += this.contour_.attackHold;
+  nextTime += this.contour_.attackHoldSetting.value;
   this.param_.setValueAtTime(v(this.contour_.attackValue), nextTime);
-  nextTime += this.contour_.decayTime;
+  nextTime += this.contour_.decayTimeSetting.value;
   this.param_.linearRampToValueAtTime(v(this.contour_.sustainValue), nextTime);
   this.sustainStart_ = nextTime;
 }
@@ -115,10 +115,10 @@ module.ADSRContourer.prototype.contourOff = function(offTime) {
   var nextTime = offTime;
   if (nextTime < this.sustainStart_)
     nextTime = this.sustainStart_;
-  nextTime += this.contour_.sustainHold;
+  nextTime += this.contour_.sustainHoldSetting.value;
   var v = this.valueFunction_;
   this.param_.setValueAtTime(v(this.contour_.sustainValue), nextTime);
-  nextTime += this.contour_.releaseTime;
+  nextTime += this.contour_.releaseTimeSetting.value;
   this.param_.linearRampToValueAtTime(v(this.contour_.finalValue), nextTime);
 }
 
@@ -126,7 +126,8 @@ module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
   var releaseTime = offTime;
   if (this.sustainStart_ > releaseTime)
     releaseTime = this.sustainStart_;
-  return releaseTime + this.contour_.sustainHold + this.contour_.releaseTime;
+  return releaseTime + this.contour_.sustainHoldSetting.value +
+         this.contour_.releaseTimeSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -134,14 +135,14 @@ module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
 module.ADSRContour = function(contouredValue) {
   this.contouredValue_ = contouredValue;
   this.initialValue = 0;
-  this.attackDelay = 0;
+  this.attackDelaySetting = new Setting.Number(0, 0, 10);
   this.attackValue = 1;
-  this.attackTime = 0;
-  this.attackHold = 0;
-  this.decayTime = 0;
+  this.attackTimeSetting = new Setting.Number(kMinChangeTime, kMinChangeTime, 10);
+  this.attackHoldSetting = new Setting.Number(0, 0, 10);
+  this.decayTimeSetting = new Setting.Number(kMinChangeTime, kMinChangeTime, 10);
   this.sustainValue = 1;
-  this.sustainHold = 0;
-  this.releaseTime = 0;
+  this.sustainHoldSetting = new Setting.Number(0, 0, 1);
+  this.releaseTimeSetting = new Setting.Number(kMinChangeTime, kMinChangeTime, 10);
   this.finalValue = 0;
 }
 

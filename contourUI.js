@@ -83,10 +83,6 @@ module.ContourController.prototype.updateValueRow = function(row) {
   row.setLabel(this.prefix_ + SettingsUI.roundForDisplay(value) + this.suffix_);
 }
 
-module.ContourController.prototype.updateTimeRow = function(row) {
-  row.setLabel(SettingsUI.roundForDisplay(row.value()) + ' s');
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, flat contour code
 module.ContourController.prototype.addFlatControls_ = function(indent) {
@@ -153,22 +149,21 @@ module.ContourController.prototype.addOscillatingControls_ = function(indent) {
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, ADSR contour code
 module.ContourController.prototype.addADSRControls_ = function(indent) {
-  var controller = this;
-  var addTimeRow = function(title, includeZero) {
-    var timeRowDef = {min: 0, max: 10, steps: 100};
-    timeRowDef.title = title;
-    timeRowDef.includeZero = includeZero;
-    return indent(controller.group_.addLinearRangeRow(timeRowDef));
+  var addTimeRow = function(title, setting) {
+    return indent(controller.group_.addExponentialRangeRow(title, setting, 10));
   }
+
+  var controller = this;
+  var adsrContour = this.contouredValue_.contoursByIdentifier[Contour.kADSRContour];
   this.adsrInitialValueRow_ = this.addValueRow('Initial Value', indent);
-  this.adsrAttackDelayRow_ = addTimeRow('Attack Delay', true);
-  this.adsrAttackTimeRow_ = addTimeRow('Attack Time', false);
+  this.adsrAttackDelayRow_ = addTimeRow('Attack Delay', adsrContour.attackDelaySetting);
+  this.adsrAttackTimeRow_ = addTimeRow('Attack Time', adsrContour.attackTimeSetting);
   this.adsrAttackValueRow_ = this.addValueRow('Attack Value', indent);
-  this.adsrAttackHoldRow_ = addTimeRow('Attack Hold', true);
-  this.adsrDecayTimeRow_ = addTimeRow('Decay Time', false);
+  this.adsrAttackHoldRow_ = addTimeRow('Attack Hold', adsrContour.attackHoldSetting);
+  this.adsrDecayTimeRow_ = addTimeRow('Decay Time', adsrContour.decayTimeSetting);
   this.adsrSustainValueRow_ = this.addValueRow('Sustain Value', indent);
-  this.adsrSustainHoldRow_ = addTimeRow('Sustain Hold', true);
-  this.adsrReleaseTimeRow_ = addTimeRow('Release Time', false);
+  this.adsrSustainHoldRow_ = addTimeRow('Sustain Hold', adsrContour.sustainHoldSetting);
+  this.adsrReleaseTimeRow_ = addTimeRow('Release Time', adsrContour.releaseTimeSetting);
   this.adsrFinalValueRow_ = this.addValueRow('Final Value', indent);
   var adsrRows = [];
   adsrRows.push(this.adsrInitialValueRow_);
@@ -184,31 +179,18 @@ module.ContourController.prototype.addADSRControls_ = function(indent) {
   this.rowsByContour_[Contour.kADSRContour] = adsrRows;
 
   var controller = this;
-  var adsrContour = this.contouredValue_.contoursByIdentifier[Contour.kADSRContour];
 
   var updateDisplay = function () {
     controller.updateValueRow(controller.adsrInitialValueRow_);
-    controller.updateTimeRow(controller.adsrAttackDelayRow_);
-    controller.updateTimeRow(controller.adsrAttackTimeRow_);
     controller.updateValueRow(controller.adsrAttackValueRow_);
-    controller.updateTimeRow(controller.adsrAttackHoldRow_);
-    controller.updateTimeRow(controller.adsrDecayTimeRow_);
     controller.updateValueRow(controller.adsrSustainValueRow_);
-    controller.updateTimeRow(controller.adsrSustainHoldRow_);
-    controller.updateTimeRow(controller.adsrReleaseTimeRow_);
     controller.updateValueRow(controller.adsrFinalValueRow_);
   }
 
   var changeHandler = function() {
     adsrContour.initialValue = controller.adsrInitialValueRow_.value();
-    adsrContour.attackDelay = controller.adsrAttackDelayRow_.value();
-    adsrContour.attackTime = controller.adsrAttackTimeRow_.value();
     adsrContour.attackValue = controller.adsrAttackValueRow_.value();
-    adsrContour.attackHold = controller.adsrAttackHoldRow_.value();
-    adsrContour.decayTime = controller.adsrDecayTimeRow_.value();
     adsrContour.sustainValue = controller.adsrSustainValueRow_.value();
-    adsrContour.sustainHold = controller.adsrSustainHoldRow_.value();
-    adsrContour.releaseTime = controller.adsrReleaseTimeRow_.value();
     adsrContour.finalValue = controller.adsrFinalValueRow_.value();
     updateDisplay();
     if (controller.onchange)

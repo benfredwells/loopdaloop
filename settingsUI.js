@@ -215,17 +215,17 @@ module.Group.prototype.addLinearRangeRow = function(linearRangeDef) {
   return row;
 }
 
-// exponentialRangeDef is {title, base, minExponent, maxExponent, expSteps, includeZero}
-module.Group.prototype.addExponentialRangeRow = function(title, exponentialSetting, steps, formatter) {
-  var base = exponentialSetting.base;
-  var minExponent = exponentialSetting.minExponent;
-  var maxExponent = exponentialSetting.maxExponent;
+module.Group.prototype.addExponentialRangeRow = function(title, numberSetting, steps, formatter) {
+  var base = 10;
+  var constant = (numberSetting.max - numberSetting.min) / base;
+  var minExponent = -1;
+  var maxExponent = 1;
   var row = this.makeRow_(title);
 
   var range = document.createElement('input');
   range.type = 'range';
   range.min = 0;
-  range.max = steps;
+  range.max = steps + 1; // add one for the minimum value
   range.classList.add('instrDetail');
   row.setting_.appendChild(range);
 
@@ -240,30 +240,36 @@ module.Group.prototype.addExponentialRangeRow = function(title, exponentialSetti
   var exponentFactor = (maxExponent - minExponent) / steps;
   var value = function() {
     var exponent = range.value;
+    if (exponent == 0)
+      return numberSetting.min;
+    exponent--;
     exponent = minExponent + exponent * exponentFactor;
-    return Math.pow(base, exponent);
+    return numberSetting.min + constant * Math.pow(base, exponent);
   }
 
   var setValue = function(newValue) {
-    var exponent = Math.log(newValue) / Math.log(base);
-    var rangeVal = Math.round((exponent - minExponent) / exponentFactor);
-    range.value = rangeVal;
+    if (newValue == numberSetting.min)
+      range.value = 0;
+    var exponent = (newValue - numberSetting.min) / constant;
+    var index = Math.log(exponent) / Math.log(base);
+    var index = Math.round((index - minExponent) / exponentFactor) + 1;
+    range.value = index;
   }
 
   var setLabel = function() {
-    var label = module.roundForDisplay(exponentialSetting.value);
+    var label = module.roundForDisplay(numberSetting.value);
     if (formatter)
       label = formatter.format(label);
     row.setLabel(label);
   }
 
   range.onchange = function() {
-    exponentialSetting.value = value();
+    numberSetting.value = value();
     setLabel();
     if (row.onchange)
       row.onchange();
   }
-  setValue(exponentialSetting.value);
+  setValue(numberSetting.value);
   setLabel();
 
   return row;

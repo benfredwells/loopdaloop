@@ -56,8 +56,8 @@ module.OscillatingContour = function(contouredValue) {
   this.contouredValue_ = contouredValue;
   this.centerValue = 1;
   // TODO: make amplitude a constrained value
-  this.amplitudeSetting = new Setting.ExponentialValue(0.1, 10, -2, 0);
-  this.frequencySetting = new Setting.ExponentialValue(1, 10, -1, 1);
+  this.amplitudeSetting = new Setting.Number(0.1, 0, 1);
+  this.frequencySetting = new Setting.Number(1, 0, 10);
 }
 
 module.OscillatingContour.prototype.addContour = function(valueFunction, param, noteSection) {

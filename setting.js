@@ -8,7 +8,7 @@ module.Choice = function(value, choices) {
   this.choices = choices;
 }
 
-module.BoolValue = function(value) {
+module.Boolean = function(value) {
   this.value = value;
 }
 

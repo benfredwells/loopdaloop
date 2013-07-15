@@ -151,7 +151,7 @@ module.Group.prototype.addSelectRow = function(title, choice, descriptions) {
   return row;
 }
 
-module.Group.prototype.addCheckRow = function(title, boolValue) {
+module.Group.prototype.addCheckRow = function(title, booleanSetting) {
   var row = this.makeRow_(title);
 
   row.check = document.createElement('input');
@@ -166,12 +166,12 @@ module.Group.prototype.addCheckRow = function(title, boolValue) {
   }
 
   row.check.onchange = function() {
-    boolValue.value = row.check.checked;
+    booleanSetting.value = row.check.checked;
     if (row.onchange)
       row.onchange();
   }
 
-  row.check.checked = boolValue.value;
+  row.check.checked = booleanSetting.value;
   return row;
 }
 

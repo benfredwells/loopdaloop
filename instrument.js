@@ -53,7 +53,7 @@ module.kFilterTypes = [module.kLowPassFilter, module.kHighPassFilter];
 // Filter class
 module.Filter = function(context) {
   this.context_ = context;
-  this.enabled = new Setting.BoolValue(true);
+  this.enabled = new Setting.Boolean(true);
   this.type = new Setting.Choice(module.kLowPassFilter, module.kFilterTypes);
   this.q = 0;
   this.frequency = new Contour.ContouredValue(context);

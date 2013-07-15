@@ -123,14 +123,14 @@ module.Group.prototype.addValueLabel_ = function(row) {
   }
 }
 
-module.Group.prototype.addSelectRow = function(title, choiceValue, descriptions) {
+module.Group.prototype.addSelectRow = function(title, choice, descriptions) {
   var row = this.makeRow_(title);
 
   row.select = document.createElement('select');
   row.setting_.appendChild(row.select);
-  for (var i = 0; i < choiceValue.choices.length; i++) {
+  for (var i = 0; i < choice.choices.length; i++) {
     var option = document.createElement('option');
-    option.value = choiceValue.choices[i];
+    option.value = choice.choices[i];
     option.text = descriptions[option.value];
     row.select.add(option, null);
   }
@@ -142,11 +142,11 @@ module.Group.prototype.addSelectRow = function(title, choiceValue, descriptions)
   }
 
   row.select.onchange = function() {
-    choiceValue.value = row.select.value;
+    choice.value = row.select.value;
     if (row.onchange)
       row.onchange();
   }
-  row.select.value = choiceValue.value;
+  row.select.value = choice.value;
 
   return row;
 }

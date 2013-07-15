@@ -1,11 +1,9 @@
-Value = (function() {
+Setting = (function() {
 
 "use strict";
 var module = {};
 
-var kControllerDef = {title: 'Type', indent: 0, min: 0, max: 1, steps: 100, prefix: '', suffix:''};
-
-module.ChoiceValue = function(value, choices) {
+module.Choice = function(value, choices) {
   this.value = value;
   this.choices = choices;
 }

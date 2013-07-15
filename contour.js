@@ -56,8 +56,8 @@ module.OscillatingContour = function(contouredValue) {
   this.contouredValue_ = contouredValue;
   this.centerValue = 1;
   // TODO: make amplitude a constrained value
-  this.amplitude = new Value.ExponentialValue(0.1, 10, -2, 0);
-  this.frequency = new Value.ExponentialValue(1, 10, -1, 1);
+  this.amplitude = new Setting.ExponentialValue(0.1, 10, -2, 0);
+  this.frequency = new Setting.ExponentialValue(1, 10, -1, 1);
 }
 
 module.OscillatingContour.prototype.addContour = function(valueFunction, param, noteSection) {
@@ -165,7 +165,7 @@ module.kContourTypes = [module.kFlatContour, module.kOscillatingContour, module.
 module.ContouredValue = function(context, isEnvelope) {
   this.isEnvelope = isEnvelope;
   this.context_ = context;
-  this.currentContourIdentifier = new Value.ChoiceValue(module.kFlatContour, module.kContourTypes);
+  this.currentContourChoice = new Setting.Choice(module.kFlatContour, module.kContourTypes);
   this.contours = [];
   this.contoursByIdentifier = {};
   this.initContour_(module.kFlatContour, new module.FlatContour(this));
@@ -179,7 +179,7 @@ module.ContouredValue.prototype.initContour_ = function(identifier, contour) {
 }
 
 module.ContouredValue.prototype.currentContour = function() {
-  return this.contoursByIdentifier[this.currentContourIdentifier.value];
+  return this.contoursByIdentifier[this.currentContourChoice.value];
 }
 
 return module;

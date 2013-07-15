@@ -19,7 +19,7 @@ module.kWaveTypes = [module.kSineWave, module.kSquareWave, module.kSawtoothWave,
 module.Oscillator = function(context) {
   this.context_ = context;
   this.enabled = true;
-  this.type = new Value.ChoiceValue(module.kSawtoothWave, module.kWaveTypes);
+  this.type = new Setting.Choice(module.kSawtoothWave, module.kWaveTypes);
   this.octaveOffset = 0;
   this.noteOffset = 0;
   this.detune = 0;
@@ -53,8 +53,8 @@ module.kFilterTypes = [module.kLowPassFilter, module.kHighPassFilter];
 // Filter class
 module.Filter = function(context) {
   this.context_ = context;
-  this.enabled = new Value.BoolValue(true);
-  this.type = new Value.ChoiceValue(module.kLowPassFilter, module.kFilterTypes);
+  this.enabled = new Setting.BoolValue(true);
+  this.type = new Setting.Choice(module.kLowPassFilter, module.kFilterTypes);
   this.q = 0;
   this.frequency = new Contour.ContouredValue(context);
 }

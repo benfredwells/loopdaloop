@@ -33,7 +33,7 @@ module.ContourController = function(group, controllerDef, contouredValue) {
   }
 
   this.typeRow_ = typeIndent(group.addSelectRow(controllerDef.title,
-                                                contouredValue.currentContourIdentifier,
+                                                contouredValue.currentContourChoice,
                                                 kTypeDescriptions));
   this.allRows_ = [];
   this.rowsByContour_ = {};
@@ -69,7 +69,7 @@ module.ContourController.prototype.showHideControls_ = function() {
   this.allRows_.forEach(function(row) {
     row.hidden = true;
   });
-  showRows(this.rowsByContour_[this.contouredValue_.currentContourIdentifier.value]);
+  showRows(this.rowsByContour_[this.contouredValue_.currentContourChoice.value]);
 }
 
 module.ContourController.prototype.addValueRow = function(title, indent) {

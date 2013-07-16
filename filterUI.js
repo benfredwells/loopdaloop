@@ -7,8 +7,6 @@ var kTypeDescriptions = {};
 kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
 kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
 
-var kFrequencyControllerDef = {title: 'Frequency', indent: 1, min: 0.5, max: 10, steps: 190, prefix: 'x', suffix:''};
-
 module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.id = id;
   this.filter_ = filter;
@@ -21,7 +19,9 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
 
   this.enabledRow_ = g.addCheckRow(Strings.kEnabled, filter.enabledSetting);
   this.typeRow_ = s(g.addSelectRow(Strings.kType, filter.typeSetting, kTypeDescriptions));
-  this.frequencyController_ = new ContourUI.ContourController(g, kFrequencyControllerDef, filter.frequency);
+  this.frequencyController_ = new ContourUI.ContourController(g, Strings.kFrequency, 1,
+                                                              filter.frequencySetting,
+                                                              190, Strings.kMultiplierFormatter);
   this.qRow_ = s(g.addLinearRangeRow(Strings.kQ, filter.qSetting, 20));
 
   var ui = this;

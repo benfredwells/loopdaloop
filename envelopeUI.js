@@ -3,15 +3,15 @@ EnvelopeUI = (function() {
 "use strict";
 var module = {};
 
-var kControllerDef = {title: 'Type', indent: 0, min: 0, max: 1, steps: 100, prefix: '', suffix:''};
-
 module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) {
   this.id = id;
   this.instrument_ = instrument;
   this.title = title;
 
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, 'Envelope', this, collapsed);
-  this.controller_ = new ContourUI.ContourController(this.group_, kControllerDef, instrument.envelope);
+  // TODO: rename contours to envelopeContour, frequencyContour etc.
+  this.controller_ = new ContourUI.ContourController(this.group_, Strings.kType, 0,
+                                                     instrument.envelope, 100);
 
   var ui = this;
   var changeHandler = function() {

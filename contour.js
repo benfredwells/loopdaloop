@@ -36,7 +36,7 @@ module.BasicEnvelopeContourer.prototype.contourFinishTime = function(offTime) {
 // Flat contour
 module.FlatContour = function(valueSetting, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.valueSetting = Value.copyNumber(valueSetting);
+  this.valueSetting = Setting.copyNumber(valueSetting);
 }
 
 module.FlatContour.prototype.addContour = function(valueFunction, param, noteSection) {
@@ -53,9 +53,9 @@ module.FlatContour.prototype.averageValue = function(valueFunction) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillating contour
-module.OscillatingContour = function(contouredValue) {
+module.OscillatingContour = function(valueSetting, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.centerValueSetting = Value.copyNumber(valueSetting);
+  this.centerValueSetting = Setting.copyNumber(valueSetting);
   // TODO: make amplitude a constrained value
   this.amplitudeSetting = new Setting.Number(0, 1);
   this.frequencySetting = new Setting.Number(0, 10);
@@ -133,18 +133,18 @@ module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // ADSR contoured value
-module.ADSRContour = function(contouredValue) {
+module.ADSRContour = function(valueSetting, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.initialValueSetting = Value.copyNumber(valueSetting);
+  this.initialValueSetting = Setting.copyNumber(valueSetting);
   this.attackDelaySetting = new Setting.Number(0, 10);
-  this.attackValueSetting = Value.copyNumber(valueSetting);
+  this.attackValueSetting = Setting.copyNumber(valueSetting);
   this.attackTimeSetting = new Setting.Number(kMinChangeTime, 10);
   this.attackHoldSetting = new Setting.Number(0, 10);
   this.decayTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.sustainValueSetting = Value.copyNumber(valueSetting);
+  this.sustainValueSetting = Setting.copyNumber(valueSetting);
   this.sustainHoldSetting = new Setting.Number(0, 1);
   this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.finalValueSetting = Value.copyNumber(valueSetting);
+  this.finalValueSetting = Setting.copyNumber(valueSetting);
 }
 
 module.ADSRContour.prototype.addContour = function(valueFunction, param, noteSection) {

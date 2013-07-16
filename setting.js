@@ -21,6 +21,7 @@ module.Number = function(min, max) {
 module.copyNumber = function(other) {
   var number = new module.Number(other.min, other.max);
   number.value = other.value;
+  return number;
 }
 
 return module;

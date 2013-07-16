@@ -19,9 +19,9 @@ module.kWaveTypes = [module.kSineWave, module.kSquareWave, module.kSawtoothWave,
 module.Oscillator = function(context) {
   this.context_ = context;
   this.typeSetting = new Setting.Choice(module.kWaveTypes);
-  this.octaveOffsetSetting = new Number(-4, 4);
-  this.noteOffsetSetting = new Number(-8, 8);
-  this.detuneSetting = new Number(-50, 50);
+  this.octaveOffsetSetting = new Setting.Number(-4, 4);
+  this.noteOffsetSetting = new Setting.Number(-8, 8);
+  this.detuneSetting = new Setting.Number(-50, 50);
 }
 
 module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
@@ -53,8 +53,8 @@ module.Filter = function(context) {
   this.context_ = context;
   this.enabledSetting = new Setting.Boolean();
   this.typeSetting = new Setting.Choice(module.kFilterTypes);
-  this.qSetting = new Value.Number(0, 20);
-  this.frequency = new Contour.ContouredValue(context, new Value.Number(0.5, 10), false);
+  this.qSetting = new Setting.Number(0, 20);
+  this.frequency = new Contour.ContouredValue(context, new Setting.Number(0.5, 10), false);
 }
 
 module.Filter.prototype.createFilterNode_ = function(octave, note) {
@@ -120,7 +120,7 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, max
 
 module.Instrument = function(context, destinationNode) {
   this.context_ = context;
-  this.envelope = new Contour.ContouredValue(context, new Value.Number(0, 1), true);
+  this.envelope = new Contour.ContouredValue(context, new Setting.Number(0, 1), true);
   this.destinationNode_ = destinationNode;
   this.oscillators = [];
   for (var i = 0; i < kOscillatorCount; i++) {

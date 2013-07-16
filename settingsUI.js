@@ -127,7 +127,7 @@ module.Group.prototype.addSelectRow = function(title, choiceSetting, description
   var row = this.makeRow_(title);
 
   var select = document.createElement('select');
-  setting_.appendChild(row.select);
+  row.setting_.appendChild(select);
   for (var i = 0; i < choiceSetting.choices.length; i++) {
     var option = document.createElement('option');
     option.value = choiceSetting.choices[i];
@@ -157,7 +157,7 @@ module.Group.prototype.addCheckRow = function(title, booleanSetting) {
   var check = document.createElement('input');
   check.type = 'checkbox';
   check.classList.add('instrDetail');
-  setting_.appendChild(row.check);
+  row.setting_.appendChild(check);
 
   var prevEnableDisable = row.enableDisable;
   row.enableDisable = function(value) {
@@ -186,7 +186,7 @@ module.Group.prototype.addLinearRangeRow = function(title, numberSetting, steps,
   range.min = 0;
   range.max = steps;
   range.classList.add('instrDetail');
-  setting_.appendChild(range);
+  row.setting_.appendChild(range);
 
   this.addValueLabel_(row);
 

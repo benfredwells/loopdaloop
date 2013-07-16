@@ -18,6 +18,11 @@ module.Number = function(min, max) {
   this.max = max;
 }
 
+module.copyNumber = function(other) {
+  var number = new module.Number(other.min, other.max);
+  number.value = other.value;
+}
+
 return module;
 
 })();

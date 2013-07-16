@@ -55,7 +55,7 @@ module.Filter = function(context) {
   this.enabledSetting = new Setting.Boolean();
   this.typeSetting = new Setting.Choice(module.kFilterTypes);
   this.q = 0;
-  this.frequency = new Contour.ContouredValue(context);
+  this.frequency = new Contour.ContouredValue(context, new Value.Number(0.5, 10), false);
 }
 
 module.Filter.prototype.createFilterNode_ = function(octave, note) {
@@ -121,7 +121,7 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, max
 
 module.Instrument = function(context, destinationNode) {
   this.context_ = context;
-  this.envelope = new Contour.ContouredValue(context, true);
+  this.envelope = new Contour.ContouredValue(context, new Value.Number(0, 1), true);
   this.destinationNode_ = destinationNode;
   this.oscillators = [];
   for (var i = 0; i < kOscillatorCount; i++) {

@@ -56,8 +56,8 @@ module.OscillatingContour = function(contouredValue) {
   this.contouredValue_ = contouredValue;
   this.centerValue = 1;
   // TODO: make amplitude a constrained value
-  this.amplitudeSetting = new Setting.Number(0.1, 0, 1);
-  this.frequencySetting = new Setting.Number(1, 0, 10);
+  this.amplitudeSetting = new Setting.Number(0, 1);
+  this.frequencySetting = new Setting.Number(0, 10);
 }
 
 module.OscillatingContour.prototype.addContour = function(valueFunction, param, noteSection) {
@@ -135,14 +135,14 @@ module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
 module.ADSRContour = function(contouredValue) {
   this.contouredValue_ = contouredValue;
   this.initialValue = 0;
-  this.attackDelaySetting = new Setting.Number(0, 0, 10);
+  this.attackDelaySetting = new Setting.Number(0, 10);
   this.attackValue = 1;
-  this.attackTimeSetting = new Setting.Number(kMinChangeTime, kMinChangeTime, 10);
-  this.attackHoldSetting = new Setting.Number(0, 0, 10);
-  this.decayTimeSetting = new Setting.Number(kMinChangeTime, kMinChangeTime, 10);
+  this.attackTimeSetting = new Setting.Number(kMinChangeTime, 10);
+  this.attackHoldSetting = new Setting.Number(0, 10);
+  this.decayTimeSetting = new Setting.Number(kMinChangeTime, 10);
   this.sustainValue = 1;
-  this.sustainHoldSetting = new Setting.Number(0, 0, 1);
-  this.releaseTimeSetting = new Setting.Number(kMinChangeTime, kMinChangeTime, 10);
+  this.sustainHoldSetting = new Setting.Number(0, 1);
+  this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
   this.finalValue = 0;
 }
 
@@ -166,7 +166,7 @@ module.kContourTypes = [module.kFlatContour, module.kOscillatingContour, module.
 module.ContouredValue = function(context, isEnvelope) {
   this.isEnvelope = isEnvelope;
   this.context_ = context;
-  this.currentContourSetting = new Setting.Choice(module.kFlatContour, module.kContourTypes);
+  this.currentContourSetting = new Setting.Choice(module.kContourTypes);
   this.contours_ = [];
   this.contoursByIdentifier = {};
   this.initContour_(module.kFlatContour, new module.FlatContour(this));

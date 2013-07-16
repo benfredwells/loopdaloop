@@ -3,17 +3,17 @@ Setting = (function() {
 "use strict";
 var module = {};
 
-module.Choice = function(value, choices) {
-  this.value = value;
+module.Choice = function(choices) {
+  this.value = choices[0];
   this.choices = choices;
 }
 
-module.Boolean = function(value) {
-  this.value = value;
+module.Boolean = function() {
+  this.value = false;
 }
 
-module.Number = function(value, min, max) {
-  this.value = value;
+module.Number = function(min, max) {
+  this.value = min;
   this.min = min;
   this.max = max;
 }

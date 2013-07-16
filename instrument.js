@@ -3,6 +3,7 @@ Instrument = (function() {
 "use strict";
 var module = {};
 
+// TODO: remove these constants, and let users add as many as they want.
 var kFilterCount = 2;
 var kOscillatorCount = 3;
 
@@ -11,7 +12,7 @@ var kOscillatorCount = 3;
 module.kSineWave = 'sine';
 module.kSquareWave = 'square';
 module.kSawtoothWave = 'sawtooth';
-module.kTriangeWave = 'triangle';
+module.kTriangleWave = 'triangle';
 module.kWaveTypes = [module.kSineWave, module.kSquareWave, module.kSawtoothWave, module.kTriangleWave];
 
 ////////////////////////////////////////////////////////////////////////////////

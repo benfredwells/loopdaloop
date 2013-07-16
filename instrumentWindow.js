@@ -32,6 +32,7 @@ function init() {
   compressor.release.value = kCompressorRelease;
   compressor.connect(gContext.destination);
   gInstrument = new Instrument.Instrument(gContext, compressor);
+  InstrumentState.updateInstrument(gInstrument, DefaultInstrumentState.Default());
 
 // Temporarily turned off because debugging with this sucks
 //  chrome.storage.local.get(kExpandedFieldKey, function(items) {

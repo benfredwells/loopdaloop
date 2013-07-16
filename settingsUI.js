@@ -126,27 +126,27 @@ module.Group.prototype.addValueLabel_ = function(row) {
 module.Group.prototype.addSelectRow = function(title, choiceSetting, descriptions) {
   var row = this.makeRow_(title);
 
-  row.select = document.createElement('select');
-  row.setting_.appendChild(row.select);
+  var select = document.createElement('select');
+  setting_.appendChild(row.select);
   for (var i = 0; i < choiceSetting.choices.length; i++) {
     var option = document.createElement('option');
     option.value = choiceSetting.choices[i];
     option.text = descriptions[option.value];
-    row.select.add(option, null);
+    select.add(option, null);
   }
 
   var prevEnableDisable = row.enableDisable;
   row.enableDisable = function(value) {
     prevEnableDisable(value);
-    row.select.disabled = !value;
+    select.disabled = !value;
   }
 
-  row.select.onchange = function() {
-    choiceSetting.value = row.select.value;
+  select.onchange = function() {
+    choiceSetting.value = select.value;
     if (row.onchange)
       row.onchange();
   }
-  row.select.value = choiceSetting.value;
+  select.value = choiceSetting.value;
 
   return row;
 }
@@ -154,24 +154,24 @@ module.Group.prototype.addSelectRow = function(title, choiceSetting, description
 module.Group.prototype.addCheckRow = function(title, booleanSetting) {
   var row = this.makeRow_(title);
 
-  row.check = document.createElement('input');
-  row.check.type = 'checkbox';
-  row.check.classList.add('instrDetail');
-  row.setting_.appendChild(row.check);
+  var check = document.createElement('input');
+  check.type = 'checkbox';
+  check.classList.add('instrDetail');
+  setting_.appendChild(row.check);
 
   var prevEnableDisable = row.enableDisable;
   row.enableDisable = function(value) {
     prevEnableDisable(value);
-    row.check.disabled = !value;
+    check.disabled = !value;
   }
 
-  row.check.onchange = function() {
-    booleanSetting.value = row.check.checked;
+  check.onchange = function() {
+    booleanSetting.value = check.checked;
     if (row.onchange)
       row.onchange();
   }
 
-  row.check.checked = booleanSetting.value;
+  check.checked = booleanSetting.value;
   return row;
 }
 

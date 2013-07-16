@@ -16,6 +16,8 @@ module.kAmplitude = 'Amplitude';
 module.kOctaveOffset = 'Octave offset';
 module.kNoteOffset = 'Semitone offset';
 module.kDetune = 'Detune';
+module.kFrequency = 'Frequency';
+module.kQ = 'Resonance';
 
 module.kFlat = 'Flat';
 module.kOscillating = 'Oscillating';

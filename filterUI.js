@@ -8,7 +8,6 @@ kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
 kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
 
 var kFrequencyControllerDef = {title: 'Frequency', indent: 1, min: 0.5, max: 10, steps: 190, prefix: 'x', suffix:''};
-var kQRowDef = {title: 'Q', min: 0, max: 20, steps: 20};
 
 module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.id = id;
@@ -23,15 +22,13 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.enabledRow_ = g.addCheckRow(Strings.kEnabled, filter.enabledSetting);
   this.typeRow_ = s(g.addSelectRow(Strings.kType, filter.typeSetting, kTypeDescriptions));
   this.frequencyController_ = new ContourUI.ContourController(g, kFrequencyControllerDef, filter.frequency);
-  this.qRow_ = s(g.addLinearRangeRow(kQRowDef));
+  this.qRow_ = s(g.addLinearRangeRow(Strings.kQ, filter.qSetting, 20));
 
   var ui = this;
   var changeHandler = function  () {
-    ui.filter_.q = ui.qRow_.value();
     ui.updateDisplay_();
   }
 
-  this.setInitialValues_();
   this.response_ = [];
   changeHandler();
 
@@ -41,13 +38,8 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.qRow_.onchange = changeHandler;
 }
 
-module.UI.prototype.setInitialValues_ = function() {
-  this.qRow_.setValue(6);
-}
-
 module.UI.prototype.updateDisplay_ = function() {
   var r = SettingsUI.roundForDisplay;
-  this.qRow_.setLabel(this.qRow_.value());
   this.enableDisable_();
   this.drawResponse_();
 }

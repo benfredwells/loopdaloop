@@ -16,9 +16,9 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
 
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
   this.typeRow_ = this.group_.addSelectRow(Strings.kType, oscillator.typeSetting, kTypeDescriptions);
-  this.octaveOffsetRow_ = this.group_.addLinearRangeRow(oscillator.octaveOffsetSetting, String.kOctaveOffset, 8);
-  this.noteOffsetRow_ = this.group_.addLinearRangeRow(oscillator.noteOffsetSetting, String.kNoteOffset, 16);
-  this.detuneRow_ = this.group_.addLinearRangeRow(oscillator.detuneSetting, String.kDetune, 100, String.kPercentFormatter);
+  this.octaveOffsetRow_ = this.group_.addLinearRangeRow(Strings.kOctaveOffset, oscillator.octaveOffsetSetting, 8);
+  this.noteOffsetRow_ = this.group_.addLinearRangeRow(Strings.kNoteOffset, oscillator.noteOffsetSetting, 16);
+  this.detuneRow_ = this.group_.addLinearRangeRow(Strings.kDetune, oscillator.detuneSetting, 100, String.kPercentFormatter);
 
   var s = SettingsUI.makeSubRow;
   var g = this.group_;

@@ -175,42 +175,53 @@ module.Group.prototype.addCheckRow = function(title, booleanSetting) {
   return row;
 }
 
-// linearRangeDef is {title, min, max, steps}
-module.Group.prototype.addLinearRangeRow = function(linearRangeDef) {
-  var title = linearRangeDef.title;
-  var min = linearRangeDef.min;
-  var max = linearRangeDef.max;
-  var steps = linearRangeDef.steps;
+module.Group.prototype.addLinearRangeRow = function(title, numberSetting, steps, formatter) {
+  var min = numberSetting.min;
+  var max = numberSetting.max;
 
   var row = this.makeRow_(title);
 
-  row.range = document.createElement('input');
-  row.range.type = 'range';
-  row.range.min = 0;
-  row.range.max = steps;
-  row.range.classList.add('instrDetail');
-  row.setting_.appendChild(row.range);
+  var range = document.createElement('input');
+  range.type = 'range';
+  range.min = 0;
+  range.max = steps;
+  range.classList.add('instrDetail');
+  setting_.appendChild(range);
 
   this.addValueLabel_(row);
-
-  var factor = (max - min) / steps;
-  row.value = function() {
-    var rangeVal = row.range.value;
-    return min + rangeVal * factor;
-  }
-
-  row.setValue = function(newValue) {
-    var rangeVal = Math.round((newValue - min) / factor);
-    row.range.value = rangeVal;
-  }
 
   var prevEnableDisable = row.enableDisable;
   row.enableDisable = function(value) {
     prevEnableDisable(value);
-    row.range.disabled = !value;
+    range.disabled = !value;
   }
 
-  setupOnchange(row, row.range);
+  var factor = (max - min) / steps;
+  var value = function() {
+    var rangeVal = range.value;
+    return min + rangeVal * factor;
+  }
+
+  var setValue = function(newValue) {
+    var rangeVal = Math.round((newValue - min) / factor);
+    range.value = rangeVal;
+  }
+
+  var setLabel = function() {
+    var label = module.roundForDisplay(numberSetting.value);
+    if (formatter)
+      label = formatter.format(label);
+    row.setLabel(label);
+  }
+
+  range.onchange = function() {
+    numberSetting.value = value();
+    setLabel();
+    if (row.onchange)
+      row.onchange();
+  }
+  setValue(numberSetting.value);
+  setLabel();
 
   return row;
 }

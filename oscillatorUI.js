@@ -9,19 +9,6 @@ kTypeDescriptions[Instrument.kSquareWave] = Strings.kSquare;
 kTypeDescriptions[Instrument.kSawtoothWave] = Strings.kSawtooth;
 kTypeDescriptions[Instrument.kTriangleWave] = Strings.kTriangle;
 
-var kOctaveOffsetRowDef = {title: 'Octave offset',
-                           min: -4,
-                           max: 4,
-                           steps: 8}
-var kNoteOffsetRowDef = {title: 'Semitone offset',
-                        min: -8,
-                        max: 8,
-                        steps: 16};
-var kDetuneRowDef = {title: 'Detune',
-                     min: -50,
-                     max: 50,
-                     steps: 100};
-
 module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) {
   this.id = id;
   this.oscillator_ = oscillator;
@@ -29,43 +16,27 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
 
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
   this.typeRow_ = this.group_.addSelectRow(Strings.kType, oscillator.typeSetting, kTypeDescriptions);
-  this.octaveOffsetRow_ = this.group_.addLinearRangeRow(kOctaveOffsetRowDef);
-  this.noteOffsetRow_ = this.group_.addLinearRangeRow(kNoteOffsetRowDef);
-  this.detuneRow_ = this.group_.addLinearRangeRow(kDetuneRowDef);
+  this.octaveOffsetRow_ = this.group_.addLinearRangeRow(oscillator.octaveOffsetSetting, String.kOctaveOffset, 8);
+  this.noteOffsetRow_ = this.group_.addLinearRangeRow(oscillator.noteOffsetSetting, String.kNoteOffset, 16);
+  this.detuneRow_ = this.group_.addLinearRangeRow(oscillator.detuneSetting, String.kDetune, 100, String.kPercentFormatter);
 
   var s = SettingsUI.makeSubRow;
   var g = this.group_;
 
+  // TODO: set onchange in constructor.
   var ui = this;
   var changeHandler = function() {
-    ui.oscillator_.octaveOffset = ui.octaveOffsetRow_.value();
-    ui.oscillator_.noteOffset = ui.noteOffsetRow_.value();
-    ui.oscillator_.detune = ui.detuneRow_.value();
     ui.updateDisplay_();
   }
   this.typeRow_.onchange = changeHandler;
   this.octaveOffsetRow_.onchange = changeHandler;
   this.noteOffsetRow_.onchange = changeHandler;
   this.detuneRow_.onchange = changeHandler;
-  this.setInitialValues_();
   changeHandler();
 }
 
-module.UI.prototype.setInitialValues_ = function() {
-  this.octaveOffsetRow_.setValue(0);
-  this.noteOffsetRow_.setValue(0);
-  this.detuneRow_.setValue(0);
-}
-
 module.UI.prototype.updateDisplay_ = function() {
-  this.octaveOffsetRow_.setLabel(this.octaveOffsetRow_.value());
-  this.noteOffsetRow_.setLabel(this.noteOffsetRow_.value());
-  this.detuneRow_.setLabel(this.detuneRow_.value());
-  this.enableDisable_();
   this.drawWave_();
-}
-
-module.UI.prototype.enableDisable_ = function() {
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

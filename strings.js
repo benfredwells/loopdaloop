@@ -13,6 +13,9 @@ module.kEnabled = 'Enabled';
 module.kType = 'Type';
 module.kSpeed = 'Speed';
 module.kAmplitude = 'Amplitude';
+module.kOctaveOffset = 'Octave offset';
+module.kNoteOffset = 'Semitone offset';
+module.kDetune = 'Detune';
 
 module.kFlat = 'Flat';
 module.kOscillating = 'Oscillating';
@@ -27,6 +30,8 @@ module.kLowPass = 'Low Pass';
 module.kHighPass = 'High Pass';
 
 module.kMaxFormatter = new module.Formatter('', ' of max');
+module.kPercentFormatter = new module.Formatter('', '%');
+module.kMultiplierFormatter = new module.Formatter('x', '');
 
 return module;
 

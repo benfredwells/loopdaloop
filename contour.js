@@ -24,6 +24,7 @@ module.BasicEnvelopeContourer.prototype.contourOn = function(onTime) {
 }
 
 module.BasicEnvelopeContourer.prototype.contourOff = function(offTime) {
+  this.param_.setValueAtTime(this.param_.value, offTime);
   this.param_.linearRampToValueAtTime(0, offTime + kMinChangeTime);
 }
 

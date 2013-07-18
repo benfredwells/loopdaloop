@@ -46,6 +46,7 @@ module.UI.prototype.updateDisplay_ = function() {
 
 module.UI.prototype.enableDisable_ = function() {
   var enabled = this.filter_.enabledSetting.value;
+  this.typeRow_.enableDisable(enabled);
   this.frequencyController_.enableDisable(enabled);
   this.qRow_.enableDisable(enabled);
 }

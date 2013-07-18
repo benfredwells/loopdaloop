@@ -66,7 +66,7 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(param, centerValue));
   else
-    param.value = valueFunction(centerValue);
+    param.value = centerValue;
 
   var oscillator = this.contouredValue_.context_.createOscillator();
   // TODO: make this controllable.

@@ -26,64 +26,63 @@ function dismantleFinishedNotes() {
 // NoteSection class
 
 module.NoteSection = function(inputNode) {
-  // TODO: make these all private.
-  this.inputNode = inputNode;
+  this.inputNode_ = inputNode;
   this.outputNode = inputNode;
-  this.allNodes = [];
+  this.allNodes_ = [];
   if (inputNode)
-    this.allNodes.push(inputNode);
-  this.oscillatorNodes = [];
-  this.contours = [];
+    this.allNodes_.push(inputNode);
+  this.oscillatorNodes_ = [];
+  this.contours_ = [];
 }
 
 module.NoteSection.prototype.pushNode = function(node) {
   if (this.outputNode)
     this.outputNode.connect(node);
   this.outputNode = node;
-  this.allNodes.push(node);
+  this.allNodes_.push(node);
 }
 
 module.NoteSection.prototype.pushOscillator = function(node) {
   this.pushNode(node);
-  this.oscillatorNodes.push(node);
+  this.oscillatorNodes_.push(node);
 }
 
 module.NoteSection.prototype.addContour = function(contour) {
-  this.contours.push(contour);
+  this.contours_.push(contour);
 }
 
 module.NoteSection.prototype.connect = function(otherSection) {
-  if (this.outputNode && otherSection.inputNode)
-    this.outputNode.connect(otherSection.inputNode);
+  if (this.outputNode && otherSection.inputNode_)
+    this.outputNode.connect(otherSection.inputNode_);
 }
 
 module.NoteSection.prototype.noteOn = function(time) {
-  this.oscillatorNodes.forEach(function (oscillator) {
+  this.oscillatorNodes_.forEach(function (oscillator) {
     oscillator.noteOn(time);
   });
-  this.contours.forEach(function (contour) {
+  this.contours_.forEach(function (contour) {
     contour.contourOn(time);
   });
 }
 
 module.NoteSection.prototype.releaseTrigger = function(time) {
-  this.contours.forEach(function (contour) {
+  this.contours_.forEach(function (contour) {
     contour.contourOff(time);
   });
 }
 
 module.NoteSection.prototype.dismantle = function() {
-  this.oscillatorNodes.forEach(function (oscillator) {
+  this.oscillatorNodes_.forEach(function (oscillator) {
     oscillator.noteOff(0);
   });
-  this.allNodes.forEach(function (node) {
+  this.allNodes_.forEach(function (node) {
     node.disconnect();  
   });
 }
 
 module.NoteSection.prototype.finishTime = function(offTime) {
   var result = offTime;
-  this.contours.forEach(function (contour) {
+  this.contours_.forEach(function (contour) {
     var contourFinish = contour.contourFinishTime(offTime);
     if (contourFinish > result)
       result = contourFinish;

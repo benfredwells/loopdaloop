@@ -11,8 +11,7 @@ module.kDisplayMid = {};
 module.kDisplayMid.x = 100.5;
 module.kDisplayMid.y = 25.5;
 
-//TODO: make this private to the module. 
-module.roundForDisplay = function(number) {
+function roundForDisplay(number) {
   return Math.round(number * 100) / 100;
 }
 
@@ -208,7 +207,7 @@ module.Group.prototype.addLinearRangeRow = function(title, numberSetting, steps,
   }
 
   var setLabel = function() {
-    var label = module.roundForDisplay(numberSetting.value);
+    var label = roundForDisplay(numberSetting.value);
     if (formatter)
       label = formatter.format(label);
     row.setLabel(label);
@@ -270,7 +269,7 @@ module.Group.prototype.addExponentialRangeRow = function(title, numberSetting, s
   }
 
   var setLabel = function() {
-    var label = module.roundForDisplay(numberSetting.value);
+    var label = roundForDisplay(numberSetting.value);
     if (formatter)
       label = formatter.format(label);
     row.setLabel(label);

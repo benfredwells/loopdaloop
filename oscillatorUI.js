@@ -23,7 +23,6 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
   var s = SettingsUI.makeSubRow;
   var g = this.group_;
 
-  // TODO: set onchange in constructor.
   var ui = this;
   var changeHandler = function() {
     ui.updateDisplay_();

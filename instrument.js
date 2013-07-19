@@ -55,7 +55,7 @@ module.Filter = function(context) {
   this.enabledSetting = new Setting.Boolean();
   this.typeSetting = new Setting.Choice(module.kFilterTypes);
   this.qSetting = new Setting.Number(0, 20);
-  this.frequency = new Contour.ContouredValue(context, new Setting.Number(0.5, 10), false);
+  this.frequencyContour = new Contour.ContouredValue(context, new Setting.Number(0.5, 10), false);
 }
 
 module.Filter.prototype.createFilterNode_ = function(octave, note) {
@@ -72,7 +72,7 @@ module.Filter.prototype.createNoteSection_ = function(octave, note) {
   var frequencyValueFunction = function(value) {
     return noteFrequency * value;
   }
-  this.frequency.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection)
+  this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection)
   return filterSection;
 }
 
@@ -90,7 +90,7 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, max
   var frequencyValueFunction = function(value) {
     return response.noteFrequency * (value);
   }
-  response.filterFrequency = this.frequency.currentContour().averageValue(frequencyValueFunction);
+  response.filterFrequency = this.frequencyContour.currentContour().averageValue(frequencyValueFunction);
   node.frequency.value = response.filterFrequency;
   response.numHarmonics = 0;
   response.harmonics = [];
@@ -121,7 +121,7 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, max
 
 module.Instrument = function(context, destinationNode) {
   this.context_ = context;
-  this.envelope = new Contour.ContouredValue(context, new Setting.Number(0, 1), true);
+  this.envelopeContour = new Contour.ContouredValue(context, new Setting.Number(0, 1), true);
   this.destinationNode_ = destinationNode;
   this.oscillators = [];
   for (var i = 0; i < kOscillatorCount; i++) {
@@ -139,7 +139,7 @@ module.Instrument.prototype.createEnvelope_ = function() {
   var gainValueFunction = function(value) {
     return value;
   }
-  this.envelope.currentContour().addContour(gainValueFunction, gainNode.gain, section)
+  this.envelopeContour.currentContour().addContour(gainValueFunction, gainNode.gain, section)
   return section;
 }
 

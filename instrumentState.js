@@ -73,7 +73,7 @@ module.updateFilter = function(filter, filterState) {
   updateSetting(filter.enabledSetting, filterState.enabled);
   updateSetting(filter.typeSetting, filterState.type);
   updateSetting(filter.qSetting, filterState.q);
-  module.updateContouredValue(filter.frequency, filterState.frequency);
+  module.updateContouredValue(filter.frequencyContour, filterState.frequency);
 }
 
 module.updateOscillator = function(oscillator, oscillatorState) {
@@ -98,7 +98,7 @@ module.updateInstrument = function(instrument, instrumentState) {
   for (var i = 0; i < instrumentState.filters.length; i++) {
     module.updateFilter(instrument.filters[i], instrumentState.filters[i]);
   }
-  module.updateContouredValue(instrument.envelope, instrumentState.envelope)
+  module.updateContouredValue(instrument.envelopeContour, instrumentState.envelope)
 }
 
 return module;

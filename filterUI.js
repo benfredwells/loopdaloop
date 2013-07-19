@@ -20,7 +20,7 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   this.enabledRow_ = g.addCheckRow(Strings.kEnabled, filter.enabledSetting);
   this.typeRow_ = s(g.addSelectRow(Strings.kType, filter.typeSetting, kTypeDescriptions));
   this.frequencyController_ = new ContourUI.ContourController(g, Strings.kFrequency, 1,
-                                                              filter.frequency,
+                                                              filter.frequencyContour,
                                                               190, Strings.kMultiplierFormatter);
   this.qRow_ = s(g.addLinearRangeRow(Strings.kQ, filter.qSetting, 20));
 

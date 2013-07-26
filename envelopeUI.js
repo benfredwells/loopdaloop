@@ -8,15 +8,14 @@ module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) 
   this.instrument_ = instrument;
   this.title = title;
 
-  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, 'Envelope', this, collapsed);
-  this.controller_ = new ContourUI.ContourController(this.group_, Strings.kType, 0,
-                                                     instrument.envelopeContour, 100);
-
   var ui = this;
   var changeHandler = function() {
     ui.updateDisplay_();
   }
-  this.controller_.onchange = changeHandler;
+  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, 'Envelope', this, collapsed);
+  this.controller_ = new ContourUI.ContourController(this.group_, Strings.kType, 0,
+                                                     instrument.envelopeContour,
+                                                     changeHandler, 100);
   changeHandler();
 }
 

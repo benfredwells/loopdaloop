@@ -78,7 +78,7 @@ function setupOnchange(row, element) {
   }
 }
 
-module.Group.prototype.makeRow_ = function(title) {
+module.Group.prototype.makeRow_ = function(title, onchange) {
   var row = document.createElement('div');
   row.classList.add('instrDetailRow');
   this.detailsEl_.appendChild(row);
@@ -103,6 +103,8 @@ module.Group.prototype.makeRow_ = function(title) {
     row.enableDisableDiv_(row.label_, value);
   }
 
+  row.onchange = onchange;
+
   return row;
 }
 
@@ -122,8 +124,8 @@ module.Group.prototype.addValueLabel_ = function(row) {
   }
 }
 
-module.Group.prototype.addSelectRow = function(title, choiceSetting, descriptions) {
-  var row = this.makeRow_(title);
+module.Group.prototype.addSelectRow = function(title, choiceSetting, onchange, descriptions) {
+  var row = this.makeRow_(title, onchange);
 
   var select = document.createElement('select');
   row.setting_.appendChild(select);
@@ -150,8 +152,8 @@ module.Group.prototype.addSelectRow = function(title, choiceSetting, description
   return row;
 }
 
-module.Group.prototype.addCheckRow = function(title, booleanSetting) {
-  var row = this.makeRow_(title);
+module.Group.prototype.addCheckRow = function(title, booleanSetting, onchange) {
+  var row = this.makeRow_(title, onchange);
 
   var check = document.createElement('input');
   check.type = 'checkbox';
@@ -174,11 +176,11 @@ module.Group.prototype.addCheckRow = function(title, booleanSetting) {
   return row;
 }
 
-module.Group.prototype.addLinearRangeRow = function(title, numberSetting, steps, formatter) {
+module.Group.prototype.addLinearRangeRow = function(title, numberSetting, onchange, steps, formatter) {
   var min = numberSetting.min;
   var max = numberSetting.max;
 
-  var row = this.makeRow_(title);
+  var row = this.makeRow_(title, onchange);
 
   var range = document.createElement('input');
   range.type = 'range';
@@ -225,12 +227,12 @@ module.Group.prototype.addLinearRangeRow = function(title, numberSetting, steps,
   return row;
 }
 
-module.Group.prototype.addExponentialRangeRow = function(title, numberSetting, steps, formatter) {
+module.Group.prototype.addExponentialRangeRow = function(title, numberSetting, onchange, steps, formatter) {
   var base = 10;
   var constant = (numberSetting.max - numberSetting.min) / base;
   var minExponent = -1;
   var maxExponent = 1;
-  var row = this.makeRow_(title);
+  var row = this.makeRow_(title, onchange);
 
   var range = document.createElement('input');
   range.type = 'range';

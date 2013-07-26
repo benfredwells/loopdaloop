@@ -14,23 +14,16 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
   this.oscillator_ = oscillator;
   this.title = title;
 
-  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
-  this.typeRow_ = this.group_.addSelectRow(Strings.kType, oscillator.typeSetting, kTypeDescriptions);
-  this.octaveOffsetRow_ = this.group_.addLinearRangeRow(Strings.kOctaveOffset, oscillator.octaveOffsetSetting, 8);
-  this.noteOffsetRow_ = this.group_.addLinearRangeRow(Strings.kNoteOffset, oscillator.noteOffsetSetting, 16);
-  this.detuneRow_ = this.group_.addLinearRangeRow(Strings.kDetune, oscillator.detuneSetting, 100, String.kPercentFormatter);
-
-  var s = SettingsUI.makeSubRow;
-  var g = this.group_;
-
   var ui = this;
   var changeHandler = function() {
     ui.updateDisplay_();
   }
-  this.typeRow_.onchange = changeHandler;
-  this.octaveOffsetRow_.onchange = changeHandler;
-  this.noteOffsetRow_.onchange = changeHandler;
-  this.detuneRow_.onchange = changeHandler;
+  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
+  this.typeRow_ = this.group_.addSelectRow(Strings.kType, oscillator.typeSetting, changeHandler, kTypeDescriptions);
+  this.octaveOffsetRow_ = this.group_.addLinearRangeRow(Strings.kOctaveOffset, oscillator.octaveOffsetSetting, changeHandler, 8);
+  this.noteOffsetRow_ = this.group_.addLinearRangeRow(Strings.kNoteOffset, oscillator.noteOffsetSetting, changeHandler, 16);
+  this.detuneRow_ = this.group_.addLinearRangeRow(Strings.kDetune, oscillator.detuneSetting, changeHandler, 100, String.kPercentFormatter);
+
   changeHandler();
 }
 

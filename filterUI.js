@@ -17,25 +17,21 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
   var ss = SettingsUI.makeSubSubRow;
   var g = this.group_;
 
-  this.enabledRow_ = g.addCheckRow(Strings.kEnabled, filter.enabledSetting);
-  this.typeRow_ = s(g.addSelectRow(Strings.kType, filter.typeSetting, kTypeDescriptions));
-  this.frequencyController_ = new ContourUI.ContourController(g, Strings.kFrequency, 1,
-                                                              filter.frequencyContour,
-                                                              190, Strings.kMultiplierFormatter);
-  this.qRow_ = s(g.addLinearRangeRow(Strings.kQ, filter.qSetting, 20));
-
   var ui = this;
-  var changeHandler = function  () {
+  var changeHandler = function() {
     ui.updateDisplay_();
   }
 
+  this.enabledRow_ = g.addCheckRow(Strings.kEnabled, filter.enabledSetting, changeHandler);
+  this.typeRow_ = s(g.addSelectRow(Strings.kType, filter.typeSetting, changeHandler, kTypeDescriptions));
+  this.frequencyController_ = new ContourUI.ContourController(g, Strings.kFrequency, 1,
+                                                              filter.frequencyContour,
+                                                              changeHandler,
+                                                              190, Strings.kMultiplierFormatter);
+  this.qRow_ = s(g.addLinearRangeRow(Strings.kQ, filter.qSetting, changeHandler, 20));
+
   this.response_ = [];
   changeHandler();
-
-  this.enabledRow_.onchange = changeHandler;
-  this.typeRow_.onchange = changeHandler;
-  this.frequencyController_.onchange = changeHandler;
-  this.qRow_.onchange = changeHandler;
 }
 
 module.UI.prototype.updateDisplay_ = function() {

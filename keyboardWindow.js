@@ -10,7 +10,7 @@ var kOctaveKey = 'keyboardWindowOctaveField';
 function init() {
   // Player setup
   chrome.storage.local.get(kOctaveKey, function(items) {
-    gKeyboard = new KeyboardPiano.Piano(gInstrument, document.getElementById('keyboard'));
+    gKeyboard = new KeyboardPiano.Piano(gInstrument, document.getElementById('keyboard'), document.getElementById('octave'));
     var octave = items[kOctaveKey];
     if (!octave)
       octave = 4;

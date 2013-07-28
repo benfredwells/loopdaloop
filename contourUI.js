@@ -91,7 +91,8 @@ module.ContourController.prototype.addFlatControls_ = function(indent) {
   var flatRows = [];
   var flatContour = this.contouredValue_.contoursByIdentifier[Contour.kFlatContour];
 
-  this.addRow_(this.createValueRow_('Value', flatContour.valueSetting, indent), flatRows);
+  if (!this.contouredValue_.isEnvelope)
+    this.addRow_(this.createValueRow_('Value', flatContour.valueSetting, indent), flatRows);
   this.rowsByContour_[Contour.kFlatContour] = flatRows;
 }
 
@@ -100,10 +101,12 @@ module.ContourController.prototype.addFlatControls_ = function(indent) {
 module.ContourController.prototype.addOscillatingControls_ = function(indent) {
   var oscillatingRows = [];
   var oscillatingContour = this.contouredValue_.contoursByIdentifier[Contour.kOscillatingContour];
-  this.addRow_(this.createValueRow_('Center Value',
-                                    oscillatingContour.centerValueSetting,
-                                    indent),
-               oscillatingRows);
+  if (!this.contouredValue_.isEnvelope) {
+    this.addRow_(this.createValueRow_('Center Value',
+                                      oscillatingContour.centerValueSetting,
+                                      indent),
+                 oscillatingRows);
+  }
   this.addRow_(indent(this.group_.addExponentialRangeRow(Strings.kSpeed,
                                                          oscillatingContour.frequencySetting,
                                                          this.contourChangeHandler,
@@ -127,16 +130,22 @@ module.ContourController.prototype.addADSRControls_ = function(indent) {
   }
   var adsrRows = [];
   var adsrContour = this.contouredValue_.contoursByIdentifier[Contour.kADSRContour];
-  this.addRow_(this.createValueRow_('Initial Value', adsrContour.initialValueSetting, indent), adsrRows);
-  this.addRow_(createTimeRow('Attack Delay', adsrContour.attackDelaySetting), adsrRows);
+  if (!this.contouredValue_.isEnvelope) {
+    this.addRow_(this.createValueRow_('Initial Value', adsrContour.initialValueSetting, indent), adsrRows);
+    this.addRow_(createTimeRow('Attack Delay', adsrContour.attackDelaySetting), adsrRows);
+  }
   this.addRow_(createTimeRow('Attack Time', adsrContour.attackTimeSetting), adsrRows);
-  this.addRow_(this.createValueRow_('Attack Value', adsrContour.attackValueSetting, indent), adsrRows);
+  if (!this.contouredValue_.isEnvelope) {
+    this.addRow_(this.createValueRow_('Attack Value', adsrContour.attackValueSetting, indent), adsrRows);
+  }
   this.addRow_(createTimeRow('Attack Hold', adsrContour.attackHoldSetting), adsrRows);
   this.addRow_(createTimeRow('Decay Time', adsrContour.decayTimeSetting), adsrRows);
   this.addRow_(this.createValueRow_('Sustain Value', adsrContour.sustainValueSetting, indent), adsrRows);
   this.addRow_(createTimeRow('Sustain Hold', adsrContour.sustainHoldSetting), adsrRows);
   this.addRow_(createTimeRow('Release Time', adsrContour.releaseTimeSetting), adsrRows);
-  this.addRow_(this.createValueRow_('Final Value', adsrContour.finalValueSetting, indent), adsrRows);
+  if (!this.contouredValue_.isEnvelope) {
+    this.addRow_(this.createValueRow_('Final Value', adsrContour.finalValueSetting, indent), adsrRows);
+  }
   this.rowsByContour_[Contour.kADSRContour] = adsrRows;
 }
 

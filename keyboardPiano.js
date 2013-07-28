@@ -143,7 +143,7 @@ KeyboardPianoKey.prototype.stopPlaying = function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Public
-module.Piano = function(instrument, div) {
+module.Piano = function(instrument, div, octaveRange) {
   var keyboard = this;
 
   //////////////////////////////////////////////////////////////////////////////
@@ -153,6 +153,16 @@ module.Piano = function(instrument, div) {
   //////////////////////////////////////////////////////////////////////////////
   // Keyboard events.
   keyboard.keyDown = function(event) {
+    var rangeOctave = parseInt(keyboard.octaveRange_.value);
+    if (event.keyCode == 219) { // '[' is 219
+      keyboard.octaveRange_.value = rangeOctave - 1;
+      keyboard.octaveRange_.onchange();
+      return;
+    } else if (event.keyCode == 221) { // ']' is 221
+      keyboard.octaveRange_.value = rangeOctave + 1;
+      keyboard.octaveRange_.onchange();
+      return;
+    }
     keyboard.keys_.forEach(function(key) {
       key.down(event);
     });
@@ -228,6 +238,7 @@ module.Piano = function(instrument, div) {
   keyboard.mouseDown_ = false;
   keyboard.mouseKey_ = null;
   keyboard.touchKeys_ = [];
+  keyboard.octaveRange_ = octaveRange;
 
   //////////////////////////////////////////////////////////////////////////////
   // Setup events.

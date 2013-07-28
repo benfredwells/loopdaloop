@@ -101,9 +101,14 @@ module.ADSRContourer = function(contour, param, valueFunction) {
 module.ADSRContourer.prototype.contourOn = function(onTime) {
   var nextTime = onTime;
   var v = this.valueFunction_;
-  this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
-  nextTime += this.contour_.attackDelaySetting.value;
-  this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
+  // Envelopes always start at 0, and have no attack delay.
+  if (this.contour_.contouredValue_.isEnvelope) {
+    this.param_.setValueAtTime(0, nextTime);
+  } else {
+    this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
+    nextTime += this.contour_.attackDelaySetting.value;
+    this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
+  }
   nextTime += this.contour_.attackTimeSetting.value;
   this.param_.linearRampToValueAtTime(v(this.contour_.attackValueSetting.value), nextTime);
   nextTime += this.contour_.attackHoldSetting.value;
@@ -119,7 +124,11 @@ module.ADSRContourer.prototype.contourOff = function(offTime) {
   nextTime += this.contour_.sustainHoldSetting.value;
   this.param_.setValueAtTime(this.param_.value, nextTime);
   nextTime += this.contour_.releaseTimeSetting.value;
-  this.param_.linearRampToValueAtTime(this.valueFunction_(this.contour_.finalValueSetting.value), nextTime);
+  var finalValue = this.valueFunction_(this.contour_.finalValueSetting.value);
+  // Envelopes always finish at 0.
+  if (this.contour_.contouredValue_.isEnvelope)
+    finalValue = 0;
+  this.param_.linearRampToValueAtTime(finalValue, nextTime);
 }
 
 module.ADSRContourer.prototype.contourFinishTime = function(offTime) {

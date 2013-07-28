@@ -24,6 +24,7 @@ module.BasicEnvelopeContourer.prototype.contourOn = function(onTime) {
 }
 
 module.BasicEnvelopeContourer.prototype.contourOff = function(offTime) {
+  this.param_.cancelScheduledValues(offTime);
   this.param_.setValueAtTime(this.param_.value, offTime);
   this.param_.linearRampToValueAtTime(0, offTime + kMinChangeTime);
 }
@@ -109,25 +110,20 @@ module.ADSRContourer.prototype.contourOn = function(onTime) {
   this.param_.setValueAtTime(v(this.contour_.attackValueSetting.value), nextTime);
   nextTime += this.contour_.decayTimeSetting.value;
   this.param_.linearRampToValueAtTime(v(this.contour_.sustainValueSetting.value), nextTime);
-  this.sustainStart_ = nextTime;
 }
 
 module.ADSRContourer.prototype.contourOff = function(offTime) {
   var nextTime = offTime;
-  if (nextTime < this.sustainStart_)
-    nextTime = this.sustainStart_;
+  this.param_.cancelScheduledValues(offTime);
+  this.param_.setValueAtTime(this.param_.value, nextTime);
   nextTime += this.contour_.sustainHoldSetting.value;
-  var v = this.valueFunction_;
-  this.param_.setValueAtTime(v(this.contour_.sustainValueSetting.value), nextTime);
+  this.param_.setValueAtTime(this.param_.value, nextTime);
   nextTime += this.contour_.releaseTimeSetting.value;
-  this.param_.linearRampToValueAtTime(v(this.contour_.finalValueSetting.value), nextTime);
+  this.param_.linearRampToValueAtTime(this.valueFunction_(this.contour_.finalValueSetting.value), nextTime);
 }
 
 module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
-  var releaseTime = offTime;
-  if (this.sustainStart_ > releaseTime)
-    releaseTime = this.sustainStart_;
-  return releaseTime + this.contour_.sustainHoldSetting.value +
+  return offTime + this.contour_.sustainHoldSetting.value +
          this.contour_.releaseTimeSetting.value;
 }
 

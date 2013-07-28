@@ -5,6 +5,8 @@ var gCurrentNote = null;
 var gInstrumentUIs = [];
 var gInstrument = null;
 
+var kOutputGain = 0.01;
+
 var kHeightPadding = 100;
 var kCompressorThreshold = -30;
 var kCompressorKnee = 10;
@@ -31,7 +33,10 @@ function init() {
   compressor.attack.value = kCompressorAttack;
   compressor.release.value = kCompressorRelease;
   compressor.connect(gContext.destination);
-  gInstrument = new Instrument.Instrument(gContext, compressor);
+  var gainNode = gContext.createGainNode();
+  gainNode.gain.value = kOutputGain;
+  gainNode.connect(compressor);
+  gInstrument = new Instrument.Instrument(gContext, gainNode);
   InstrumentState.updateInstrument(gInstrument, DefaultInstrumentState.Default());
 
 // Temporarily turned off because debugging with this sucks

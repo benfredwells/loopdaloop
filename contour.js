@@ -73,15 +73,14 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
   // TODO: make this controllable.
   oscillator.type = 'sine';
   oscillator.frequency.value = this.frequencySetting.value;
-  noteSection.oscillatorNodes.push(oscillator);
-  noteSection.allNodes.push(oscillator);
+  noteSection.addOscillator(oscillator);
   var gain = this.contouredValue_.context_.createGainNode();
   var amplitudeValue = this.amplitudeSetting.value * centerValue;
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(gain.gain, amplitudeValue));
   else
     gain.gain.value = amplitudeValue;
-  noteSection.allNodes.push(gain);
+  noteSection.addNode(gain);
   oscillator.connect(gain);
   gain.connect(param);
 }

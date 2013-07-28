@@ -35,16 +35,29 @@ module.NoteSection = function(inputNode) {
   this.contours_ = [];
 }
 
-module.NoteSection.prototype.pushNode = function(node) {
-  if (this.outputNode)
-    this.outputNode.connect(node);
-  this.outputNode = node;
+module.NoteSection.prototype.addNode = function(node) {
   this.allNodes_.push(node);
 }
 
-module.NoteSection.prototype.pushOscillator = function(node) {
-  this.pushNode(node);
+module.NoteSection.prototype.pushNode_ = function(node) {
+  if (this.outputNode)
+    this.outputNode.connect(node);
+  this.outputNode = node;
+}
+
+module.NoteSection.prototype.pushNode = function(node) {
+  this.pushNode_(node);
+  this.addNode(node);;
+}
+
+module.NoteSection.prototype.addOscillator = function(node) {
+  this.addNode(node);
   this.oscillatorNodes_.push(node);
+}
+
+module.NoteSection.prototype.pushOscillator = function(node) {
+  this.pushNode_(node);
+  this.addOscillator(node);
 }
 
 module.NoteSection.prototype.addContour = function(contour) {

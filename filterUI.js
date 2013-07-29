@@ -14,7 +14,6 @@ module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
 
   this.group_ = new SettingsUI.Group(categoryEl, detailsEl, title, this, collapsed);
   var s = SettingsUI.makeSubRow;
-  var ss = SettingsUI.makeSubSubRow;
   var g = this.group_;
 
   var ui = this;

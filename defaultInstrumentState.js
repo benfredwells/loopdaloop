@@ -9,18 +9,21 @@ module.Default = function() {
     oscillators: [
       {
         type: 'sine',
+        enabled: true,
         octaveOffset: 0,
         noteOffset: 0,
         detune: 0
       },
       {
         type: 'square',
+        enabled: true,
         octaveOffset: 1,
         noteOffset: 5,
-        detune: -10
+        detune: 0
       },
       {
         type: 'triangle',
+        enabled: false,
         octaveOffset: 0,
         noteOffset: 0,
         detune: 0

@@ -19,10 +19,12 @@ module.kWaveTypes = [module.kSineWave, module.kSquareWave, module.kSawtoothWave,
 // Oscillator class
 module.Oscillator = function(context) {
   this.context_ = context;
+  this.enabledSetting = new Setting.Boolean();
   this.typeSetting = new Setting.Choice(module.kWaveTypes);
   this.octaveOffsetSetting = new Setting.Number(-4, 4);
   this.noteOffsetSetting = new Setting.Number(-8, 8);
   this.detuneSetting = new Setting.Number(-50, 50);
+  this.gainContour = new Contour.ContouredValue(context, new Setting.Number(0, 1), false);
 }
 
 module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
@@ -39,6 +41,12 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note) {
   var section = new PlayedNote.NoteSection(null);
   var oscillator = this.createOscillatorNode_(octave, note);
   section.pushOscillator(oscillator);
+  var gainNode = this.context_.createGainNode();
+  section.pushNode(gainNode);
+  var gainValueFunction = function(value) {
+    return value;
+  }
+  this.gainContour.currentContour().addContour(gainValueFunction, gainNode.gain, section)
   return section;
 }
 
@@ -148,7 +156,8 @@ module.Instrument.prototype.createPlayedNote = function(octave, note) {
   var playedNote = new PlayedNote.Note(this.context_, this.destinationNode_);
   var oscillatorSections = [];
   this.oscillators.forEach(function(oscillator) {
-    oscillatorSections.push(oscillator.createNoteSection_(octave, note));
+    if (oscillator.enabledSetting.value)
+      oscillatorSections.push(oscillator.createNoteSection_(octave, note));
   });
   playedNote.pushSections(oscillatorSections);
   this.filters.forEach(function(filter) {

@@ -81,10 +81,12 @@ module.updateOscillator = function(oscillator, oscillatorState) {
     reportError('oscillatorState undefined');
     return;
   }
+  updateSetting(oscillator.enabledSetting, oscillatorState.enabled);
   updateSetting(oscillator.typeSetting, oscillatorState.type);
   updateSetting(oscillator.octaveOffsetSetting, oscillatorState.octaveOffset);
   updateSetting(oscillator.noteOffsetSetting, oscillatorState.noteOffset);
   updateSetting(oscillator.detuneSetting, oscillatorState.detune);
+  module.updateContouredValue(oscillator.gainContour, oscillatorState.gain);
 }
 
 module.updateInstrument = function(instrument, instrumentState) {

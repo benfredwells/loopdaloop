@@ -77,7 +77,7 @@ module.ContourController.prototype.createValueRow_ = function(title, valueSettin
                                               valueSetting,
                                               this.contourChangeHandler,
                                               this.steps_,
-                                              this.formatter));
+                                              this.formatter_));
 }
 
 module.ContourController.prototype.addRow_ = function(row, array) {

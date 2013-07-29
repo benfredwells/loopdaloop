@@ -19,16 +19,32 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
     ui.updateDisplay_();
   }
   this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
-  this.typeRow_ = this.group_.addSelectRow(Strings.kType, oscillator.typeSetting, changeHandler, kTypeDescriptions);
-  this.octaveOffsetRow_ = this.group_.addLinearRangeRow(Strings.kOctaveOffset, oscillator.octaveOffsetSetting, changeHandler, 8);
-  this.noteOffsetRow_ = this.group_.addLinearRangeRow(Strings.kNoteOffset, oscillator.noteOffsetSetting, changeHandler, 16);
-  this.detuneRow_ = this.group_.addLinearRangeRow(Strings.kDetune, oscillator.detuneSetting, changeHandler, 100, String.kPercentFormatter);
+  var s = SettingsUI.makeSubRow;
+  var g = this.group_;
+  this.enabledRow_ = g.addCheckRow(Strings.kEnabled, oscillator.enabledSetting, changeHandler);
+  this.typeRow_ = s(g.addSelectRow(Strings.kType, oscillator.typeSetting, changeHandler, kTypeDescriptions));
+  this.octaveOffsetRow_ = s(g.addLinearRangeRow(Strings.kOctaveOffset, oscillator.octaveOffsetSetting, changeHandler, 8));
+  this.noteOffsetRow_ = s(g.addLinearRangeRow(Strings.kNoteOffset, oscillator.noteOffsetSetting, changeHandler, 16));
+  this.detuneRow_ = s(g.addLinearRangeRow(Strings.kDetune, oscillator.detuneSetting, changeHandler, 100, String.kPercentFormatter));
+  this.gainController_ = new ContourUI.ContourController(g, Strings.kGain, 1,
+                                                         oscillator.gainContour,
+                                                         changeHandler,
+                                                         10);
 
   changeHandler();
 }
 
 module.UI.prototype.updateDisplay_ = function() {
   this.drawWave_();
+  this.enableDisable_();
+}
+
+module.UI.prototype.enableDisable_ = function() {
+  var enabled = this.oscillator_.enabledSetting.value;
+  this.typeRow_.enableDisable(enabled);
+  this.octaveOffsetRow_.enableDisable(enabled);
+  this.noteOffsetRow_.enableDisable(enabled);
+  this.detuneRow_.enableDisable(enabled);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;
@@ -153,16 +169,22 @@ module.UI.prototype.drawWave_ = function() {
                                          kBackgroundColorFlat, 0, kBackgroundColorFlat,
                                          this.group_.svgDoc, this.group_.svg);
 
-  if (this.axis_)
+  if (this.axis_) {
     this.group_.svg.removeChild(this.axis_);
+    this.axis_ = null;
+  }
+  if (this.waveform_) {
+    this.group_.svg.removeChild(this.waveform_);
+    this.waveform_ = null;
+  }
+  if (!this.oscillator_.enabledSetting.value)
+    return;
 
   this.axis_ = SVGUtils.createLine(0, kMid.y,
                                    kBounds.x, kMid.y,
                                    kAxisColor, 1,
                                    this.group_.svgDoc, this.group_.svg);
 
-  if (this.waveform_)
-    this.group_.svg.removeChild(this.waveform_);
   switch (this.oscillator_.typeSetting.value) {
     case Instrument.kSineWave: this.drawSineWave_(); break;
     case Instrument.kSquareWave: this.drawSquareWave_(); break;

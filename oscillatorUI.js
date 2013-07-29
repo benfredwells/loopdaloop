@@ -45,6 +45,7 @@ module.UI.prototype.enableDisable_ = function() {
   this.octaveOffsetRow_.enableDisable(enabled);
   this.noteOffsetRow_.enableDisable(enabled);
   this.detuneRow_.enableDisable(enabled);
+  this.gainController_.enableDisable(enabled);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

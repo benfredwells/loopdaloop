@@ -5,58 +5,79 @@ InstrumentState = (function() {
 var module = {};
 
 function reportError(error) {
-  console.log(error);
+  console.log('Error: ' + error);
   console.trace();
 }
 
-function updateSetting(setting, value) {
-  if (value != null)
+function reportWarning(error) {
+  console.log('Warning: ' + error);
+  console.trace();
+}
+
+function updateSetting(setting, value, defaultValue) {
+  if (value != null) {
     setting.value = value;
-  else
-    reportError('updateSetting error: no value');
+  } else {
+    setting.value = defaultValue;
+    reportWarning('using default value');
+  }
+}
+
+function updateSettingWithMaxDefault(setting, value) {
+  updateSetting(setting, value, setting.max);
+}
+
+function updateSettingWithMinDefault(setting, value) {
+  updateSetting(setting, value, setting.min);
+}
+
+function updateSettingWithMidDefault(setting, value) {
+  updateSetting(setting, value, (setting.max + setting.min) / 2);
 }
 
 module.updateFlatContour = function(flatContour, flatContourState) {
   if (!flatContourState) {
-    reportError('flatContourState undefined');
-    return;
+    reportWarning('flatContourState undefined');
+    flatContourState = {};
   }
-  updateSetting(flatContour.valueSetting, flatContourState.value);
+  updateSettingWithMaxDefault(flatContour.valueSetting, flatContourState.value);
 }
 
 module.updateOscillatingContour = function(oscillatingContour, oscillatingContourState) {
   if (!oscillatingContourState) {
-    reportError('oscillatingContourState undefined');
-    return;
+    reportWarning('oscillatingContourState undefined');
+    oscillatingContourState = {};
   }
-  updateSetting(oscillatingContour.centerValueSetting, oscillatingContourState.centerValue);
-  updateSetting(oscillatingContour.amplitudeSetting, oscillatingContourState.amplitude);
-  updateSetting(oscillatingContour.frequencySetting, oscillatingContourState.frequency);
+  var o = oscillatingContour;
+  updateSettingWithMidDefault(o.centerValueSetting, oscillatingContourState.centerValue);
+  updateSettingWithMinDefault(o.amplitudeSetting, oscillatingContourState.amplitude);
+  updateSettingWithMinDefault(o.frequencySetting, oscillatingContourState.frequency);
 }
 
 module.updateADSRContour = function(adsrContour, adsrContourState) {
   if (!adsrContourState) {
-    reportError('adsrContourState undefined');
-    return;
+    reportWarning('adsrContourState undefined');
+    adsrContourState = {};
   }
-  updateSetting(adsrContour.initialValueSetting, adsrContourState.initialValue);
-  updateSetting(adsrContour.attackDelaySetting, adsrContourState.attackDelay);
-  updateSetting(adsrContour.attackTimeSetting, adsrContourState.attackTime);
-  updateSetting(adsrContour.attackValueSetting, adsrContourState.attackValue);
-  updateSetting(adsrContour.attackHoldSetting, adsrContourState.attackHold);
-  updateSetting(adsrContour.decayTimeSetting, adsrContourState.decayTime);
-  updateSetting(adsrContour.sustainValueSetting, adsrContourState.sustainValue);
-  updateSetting(adsrContour.sustainHoldSetting, adsrContourState.sustainHold);
-  updateSetting(adsrContour.releaseTimeSetting, adsrContourState.releaseTime);
-  updateSetting(adsrContour.finalValueSetting, adsrContourState.finalValue);
+  updateSettingWithMinDefault(adsrContour.initialValueSetting, adsrContourState.initialValue);
+  updateSettingWithMinDefault(adsrContour.attackDelaySetting, adsrContourState.attackDelay);
+  updateSettingWithMinDefault(adsrContour.attackTimeSetting, adsrContourState.attackTime);
+  updateSettingWithMaxDefault(adsrContour.attackValueSetting, adsrContourState.attackValue);
+  updateSettingWithMinDefault(adsrContour.attackHoldSetting, adsrContourState.attackHold);
+  updateSettingWithMinDefault(adsrContour.decayTimeSetting, adsrContourState.decayTime);
+  updateSettingWithMidDefault(adsrContour.sustainValueSetting, adsrContourState.sustainValue);
+  updateSettingWithMinDefault(adsrContour.sustainHoldSetting, adsrContourState.sustainHold);
+  updateSettingWithMinDefault(adsrContour.releaseTimeSetting, adsrContourState.releaseTime);
+  updateSettingWithMinDefault(adsrContour.finalValueSetting, adsrContourState.finalValue);
 }
 
 module.updateContouredValue = function(contouredValue, contouredValueState) {
   if (!contouredValueState) {
     reportError('contouredValueState undefined');
-    return;
+    contouredValueState = {};
+    contouredValueState.contours = {};
   }
-  updateSetting(contouredValue.currentContourSetting, contouredValueState.currentContour);
+  updateSetting(contouredValue.currentContourSetting, contouredValueState.currentContour, Contour.kFlatContour);
   module.updateFlatContour(contouredValue.contoursByIdentifier[Contour.kFlatContour],
                            contouredValueState.contours[Contour.kFlatContour]);
   module.updateOscillatingContour(contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
@@ -67,25 +88,25 @@ module.updateContouredValue = function(contouredValue, contouredValueState) {
 
 module.updateFilter = function(filter, filterState) {
   if (!filterState) {
-    reportError('filterState undefined');
-    return;
+    reportWarning('filterState undefined');
+    filterState = {};
   }
-  updateSetting(filter.enabledSetting, filterState.enabled);
-  updateSetting(filter.typeSetting, filterState.type);
-  updateSetting(filter.qSetting, filterState.q);
+  updateSetting(filter.enabledSetting, filterState.enabled, false);
+  updateSetting(filter.typeSetting, filterState.type, filter.typeSetting.choices[0]);
+  updateSettingWithMinDefault(filter.qSetting, filterState.q);
   module.updateContouredValue(filter.frequencyContour, filterState.frequency);
 }
 
 module.updateOscillator = function(oscillator, oscillatorState) {
   if (!oscillatorState) {
-    reportError('oscillatorState undefined');
-    return;
+    reportWarning('oscillatorState undefined');
+    oscillatorState = {};
   }
-  updateSetting(oscillator.enabledSetting, oscillatorState.enabled);
-  updateSetting(oscillator.typeSetting, oscillatorState.type);
-  updateSetting(oscillator.octaveOffsetSetting, oscillatorState.octaveOffset);
-  updateSetting(oscillator.noteOffsetSetting, oscillatorState.noteOffset);
-  updateSetting(oscillator.detuneSetting, oscillatorState.detune);
+  updateSetting(oscillator.enabledSetting, oscillatorState.enabled, false);
+  updateSetting(oscillator.typeSetting, oscillatorState.type, oscillator.typeSetting.choices[0]);
+  updateSetting(oscillator.octaveOffsetSetting, oscillatorState.octaveOffset, 0);
+  updateSetting(oscillator.noteOffsetSetting, oscillatorState.noteOffset, 0);
+  updateSetting(oscillator.detuneSetting, oscillatorState.detune, 0);
   module.updateContouredValue(oscillator.gainContour, oscillatorState.gain);
 }
 

@@ -15,14 +15,17 @@ div.page {
 
 div#categories {
   display: inline-block;
-  width: 340px;
+  width: 330px;
 }
 
 div#details {
   display: inline-block;
   position: absolute;
-  top: 60px;
-  width: 320px;
+  top: 51px;
+  width: 310px;
+  padding: 20px;
+  background-color: #E5E5E5;
+  border-radius: 5px;
 }
 
 div.title {
@@ -41,6 +44,15 @@ div#keyboardTitle {
 div#synthesizerItemTitle {
   font-size: medium;
   padding-top: 5px;
+}
+
+div.instrCategoryBackground {
+  width: 350px;
+  border-radius: 5px;
+}
+
+div.instrSelectedCategoryBackground {
+  background-color: #EEE;
 }
 
 div.instrCategory {

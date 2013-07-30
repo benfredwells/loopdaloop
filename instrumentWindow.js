@@ -118,7 +118,7 @@ function updateTitle(ui) {
 function collapseChanged(sender) {
   gInstrumentUIs.forEach(function (ui) {
     if (ui != sender) {
-      ui.setCollapsed(true);
+      ui.setCollapsed();
     }
   });
   updateTitle();

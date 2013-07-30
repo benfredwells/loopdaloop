@@ -7,12 +7,12 @@ var kTypeDescriptions = {};
 kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
 kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
 
-module.UI = function(id, filter, title, categoryEl, detailsEl, collapsed) {
+module.UI = function(id, filter, title, categoriesEl, detailsEl, collapsed) {
   this.id = id;
   this.filter_ = filter;
   this.title = title;
 
-  this.group_ = new SettingsUI.Group(categoryEl, detailsEl, title, this, collapsed);
+  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title, this, collapsed);
   var s = SettingsUI.makeSubRow;
   var g = this.group_;
 

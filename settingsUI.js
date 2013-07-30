@@ -16,14 +16,19 @@ function roundForDisplay(number) {
 }
 
 module.Group = function(categoryParentEl, detailsParentEl, title, owner, collapsed) {
-  this.categoryEl_ = document.createElement('div');
-  this.categoryEl_.classList.add('instrCategory');
-  categoryParentEl.appendChild(this.categoryEl_);
-  owner.categoryEl = this.categoryEl_;
+  var categoryBackgroundEl = document.createElement('div');
+  categoryBackgroundEl.classList.add('instrCategoryBackground');
+  if (!collapsed)
+    categoryBackgroundEl.classList.add('instrSelectedCategoryBackground');
+  categoryParentEl.appendChild(categoryBackgroundEl);
+
+  var categoryEl = document.createElement('div');
+  categoryEl.classList.add('instrCategory');
+  categoryBackgroundEl.appendChild(categoryEl);
 
   this.heading_ = document.createElement('div');
   this.heading_.classList.add('instrCategoryHeading');
-  this.categoryEl_.appendChild(this.heading_);
+  categoryEl.appendChild(this.heading_);
 
   var headingText = document.createElement('div');
   headingText.classList.add('instrCategoryHeadingText');
@@ -48,12 +53,14 @@ module.Group = function(categoryParentEl, detailsParentEl, title, owner, collaps
     if (!owner.isCollapsed())
       return;
     ui.detailsEl_.hidden = false;
+    categoryBackgroundEl.classList.add('instrSelectedCategoryBackground');
     if (owner.onCollapseChanged)
       owner.onCollapseChanged(owner);
   }
 
-  owner.setCollapsed = function(collapsed) {
-    ui.detailsEl_.hidden = collapsed;
+  owner.setCollapsed = function() {
+    categoryBackgroundEl.classList.remove('instrSelectedCategoryBackground');
+    ui.detailsEl_.hidden = true;
   }
   
   owner.isCollapsed = function() {

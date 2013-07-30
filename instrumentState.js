@@ -9,17 +9,11 @@ function reportError(error) {
   console.trace();
 }
 
-function reportWarning(error) {
-  console.log('Warning: ' + error);
-  console.trace();
-}
-
 function updateSetting(setting, value, defaultValue) {
   if (value != null) {
     setting.value = value;
   } else {
     setting.value = defaultValue;
-    reportWarning('using default value');
   }
 }
 
@@ -37,7 +31,6 @@ function updateSettingWithMidDefault(setting, value) {
 
 module.updateFlatContour = function(flatContour, flatContourState) {
   if (!flatContourState) {
-    reportWarning('flatContourState undefined');
     flatContourState = {};
   }
   updateSettingWithMaxDefault(flatContour.valueSetting, flatContourState.value);
@@ -45,7 +38,6 @@ module.updateFlatContour = function(flatContour, flatContourState) {
 
 module.updateOscillatingContour = function(oscillatingContour, oscillatingContourState) {
   if (!oscillatingContourState) {
-    reportWarning('oscillatingContourState undefined');
     oscillatingContourState = {};
   }
   var o = oscillatingContour;
@@ -56,7 +48,6 @@ module.updateOscillatingContour = function(oscillatingContour, oscillatingContou
 
 module.updateADSRContour = function(adsrContour, adsrContourState) {
   if (!adsrContourState) {
-    reportWarning('adsrContourState undefined');
     adsrContourState = {};
   }
   updateSettingWithMinDefault(adsrContour.initialValueSetting, adsrContourState.initialValue);
@@ -73,7 +64,6 @@ module.updateADSRContour = function(adsrContour, adsrContourState) {
 
 module.updateContouredValue = function(contouredValue, contouredValueState) {
   if (!contouredValueState) {
-    reportError('contouredValueState undefined');
     contouredValueState = {};
     contouredValueState.contours = {};
   }
@@ -88,7 +78,6 @@ module.updateContouredValue = function(contouredValue, contouredValueState) {
 
 module.updateFilter = function(filter, filterState) {
   if (!filterState) {
-    reportWarning('filterState undefined');
     filterState = {};
   }
   updateSetting(filter.enabledSetting, filterState.enabled, false);
@@ -99,7 +88,6 @@ module.updateFilter = function(filter, filterState) {
 
 module.updateOscillator = function(oscillator, oscillatorState) {
   if (!oscillatorState) {
-    reportWarning('oscillatorState undefined');
     oscillatorState = {};
   }
   updateSetting(oscillator.enabledSetting, oscillatorState.enabled, false);

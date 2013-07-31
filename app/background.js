@@ -15,7 +15,7 @@ chrome.app.runtime.onLaunched.addListener(function() {
     id: 'instrumentv2'
   };
 
-  chrome.app.window.create('instrumentWindow.html', instrumentParams, function(win) {
+  chrome.app.window.create('app/instrumentWindow.html', instrumentParams, function(win) {
     win.contentWindow.showKeyboard = showKeyboard;
     gInstrumentWindow = win;
     win.onClosed.addListener(function() {
@@ -37,7 +37,7 @@ function showKeyboard() {
     id: 'keyboard'
   };
 
-  chrome.app.window.create('keyboardWindow.html', keyboardParams, function(win) {
+  chrome.app.window.create('app/keyboardWindow.html', keyboardParams, function(win) {
     gKeyboardWindow = win;
     c = gInstrumentWindow.contentWindow;
     win.contentWindow.gInstrument = c.gInstrument;

@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+  <title>Synthesizer Setup</title>
+  <link rel='stylesheet' href='synth.css'/>
+  <script src='mocksynth.js'></script>
+</head>
+<body>
+  <div class='page'>
+    <div id='categories'>
+      <div id='pitch' class='synthCategory selected'>
+      </div><div id='osc1' class='synthCategory'>
+      </div><div id='osc2' class='synthCategory'>
+      </div><div id='osc3' class='synthCategory'>
+      </div><div id='filt1' class='synthCategory'>
+      </div><div id='filt2' class='synthCategory'>
+      </div><div id='env' class='synthCategory'></div>
+    </div>
+    <div id='details'>
+      <div id='synthesizerItemTitle'>Oscillator 1</div>
+      <div id='oscdetails'>
+        <div class='settingRow'><div class='settingName'>Enabled</div>
+          <div class='setting'><input type='checkbox'/></div>
+          <div class='settingValue'></div></div>
+        <div class='settingRow'><div class='settingName'>Type</div>
+          <div class='setting'><select value='sine'>
+            <option value='sine'>Sine</option>
+            <option value='square'>Square</option>
+          </select></div>
+          <div class='settingValue'></div></div>
+        <div class='settingRow'><div class='settingName'>Octave Offset</div>
+          <div class='setting'><input type='range'/></div>
+          <div class='settingValue'>0</div></div>
+        <div class='settingRow'><div class='settingName'>Semitone Offset</div>
+          <div class='setting'><input type='range'/></div>
+          <div class='settingValue'>1</div></div>
+        <div id='detuneContourGroup' class='contourGroup'>
+          <div class='settingRow contourGroupRow' rowClass='detuneContourRow'><div class='settingName'>Detune</div>
+            <div class='setting'><div id='detuneContour' class='contour'></div></div>
+            <div class='settinvValue'></div></div>
+          <div class='settingRow contourRow detuneContourRow'><div class='settingName'>Type</div>
+            <div class='setting'><select value='sine'>
+              <option value='sine'>Flat</option>
+              <option value='square'>Oscillating</option>
+              <option value='square'>ADSR</option>
+            </select></div>
+            <div class='settingValue'></div></div>
+          <div class='settingRow contourRow detuneContourRow'><div class='settingName'>Center Value</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>0</div></div>
+          <div class='settingRow contourRow detuneContourRow'><div class='settingName'>Frequency</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+          <div class='settingRow contourRow detuneContourRow'><div class='settingName'>Amplitude</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+        </div>
+        <div id='gainContourGroup' class='contourGroup'>
+          <div class='settingRow contourGroupRow' rowClass='gainContourRow'><div class='settingName'>Gain</div>
+            <div class='setting'><div id='gainContour' class='contour'></div></div>
+            <div class='settinvValue'></div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Type</div>
+            <div class='setting'><select value='sine'>
+              <option value='sine'>Flat</option>
+              <option value='square'>Oscillating</option>
+              <option value='square'>ADSR</option>
+            </select></div>
+            <div class='settingValue'></div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Initial Value</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>0</div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Attack Delay</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Attack Time</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Attack Value</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Attack Hold</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Decay Time</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Sustain Value</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Sustain Hold</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Release Time</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+          <div class='settingRow contourRow gainContourRow'><div class='settingName'>Final Value</div>
+            <div class='setting'><input type='range'/></div>
+            <div class='settingValue'>1</div></div>
+        </div>
+      </div>
+    </div>
+</body>
+</html>

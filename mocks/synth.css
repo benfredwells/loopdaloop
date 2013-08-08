@@ -8,51 +8,96 @@ div {
   margin: 0px;
 }
 
+#categories {
+  padding: 0px;
+  height: 42px;
+}
+
 .synthCategory {
-  background-color: #eee;
-  width: 40px;
+  width: 46px;
   height: 40px;
-  border-radius: 5px;
   border-width: 1px;
-  border-color: #e0e0e0;
+  border-color: #999;
   border-style: solid;
   display: inline-block;
-  margin-right: 8px;
+  margin-right: -1px;
+  background-image: -webkit-linear-gradient( 90deg, white, #DDD);
+}
+
+.synthCategory.hover {
+  background-image: -webkit-linear-gradient( 90deg, #eee, #DDD);
+}
+
+.synthCategory.selected {
+  background-image: none;
+  border-bottom-color: #fff;
+}
+
+.synthCategoryImage {
+  height: 38px;
+  width: 44px;
+  border: none;
+}
+
+#pitchImage {
+  background-image: url('pitch.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
 }
 
 #synthesizerItemTitle {
-  font-size: 18px;
+  font-size: 15px;
   margin-top: 8px;
   margin-bottom: 16px;
   padding-left: 4px;
 }
 
 #details {
-  background-color: #eee;
+  background-color: #fff;
   width: 394px;
-  border-radius: 5px;
   border-width: 1px;
-  border-color: #e0e0e0;
+  border-color: #999;
   border-style: solid;
   padding: 8px;
-  font-size: 14px;
+  font-size: 13px;
+  margin-top: -1px;
 }
 
 .settingRow {
-  min-height: 32px;
+  min-height: 26px;
   padding-left: 4px;
   padding-right: 4px;
 }
 
 .settingName {
   display: inline-block;
-  padding-top: 8px;
+  padding-top: 4px;
   width: 150px;
   vertical-align: top;
+  padding-left: 12px;
 }
 
 .contourRow .settingName {
-  padding-left: 12px;
+  width: 138px;
+  padding-left: 24px;
+}
+
+.contourGroupRow .settingName {
+  background-image: url('rightarrow.png');
+  background-repeat: no-repeat;
+  background-position: left -2px top 6px;
+}
+
+.contourGroupRow.hover {
+  background-color: #f2f2f2;
+}
+
+.contourGroupRow.selected {
+}
+
+.contourGroupRow.selected .settingName {
+  background-image: url('downarrow.png');
+  background-position: left -2px top 8px;
 }
 
 .setting {
@@ -69,7 +114,7 @@ div {
 }
 
 .settingRow select {
-  font-size: 14px;
+  font-size: 13px;
   color: #444;
   width: 140px;
   top: 0px;
@@ -78,12 +123,3 @@ div {
 .settingRow input {
   width: 140px;
 }
-
-.hover {
-  background-color: #e0e0e0;
-}
-
-.selected {
-  background-color: #9bcff0;
-}
-

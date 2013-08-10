@@ -51,6 +51,12 @@ div {
   background-position: left 7px top 4px;
 }
 
+#osc2Image {
+  background-image: url('osc_square.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
 #synthesizerItemTitle {
   font-size: 15px;
   margin-top: 8px;

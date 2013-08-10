@@ -6,6 +6,6 @@
   <g>
     <polyline
        style="fill:none;stroke:#008000;stroke-width:2;"
-       points="6,22 6,10 26,22"/>
+       points="6,22 6,10 16,10 16,22 26,22"/>
   </g>
 </svg>

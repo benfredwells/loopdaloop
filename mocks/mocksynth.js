@@ -65,7 +65,7 @@ function init() {
     el.onmouseleave = unHoverCategory;
     el.onclick = selectCategory;
   };
-  selectedCategory = document.getElementById('pitch');
+  selectedCategory = document.getElementById('pitchCategory');
   var rows = document.getElementsByClassName('contourGroupRow');
   for (var i = 0; i < rows.length; i++) {
     var el = rows[i];

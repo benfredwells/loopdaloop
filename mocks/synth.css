@@ -33,25 +33,25 @@ div {
   border-bottom-color: #fff;
 }
 
-.synthCategoryImage {
+.synthCategoryIcon {
   height: 38px;
   width: 44px;
   border: none;
 }
 
-#pitchImage {
+#pitchIcon {
   background-image: url('pitch.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
-#osc1Image {
+#oscillator1Icon {
   background-image: url('osc_saw.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
-#osc2Image {
+#oscillator2Icon {
   background-image: url('osc_square.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;

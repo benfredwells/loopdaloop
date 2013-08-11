@@ -46,13 +46,19 @@ div {
 }
 
 #oscillator1Icon {
-  background-image: url('osc_saw.svg');
+  background-image: url('osc_sine.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 #oscillator2Icon {
-  background-image: url('osc_square.svg');
+  background-image: url('osc_disabled.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+#oscillator3Icon {
+  background-image: url('osc_triangle.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }

@@ -75,6 +75,12 @@ div {
   background-position: left 7px top 4px;
 }
 
+#envelopeIcon {
+  background-image: url('env.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
 #synthesizerItemTitle {
   font-size: 15px;
   margin-top: 8px;

@@ -2,9 +2,7 @@
    xmlns="http://www.w3.org/2000/svg"
    width="32"
    height="32">
-  <g>
-    <polyline
-      style="fill:none;stroke:#008000;stroke-width:2;"
-      points="6,22 6,10 26,22"/>
-  </g>
-</svg>
+   <polyline
+     style="fill:none;stroke:#008000;stroke-width:2"
+     points="6,22 6,10 26,22"/>
+ </svg>

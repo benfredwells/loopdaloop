@@ -36,7 +36,7 @@ def handle_token(token):
     if absolute:
       x += x_translate
       y += y_translate
-    print str(x) + ',' + str(y), 
+    print '%.2f' % x + ',' + '%.2f' % y,
 
 for line in fileinput.input():
   tokens = line.split(' ')

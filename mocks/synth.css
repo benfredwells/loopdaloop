@@ -63,6 +63,18 @@ div {
   background-position: left 7px top 4px;
 }
 
+#filter1Icon {
+  background-image: url('filter_low.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+#filter2Icon {
+  background-image: url('filter_disabled.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
 #synthesizerItemTitle {
   font-size: 15px;
   margin-top: 8px;

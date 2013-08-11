@@ -1,9 +1,9 @@
-var gInstrumentWindow = null;
+var gSynthWindow = null;
 var gKeyboardWindow = null;
 
 chrome.app.runtime.onLaunched.addListener(function() {
-  if (gInstrumentWindow && gKeyboardWindow) {
-    gInstrumentWindow.focus();
+  if (gSynthWindow && gKeyboardWindow) {
+    gSynthWindow.focus();
     gKeyboardWindow.focus();
   }
 
@@ -15,11 +15,11 @@ chrome.app.runtime.onLaunched.addListener(function() {
     id: 'instrumentv2'
   };
 
-  chrome.app.window.create('instrumentWindow.html', instrumentParams, function(win) {
+  chrome.app.window.create('synthWindow.html', instrumentParams, function(win) {
     win.contentWindow.showKeyboard = showKeyboard;
-    gInstrumentWindow = win;
+    gSynthWindow = win;
     win.onClosed.addListener(function() {
-      gInstrumentWindow = null;
+      gSynthWindow = null;
       if (gKeyboardWindow)
         gKeyboardWindow.contentWindow.close();
     });
@@ -39,12 +39,12 @@ function showKeyboard() {
 
   chrome.app.window.create('keyboardWindow.html', keyboardParams, function(win) {
     gKeyboardWindow = win;
-    c = gInstrumentWindow.contentWindow;
+    c = gSynthWindow.contentWindow;
     win.contentWindow.gInstrument = c.gInstrument;
     win.onClosed.addListener(function() {
       gKeyboardWindow = null;
-      if (gInstrumentWindow)
-        gInstrumentWindow.contentWindow.close();
+      if (gSynthWindow)
+        gSynthWindow.contentWindow.close();
     });
   });
 }

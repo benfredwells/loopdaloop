@@ -30,7 +30,6 @@ module.Group = function(categoryParentEl, detailsParentEl, title, owner, selecte
 //  this.svg = SVGUtils.createSVG(this.svgDoc, this.display_);
 
   this.detailsEl_ = document.createElement('div');
-  this.detailsEl_.classList.add('instrDetails');
   this.detailsEl_.hidden = !selected;
   detailsParentEl.appendChild(this.detailsEl_);
   owner.detailsEl = this.detailsEl_;
@@ -64,12 +63,12 @@ module.Group = function(categoryParentEl, detailsParentEl, title, owner, selecte
 }
 
 module.makeSubRow = function(row) {
-  row.label_.classList.add('instrSubDetailDescr');
+//  row.label_.classList.add('instrSubDetailDescr');
   return row;
 }
 
 module.makeSubSubRow = function(row) {
-  row.label_.classList.add('instrSubSubDetailDescr');
+//  row.label_.classList.add('instrSubSubDetailDescr');
   return row;
 }
 
@@ -91,23 +90,20 @@ module.Group.prototype.setIconClass = function(iconClass) {
 
 module.Group.prototype.makeRow_ = function(title, onchange) {
   var row = document.createElement('div');
-  row.classList.add('instrDetailRow');
+  row.classList.add('settingRow');
   this.detailsEl_.appendChild(row);
 
   row.label_ = document.createElement('div');
-  row.label_.classList.add('instrDetailDescr');
+  row.label_.classList.add('settingName');
   row.label_.innerHTML = title;
   row.appendChild(row.label_);
 
   row.setting_ = document.createElement('div');
-  row.setting_.classList.add('instrDetail');
+  row.setting_.classList.add('setting');
   row.appendChild(row.setting_);
 
   row.enableDisableDiv_ = function(div, value) {
-    if (value)
-      div.classList.remove('instrDetailDisabled');
-    else
-      div.classList.add('instrDetailDisabled');
+    row.hidden = !value;
   }
 
   row.enableDisable = function(value) {
@@ -121,7 +117,7 @@ module.Group.prototype.makeRow_ = function(title, onchange) {
 
 module.Group.prototype.addValueLabel_ = function(row) {
   row.valueLabel_ = document.createElement('div');
-  row.valueLabel_.classList.add('instrDetailValue');
+  row.valueLabel_.classList.add('settingValue');
   row.appendChild(row.valueLabel_);
 
   row.setLabel = function(newText) {
@@ -168,7 +164,7 @@ module.Group.prototype.addCheckRow = function(title, booleanSetting, onchange) {
 
   var check = document.createElement('input');
   check.type = 'checkbox';
-  check.classList.add('instrDetail');
+  check.classList.add('setting');
   row.setting_.appendChild(check);
 
   var prevEnableDisable = row.enableDisable;
@@ -197,7 +193,7 @@ module.Group.prototype.addLinearRangeRow = function(title, numberSetting, onchan
   range.type = 'range';
   range.min = 0;
   range.max = steps;
-  range.classList.add('instrDetail');
+  range.classList.add('setting');
   row.setting_.appendChild(range);
 
   this.addValueLabel_(row);
@@ -249,7 +245,7 @@ module.Group.prototype.addExponentialRangeRow = function(title, numberSetting, o
   range.type = 'range';
   range.min = 0;
   range.max = steps + 1; // add one for the minimum value
-  range.classList.add('instrDetail');
+  range.classList.add('setting');
   row.setting_.appendChild(range);
 
   this.addValueLabel_(row);

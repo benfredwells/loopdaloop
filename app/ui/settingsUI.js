@@ -15,19 +15,19 @@ function roundForDisplay(number) {
   return Math.round(number * 100) / 100;
 }
 
-module.Group = function(parentEl, containerClass) {
-  this.containerEl_ = document.createElement('div');
-  if (containerClass)
-    this.containerEl_.classList.add(containerClass);
-  parentEl.appendChild(this.containerEl_);
+module.Group = function(parentEl, extraRowClass) {
+  this.containerEl = document.createElement('div');
+  if (extraRowClass)
+    this.extraRowClass_ = extraRowClass;
+  parentEl.appendChild(this.containerEl);
 }
 
 module.Group.prototype.setVisible = function(visible) {
-  this.containerEl_.hidden = !visible;
+  this.containerEl.hidden = !visible;
 }
 
 module.Group.prototype.isVisible = function(visible) {
-  return !this.containerEl_.hidden;
+  return !this.containerEl.hidden;
 }
 
 function setupOnchange(row, element) {
@@ -37,10 +37,12 @@ function setupOnchange(row, element) {
   }
 }
 
-module.Group.prototype.makeRow_ = function(title, onchange) {
+module.Group.prototype.makeRow = function(title, onchange) {
   var row = document.createElement('div');
   row.classList.add('settingRow');
-  this.containerEl_.appendChild(row);
+  if (this.extraRowClass_)
+    row.classList.add(this.extraRowClass_);
+  this.containerEl.appendChild(row);
 
   row.label_ = document.createElement('div');
   row.label_.classList.add('settingName');
@@ -81,7 +83,7 @@ module.Group.prototype.addValueLabel_ = function(row) {
 }
 
 module.Group.prototype.addSelectRow = function(title, choiceSetting, onchange, descriptions) {
-  var row = this.makeRow_(title, onchange);
+  var row = this.makeRow(title, onchange);
 
   var select = document.createElement('select');
   row.setting_.appendChild(select);
@@ -109,7 +111,7 @@ module.Group.prototype.addSelectRow = function(title, choiceSetting, onchange, d
 }
 
 module.Group.prototype.addCheckRow = function(title, booleanSetting, onchange) {
-  var row = this.makeRow_(title, onchange);
+  var row = this.makeRow(title, onchange);
 
   var check = document.createElement('input');
   check.type = 'checkbox';
@@ -136,7 +138,7 @@ module.Group.prototype.addLinearRangeRow = function(title, numberSetting, onchan
   var min = numberSetting.min;
   var max = numberSetting.max;
 
-  var row = this.makeRow_(title, onchange);
+  var row = this.makeRow(title, onchange);
 
   var range = document.createElement('input');
   range.type = 'range';
@@ -188,7 +190,7 @@ module.Group.prototype.addExponentialRangeRow = function(title, numberSetting, o
   var constant = (numberSetting.max - numberSetting.min) / base;
   var minExponent = -1;
   var maxExponent = 1;
-  var row = this.makeRow_(title, onchange);
+  var row = this.makeRow(title, onchange);
 
   var range = document.createElement('input');
   range.type = 'range';

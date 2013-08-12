@@ -10,23 +10,17 @@ kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, generic code
-module.ContourController = function(group, title, indent, contouredValue, onchange, steps, formatter) {
+module.ContourController = function(parentSettings, title, indent, contouredValue, onchange, steps, formatter) {
   this.contouredValue_ = contouredValue;
-  this.group_ = group;
   this.steps_ = steps;
   this.formatter_ = formatter;
 
-  var typeIndent, controlIndent;
-  if (indent == 0) {
-    typeIndent = function(row) {return row};
-    controlIndent = SettingsUI.makeSubRow;
-  } else {
-    typeIndent = SettingsUI.makeSubRow;
-    controlIndent = SettingsUI.makeSubSubRow;
-  }
-
   this.allRows_ = [];
   this.rowsByContour_ = {};
+
+  this.groupRow_ = parentSettings.makeRow(title, null);
+  this.groupRow_.classList.add('contourGroupRow');
+  this.group_ = new SettingsUI.Group(parentSettings.containerEl, 'contourRow');
 
   var controller = this;
   this.contourChangeHandler = function() {
@@ -38,13 +32,13 @@ module.ContourController = function(group, title, indent, contouredValue, onchan
     if (controller.onchange)
       controller.onchange();
   }
-  this.typeRow_ = typeIndent(group.addSelectRow(title,
-                                                contouredValue.currentContourSetting,
-                                                changeHandler,
-                                                kTypeDescriptions));
-  this.addFlatControls_(controlIndent);
-  this.addOscillatingControls_(controlIndent);
-  this.addADSRControls_(controlIndent);
+  this.typeRow_ = this.group_.addSelectRow(Strings.kType,
+                                           contouredValue.currentContourSetting,
+                                           changeHandler,
+                                           kTypeDescriptions);
+  this.addFlatControls_();
+  this.addOscillatingControls_();
+  this.addADSRControls_();
 
   changeHandler();
   // Set this change handler after calling changeHandler to prevent the call
@@ -52,6 +46,7 @@ module.ContourController = function(group, title, indent, contouredValue, onchan
   this.onchange = onchange;
 
   this.enableDisable = function(value) {
+    controller.groupRow_.enableDisable(value)
     controller.typeRow_.enableDisable(value);
     controller.allRows_.forEach(function(row) {
       row.enableDisable(value);
@@ -72,12 +67,12 @@ module.ContourController.prototype.showHideControls_ = function() {
   showRows(this.rowsByContour_[this.contouredValue_.currentContourSetting.value]);
 }
 
-module.ContourController.prototype.createValueRow_ = function(title, valueSetting, indent) {
-  return indent(this.group_.addLinearRangeRow(title,
-                                              valueSetting,
-                                              this.contourChangeHandler,
-                                              this.steps_,
-                                              this.formatter_));
+module.ContourController.prototype.createValueRow_ = function(title, valueSetting) {
+  return this.group_.addLinearRangeRow(title,
+                                       valueSetting,
+                                       this.contourChangeHandler,
+                                       this.steps_,
+                                       this.formatter_);
 }
 
 module.ContourController.prototype.addRow_ = function(row, array) {
@@ -87,64 +82,63 @@ module.ContourController.prototype.addRow_ = function(row, array) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, flat contour code
-module.ContourController.prototype.addFlatControls_ = function(indent) {
+module.ContourController.prototype.addFlatControls_ = function() {
   var flatRows = [];
   var flatContour = this.contouredValue_.contoursByIdentifier[Contour.kFlatContour];
 
   if (!this.contouredValue_.isEnvelope)
-    this.addRow_(this.createValueRow_('Value', flatContour.valueSetting, indent), flatRows);
+    this.addRow_(this.createValueRow_('Value', flatContour.valueSetting), flatRows);
   this.rowsByContour_[Contour.kFlatContour] = flatRows;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, oscillating contour code
-module.ContourController.prototype.addOscillatingControls_ = function(indent) {
+module.ContourController.prototype.addOscillatingControls_ = function() {
   var oscillatingRows = [];
   var oscillatingContour = this.contouredValue_.contoursByIdentifier[Contour.kOscillatingContour];
   if (!this.contouredValue_.isEnvelope) {
     this.addRow_(this.createValueRow_('Center Value',
-                                      oscillatingContour.centerValueSetting,
-                                      indent),
+                                      oscillatingContour.centerValueSetting),
                  oscillatingRows);
   }
-  this.addRow_(indent(this.group_.addExponentialRangeRow(Strings.kSpeed,
-                                                         oscillatingContour.frequencySetting,
-                                                         this.contourChangeHandler,
-                                                         20)),
+  this.addRow_(this.group_.addExponentialRangeRow(Strings.kSpeed,
+                                                  oscillatingContour.frequencySetting,
+                                                  this.contourChangeHandler,
+                                                  20),
                oscillatingRows);
-  this.addRow_(indent(this.group_.addExponentialRangeRow(Strings.kAmplitude,
-                                                         oscillatingContour.amplitudeSetting,
-                                                         this.contourChangeHandler,
-                                                         10,
-                                                         Strings.kMaxFormatter)),
+  this.addRow_(this.group_.addExponentialRangeRow(Strings.kAmplitude,
+                                                  oscillatingContour.amplitudeSetting,
+                                                  this.contourChangeHandler,
+                                                  10,
+                                                  Strings.kMaxFormatter),
                oscillatingRows);
   this.rowsByContour_[Contour.kOscillatingContour] = oscillatingRows;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, ADSR contour code
-module.ContourController.prototype.addADSRControls_ = function(indent) {
+module.ContourController.prototype.addADSRControls_ = function() {
   var controller = this;
   var createTimeRow = function(title, setting) {
-    return indent(controller.group_.addExponentialRangeRow(title, setting, controller.contourChangeHandler, 10));
+    return controller.group_.addExponentialRangeRow(title, setting, controller.contourChangeHandler, 10);
   }
   var adsrRows = [];
   var adsrContour = this.contouredValue_.contoursByIdentifier[Contour.kADSRContour];
   if (!this.contouredValue_.isEnvelope) {
-    this.addRow_(this.createValueRow_('Initial Value', adsrContour.initialValueSetting, indent), adsrRows);
+    this.addRow_(this.createValueRow_('Initial Value', adsrContour.initialValueSetting), adsrRows);
     this.addRow_(createTimeRow('Attack Delay', adsrContour.attackDelaySetting), adsrRows);
   }
   this.addRow_(createTimeRow('Attack Time', adsrContour.attackTimeSetting), adsrRows);
   if (!this.contouredValue_.isEnvelope) {
-    this.addRow_(this.createValueRow_('Attack Value', adsrContour.attackValueSetting, indent), adsrRows);
+    this.addRow_(this.createValueRow_('Attack Value', adsrContour.attackValueSetting), adsrRows);
   }
   this.addRow_(createTimeRow('Attack Hold', adsrContour.attackHoldSetting), adsrRows);
   this.addRow_(createTimeRow('Decay Time', adsrContour.decayTimeSetting), adsrRows);
-  this.addRow_(this.createValueRow_('Sustain Value', adsrContour.sustainValueSetting, indent), adsrRows);
+  this.addRow_(this.createValueRow_('Sustain Value', adsrContour.sustainValueSetting), adsrRows);
   this.addRow_(createTimeRow('Sustain Hold', adsrContour.sustainHoldSetting), adsrRows);
   this.addRow_(createTimeRow('Release Time', adsrContour.releaseTimeSetting), adsrRows);
   if (!this.contouredValue_.isEnvelope) {
-    this.addRow_(this.createValueRow_('Final Value', adsrContour.finalValueSetting, indent), adsrRows);
+    this.addRow_(this.createValueRow_('Final Value', adsrContour.finalValueSetting), adsrRows);
   }
   this.rowsByContour_[Contour.kADSRContour] = adsrRows;
 }

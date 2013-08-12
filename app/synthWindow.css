@@ -137,7 +137,7 @@ div {
 }
 
 .contourGroupRow .settingName {
-  background-image: url('rightarrow.png');
+  background-image: url('assets/rightarrow.png');
   background-repeat: no-repeat;
   background-position: left -2px top 6px;
 }
@@ -150,7 +150,7 @@ div {
 }
 
 .contourGroupRow.selected .settingName {
-  background-image: url('downarrow.png');
+  background-image: url('assets/downarrow.png');
   background-position: left -2px top 8px;
 }
 

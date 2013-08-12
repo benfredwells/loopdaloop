@@ -38,12 +38,6 @@ module.UI = function(id, title, categoriesEl, detailsEl, selected) {
 
 //  this.svgDoc = document;
 //  this.svg = SVGUtils.createSVG(this.svgDoc, this.display_);
-
-  //var ui = this;
-  //var changeHandler = function() {
-  //  ui.updateDisplay_();
-  //}
-  //changeHandler();
 }
 
 module.UI.prototype.setSelected = function(selected) {

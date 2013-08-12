@@ -35,8 +35,9 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) 
 }
 
 module.UI.prototype.updateDisplay_ = function() {
-  this.drawWave_();
+  //this.drawWave_();
   this.enableDisable_();
+  this.updateIcon_();
 }
 
 module.UI.prototype.enableDisable_ = function() {
@@ -46,6 +47,21 @@ module.UI.prototype.enableDisable_ = function() {
   this.noteOffsetRow_.enableDisable(enabled);
   this.detuneRow_.enableDisable(enabled);
   this.gainController_.enableDisable(enabled);
+}
+
+module.UI.prototype.updateIcon_ = function() {
+  var iconClass;
+  if (this.oscillator_.enabledSetting.value) {
+    switch (this.oscillator_.typeSetting.value) {
+      case Instrument.kSineWave: iconClass = 'sineWaveIcon'; break;
+      case Instrument.kSquareWave: iconClass = 'squareWaveIcon'; break;
+      case Instrument.kSawtoothWave: iconClass = 'sawtoothWaveIcon'; break;
+      case Instrument.kTriangleWave: iconClass = 'triangleWaveIcon'; break;
+    }
+  } else {
+    iconClass = 'disabledWaveIcon';
+  }
+  this.group_.setIconClass(iconClass);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

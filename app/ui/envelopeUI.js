@@ -20,8 +20,7 @@ module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) 
 }
 
 module.UI.prototype.updateDisplay_ = function() {
-  var r = SettingsUI.roundForDisplay;
-  this.drawEnvelope_();
+  //this.drawEnvelope_();
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

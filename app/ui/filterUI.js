@@ -36,7 +36,7 @@ module.UI = function(id, filter, title, categoriesEl, detailsEl, collapsed) {
 module.UI.prototype.updateDisplay_ = function() {
   var r = SettingsUI.roundForDisplay;
   this.enableDisable_();
-  this.drawResponse_();
+  //this.drawResponse_();
 }
 
 module.UI.prototype.enableDisable_ = function() {

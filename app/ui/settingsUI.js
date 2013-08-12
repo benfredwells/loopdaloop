@@ -15,54 +15,49 @@ function roundForDisplay(number) {
   return Math.round(number * 100) / 100;
 }
 
-module.Group = function(categoryParentEl, detailsParentEl, title, owner, collapsed) {
-  var categoryBackgroundEl = document.createElement('div');
-  categoryBackgroundEl.classList.add('instrCategoryBackground');
-  if (!collapsed)
-    categoryBackgroundEl.classList.add('instrSelectedCategoryBackground');
-  categoryParentEl.appendChild(categoryBackgroundEl);
-
+module.Group = function(categoryParentEl, detailsParentEl, title, owner, selected) {
   var categoryEl = document.createElement('div');
-  categoryEl.classList.add('instrCategory');
-  categoryBackgroundEl.appendChild(categoryEl);
+  categoryEl.classList.add('synthCategory');
+  if (selected)
+    categoryEl.classList.add('selected');
+  categoryParentEl.appendChild(categoryEl);
 
-  this.heading_ = document.createElement('div');
-  this.heading_.classList.add('instrCategoryHeading');
-  categoryEl.appendChild(this.heading_);
+  this.categoryIconEl_ = document.createElement('div');
+  this.categoryIconEl_.classList.add('synthCategoryIcon');
+  categoryEl.appendChild(this.categoryIconEl_);
 
-  var headingText = document.createElement('div');
-  headingText.classList.add('instrCategoryHeadingText');
-  headingText.innerHTML = title;
-  this.heading_.appendChild(headingText);
-
-  this.display_ = document.createElement('div');
-  this.display_.classList.add('instrDisplay');
-  this.heading_.appendChild(this.display_);
-
-  this.svgDoc = document;
-  this.svg = SVGUtils.createSVG(this.svgDoc, this.display_);
+//  this.svgDoc = document;
+//  this.svg = SVGUtils.createSVG(this.svgDoc, this.display_);
 
   this.detailsEl_ = document.createElement('div');
   this.detailsEl_.classList.add('instrDetails');
-  this.detailsEl_.hidden = collapsed;
+  this.detailsEl_.hidden = !selected;
   detailsParentEl.appendChild(this.detailsEl_);
   owner.detailsEl = this.detailsEl_;
 
   var ui = this;
-  this.heading_.onclick = function() {
+  categoryEl.onclick = function() {
     if (!owner.isCollapsed())
       return;
     ui.detailsEl_.hidden = false;
-    categoryBackgroundEl.classList.add('instrSelectedCategoryBackground');
+    categoryEl.classList.add('selected');
     if (owner.onCollapseChanged)
       owner.onCollapseChanged(owner);
   }
 
+  categoryEl.onmouseenter = function() {
+    categoryEl.classList.add('hover');
+  }
+
+  categoryEl.onmouseleave = function() {
+    categoryEl.classList.remove('hover');
+  }
+
   owner.setCollapsed = function() {
-    categoryBackgroundEl.classList.remove('instrSelectedCategoryBackground');
+    categoryEl.classList.remove('selected');
     ui.detailsEl_.hidden = true;
   }
-  
+
   owner.isCollapsed = function() {
     return ui.detailsEl_.hidden;
   }
@@ -83,6 +78,15 @@ function setupOnchange(row, element) {
     if (row.onchange)
       row.onchange();
   }
+}
+
+module.Group.prototype.setIconClass = function(iconClass) {
+  for (var i = this.categoryIconEl_.classList.length-1; i >= 0; i--) {
+    var className = this.categoryIconEl_.classList.item(i);
+    if (className != 'synthCategoryIcon' && className.indexOf('Icon') != -1)
+      this.categoryIconEl_.classList.remove(className);
+  }
+  this.categoryIconEl_.classList.add(iconClass);
 }
 
 module.Group.prototype.makeRow_ = function(title, onchange) {

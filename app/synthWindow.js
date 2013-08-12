@@ -20,7 +20,7 @@ var kFilterAID = 'fitlera';
 var kFilterBID = 'filterb';
 var kEnvelopeID = 'envelope';
 
-var kExpandedFieldKey = 'instrumentWindowExpandedField';
+var kSelectedFieldKey = 'instrumentWindowExpandedField';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
@@ -40,9 +40,9 @@ function init() {
   InstrumentState.updateInstrument(gInstrument, DefaultInstrumentState.Default());
 
 // Temporarily turned off because debugging with this sucks
-//  chrome.storage.local.get(kExpandedFieldKey, function(items) {
-//    var expandedID = items[kExpandedFieldKey];
-    var expandedID = kOscillatorAID;
+//  chrome.storage.local.get(kSelectedFieldKey, function(items) {
+//    var selectedID = items[kSelectedFieldKey];
+    var selectedID = kOscillatorAID;
 // End temporary hack
     // Instrument UI setup
     var categoriesEl = document.getElementById('categories');
@@ -52,37 +52,37 @@ function init() {
         gInstrument.oscillators[0], 'Oscillator A',
         categoriesEl,
         detailsEl,
-        kOscillatorAID != expandedID));
+        kOscillatorAID == selectedID));
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorBID,
         gInstrument.oscillators[1], 'Oscillator B',
         categoriesEl,
         detailsEl,
-        kOscillatorBID != expandedID));
+        kOscillatorBID == selectedID));
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorCID,
         gInstrument.oscillators[2], 'Oscillator C',
         categoriesEl,
         detailsEl,
-        kOscillatorCID != expandedID));
+        kOscillatorCID == selectedID));
     gInstrumentUIs.push(new FilterUI.UI(
         kFilterAID,
         gInstrument.filters[0], 'Filter A',
         categoriesEl,
         detailsEl,
-        kFilterAID != expandedID));
+        kFilterAID == selectedID));
     gInstrumentUIs.push(new FilterUI.UI(
         kFilterBID,
         gInstrument.filters[1], 'Filter B',
         categoriesEl,
         detailsEl,
-        kFilterBID != expandedID));
+        kFilterBID == selectedID));
     gInstrumentUIs.push(new EnvelopeUI.UI(
         kEnvelopeID,
         gInstrument, 'Envelope',
         categoriesEl,
         detailsEl,
-        kEnvelopeID != expandedID));
+        kEnvelopeID == selectedID));
 
     gInstrumentUIs.forEach(function (ui) {
       ui.onCollapseChanged = collapseChanged;
@@ -98,13 +98,13 @@ function init() {
 }
 
 function saveState() {
-  var expandedID = '';
+  var selectedID = '';
   gInstrumentUIs.forEach(function (ui) {
     if (!ui.isCollapsed())
-      expandedID = ui.id;
+      selectedID = ui.id;
   });
   var setting = {};
-  setting[kExpandedFieldKey] = expandedID;
+  setting[kSelectedFieldKey] = selectedID;
   chrome.storage.local.set(setting);
 }
 

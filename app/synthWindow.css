@@ -1,0 +1,179 @@
+body {
+  margin: 16px;
+  font-family: arial, sans-serif;
+  color: #444;
+}
+
+div {
+  margin: 0px;
+}
+
+#categories {
+  padding: 0px;
+  height: 42px;
+}
+
+.synthCategory {
+  width: 46px;
+  height: 40px;
+  border-width: 1px;
+  border-color: #999;
+  border-style: solid;
+  display: inline-block;
+  margin-right: -1px;
+  background-image: -webkit-linear-gradient( 90deg, white, #DDD);
+}
+
+.synthCategory.hover {
+  background-image: -webkit-linear-gradient( 90deg, #eee, #DDD);
+}
+
+.synthCategory.selected {
+  background-image: none;
+  border-bottom-color: #fff;
+}
+
+.synthCategoryIcon {
+  height: 38px;
+  width: 44px;
+  border: none;
+}
+
+.pitchIcon {
+  background-image: url('assets/pitch.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+.sineWaveIcon {
+  background-image: url('assets/osc_sine.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+.squareWaveIcon {
+  background-image: url('assets/osc_square.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+.sawtoothWaveIcon {
+  background-image: url('assets/osc_saw.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+.triangleWaveIcon {
+  background-image: url('assets/osc_triangle.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+.disabledWaveIcon {
+  background-image: url('assets/osc_disabled.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+.lowPassIcon {
+  background-image: url('assets/filter_low.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+.highPassIcon {
+  background-image: url('assets/filter_high.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+.disabledFilterIcon {
+  background-image: url('assets/filter_disabled.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+#envelopeIcon {
+  background-image: url('assets/env.svg');
+  background-repeat: no-repeat;
+  background-position: left 7px top 4px;
+}
+
+#synthesizerItemTitle {
+  font-size: 15px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+
+#details {
+  background-color: #fff;
+  width: 394px;
+  border-width: 1px;
+  border-color: #999;
+  border-style: solid;
+  padding: 8px;
+  font-size: 13px;
+  margin-top: -1px;
+}
+
+.settingRow {
+  min-height: 26px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.settingName {
+  display: inline-block;
+  padding-top: 4px;
+  width: 150px;
+  vertical-align: top;
+  padding-left: 12px;
+}
+
+.contourRow .settingName {
+  width: 138px;
+  padding-left: 24px;
+}
+
+.contourGroupRow .settingName {
+  background-image: url('rightarrow.png');
+  background-repeat: no-repeat;
+  background-position: left -2px top 6px;
+}
+
+.contourGroupRow.hover {
+  background-color: #f2f2f2;
+}
+
+.contourGroupRow.selected {
+}
+
+.contourGroupRow.selected .settingName {
+  background-image: url('downarrow.png');
+  background-position: left -2px top 8px;
+}
+
+.setting {
+  display: inline-block;
+  padding-top: 4px;
+  width: 150px;
+}
+
+.settingValue {
+  display: inline-block;
+  padding-top: 4px;
+  width: 50px;
+  vertical-align: top;
+}
+
+.settingRow select {
+  font-size: 13px;
+  color: #444;
+  width: 140px;
+  top: 0px;
+}
+
+.settingRow input {
+  width: 140px;
+}

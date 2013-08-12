@@ -9,30 +9,28 @@ kTypeDescriptions[Instrument.kSquareWave] = Strings.kSquare;
 kTypeDescriptions[Instrument.kSawtoothWave] = Strings.kSawtooth;
 kTypeDescriptions[Instrument.kTriangleWave] = Strings.kTriangle;
 
-module.UI = function(id, oscillator, title, categoriesEl, detailsEl, collapsed) {
-  this.id = id;
+module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
+  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, selected);
   this.oscillator_ = oscillator;
-  this.title = title;
 
   var ui = this;
   var changeHandler = function() {
     ui.updateDisplay_();
   }
-  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title , this, collapsed);
-  var s = SettingsUI.makeSubRow;
-  var g = this.group_;
-  this.enabledRow_ = g.addCheckRow(Strings.kEnabled, oscillator.enabledSetting, changeHandler);
-  this.typeRow_ = s(g.addSelectRow(Strings.kType, oscillator.typeSetting, changeHandler, kTypeDescriptions));
-  this.octaveOffsetRow_ = s(g.addLinearRangeRow(Strings.kOctaveOffset, oscillator.octaveOffsetSetting, changeHandler, 8));
-  this.noteOffsetRow_ = s(g.addLinearRangeRow(Strings.kNoteOffset, oscillator.noteOffsetSetting, changeHandler, 16));
-  this.detuneRow_ = s(g.addLinearRangeRow(Strings.kDetune, oscillator.detuneSetting, changeHandler, 100, String.kPercentFormatter));
-  this.gainController_ = new ContourUI.ContourController(g, Strings.kGain, 1,
-                                                         oscillator.gainContour,
-                                                         changeHandler,
-                                                         10);
+  this.enabledRow_ = this.settings.addCheckRow(Strings.kEnabled, oscillator.enabledSetting, changeHandler);
+  this.typeRow_ = this.settings.addSelectRow(Strings.kType, oscillator.typeSetting, changeHandler, kTypeDescriptions);
+  this.octaveOffsetRow_ = this.settings.addLinearRangeRow(Strings.kOctaveOffset, oscillator.octaveOffsetSetting, changeHandler, 8);
+  this.noteOffsetRow_ = this.settings.addLinearRangeRow(Strings.kNoteOffset, oscillator.noteOffsetSetting, changeHandler, 16);
+  this.detuneRow_ = this.settings.addLinearRangeRow(Strings.kDetune, oscillator.detuneSetting, changeHandler, 100, String.kPercentFormatter);
+//  this.gainController_ = new ContourUI.ContourController(g, Strings.kGain, 1,
+//                                                         oscillator.gainContour,
+//                                                         changeHandler,
+//                                                         10);
 
-  changeHandler();
+  this.updateDisplay_();
 }
+
+module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.updateDisplay_ = function() {
   //this.drawWave_();
@@ -46,7 +44,7 @@ module.UI.prototype.enableDisable_ = function() {
   this.octaveOffsetRow_.enableDisable(enabled);
   this.noteOffsetRow_.enableDisable(enabled);
   this.detuneRow_.enableDisable(enabled);
-  this.gainController_.enableDisable(enabled);
+  //this.gainController_.enableDisable(enabled);
 }
 
 module.UI.prototype.updateIcon_ = function() {
@@ -61,7 +59,7 @@ module.UI.prototype.updateIcon_ = function() {
   } else {
     iconClass = 'disabledWaveIcon';
   }
-  this.group_.setIconClass(iconClass);
+  this.setIconClass(iconClass);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

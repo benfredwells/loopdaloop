@@ -15,61 +15,19 @@ function roundForDisplay(number) {
   return Math.round(number * 100) / 100;
 }
 
-module.Group = function(categoryParentEl, detailsParentEl, title, owner, selected) {
-  var categoryEl = document.createElement('div');
-  categoryEl.classList.add('synthCategory');
-  if (selected)
-    categoryEl.classList.add('selected');
-  categoryParentEl.appendChild(categoryEl);
-
-  this.categoryIconEl_ = document.createElement('div');
-  this.categoryIconEl_.classList.add('synthCategoryIcon');
-  categoryEl.appendChild(this.categoryIconEl_);
-
-//  this.svgDoc = document;
-//  this.svg = SVGUtils.createSVG(this.svgDoc, this.display_);
-
-  this.detailsEl_ = document.createElement('div');
-  this.detailsEl_.hidden = !selected;
-  detailsParentEl.appendChild(this.detailsEl_);
-  owner.detailsEl = this.detailsEl_;
-
-  var ui = this;
-  categoryEl.onclick = function() {
-    if (!owner.isCollapsed())
-      return;
-    ui.detailsEl_.hidden = false;
-    categoryEl.classList.add('selected');
-    if (owner.onCollapseChanged)
-      owner.onCollapseChanged(owner);
-  }
-
-  categoryEl.onmouseenter = function() {
-    categoryEl.classList.add('hover');
-  }
-
-  categoryEl.onmouseleave = function() {
-    categoryEl.classList.remove('hover');
-  }
-
-  owner.setCollapsed = function() {
-    categoryEl.classList.remove('selected');
-    ui.detailsEl_.hidden = true;
-  }
-
-  owner.isCollapsed = function() {
-    return ui.detailsEl_.hidden;
-  }
+module.Group = function(parentEl, containerClass) {
+  this.containerEl_ = document.createElement('div');
+  if (containerClass)
+    this.containerEl_.classList.add(containerClass);
+  parentEl.appendChild(this.containerEl_);
 }
 
-module.makeSubRow = function(row) {
-//  row.label_.classList.add('instrSubDetailDescr');
-  return row;
+module.Group.prototype.setVisible = function(visible) {
+  this.containerEl_.hidden = !visible;
 }
 
-module.makeSubSubRow = function(row) {
-//  row.label_.classList.add('instrSubSubDetailDescr');
-  return row;
+module.Group.prototype.isVisible = function(visible) {
+  return !this.containerEl_.hidden;
 }
 
 function setupOnchange(row, element) {
@@ -79,19 +37,10 @@ function setupOnchange(row, element) {
   }
 }
 
-module.Group.prototype.setIconClass = function(iconClass) {
-  for (var i = this.categoryIconEl_.classList.length-1; i >= 0; i--) {
-    var className = this.categoryIconEl_.classList.item(i);
-    if (className != 'synthCategoryIcon' && className.indexOf('Icon') != -1)
-      this.categoryIconEl_.classList.remove(className);
-  }
-  this.categoryIconEl_.classList.add(iconClass);
-}
-
 module.Group.prototype.makeRow_ = function(title, onchange) {
   var row = document.createElement('div');
   row.classList.add('settingRow');
-  this.detailsEl_.appendChild(row);
+  this.containerEl_.appendChild(row);
 
   row.label_ = document.createElement('div');
   row.label_.classList.add('settingName');

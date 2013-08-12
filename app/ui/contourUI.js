@@ -152,5 +152,3 @@ module.ContourController.prototype.addADSRControls_ = function(indent) {
 return module;
 
 })();
-
-

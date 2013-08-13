@@ -17,11 +17,12 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
   var changeHandler = function() {
     ui.updateDisplay_();
   }
-  this.enabledRow_ = this.settings.addCheckRow(Strings.kEnabled, oscillator.enabledSetting, changeHandler);
-  this.typeRow_ = this.settings.addSelectRow(Strings.kType, oscillator.typeSetting, changeHandler, kTypeDescriptions);
-  this.octaveOffsetRow_ = this.settings.addLinearRangeRow(Strings.kOctaveOffset, oscillator.octaveOffsetSetting, changeHandler, 8);
-  this.noteOffsetRow_ = this.settings.addLinearRangeRow(Strings.kNoteOffset, oscillator.noteOffsetSetting, changeHandler, 16);
-  this.detuneRow_ = this.settings.addLinearRangeRow(Strings.kDetune, oscillator.detuneSetting, changeHandler, 100, String.kPercentFormatter);
+  var div = this.settingsGroup.holderDiv;
+  this.enabledRow_ = new SettingsUI.CheckRow(div, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
+  this.typeRow_ = new SettingsUI.SelectRow(div, Strings.kType, changeHandler, oscillator.typeSetting, kTypeDescriptions);
+  this.octaveOffsetRow_ = new SettingsUI.LinearRangeRow(div, Strings.kOctaveOffset, changeHandler, oscillator.octaveOffsetSetting, null, 8);
+  this.noteOffsetRow_ = new SettingsUI.LinearRangeRow(div, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);
+  this.detuneRow_ = new SettingsUI.LinearRangeRow(div, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
 //  this.gainController_ = new ContourUI.ContourController(this.settings, Strings.kGain, 1,
 //                                                         oscillator.gainContour,
 //                                                         changeHandler,
@@ -40,11 +41,11 @@ module.UI.prototype.updateDisplay_ = function() {
 
 module.UI.prototype.enableDisable_ = function() {
   var enabled = this.oscillator_.enabledSetting.value;
-  this.typeRow_.enableDisable(enabled);
-  this.octaveOffsetRow_.enableDisable(enabled);
-  this.noteOffsetRow_.enableDisable(enabled);
-  this.detuneRow_.enableDisable(enabled);
-//  this.gainController_.enableDisable(enabled);
+  this.typeRow_.setEnabled(enabled);
+  this.octaveOffsetRow_.setEnabled(enabled);
+  this.noteOffsetRow_.setEnabled(enabled);
+  this.detuneRow_.setEnabled(enabled);
+//  this.gainController_.setEnabled(enabled);
 }
 
 module.UI.prototype.updateIcon_ = function() {

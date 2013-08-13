@@ -45,7 +45,7 @@ module.Item.prototype.isEnabled = function() {
 }
 
 module.Row = function(containerEl, title, onchange) {
-  module.Item.call(containerEl);
+  module.Item.call(this, containerEl);
   this.holderDiv.classList.add('settingRow');
   containerEl.appendChild(this.holderDiv);
 
@@ -75,10 +75,11 @@ module.SelectRow = function(containerEl, title, onchange, choiceSetting, descrip
     select.add(option, null);
   }
 
+  var row = this;
   select.onchange = function() {
     choiceSetting.value = select.value;
-    if (this.onchange)
-      this.onchange();
+    if (row.onchange)
+      row.onchange();
   }
   select.value = choiceSetting.value;
 }
@@ -93,10 +94,11 @@ module.CheckRow = function(containerEl, title, onchange, booleanSetting) {
   check.classList.add('setting');
   this.settingDiv.appendChild(check);
 
+  var row = this;
   check.onchange = function() {
     booleanSetting.value = check.checked;
-    if (this.onchange)
-      this.onchange();
+    if (row.onchange)
+      row.onchange();
   }
 
   check.checked = booleanSetting.value;
@@ -121,7 +123,7 @@ module.NumberRow.prototype.updateLabel = function() {
   var label = roundForDisplay(this.numberSetting.value);
   if (this.formatter_)
     label = this.formatter_.format(label);
-  this..valueLabel_.innerHTML = newText;
+  this.valueLabel_.innerHTML = label;
 }
 
 module.LinearRangeRow = function(containerEl, title, onchange, numberSetting, formatter, steps) {
@@ -139,16 +141,15 @@ module.LinearRangeRow = function(containerEl, title, onchange, numberSetting, fo
 
   var factor = (max - min) / steps;
 
+  var row = this;
   range.onchange = function() {
     numberSetting.value = min + range.value * factor;
-    updateLabel();
-    if (this.onchange)
-      this.onchange();
+    row.updateLabel();
+    if (row.onchange)
+      row.onchange();
   }
   range.value = Math.round((numberSetting.value - min) / factor);
-  updateLabel();
-
-  return row;
+  this.updateLabel();
 }
 
 module.LinearRangeRow.prototype = Object.create(module.NumberRow.prototype);
@@ -172,14 +173,13 @@ module.ExponentialRangeRow = function(containerEl, title, onchange, numberSettin
   var row = this;
   this.range_.onchange = function() {
     numberSetting.value = row.value_();
-    updateLabel();
+    row.updateLabel();
     if (row.onchange)
       row.onchange();
   }
   this.setValue_(numberSetting.value);
-  updateLabel();
+  this.updateLabel();
 
-  return row;
 }
 
 module.ExponentialRangeRow.prototype = Object.create(module.NumberRow.prototype);
@@ -206,24 +206,9 @@ module.ExponentialRangeRow.prototype.setValue = function(newValue) {
 
 module.Group = function(containerEl) {
   module.Item.call(this, containerEl);
-  this.rows_ = [];
 }
 
 module.Group.prototype = Object.create(module.Item.prototype);
-
-module.Group.prototype.setVisible = function(visible) {
-  module.Item.prototype.setVisible.call(this, visible);
-  this.rows_.forEach(function(row) {
-    row.setVisible(visible);
-  });
-}
-
-module.Group.prototype.setEnabled = function(enabled) {
-  module.Item.prototype.setEnabled.call(this, enabled);
-  this.rows_.forEach(function(row) {
-    row.setEnabled(enabled);
-  });
-}
 
 return module;
 

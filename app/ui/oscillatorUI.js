@@ -17,12 +17,13 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
   var changeHandler = function() {
     ui.updateDisplay_();
   }
-  var div = this.settingsGroup.holderDiv;
-  this.enabledRow_ = new SettingsUI.CheckRow(div, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
-  this.typeRow_ = new SettingsUI.SelectRow(div, Strings.kType, changeHandler, oscillator.typeSetting, kTypeDescriptions);
-  this.octaveOffsetRow_ = new SettingsUI.LinearRangeRow(div, Strings.kOctaveOffset, changeHandler, oscillator.octaveOffsetSetting, null, 8);
-  this.noteOffsetRow_ = new SettingsUI.LinearRangeRow(div, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);
-  this.detuneRow_ = new SettingsUI.LinearRangeRow(div, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
+  new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
+
+  this.enableGroup_ = new SettingsUI.Group(this.settings);
+  new SettingsUI.SelectRow(this.enableGroup_, Strings.kType, changeHandler, oscillator.typeSetting, kTypeDescriptions);
+  new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kOctaveOffset, changeHandler, oscillator.octaveOffsetSetting, null, 8);
+  new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);
+  new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
 //  this.gainController_ = new ContourUI.ContourController(this.settings, Strings.kGain, 1,
 //                                                         oscillator.gainContour,
 //                                                         changeHandler,
@@ -35,17 +36,8 @@ module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.updateDisplay_ = function() {
   //this.drawWave_();
-  this.enableDisable_();
+  this.enableGroup_.setEnabled(this.oscillator_.enabledSetting.value);;
   this.updateIcon_();
-}
-
-module.UI.prototype.enableDisable_ = function() {
-  var enabled = this.oscillator_.enabledSetting.value;
-  this.typeRow_.setEnabled(enabled);
-  this.octaveOffsetRow_.setEnabled(enabled);
-  this.noteOffsetRow_.setEnabled(enabled);
-  this.detuneRow_.setEnabled(enabled);
-//  this.gainController_.setEnabled(enabled);
 }
 
 module.UI.prototype.updateIcon_ = function() {

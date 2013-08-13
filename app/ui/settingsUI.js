@@ -15,8 +15,12 @@ function roundForDisplay(number) {
   return Math.round(number * 100) / 100;
 }
 
-module.Item = function(containerEl) {
+// Container cal be a DOM element or another Item
+module.Item = function(container) {
   this.holderDiv = document.createElement('div');
+  var containerEl = container;
+  if (container.holderDiv)
+    containerEl = container.holderDiv;
   containerEl.appendChild(this.holderDiv);
   this.enabled_ = true;
   this.visible_ = true;
@@ -44,10 +48,9 @@ module.Item.prototype.isEnabled = function() {
   return this.enabled_;
 }
 
-module.Row = function(containerEl, title, onchange) {
-  module.Item.call(this, containerEl);
+module.Row = function(container, title, onchange) {
+  module.Item.call(this, container);
   this.holderDiv.classList.add('settingRow');
-  containerEl.appendChild(this.holderDiv);
 
   var label = document.createElement('div');
   label.classList.add('settingName');
@@ -63,8 +66,8 @@ module.Row = function(containerEl, title, onchange) {
 
 module.Row.prototype = Object.create(module.Item.prototype);
 
-module.SelectRow = function(containerEl, title, onchange, choiceSetting, descriptions) {
-  module.Row.call(this, containerEl, title, onchange);
+module.SelectRow = function(container, title, onchange, choiceSetting, descriptions) {
+  module.Row.call(this, container, title, onchange);
 
   var select = document.createElement('select');
   this.settingDiv.appendChild(select);
@@ -86,8 +89,8 @@ module.SelectRow = function(containerEl, title, onchange, choiceSetting, descrip
 
 module.SelectRow.prototype = Object.create(module.Row.prototype);
 
-module.CheckRow = function(containerEl, title, onchange, booleanSetting) {
-  module.Row.call(this, containerEl, title, onchange);
+module.CheckRow = function(container, title, onchange, booleanSetting) {
+  module.Row.call(this, container, title, onchange);
 
   var check = document.createElement('input');
   check.type = 'checkbox';
@@ -107,8 +110,8 @@ module.CheckRow = function(containerEl, title, onchange, booleanSetting) {
 module.CheckRow.prototype = Object.create(module.Row.prototype);
 
 // formatter can be null
-module.NumberRow = function(containerEl, title, onchange, numberSetting, formatter) {
-  module.Row.call(this, containerEl, title, onchange);
+module.NumberRow = function(container, title, onchange, numberSetting, formatter) {
+  module.Row.call(this, container, title, onchange);
   this.valueLabel_ = document.createElement('div');
   this.valueLabel_.classList.add('settingValue');
   this.holderDiv.appendChild(this.valueLabel_);
@@ -126,8 +129,8 @@ module.NumberRow.prototype.updateLabel = function() {
   this.valueLabel_.innerHTML = label;
 }
 
-module.LinearRangeRow = function(containerEl, title, onchange, numberSetting, formatter, steps) {
-  module.NumberRow.call(this, containerEl, title, onchange, numberSetting, formatter);
+module.LinearRangeRow = function(container, title, onchange, numberSetting, formatter, steps) {
+  module.NumberRow.call(this, container, title, onchange, numberSetting, formatter);
 
   var min = numberSetting.min;
   var max = numberSetting.max;
@@ -154,8 +157,8 @@ module.LinearRangeRow = function(containerEl, title, onchange, numberSetting, fo
 
 module.LinearRangeRow.prototype = Object.create(module.NumberRow.prototype);
 
-module.ExponentialRangeRow = function(containerEl, title, onchange, numberSetting, formatter, steps) {
-  module.NumberRow.call(this, containerEl, title, onchange, numberSetting, formatter);
+module.ExponentialRangeRow = function(container, title, onchange, numberSetting, formatter, steps) {
+  module.NumberRow.call(this, container, title, onchange, numberSetting, formatter);
 
   this.base_ = 10;
   this.constant_ = (numberSetting.max - numberSetting.min) / base;
@@ -204,8 +207,8 @@ module.ExponentialRangeRow.prototype.setValue = function(newValue) {
   this.range_.value = index;
 }
 
-module.Group = function(containerEl) {
-  module.Item.call(this, containerEl);
+module.Group = function(container) {
+  module.Item.call(this, container);
 }
 
 module.Group.prototype = Object.create(module.Item.prototype);

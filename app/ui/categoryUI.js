@@ -15,7 +15,7 @@ module.UI = function(id, title, categoriesEl, detailsEl, selected) {
   this.categoryIconEl_.classList.add('synthCategoryIcon');
   this.categoryEl_.appendChild(this.categoryIconEl_);
 
-  this.settingsGroup = new SettingsUI.Group(detailsEl);
+  this.settings = new SettingsUI.Group(detailsEl);
 
   this.setSelected(selected);
 
@@ -45,11 +45,11 @@ module.UI.prototype.setSelected = function(selected) {
     this.categoryEl_.classList.add('selected');
   else
     this.categoryEl_.classList.remove('selected');
-  this.settingsGroup.setVisible(selected);
+  this.settings.setVisible(selected);
 }
 
 module.UI.prototype.isSelected = function() {
-  return this.settingsGroup.isVisible();
+  return this.settings.isVisible();
 }
 
 module.UI.prototype.setIconClass = function(iconClass) {

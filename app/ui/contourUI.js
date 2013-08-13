@@ -3,6 +3,16 @@ ContourUI = (function() {
 "use strict";
 var module = {};
 
+////////////////////////////////////////////////////////////////////////////////
+// ContourController class, flat contour code
+module.FlatContourGroup_ = function(container, onchange, steps, formatter, isEnvelope, flatContour) {
+  SettingsUI.Group.call(this, container);
+  if (!isEnvelope)
+    new SettingsUI.LinearRangeRow(this, 'Value', onchange, flatContour.valueSetting, formatter, steps);
+}
+
+module.FlatContourGroup_.prototype = Object.create(SettingsUI.Group.prototype);
+
 var kTypeDescriptions = {};
 kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
 kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
@@ -10,7 +20,23 @@ kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, generic code
-module.ContourController = function(parentSettings, title, indent, contouredValue, onchange, steps, formatter) {
+module.ContourController = function(container, title, indent, contouredValue, onchange, steps, formatter) {
+  SettingsUI.Group.call(this, container);
+
+  this.onchange = onchange;
+  var controller = this;
+  var changeHandler = function() {
+    controller.showHideContourss_();
+    if (controller.onchange)
+      controller.onchange();
+  }
+  new SettingsUI.SelectRow(this,
+                           Strings.kType,
+                           changeHandler,
+                           contouredValue.currentContourSetting
+                           kTypeDescriptions);
+  this.flatGroup_ = new module.FlatContourGroup_(this, onchange, )
+
   this.contouredValue_ = contouredValue;
   this.steps_ = steps;
   this.formatter_ = formatter;
@@ -28,7 +54,7 @@ module.ContourController = function(parentSettings, title, indent, contouredValu
       controller.onchange();
   }
   var changeHandler = function() {
-    controller.showHideControls_();
+    controller.showHideContourss_();
     if (controller.onchange)
       controller.onchange();
   }

@@ -22,10 +22,10 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
   this.octaveOffsetRow_ = this.settings.addLinearRangeRow(Strings.kOctaveOffset, oscillator.octaveOffsetSetting, changeHandler, 8);
   this.noteOffsetRow_ = this.settings.addLinearRangeRow(Strings.kNoteOffset, oscillator.noteOffsetSetting, changeHandler, 16);
   this.detuneRow_ = this.settings.addLinearRangeRow(Strings.kDetune, oscillator.detuneSetting, changeHandler, 100, String.kPercentFormatter);
-  this.gainController_ = new ContourUI.ContourController(this.settings, Strings.kGain, 1,
-                                                         oscillator.gainContour,
-                                                         changeHandler,
-                                                         10);
+//  this.gainController_ = new ContourUI.ContourController(this.settings, Strings.kGain, 1,
+//                                                         oscillator.gainContour,
+//                                                         changeHandler,
+//                                                         10);
 
   this.updateDisplay_();
 }
@@ -44,7 +44,7 @@ module.UI.prototype.enableDisable_ = function() {
   this.octaveOffsetRow_.enableDisable(enabled);
   this.noteOffsetRow_.enableDisable(enabled);
   this.detuneRow_.enableDisable(enabled);
-  this.gainController_.enableDisable(enabled);
+//  this.gainController_.enableDisable(enabled);
 }
 
 module.UI.prototype.updateIcon_ = function() {

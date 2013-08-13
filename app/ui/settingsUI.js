@@ -15,78 +15,59 @@ function roundForDisplay(number) {
   return Math.round(number * 100) / 100;
 }
 
-module.Group = function(parentEl, extraRowClass) {
-  this.containerEl = document.createElement('div');
-  if (extraRowClass)
-    this.extraRowClass_ = extraRowClass;
-  parentEl.appendChild(this.containerEl);
+module.Item = function(containerEl) {
+  this.holderDiv = document.createElement('div');
+  containerEl.appendChild(this.holderDiv);
+  this.enabled_ = true;
+  this.visible_ = true;
 }
 
-module.Group.prototype.setVisible = function(visible) {
-  this.containerEl.hidden = !visible;
+module.Item.prototype.updateHidden_ = function() {
+  this.holderDiv.hidden = !this.visible_ || !this.enabled_;
 }
 
-module.Group.prototype.isVisible = function(visible) {
-  return !this.containerEl.hidden;
+module.Item.prototype.setVisible = function(visible) {
+  this.visible_ = visible;
+  this.updateHidden_();
 }
 
-function setupOnchange(row, element) {
-  element.onchange = function() {
-    if (row.onchange)
-      row.onchange();
-  }
+module.Item.prototype.isVisible = function() {
+  return this.visible_;
 }
 
-module.Group.prototype.makeRow = function(title, onchange) {
-  var row = document.createElement('div');
-  row.classList.add('settingRow');
-  if (this.extraRowClass_)
-    row.classList.add(this.extraRowClass_);
-  this.containerEl.appendChild(row);
-
-  row.label_ = document.createElement('div');
-  row.label_.classList.add('settingName');
-  row.label_.innerHTML = title;
-  row.appendChild(row.label_);
-
-  row.setting_ = document.createElement('div');
-  row.setting_.classList.add('setting');
-  row.appendChild(row.setting_);
-
-  row.enableDisableDiv_ = function(div, value) {
-    row.hidden = !value;
-  }
-
-  row.enableDisable = function(value) {
-    row.enableDisableDiv_(row.label_, value);
-  }
-
-  row.onchange = onchange;
-
-  return row;
+module.Item.prototype.setEnabled = function(enabled) {
+  this.enabled_ = enabled;
+  this.updateHidden_();
 }
 
-module.Group.prototype.addValueLabel_ = function(row) {
-  row.valueLabel_ = document.createElement('div');
-  row.valueLabel_.classList.add('settingValue');
-  row.appendChild(row.valueLabel_);
-
-  row.setLabel = function(newText) {
-    row.valueLabel_.innerHTML = newText;
-  }
-
-  var prevEnableDisable = row.enableDisable;
-  row.enableDisable = function(value) {
-    prevEnableDisable(value);
-    row.enableDisableDiv_(row.valueLabel_, value);
-  }
+module.Item.prototype.isEnabled = function() {
+  return this.enabled_;
 }
 
-module.Group.prototype.addSelectRow = function(title, choiceSetting, onchange, descriptions) {
-  var row = this.makeRow(title, onchange);
+module.Row = function(containerEl, title, onchange) {
+  module.Item.call(containerEl);
+  this.holderDiv.classList.add('settingRow');
+  containerEl.appendChild(this.holderDiv);
+
+  var label = document.createElement('div');
+  label.classList.add('settingName');
+  label.innerHTML = title;
+  this.holderDiv.appendChild(label);
+
+  this.settingDiv = document.createElement('div');
+  this.settingDiv.classList.add('setting');
+  this.holderDiv.appendChild(this.settingDiv);
+
+  this.onchange = onchange;
+}
+
+module.Row.prototype = Object.create(module.Item.prototype);
+
+module.SelectRow = function(containerEl, title, onchange, choiceSetting, descriptions) {
+  module.Row.call(this, containerEl, title, onchange);
 
   var select = document.createElement('select');
-  row.setting_.appendChild(select);
+  this.settingDiv.appendChild(select);
   for (var i = 0; i < choiceSetting.choices.length; i++) {
     var option = document.createElement('option');
     option.value = choiceSetting.choices[i];
@@ -94,157 +75,154 @@ module.Group.prototype.addSelectRow = function(title, choiceSetting, onchange, d
     select.add(option, null);
   }
 
-  var prevEnableDisable = row.enableDisable;
-  row.enableDisable = function(value) {
-    prevEnableDisable(value);
-    select.disabled = !value;
-  }
-
   select.onchange = function() {
     choiceSetting.value = select.value;
-    if (row.onchange)
-      row.onchange();
+    if (this.onchange)
+      this.onchange();
   }
   select.value = choiceSetting.value;
-
-  return row;
 }
 
-module.Group.prototype.addCheckRow = function(title, booleanSetting, onchange) {
-  var row = this.makeRow(title, onchange);
+module.SelectRow.prototype = Object.create(module.Row.prototype);
+
+module.CheckRow = function(containerEl, title, onchange, booleanSetting) {
+  module.Row.call(this, containerEl, title, onchange);
 
   var check = document.createElement('input');
   check.type = 'checkbox';
   check.classList.add('setting');
-  row.setting_.appendChild(check);
-
-  var prevEnableDisable = row.enableDisable;
-  row.enableDisable = function(value) {
-    prevEnableDisable(value);
-    check.disabled = !value;
-  }
+  this.settingDiv.appendChild(check);
 
   check.onchange = function() {
     booleanSetting.value = check.checked;
-    if (row.onchange)
-      row.onchange();
+    if (this.onchange)
+      this.onchange();
   }
 
   check.checked = booleanSetting.value;
-  return row;
 }
 
-module.Group.prototype.addLinearRangeRow = function(title, numberSetting, onchange, steps, formatter) {
+module.CheckRow.prototype = Object.create(module.Row.prototype);
+
+// formatter can be null
+module.NumberRow = function(containerEl, title, onchange, numberSetting, formatter) {
+  module.Row.call(this, containerEl, title, onchange);
+  this.valueLabel_ = document.createElement('div');
+  this.valueLabel_.classList.add('settingValue');
+  this.holderDiv.appendChild(this.valueLabel_);
+
+  this.formatter_ = formatter;
+  this.numberSetting = numberSetting;
+}
+
+module.NumberRow.prototype = Object.create(module.Row.prototype);
+
+module.NumberRow.prototype.updateLabel = function() {
+  var label = roundForDisplay(this.numberSetting.value);
+  if (this.formatter_)
+    label = this.formatter_.format(label);
+  this..valueLabel_.innerHTML = newText;
+}
+
+module.LinearRangeRow = function(containerEl, title, onchange, numberSetting, formatter, steps) {
+  module.NumberRow.call(this, containerEl, title, onchange, numberSetting, formatter);
+
   var min = numberSetting.min;
   var max = numberSetting.max;
-
-  var row = this.makeRow(title, onchange);
 
   var range = document.createElement('input');
   range.type = 'range';
   range.min = 0;
   range.max = steps;
   range.classList.add('setting');
-  row.setting_.appendChild(range);
-
-  this.addValueLabel_(row);
-
-  var prevEnableDisable = row.enableDisable;
-  row.enableDisable = function(value) {
-    prevEnableDisable(value);
-    range.disabled = !value;
-  }
+  this.settingDiv.appendChild(range);
 
   var factor = (max - min) / steps;
-  var value = function() {
-    var rangeVal = range.value;
-    return min + rangeVal * factor;
-  }
-
-  var setValue = function(newValue) {
-    var rangeVal = Math.round((newValue - min) / factor);
-    range.value = rangeVal;
-  }
-
-  var setLabel = function() {
-    var label = roundForDisplay(numberSetting.value);
-    if (formatter)
-      label = formatter.format(label);
-    row.setLabel(label);
-  }
 
   range.onchange = function() {
-    numberSetting.value = value();
-    setLabel();
-    if (row.onchange)
-      row.onchange();
+    numberSetting.value = min + range.value * factor;
+    updateLabel();
+    if (this.onchange)
+      this.onchange();
   }
-  setValue(numberSetting.value);
-  setLabel();
+  range.value = Math.round((numberSetting.value - min) / factor);
+  updateLabel();
 
   return row;
 }
 
-module.Group.prototype.addExponentialRangeRow = function(title, numberSetting, onchange, steps, formatter) {
-  var base = 10;
-  var constant = (numberSetting.max - numberSetting.min) / base;
-  var minExponent = -1;
-  var maxExponent = 1;
-  var row = this.makeRow(title, onchange);
+module.LinearRangeRow.prototype = Object.create(module.NumberRow.prototype);
 
-  var range = document.createElement('input');
-  range.type = 'range';
-  range.min = 0;
-  range.max = steps + 1; // add one for the minimum value
-  range.classList.add('setting');
-  row.setting_.appendChild(range);
+module.ExponentialRangeRow = function(containerEl, title, onchange, numberSetting, formatter, steps) {
+  module.NumberRow.call(this, containerEl, title, onchange, numberSetting, formatter);
 
-  this.addValueLabel_(row);
+  this.base_ = 10;
+  this.constant_ = (numberSetting.max - numberSetting.min) / base;
+  this.minExponent_ = -1;
+  this.maxExponent_ = 1;
+  this.exponentFactor_ = (maxExponent - minExponent) / steps;
 
-  var prevEnableDisable = row.enableDisable;
-  row.enableDisable = function(value) {
-    prevEnableDisable(value);
-    range.disabled = !value;
-  }
+  this.range_ = document.createElement('input');
+  this.range_.type = 'range';
+  this.range_.min = 0;
+  this.range_.max = steps + 1; // add one for the minimum value
+  this.range_.classList.add('setting');
+  this.settingDiv.appendChild(this.range_);
 
-  var exponentFactor = (maxExponent - minExponent) / steps;
-  var value = function() {
-    var exponent = range.value;
-    if (exponent == 0)
-      return numberSetting.min;
-    exponent--;
-    exponent = minExponent + exponent * exponentFactor;
-    return numberSetting.min + constant * Math.pow(base, exponent);
-  }
-
-  var setValue = function(newValue) {
-    if (newValue == numberSetting.min) {
-      range.value = 0;
-      return;
-    }
-    var exponent = (newValue - numberSetting.min) / constant;
-    var index = Math.log(exponent) / Math.log(base);
-    var index = Math.round((index - minExponent) / exponentFactor) + 1;
-    range.value = index;
-  }
-
-  var setLabel = function() {
-    var label = roundForDisplay(numberSetting.value);
-    if (formatter)
-      label = formatter.format(label);
-    row.setLabel(label);
-  }
-
-  range.onchange = function() {
-    numberSetting.value = value();
-    setLabel();
+  var row = this;
+  this.range_.onchange = function() {
+    numberSetting.value = row.value_();
+    updateLabel();
     if (row.onchange)
       row.onchange();
   }
-  setValue(numberSetting.value);
-  setLabel();
+  this.setValue_(numberSetting.value);
+  updateLabel();
 
   return row;
+}
+
+module.ExponentialRangeRow.prototype = Object.create(module.NumberRow.prototype);
+
+module.ExponentialRangeRow.prototype.value_ = function() {
+  var exponent = this.range_.value;
+  if (exponent == 0)
+    return this.numberSetting.min;
+  exponent--;
+  exponent = this.minExponent_ + exponent * this.exponentFactor_;
+  return numberSetting.min + this.constant_ * Math.pow(this.base_, exponent);
+}
+
+module.ExponentialRangeRow.prototype.setValue = function(newValue) {
+  if (newValue == this.numberSetting.min) {
+    this.range_.value = 0;
+    return;
+  }
+  var exponent = (newValue - this.numberSetting_.min) / this.constant_;
+  var index = Math.log(this.exponent_) / Math.log(this.base_);
+  var index = Math.round((index - this.minExponent_) / this.exponentFactor_) + 1;
+  this.range_.value = index;
+}
+
+module.Group = function(containerEl) {
+  module.Item.call(this, containerEl);
+  this.rows_ = [];
+}
+
+module.Group.prototype = Object.create(module.Item.prototype);
+
+module.Group.prototype.setVisible = function(visible) {
+  module.Item.prototype.setVisible.call(this, visible);
+  this.rows_.forEach(function(row) {
+    row.setVisible(visible);
+  });
+}
+
+module.Group.prototype.setEnabled = function(enabled) {
+  module.Item.prototype.setEnabled.call(this, enabled);
+  this.rows_.forEach(function(row) {
+    row.setEnabled(enabled);
+  });
 }
 
 return module;

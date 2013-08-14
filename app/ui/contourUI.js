@@ -3,155 +3,35 @@ ContourUI = (function() {
 "use strict";
 var module = {};
 
-module.FlatContourGroup_ = function(container, onchange, steps, formatter, isEnvelope, flatContour) {
+module.FlatContourGroup_ = function(container, onchange, flatContour, isEnvelope,
+                                    formatter, steps) {
   SettingsUI.Group.call(this, container);
   if (!isEnvelope)
-    new SettingsUI.LinearRangeRow(this, 'Value', onchange, flatContour.valueSetting, formatter, steps);
+    new SettingsUI.LinearRangeRow(this, Strings.kValue, onchange,
+                                  flatContour.valueSetting, formatter, steps);
 }
 
 module.FlatContourGroup_.prototype = Object.create(SettingsUI.Group.prototype);
 
-var kTypeDescriptions = {};
-kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
-kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
-kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
-
-module.ContourGroup = function(container, title, onchange, contouredValue, formatter, steps) {
+module.OscillatingContourGroup_ = function(container, onchange, oscillatingContour,
+                                          isEnvelope, formatter, steps) {
   SettingsUI.Group.call(this, container);
-
-  this.contouredValue_ = contouredValue;
-  this.onchange = onchange;
-
-  var controller = this;
-  var changeHandler = function() {
-    controller.showHideContours_();
-    if (controller.onchange)
-      controller.onchange();
+  if (!isEnvelope) {
+    new SettingsUI.LinearRangeRow(this, Strings.kCenterValue, onchange,
+                                  oscillatingContour.centerValueSetting, formatter, steps);
   }
-  new SettingsUI.SelectRow(this,
-                           Strings.kType,
-                           changeHandler,
-                           contouredValue.currentContourSetting,
-                           kTypeDescriptions);
-  this.flatGroup_ = new module.FlatContourGroup_(
-      this, onchange, steps, formatter, contouredValue.isEnvelope,
-      contouredValue.contoursByIdentifier[Contour.kFlatContour])
+  new SettingsUI.ExponentialRangeRow(this, Strings.kSpeed, onchange,
+                                     oscillatingContour.frequencySetting, null, 20);
+  new SettingsUI.ExponentialRangeRow(this, Strings.kAmplitude, onchange,
+                                     oscillatingContour.amplitudeSetting,
+                                     Strings.kMaxFormatter, 10);
 }
 
-module.ContourGroup.prototype = Object.create(SettingsUI.Group.prototype);
-
-module.ContourGroup.prototype.showHideContours_ = function() {
-  var current = this.contouredValue_.currentContourSetting.value
-  this.flatGroup_.setVisible(current == Contour.kFlatContour);
-}
-
-/*
-  this.steps_ = steps;
-  this.formatter_ = formatter;
-
-  this.allRows_ = [];
-  this.rowsByContour_ = {};
-
-  this.groupRow_ = parentSettings.makeRow(title, null);
-  this.groupRow_.classList.add('contourGroupRow');
-  this.group_ = new SettingsUI.Group(parentSettings.containerEl, 'contourRow');
-
-  var controller = this;
-  this.contourChangeHandler = function() {
-    if (controller.onchange)
-      controller.onchange();
-  }
-  var changeHandler = function() {
-    controller.showHideContourss_();
-    if (controller.onchange)
-      controller.onchange();
-  }
-  this.typeRow_ = this.group_.addSelectRow(Strings.kType,
-                                           contouredValue.currentContourSetting,
-                                           changeHandler,
-                                           kTypeDescriptions);
-  this.addFlatControls_();
-  this.addOscillatingControls_();
-  this.addADSRControls_();
-
-  changeHandler();
-  // Set this change handler after calling changeHandler to prevent the call
-  // bubbling up while the owner may still be initialiing the UI.
-  this.onchange = onchange;
-
-  this.enableDisable = function(value) {
-    controller.groupRow_.enableDisable(value)
-    controller.typeRow_.enableDisable(value);
-    controller.allRows_.forEach(function(row) {
-      row.enableDisable(value);
-    });
-  }
-}
-
-function showRows(rows) {
-  rows.forEach(function(row) {
-    row.hidden = false;
-  });
-}
-
-module.ContourController.prototype.showHideControls_ = function() {
-  this.allRows_.forEach(function(row) {
-    row.hidden = true;
-  });
-  showRows(this.rowsByContour_[this.contouredValue_.currentContourSetting.value]);
-}
-
-module.ContourController.prototype.createValueRow_ = function(title, valueSetting) {
-  return this.group_.addLinearRangeRow(title,
-                                       valueSetting,
-                                       this.contourChangeHandler,
-                                       this.steps_,
-                                       this.formatter_);
-}
-
-module.ContourController.prototype.addRow_ = function(row, array) {
-  array.push(row);
-  this.allRows_.push(row);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// ContourController class, flat contour code
-module.ContourController.prototype.addFlatControls_ = function() {
-  var flatRows = [];
-  var flatContour = this.contouredValue_.contoursByIdentifier[Contour.kFlatContour];
-
-  if (!this.contouredValue_.isEnvelope)
-    this.addRow_(this.createValueRow_('Value', flatContour.valueSetting), flatRows);
-  this.rowsByContour_[Contour.kFlatContour] = flatRows;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// ContourController class, oscillating contour code
-module.ContourController.prototype.addOscillatingControls_ = function() {
-  var oscillatingRows = [];
-  var oscillatingContour = this.contouredValue_.contoursByIdentifier[Contour.kOscillatingContour];
-  if (!this.contouredValue_.isEnvelope) {
-    this.addRow_(this.createValueRow_('Center Value',
-                                      oscillatingContour.centerValueSetting),
-                 oscillatingRows);
-  }
-  this.addRow_(this.group_.addExponentialRangeRow(Strings.kSpeed,
-                                                  oscillatingContour.frequencySetting,
-                                                  this.contourChangeHandler,
-                                                  20),
-               oscillatingRows);
-  this.addRow_(this.group_.addExponentialRangeRow(Strings.kAmplitude,
-                                                  oscillatingContour.amplitudeSetting,
-                                                  this.contourChangeHandler,
-                                                  10,
-                                                  Strings.kMaxFormatter),
-               oscillatingRows);
-  this.rowsByContour_[Contour.kOscillatingContour] = oscillatingRows;
-}
+module.OscillatingContourGroup_.prototype = Object.create(SettingsUI.Group.prototype);
 
 ////////////////////////////////////////////////////////////////////////////////
 // ContourController class, ADSR contour code
-module.ContourController.prototype.addADSRControls_ = function() {
+module.ADSRGroup_ = function() {
   var controller = this;
   var createTimeRow = function(title, setting) {
     return controller.group_.addExponentialRangeRow(title, setting, controller.contourChangeHandler, 10);
@@ -176,7 +56,45 @@ module.ContourController.prototype.addADSRControls_ = function() {
   }
   this.rowsByContour_[Contour.kADSRContour] = adsrRows;
 }
-*/
+
+var kTypeDescriptions = {};
+kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
+kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
+kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
+
+module.ContourGroup = function(container, title, onchange, contouredValue, formatter, steps) {
+  SettingsUI.Group.call(this, container);
+
+  this.contouredValue_ = contouredValue;
+  this.onchange = onchange;
+
+  var controller = this;
+  var changeHandler = function() {
+    controller.showHideContours_();
+    if (controller.onchange)
+      controller.onchange();
+  }
+  new SettingsUI.SelectRow(this,
+                           Strings.kType,
+                           changeHandler,
+                           contouredValue.currentContourSetting,
+                           kTypeDescriptions);
+  this.flatGroup_ = new module.FlatContourGroup_(
+      this, onchange, contouredValue.contoursByIdentifier[Contour.kFlatContour],
+      contouredValue.isEnvelope, formatter, steps);
+  this.oscillatingGroup_ = new module.OscillatingContourGroup_(
+      this, onchange, contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
+      contouredValue.isEnvelope, formatter, steps);
+}
+
+module.ContourGroup.prototype = Object.create(SettingsUI.Group.prototype);
+
+module.ContourGroup.prototype.showHideContours_ = function() {
+  var current = this.contouredValue_.currentContourSetting.value
+  this.flatGroup_.setVisible(current == Contour.kFlatContour);
+  this.oscillatingGroup_.setVisible(current == Contour.kOscillatingContour);
+}
+
 return module;
 
 })();

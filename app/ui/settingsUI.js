@@ -161,10 +161,10 @@ module.ExponentialRangeRow = function(container, title, onchange, numberSetting,
   module.NumberRow.call(this, container, title, onchange, numberSetting, formatter);
 
   this.base_ = 10;
-  this.constant_ = (numberSetting.max - numberSetting.min) / base;
+  this.constant_ = (numberSetting.max - numberSetting.min) / this.base_;
   this.minExponent_ = -1;
   this.maxExponent_ = 1;
-  this.exponentFactor_ = (maxExponent - minExponent) / steps;
+  this.exponentFactor_ = (this.maxExponent_ - this.minExponent_) / steps;
 
   this.range_ = document.createElement('input');
   this.range_.type = 'range';
@@ -196,7 +196,7 @@ module.ExponentialRangeRow.prototype.value_ = function() {
   return numberSetting.min + this.constant_ * Math.pow(this.base_, exponent);
 }
 
-module.ExponentialRangeRow.prototype.setValue = function(newValue) {
+module.ExponentialRangeRow.prototype.setValue_ = function(newValue) {
   if (newValue == this.numberSetting.min) {
     this.range_.value = 0;
     return;

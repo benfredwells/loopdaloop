@@ -3,8 +3,6 @@ ContourUI = (function() {
 "use strict";
 var module = {};
 
-////////////////////////////////////////////////////////////////////////////////
-// ContourController class, flat contour code
 module.FlatContourGroup_ = function(container, onchange, steps, formatter, isEnvelope, flatContour) {
   SettingsUI.Group.call(this, container);
   if (!isEnvelope)
@@ -18,26 +16,36 @@ kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
 kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
 kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
-////////////////////////////////////////////////////////////////////////////////
-// ContourController class, generic code
-module.ContourController = function(container, title, indent, contouredValue, onchange, steps, formatter) {
+module.ContourGroup = function(container, title, onchange, contouredValue, formatter, steps) {
   SettingsUI.Group.call(this, container);
 
+  this.contouredValue_ = contouredValue;
   this.onchange = onchange;
+
   var controller = this;
   var changeHandler = function() {
-    controller.showHideContourss_();
+    controller.showHideContours_();
     if (controller.onchange)
       controller.onchange();
   }
   new SettingsUI.SelectRow(this,
                            Strings.kType,
                            changeHandler,
-                           contouredValue.currentContourSetting
+                           contouredValue.currentContourSetting,
                            kTypeDescriptions);
-  this.flatGroup_ = new module.FlatContourGroup_(this, onchange, )
+  this.flatGroup_ = new module.FlatContourGroup_(
+      this, onchange, steps, formatter, contouredValue.isEnvelope,
+      contouredValue.contoursByIdentifier[Contour.kFlatContour])
+}
 
-  this.contouredValue_ = contouredValue;
+module.ContourGroup.prototype = Object.create(SettingsUI.Group.prototype);
+
+module.ContourGroup.prototype.showHideContours_ = function() {
+  var current = this.contouredValue_.currentContourSetting.value
+  this.flatGroup_.setVisible(current == Contour.kFlatContour);
+}
+
+/*
   this.steps_ = steps;
   this.formatter_ = formatter;
 
@@ -168,7 +176,7 @@ module.ContourController.prototype.addADSRControls_ = function() {
   }
   this.rowsByContour_[Contour.kADSRContour] = adsrRows;
 }
-
+*/
 return module;
 
 })();

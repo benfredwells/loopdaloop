@@ -24,10 +24,9 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
   new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kOctaveOffset, changeHandler, oscillator.octaveOffsetSetting, null, 8);
   new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);
   new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
-//  this.gainController_ = new ContourUI.ContourController(this.settings, Strings.kGain, 1,
-//                                                         oscillator.gainContour,
-//                                                         changeHandler,
-//                                                         10);
+  new ContourUI.ContourGroup(this.enableGroup_, Strings.kGain,
+                             changeHandler, oscillator.gainContour,
+                             null, 10);
 
   this.updateDisplay_();
 }

@@ -62,29 +62,53 @@ kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
 kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
 kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
-module.ContourGroup = function(container, title, onchange, contouredValue, formatter, steps) {
+module.ContourGroup = function(container, title, onchange, contouredValue, formatter, steps, selected) {
   SettingsUI.Group.call(this, container);
 
   this.contouredValue_ = contouredValue;
   this.onchange = onchange;
 
+  this.contourRow_ = new SettingsUI.Row(this, title, null);
+  // TODO: rename holderDiv -> div
+  this.contourRow_.holderDiv.classList.add('contourGroupRow');
+
   var controller = this;
+  this.contourRow_.holderDiv.onclick = function() {
+    controller.setSelected(!controller.selected_);
+  }
+
+  this.contourRow_.holderDiv.onmouseenter = function() {
+    this.classList.add('hover');
+  }
+
+  this.contourRow_.holderDiv.onmouseleave = function() {
+    this.classList.remove('hover');
+  }
+
+  this.selectGroup_ = new SettingsUI.Group(this);
+  this.selectGroup_.holderDiv.classList.add('contourGroup');
+
   var changeHandler = function() {
     controller.showHideContours_();
     if (controller.onchange)
       controller.onchange();
   }
-  new SettingsUI.SelectRow(this,
+  new SettingsUI.SelectRow(this.selectGroup_,
                            Strings.kType,
                            changeHandler,
                            contouredValue.currentContourSetting,
                            kTypeDescriptions);
   this.flatGroup_ = new module.FlatContourGroup_(
-      this, onchange, contouredValue.contoursByIdentifier[Contour.kFlatContour],
+      this.selectGroup_, onchange,
+      contouredValue.contoursByIdentifier[Contour.kFlatContour],
       contouredValue.isEnvelope, formatter, steps);
   this.oscillatingGroup_ = new module.OscillatingContourGroup_(
-      this, onchange, contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
+      this.selectGroup_, onchange,
+      contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
       contouredValue.isEnvelope, formatter, steps);
+
+  this.showHideContours_();
+  this.setSelected(selected);
 }
 
 module.ContourGroup.prototype = Object.create(SettingsUI.Group.prototype);
@@ -93,6 +117,15 @@ module.ContourGroup.prototype.showHideContours_ = function() {
   var current = this.contouredValue_.currentContourSetting.value
   this.flatGroup_.setVisible(current == Contour.kFlatContour);
   this.oscillatingGroup_.setVisible(current == Contour.kOscillatingContour);
+}
+
+module.ContourGroup.prototype.setSelected = function(selected) {
+  this.selected_ = selected;
+  if (selected)
+    this.contourRow_.holderDiv.classList.add('selected');
+  else
+    this.contourRow_.holderDiv.classList.remove('selected');
+  this.selectGroup_.setVisible(selected);
 }
 
 return module;

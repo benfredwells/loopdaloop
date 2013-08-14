@@ -26,7 +26,7 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
   new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
   new ContourUI.ContourGroup(this.enableGroup_, Strings.kGain,
                              changeHandler, oscillator.gainContour,
-                             null, 10);
+                             null, 10, false);
 
   this.updateDisplay_();
 }

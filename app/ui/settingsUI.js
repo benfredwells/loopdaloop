@@ -193,7 +193,7 @@ module.ExponentialRangeRow.prototype.value_ = function() {
     return this.numberSetting.min;
   exponent--;
   exponent = this.minExponent_ + exponent * this.exponentFactor_;
-  return numberSetting.min + this.constant_ * Math.pow(this.base_, exponent);
+  return this.numberSetting.min + this.constant_ * Math.pow(this.base_, exponent);
 }
 
 module.ExponentialRangeRow.prototype.setValue_ = function(newValue) {

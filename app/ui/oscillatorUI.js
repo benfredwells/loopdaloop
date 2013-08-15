@@ -19,12 +19,12 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
   }
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
 
-  this.enableGroup_ = new SettingsUI.Group(this.settings);
-  new SettingsUI.SelectRow(this.enableGroup_, Strings.kType, changeHandler, oscillator.typeSetting, kTypeDescriptions);
-  new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kOctaveOffset, changeHandler, oscillator.octaveOffsetSetting, null, 8);
-  new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);
-  new SettingsUI.LinearRangeRow(this.enableGroup_, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
-  new ContourUI.ContourGroup(this.enableGroup_, Strings.kGain,
+  this.enablePanel_ = new SettingsUI.Panel(this.settings);
+  new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, oscillator.typeSetting, kTypeDescriptions);
+  new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kOctaveOffset, changeHandler, oscillator.octaveOffsetSetting, null, 8);
+  new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);
+  new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
+  new ContourUI.ContourPanel(this.enablePanel_, Strings.kGain,
                              changeHandler, oscillator.gainContour,
                              null, 10, false);
 
@@ -35,7 +35,7 @@ module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.updateDisplay_ = function() {
   //this.drawWave_();
-  this.enableGroup_.setEnabled(this.oscillator_.enabledSetting.value);;
+  this.enablePanel_.setEnabled(this.oscillator_.enabledSetting.value);;
   this.updateIcon_();
 }
 

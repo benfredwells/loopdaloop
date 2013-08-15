@@ -15,7 +15,7 @@ module.UI = function(id, title, categoriesEl, detailsEl, selected) {
   this.categoryIconEl_.classList.add('synthCategoryIcon');
   this.categoryEl_.appendChild(this.categoryIconEl_);
 
-  this.settings = new SettingsUI.Group(detailsEl);
+  this.settings = new SettingsUI.Panel(detailsEl);
 
   this.setSelected(selected);
 

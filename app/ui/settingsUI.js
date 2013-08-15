@@ -15,56 +15,56 @@ function roundForDisplay(number) {
   return Math.round(number * 100) / 100;
 }
 
-// Container cal be a DOM element or another Item
-module.Item = function(container) {
-  this.holderDiv = document.createElement('div');
+// Container cal be a DOM element or another Control
+module.Control = function(container) {
+  this.div = document.createElement('div');
   var containerEl = container;
-  if (container.holderDiv)
-    containerEl = container.holderDiv;
-  containerEl.appendChild(this.holderDiv);
+  if (container.div)
+    containerEl = container.div;
+  containerEl.appendChild(this.div);
   this.enabled_ = true;
   this.visible_ = true;
 }
 
-module.Item.prototype.updateHidden_ = function() {
-  this.holderDiv.hidden = !this.visible_ || !this.enabled_;
+module.Control.prototype.updateHidden_ = function() {
+  this.div.hidden = !this.visible_ || !this.enabled_;
 }
 
-module.Item.prototype.setVisible = function(visible) {
+module.Control.prototype.setVisible = function(visible) {
   this.visible_ = visible;
   this.updateHidden_();
 }
 
-module.Item.prototype.isVisible = function() {
+module.Control.prototype.isVisible = function() {
   return this.visible_;
 }
 
-module.Item.prototype.setEnabled = function(enabled) {
+module.Control.prototype.setEnabled = function(enabled) {
   this.enabled_ = enabled;
   this.updateHidden_();
 }
 
-module.Item.prototype.isEnabled = function() {
+module.Control.prototype.isEnabled = function() {
   return this.enabled_;
 }
 
 module.Row = function(container, title, onchange) {
-  module.Item.call(this, container);
-  this.holderDiv.classList.add('settingRow');
+  module.Control.call(this, container);
+  this.div.classList.add('settingRow');
 
   var label = document.createElement('div');
   label.classList.add('settingName');
   label.innerHTML = title;
-  this.holderDiv.appendChild(label);
+  this.div.appendChild(label);
 
   this.settingDiv = document.createElement('div');
   this.settingDiv.classList.add('setting');
-  this.holderDiv.appendChild(this.settingDiv);
+  this.div.appendChild(this.settingDiv);
 
   this.onchange = onchange;
 }
 
-module.Row.prototype = Object.create(module.Item.prototype);
+module.Row.prototype = Object.create(module.Control.prototype);
 
 module.SelectRow = function(container, title, onchange, choiceSetting, descriptions) {
   module.Row.call(this, container, title, onchange);
@@ -114,7 +114,7 @@ module.NumberRow = function(container, title, onchange, numberSetting, formatter
   module.Row.call(this, container, title, onchange);
   this.valueLabel_ = document.createElement('div');
   this.valueLabel_.classList.add('settingValue');
-  this.holderDiv.appendChild(this.valueLabel_);
+  this.div.appendChild(this.valueLabel_);
 
   this.formatter_ = formatter;
   this.numberSetting = numberSetting;
@@ -207,11 +207,11 @@ module.ExponentialRangeRow.prototype.setValue_ = function(newValue) {
   this.range_.value = index;
 }
 
-module.Group = function(container) {
-  module.Item.call(this, container);
+module.Panel = function(container) {
+  module.Control.call(this, container);
 }
 
-module.Group.prototype = Object.create(module.Item.prototype);
+module.Panel.prototype = Object.create(module.Control.prototype);
 
 return module;
 

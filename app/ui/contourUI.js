@@ -3,19 +3,19 @@ ContourUI = (function() {
 "use strict";
 var module = {};
 
-module.FlatContourGroup_ = function(container, onchange, flatContour, isEnvelope,
+module.FlatContourPanel_ = function(container, onchange, flatContour, isEnvelope,
                                     formatter, steps) {
-  SettingsUI.Group.call(this, container);
+  SettingsUI.Panel.call(this, container);
   if (!isEnvelope)
     new SettingsUI.LinearRangeRow(this, Strings.kValue, onchange,
                                   flatContour.valueSetting, formatter, steps);
 }
 
-module.FlatContourGroup_.prototype = Object.create(SettingsUI.Group.prototype);
+module.FlatContourPanel_.prototype = Object.create(SettingsUI.Panel.prototype);
 
-module.OscillatingContourGroup_ = function(container, onchange, oscillatingContour,
+module.OscillatingContourPanel_ = function(container, onchange, oscillatingContour,
                                            isEnvelope, formatter, steps) {
-  SettingsUI.Group.call(this, container);
+  SettingsUI.Panel.call(this, container);
   if (!isEnvelope) {
     new SettingsUI.LinearRangeRow(this, Strings.kCenterValue, onchange,
                                   oscillatingContour.centerValueSetting, formatter, steps);
@@ -27,18 +27,18 @@ module.OscillatingContourGroup_ = function(container, onchange, oscillatingConto
                                      Strings.kMaxFormatter, 10);
 }
 
-module.OscillatingContourGroup_.prototype = Object.create(SettingsUI.Group.prototype);
+module.OscillatingContourPanel_.prototype = Object.create(SettingsUI.Panel.prototype);
 
-module.ADSRContourGroup_ = function(container, onchange, adsrContour,
+module.ADSRContourPanel_ = function(container, onchange, adsrContour,
                                     isEnvelope, formatter, steps) {
-  SettingsUI.Group.call(this, container);
+  SettingsUI.Panel.call(this, container);
 
-  var contourGroup = this;
+  var contourPanel = this;
   var createValueRow = function(title, setting) {
-    new SettingsUI.LinearRangeRow(contourGroup, title, onchange, setting, formatter, steps);
+    new SettingsUI.LinearRangeRow(contourPanel, title, onchange, setting, formatter, steps);
   }
   var createTimeRow = function(title, setting) {
-    new SettingsUI.ExponentialRangeRow(contourGroup, title, onchange, setting, Strings.kTimeFormatter, 10);
+    new SettingsUI.ExponentialRangeRow(contourPanel, title, onchange, setting, Strings.kTimeFormatter, 10);
   }
   if (!isEnvelope) {
     createValueRow(Strings.kInitialValue, adsrContour.initialValueSetting);
@@ -58,59 +58,58 @@ module.ADSRContourGroup_ = function(container, onchange, adsrContour,
   }
 }
 
-module.ADSRContourGroup_.prototype = Object.create(SettingsUI.Group.prototype);
+module.ADSRContourPanel_.prototype = Object.create(SettingsUI.Panel.prototype);
 
 var kTypeDescriptions = {};
 kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
 kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
 kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
-module.ContourGroup = function(container, title, onchange, contouredValue, formatter, steps, selected) {
-  SettingsUI.Group.call(this, container);
+module.ContourPanel = function(container, title, onchange, contouredValue, formatter, steps, selected) {
+  SettingsUI.Panel.call(this, container);
 
   this.contouredValue_ = contouredValue;
   this.onchange = onchange;
 
   this.contourRow_ = new SettingsUI.Row(this, title, null);
-  // TODO: rename holderDiv -> div
-  this.contourRow_.holderDiv.classList.add('contourGroupRow');
+  this.contourRow_.div.classList.add('contourPanelRow');
 
   var controller = this;
-  this.contourRow_.holderDiv.onclick = function() {
+  this.contourRow_.div.onclick = function() {
     controller.setSelected(!controller.selected_);
   }
 
-  this.contourRow_.holderDiv.onmouseenter = function() {
+  this.contourRow_.div.onmouseenter = function() {
     this.classList.add('hover');
   }
 
-  this.contourRow_.holderDiv.onmouseleave = function() {
+  this.contourRow_.div.onmouseleave = function() {
     this.classList.remove('hover');
   }
 
-  this.selectGroup_ = new SettingsUI.Group(this);
-  this.selectGroup_.holderDiv.classList.add('contourGroup');
+  this.selectPanel_ = new SettingsUI.Panel(this);
+  this.selectPanel_.div.classList.add('contourPanel');
 
   var changeHandler = function() {
     controller.showHideContours_();
     if (controller.onchange)
       controller.onchange();
   }
-  new SettingsUI.SelectRow(this.selectGroup_,
+  new SettingsUI.SelectRow(this.selectPanel_,
                            Strings.kType,
                            changeHandler,
                            contouredValue.currentContourSetting,
                            kTypeDescriptions);
-  this.flatGroup_ = new module.FlatContourGroup_(
-      this.selectGroup_, onchange,
+  this.flatPanel_ = new module.FlatContourPanel_(
+      this.selectPanel_, onchange,
       contouredValue.contoursByIdentifier[Contour.kFlatContour],
       contouredValue.isEnvelope, formatter, steps);
-  this.oscillatingGroup_ = new module.OscillatingContourGroup_(
-      this.selectGroup_, onchange,
+  this.oscillatingPanel_ = new module.OscillatingContourPanel_(
+      this.selectPanel_, onchange,
       contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
       contouredValue.isEnvelope, formatter, steps);
-  this.adsrGroup_ = new module.ADSRContourGroup_(
-      this.selectGroup_, onchange,
+  this.adsrPanel_ = new module.ADSRContourPanel_(
+      this.selectPanel_, onchange,
       contouredValue.contoursByIdentifier[Contour.kADSRContour],
       contouredValue.isEnvelope, formatter, steps);
 
@@ -118,22 +117,22 @@ module.ContourGroup = function(container, title, onchange, contouredValue, forma
   this.setSelected(selected);
 }
 
-module.ContourGroup.prototype = Object.create(SettingsUI.Group.prototype);
+module.ContourPanel.prototype = Object.create(SettingsUI.Panel.prototype);
 
-module.ContourGroup.prototype.showHideContours_ = function() {
+module.ContourPanel.prototype.showHideContours_ = function() {
   var current = this.contouredValue_.currentContourSetting.value
-  this.flatGroup_.setVisible(current == Contour.kFlatContour);
-  this.oscillatingGroup_.setVisible(current == Contour.kOscillatingContour);
-  this.adsrGroup_.setVisible(current == Contour.kADSRContour);
+  this.flatPanel_.setVisible(current == Contour.kFlatContour);
+  this.oscillatingPanel_.setVisible(current == Contour.kOscillatingContour);
+  this.adsrPanel_.setVisible(current == Contour.kADSRContour);
 }
 
-module.ContourGroup.prototype.setSelected = function(selected) {
+module.ContourPanel.prototype.setSelected = function(selected) {
   this.selected_ = selected;
   if (selected)
-    this.contourRow_.holderDiv.classList.add('selected');
+    this.contourRow_.div.classList.add('selected');
   else
-    this.contourRow_.holderDiv.classList.remove('selected');
-  this.selectGroup_.setVisible(selected);
+    this.contourRow_.div.classList.remove('selected');
+  this.selectPanel_.setVisible(selected);
 }
 
 return module;

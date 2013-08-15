@@ -131,25 +131,25 @@ div {
   padding-left: 12px;
 }
 
-.contourGroup .settingName {
+.contourPanel .settingName {
   width: 138px;
   padding-left: 24px;
 }
 
-.contourGroupRow .settingName {
+.contourPanelRow .settingName {
   background-image: url('assets/rightarrow.png');
   background-repeat: no-repeat;
   background-position: left -2px top 6px;
 }
 
-.contourGroupRow.hover {
+.contourPanelRow.hover {
   background-color: #f2f2f2;
 }
 
-.contourGroupRow.selected {
+.contourPanelRow.selected {
 }
 
-.contourGroupRow.selected .settingName {
+.contourPanelRow.selected .settingName {
   background-image: url('assets/downarrow.png');
   background-position: left -2px top 8px;
 }

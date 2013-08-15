@@ -77,24 +77,12 @@ function init() {
         categoriesEl,
         detailsEl,
         kFilterBID == selectedID));
-//    gInstrumentUIs.push(new FilterUI.UI(
-//        kFilterAID,
-//        gInstrument.filters[0], 'Filter A',
-//        categoriesEl,
-//        detailsEl,
-//        kFilterAID == selectedID));
-//    gInstrumentUIs.push(new FilterUI.UI(
-//        kFilterBID,
-//        gInstrument.filters[1], 'Filter B',
-//        categoriesEl,
-//        detailsEl,
-//        kFilterBID == selectedID));
-//    gInstrumentUIs.push(new EnvelopeUI.UI(
-//        kEnvelopeID,
-//        gInstrument, 'Envelope',
-//        categoriesEl,
-//        detailsEl,
-//        kEnvelopeID == selectedID));
+    gInstrumentUIs.push(new EnvelopeUI.UI(
+        kEnvelopeID,
+        gInstrument.envelopeContour, 'Envelope',
+        categoriesEl,
+        detailsEl,
+        kEnvelopeID == selectedID));
 
     gInstrumentUIs.forEach(function (ui) {
       ui.onclicked = categoryClicked;

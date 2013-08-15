@@ -93,7 +93,7 @@ div {
   background-position: left 7px top 4px;
 }
 
-#envelopeIcon {
+.envelopeIcon {
   background-image: url('assets/env.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;

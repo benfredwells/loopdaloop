@@ -3,21 +3,22 @@ EnvelopeUI = (function() {
 "use strict";
 var module = {};
 
-module.UI = function(id, instrument, title, categoriesEl, detailsEl, collapsed) {
-  this.id = id;
-  this.instrument_ = instrument;
-  this.title = title;
+module.UI = function(id, envelopeContour, title, categoriesEl, detailsEl, selected) {
+  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, selected);
+  this.envelopeContour_ = envelopeContour;
 
   var ui = this;
   var changeHandler = function() {
     ui.updateDisplay_();
   }
-  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, 'Envelope', this, collapsed);
-  this.controller_ = new ContourUI.ContourController(this.group_, Strings.kType, 0,
-                                                     instrument.envelopeContour,
-                                                     changeHandler, 100);
+  new ContourUI.ContourPanel(this.settings, Strings.kEnvelope,
+                             changeHandler, envelopeContour,
+                             null, 190);
+  this.setIconClass('envelopeIcon');
   changeHandler();
 }
+
+module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.updateDisplay_ = function() {
   //this.drawEnvelope_();

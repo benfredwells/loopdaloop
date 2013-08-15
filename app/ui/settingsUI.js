@@ -201,7 +201,7 @@ module.ExponentialRangeRow.prototype.setValue_ = function(newValue) {
     this.range_.value = 0;
     return;
   }
-  var exponent = (newValue - this.numberSetting_.min) / this.constant_;
+  var exponent = (newValue - this.numberSetting.min) / this.constant_;
   var index = Math.log(this.exponent_) / Math.log(this.base_);
   var index = Math.round((index - this.minExponent_) / this.exponentFactor_) + 1;
   this.range_.value = index;

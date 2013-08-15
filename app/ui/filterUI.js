@@ -40,8 +40,8 @@ module.UI.prototype.updateIcon_ = function() {
   var iconClass;
   if (this.filter_.enabledSetting.value) {
     switch (this.filter_.typeSetting.value) {
-      case Instrument.kLowPassFilter: iconClass = 'lowPassFitlerIcon'; break;
-      case Instrument.kHighPassFilter: iconClass = 'highPassFitlerIcon'; break;
+      case Instrument.kLowPassFilter: iconClass = 'lowPassFilterIcon'; break;
+      case Instrument.kHighPassFilter: iconClass = 'highPassFilterIcon'; break;
     }
   } else {
     iconClass = 'disabledFilterIcon';

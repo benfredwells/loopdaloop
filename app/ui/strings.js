@@ -12,7 +12,7 @@ module.Formatter = function(prefix, suffix) {
 module.kMaxFormatter = new module.Formatter('', ' of max');
 module.kPercentFormatter = new module.Formatter('', '%');
 module.kMultiplierFormatter = new module.Formatter('x', '');
-module.kSecondsFormatter = new module.Formatter('', 's');
+module.kSecondsFormatter = new module.Formatter('', ' s');
 
 module.kEnabled = 'Enabled';
 module.kType = 'Type';

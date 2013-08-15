@@ -172,8 +172,26 @@ div {
   color: #444;
   width: 140px;
   top: 0px;
+  margin-top: -4px;
 }
 
 .settingRow input {
   width: 140px;
+}
+
+.settingRow input[type="range"] {
+  -webkit-appearance:none;
+  height: 2px;
+  background-color: #ccc;
+  padding-top: 0px;
+  margin-top: 8px;
+  vertical-align: top;
+}
+
+.settingRow input::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:10px;
+  height:10px;
+  border-radius:10px;
+  background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #aaa), color-stop(0.49, #666), color-stop(0.51, #666), color-stop(1, #444) );
 }

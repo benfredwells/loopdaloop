@@ -38,7 +38,7 @@ module.ADSRContourPanel_ = function(container, onchange, adsrContour,
     new SettingsUI.LinearRangeRow(contourPanel, title, onchange, setting, formatter, steps);
   }
   var createTimeRow = function(title, setting) {
-    new SettingsUI.ExponentialRangeRow(contourPanel, title, onchange, setting, Strings.kTimeFormatter, 10);
+    new SettingsUI.ExponentialRangeRow(contourPanel, title, onchange, setting, Strings.kSecondsFormatter, 10);
   }
   if (!isEnvelope) {
     createValueRow(Strings.kInitialValue, adsrContour.initialValueSetting);

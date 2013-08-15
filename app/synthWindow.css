@@ -75,13 +75,13 @@ div {
   background-position: left 7px top 4px;
 }
 
-.lowPassIcon {
+.lowPassFilterIcon {
   background-image: url('assets/filter_low.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
-.highPassIcon {
+.highPassFilterIcon {
   background-image: url('assets/filter_high.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;

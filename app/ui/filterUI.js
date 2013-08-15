@@ -7,43 +7,46 @@ var kTypeDescriptions = {};
 kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
 kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
 
-module.UI = function(id, filter, title, categoriesEl, detailsEl, collapsed) {
-  this.id = id;
+module.UI = function(id, filter, title, categoriesEl, detailsEl, selected) {
+  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, selected);
   this.filter_ = filter;
-  this.title = title;
-
-  this.group_ = new SettingsUI.Group(categoriesEl, detailsEl, title, this, collapsed);
-  var s = SettingsUI.makeSubRow;
-  var g = this.group_;
 
   var ui = this;
   var changeHandler = function() {
     ui.updateDisplay_();
   }
+  new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, filter.enabledSetting);
 
-  this.enabledRow_ = g.addCheckRow(Strings.kEnabled, filter.enabledSetting, changeHandler);
-  this.typeRow_ = s(g.addSelectRow(Strings.kType, filter.typeSetting, changeHandler, kTypeDescriptions));
-  this.frequencyController_ = new ContourUI.ContourController(g, Strings.kFrequency, 1,
-                                                              filter.frequencyContour,
-                                                              changeHandler,
-                                                              190, Strings.kMultiplierFormatter);
-  this.qRow_ = s(g.addLinearRangeRow(Strings.kQ, filter.qSetting, changeHandler, 20));
+  this.enablePanel_ = new SettingsUI.Panel(this.settings);
+  new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, filter.typeSetting, kTypeDescriptions);
+  new ContourUI.ContourPanel(this.enablePanel_, Strings.kFrequency,
+                             changeHandler, filter.frequencyContour,
+                             Strings.kMultiplierFormatter, 190);
+  new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kQ, changeHandler, filter.qSetting, null, 20);
 
   this.response_ = [];
-  changeHandler();
+  this.updateDisplay_();
 }
 
+module.UI.prototype = Object.create(CategoryUI.UI.prototype);
+
 module.UI.prototype.updateDisplay_ = function() {
-  var r = SettingsUI.roundForDisplay;
-  this.enableDisable_();
+  this.enablePanel_.setEnabled(this.filter_.enabledSetting.value);;
+  this.updateIcon_();
   //this.drawResponse_();
 }
 
-module.UI.prototype.enableDisable_ = function() {
-  var enabled = this.filter_.enabledSetting.value;
-  this.typeRow_.enableDisable(enabled);
-  this.frequencyController_.enableDisable(enabled);
-  this.qRow_.enableDisable(enabled);
+module.UI.prototype.updateIcon_ = function() {
+  var iconClass;
+  if (this.filter_.enabledSetting.value) {
+    switch (this.filter_.typeSetting.value) {
+      case Instrument.kLowPassFilter: iconClass = 'lowPassFitlerIcon'; break;
+      case Instrument.kHighPassFilter: iconClass = 'highPassFitlerIcon'; break;
+    }
+  } else {
+    iconClass = 'disabledFilterIcon';
+  }
+  this.setIconClass(iconClass);
 }
 
 var kBounds = SettingsUI.kDisplayBounds;

@@ -65,6 +65,18 @@ function init() {
         categoriesEl,
         detailsEl,
         kOscillatorCID == selectedID));
+    gInstrumentUIs.push(new FilterUI.UI(
+        kFilterAID,
+        gInstrument.filters[0], 'Filter 1',
+        categoriesEl,
+        detailsEl,
+        kFilterAID == selectedID));
+    gInstrumentUIs.push(new FilterUI.UI(
+        kFilterBID,
+        gInstrument.filters[1], 'Filter 2',
+        categoriesEl,
+        detailsEl,
+        kFilterBID == selectedID));
 //    gInstrumentUIs.push(new FilterUI.UI(
 //        kFilterAID,
 //        gInstrument.filters[0], 'Filter A',

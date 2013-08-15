@@ -14,7 +14,7 @@ module.FlatContourGroup_ = function(container, onchange, flatContour, isEnvelope
 module.FlatContourGroup_.prototype = Object.create(SettingsUI.Group.prototype);
 
 module.OscillatingContourGroup_ = function(container, onchange, oscillatingContour,
-                                          isEnvelope, formatter, steps) {
+                                           isEnvelope, formatter, steps) {
   SettingsUI.Group.call(this, container);
   if (!isEnvelope) {
     new SettingsUI.LinearRangeRow(this, Strings.kCenterValue, onchange,
@@ -29,33 +29,36 @@ module.OscillatingContourGroup_ = function(container, onchange, oscillatingConto
 
 module.OscillatingContourGroup_.prototype = Object.create(SettingsUI.Group.prototype);
 
-////////////////////////////////////////////////////////////////////////////////
-// ContourController class, ADSR contour code
-module.ADSRGroup_ = function() {
-  var controller = this;
+module.ADSRContourGroup_ = function(container, onchange, adsrContour,
+                                    isEnvelope, formatter, steps) {
+  SettingsUI.Group.call(this, container);
+
+  var contourGroup = this;
+  var createValueRow = function(title, setting) {
+    new SettingsUI.LinearRangeRow(contourGroup, title, onchange, setting, formatter, steps);
+  }
   var createTimeRow = function(title, setting) {
-    return controller.group_.addExponentialRangeRow(title, setting, controller.contourChangeHandler, 10);
+    new SettingsUI.ExponentialRangeRow(contourGroup, title, onchange, setting, Strings.kTimeFormatter, 10);
   }
-  var adsrRows = [];
-  var adsrContour = this.contouredValue_.contoursByIdentifier[Contour.kADSRContour];
-  if (!this.contouredValue_.isEnvelope) {
-    this.addRow_(this.createValueRow_('Initial Value', adsrContour.initialValueSetting), adsrRows);
-    this.addRow_(createTimeRow('Attack Delay', adsrContour.attackDelaySetting), adsrRows);
+  if (!isEnvelope) {
+    createValueRow(Strings.kInitialValue, adsrContour.initialValueSetting);
+    createTimeRow(Strings.kAttackDelay, adsrContour.attackDelaySetting);
   }
-  this.addRow_(createTimeRow('Attack Time', adsrContour.attackTimeSetting), adsrRows);
-  if (!this.contouredValue_.isEnvelope) {
-    this.addRow_(this.createValueRow_('Attack Value', adsrContour.attackValueSetting), adsrRows);
+  createTimeRow(Strings.kAttackTime, adsrContour.attackTimeSetting);
+  if (!isEnvelope) {
+    createValueRow(Strings.kAttackValue, adsrContour.attackValueSetting);
   }
-  this.addRow_(createTimeRow('Attack Hold', adsrContour.attackHoldSetting), adsrRows);
-  this.addRow_(createTimeRow('Decay Time', adsrContour.decayTimeSetting), adsrRows);
-  this.addRow_(this.createValueRow_('Sustain Value', adsrContour.sustainValueSetting), adsrRows);
-  this.addRow_(createTimeRow('Sustain Hold', adsrContour.sustainHoldSetting), adsrRows);
-  this.addRow_(createTimeRow('Release Time', adsrContour.releaseTimeSetting), adsrRows);
-  if (!this.contouredValue_.isEnvelope) {
-    this.addRow_(this.createValueRow_('Final Value', adsrContour.finalValueSetting), adsrRows);
+  createTimeRow(Strings.kAttackHold, adsrContour.attackHoldSetting);
+  createTimeRow(Strings.kDecayTime, adsrContour.decayTimeSetting);
+  createValueRow(Strings.kSustainValue, adsrContour.sustainValueSetting);
+  createTimeRow(Strings.kSustainHold, adsrContour.sustainHoldSetting);
+  createTimeRow(Strings.kReleaseTime, adsrContour.releaseTimeSetting);
+  if (!isEnvelope) {
+    createValueRow(Strings.kFinalValue, adsrContour.finalValueSetting);
   }
-  this.rowsByContour_[Contour.kADSRContour] = adsrRows;
 }
+
+module.ADSRContourGroup_.prototype = Object.create(SettingsUI.Group.prototype);
 
 var kTypeDescriptions = {};
 kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
@@ -106,6 +109,10 @@ module.ContourGroup = function(container, title, onchange, contouredValue, forma
       this.selectGroup_, onchange,
       contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
       contouredValue.isEnvelope, formatter, steps);
+  this.adsrGroup_ = new module.ADSRContourGroup_(
+      this.selectGroup_, onchange,
+      contouredValue.contoursByIdentifier[Contour.kADSRContour],
+      contouredValue.isEnvelope, formatter, steps);
 
   this.showHideContours_();
   this.setSelected(selected);
@@ -117,6 +124,7 @@ module.ContourGroup.prototype.showHideContours_ = function() {
   var current = this.contouredValue_.currentContourSetting.value
   this.flatGroup_.setVisible(current == Contour.kFlatContour);
   this.oscillatingGroup_.setVisible(current == Contour.kOscillatingContour);
+  this.adsrGroup_.setVisible(current == Contour.kADSRContour);
 }
 
 module.ContourGroup.prototype.setSelected = function(selected) {

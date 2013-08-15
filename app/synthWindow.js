@@ -49,19 +49,19 @@ function init() {
     var detailsEl = document.getElementById('details');
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorAID,
-        gInstrument.oscillators[0], 'Oscillator A',
+        gInstrument.oscillators[0], 'Oscillator 1',
         categoriesEl,
         detailsEl,
         kOscillatorAID == selectedID));
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorBID,
-        gInstrument.oscillators[1], 'Oscillator B',
+        gInstrument.oscillators[1], 'Oscillator 2',
         categoriesEl,
         detailsEl,
         kOscillatorBID == selectedID));
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorCID,
-        gInstrument.oscillators[2], 'Oscillator C',
+        gInstrument.oscillators[2], 'Oscillator 3',
         categoriesEl,
         detailsEl,
         kOscillatorCID == selectedID));

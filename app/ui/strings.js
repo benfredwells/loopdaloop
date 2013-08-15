@@ -12,6 +12,7 @@ module.Formatter = function(prefix, suffix) {
 module.kMaxFormatter = new module.Formatter('', ' of max');
 module.kPercentFormatter = new module.Formatter('', '%');
 module.kMultiplierFormatter = new module.Formatter('x', '');
+module.kSecondsFormatter = new module.Formatter('', 's');
 
 module.kEnabled = 'Enabled';
 module.kType = 'Type';
@@ -38,6 +39,16 @@ module.kADSR = 'ADSR';
 
 module.kValue = 'Value';
 module.kCenterValue = 'Center Value';
+module.kInitialValue = 'Initial Value';
+module.kAttackDelay = 'Attack Delay';
+module.kAttackTime = 'Attack Time';
+module.kAttackValue = 'Attack Value';
+module.kAttackHold = 'Attack Hold';
+module.kDecayTime = 'Decay Time';
+module.kSustainValue = 'Sustain Value';
+module.kSustainHold = 'Sustain Hold';
+module.kReleaseTime = 'Release Time';
+module.kFinalValue = 'Final Value';
 
 return module;
 

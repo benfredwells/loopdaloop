@@ -76,9 +76,9 @@ module.ContourPanel = function(container, title, onchange, contouredValue, forma
 
   this.svgControl_ = new SVGUI.SVGControl(this.contourRow_.settingDiv, 'contourSVGDiv');
 
-  var controller = this;
+  var contourGroup = this;
   this.contourRow_.div.onclick = function() {
-    controller.setSelected(!controller.selected_);
+    contourGroup.setSelected(!contourGroup.selected_);
   }
 
   this.contourRow_.div.onmouseenter = function() {
@@ -93,9 +93,10 @@ module.ContourPanel = function(container, title, onchange, contouredValue, forma
   this.selectPanel_.div.classList.add('contourPanel');
 
   var changeHandler = function() {
-    controller.showHideContours_();
-    if (controller.onchange)
-      controller.onchange();
+    contourGroup.showHideContours_();
+    contourGroup.drawContour_();
+    if (contourGroup.onchange)
+      contourGroup.onchange();
   }
   new SettingsUI.SelectRow(this.selectPanel_,
                            Strings.kType,
@@ -103,19 +104,20 @@ module.ContourPanel = function(container, title, onchange, contouredValue, forma
                            contouredValue.currentContourSetting,
                            kTypeDescriptions);
   this.flatPanel_ = new module.FlatContourPanel_(
-      this.selectPanel_, onchange,
+      this.selectPanel_, changeHandler,
       contouredValue.contoursByIdentifier[Contour.kFlatContour],
       contouredValue.isEnvelope, formatter, steps);
   this.oscillatingPanel_ = new module.OscillatingContourPanel_(
-      this.selectPanel_, onchange,
+      this.selectPanel_, changeHandler,
       contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
       contouredValue.isEnvelope, formatter, steps);
   this.adsrPanel_ = new module.ADSRContourPanel_(
-      this.selectPanel_, onchange,
+      this.selectPanel_, changeHandler,
       contouredValue.contoursByIdentifier[Contour.kADSRContour],
       contouredValue.isEnvelope, formatter, steps);
 
   this.showHideContours_();
+  this.drawContour_();
   this.setSelected(selected);
 }
 
@@ -126,6 +128,11 @@ module.ContourPanel.prototype.showHideContours_ = function() {
   this.flatPanel_.setVisible(current == Contour.kFlatContour);
   this.oscillatingPanel_.setVisible(current == Contour.kOscillatingContour);
   this.adsrPanel_.setVisible(current == Contour.kADSRContour);
+}
+
+module.ContourPanel.prototype.drawContour_ = function() {
+  this.svgControl_.clear();
+  this.svgControl_.drawLine(0, 0, 100, 100, "#4040A0", 5);
 }
 
 module.ContourPanel.prototype.setSelected = function(selected) {

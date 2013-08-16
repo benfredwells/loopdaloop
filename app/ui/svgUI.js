@@ -88,6 +88,7 @@ module.SVGControl = function(container, divClass) {
   this.svg_ = document.createElementNS(svgns, "svg:svg");
   this.div.appendChild(this.svg_);
   this.div.classList.add(divClass);
+  this.primitives_ = [];
   // SVG Defs not currently used. Useful for gradients
   // and other reusable definitions.
   //this.svgDefs_ = doc.createElementNS(svgns,'defs');
@@ -96,16 +97,23 @@ module.SVGControl = function(container, divClass) {
 
 module.SVGControl.prototype = Object.create(SettingsUI.Control.prototype);
 
-module.SVGControl.createLine = function(x1, y1, x2, y2, color, width, doc, svg) {
-  var line = doc.createElementNS(svgns, "line");
+module.SVGControl.prototype.clear = function() {
+  this.primitives_.forEach(function (primitive) {
+    this.svg_.removeChild(primitive);
+  });
+  this.primitives_ = [];
+}
+
+module.SVGControl.prototype.drawLine = function(x1, y1, x2, y2, color, width) {
+  var line = document.createElementNS(svgns, "line");
   line.setAttribute("x1", svgNumberVal(x1));
   line.setAttribute("y1", svgNumberVal(y1));
   line.setAttribute("x2", svgNumberVal(x2));
   line.setAttribute("y2", svgNumberVal(y2));
   line.setAttribute("stroke", color);
   line.setAttribute("stroke-width", svgNumberVal(width));
-  svg.appendChild(line);
-  return line;
+  this.svg_.appendChild(line);
+  this.primitives_.push(line);
 }
 
 module.createRect = function(x, y, width, height, color, strokeWidth, fill, doc, svg) {

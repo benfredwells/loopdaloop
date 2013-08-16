@@ -151,7 +151,7 @@ div {
 
 .contourPanelRow.selected .settingName {
   background-image: url('assets/downarrow.png');
-  background-position: left -2px top 8px;
+  background-position: left -2px top 7px;
 }
 
 .setting {

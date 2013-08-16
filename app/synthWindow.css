@@ -167,6 +167,11 @@ div {
   vertical-align: top;
 }
 
+.contourSVGDiv {
+  height: 50px;
+  width: 150px;
+}
+
 .settingRow select {
   font-size: 13px;
   color: #444;

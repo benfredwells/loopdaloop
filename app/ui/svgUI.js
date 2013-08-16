@@ -1,4 +1,4 @@
-SVGUtils = (function() {
+SVGUI = (function() {
 
 "use strict";
 var module = {};
@@ -82,16 +82,21 @@ module.addCubicToPath = function(useDelta, path, x1, y1, x2, y2, x3, y3) {
   return path;
 }
 
-module.createSVG = function(doc, parent) {
-  var svg = doc.createElementNS(svgns, "svg:svg");
-  parent.appendChild(svg);
-  var defs = doc.createElementNS(svgns,'defs');
-  svg.appendChild(defs);
-  svg.defs = defs;
-  return svg;
+module.SVGControl = function(container, divClass) {
+  SettingsUI.Control.call(this, container);
+
+  this.svg_ = document.createElementNS(svgns, "svg:svg");
+  this.div.appendChild(this.svg_);
+  this.div.classList.add(divClass);
+  // SVG Defs not currently used. Useful for gradients
+  // and other reusable definitions.
+  //this.svgDefs_ = doc.createElementNS(svgns,'defs');
+  //svg.appendChild(defs);
 }
 
-module.createLine = function(x1, y1, x2, y2, color, width, doc, svg) {
+module.SVGControl.prototype = Object.create(SettingsUI.Control.prototype);
+
+module.SVGControl.createLine = function(x1, y1, x2, y2, color, width, doc, svg) {
   var line = doc.createElementNS(svgns, "line");
   line.setAttribute("x1", svgNumberVal(x1));
   line.setAttribute("y1", svgNumberVal(y1));

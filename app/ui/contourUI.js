@@ -74,6 +74,8 @@ module.ContourPanel = function(container, title, onchange, contouredValue, forma
   this.contourRow_ = new SettingsUI.Row(this, title, null);
   this.contourRow_.div.classList.add('contourPanelRow');
 
+  this.svgControl_ = new SVGUI.SVGControl(this.contourRow_.settingDiv, 'contourSVGDiv');
+
   var controller = this;
   this.contourRow_.div.onclick = function() {
     controller.setSelected(!controller.selected_);

@@ -51,6 +51,12 @@ module.kSustainHold = 'Sustain Hold';
 module.kReleaseTime = 'Release Time';
 module.kFinalValue = 'Final Value';
 
+module.kOscillator1 = 'Oscillator 1';
+module.kOscillator2 = 'Oscillator 2';
+module.kOscillator3 = 'Oscillator 3';
+module.kFilter1 = 'Filter 1';
+module.kFilter2 = 'Filter 2';
+
 return module;
 
 }());

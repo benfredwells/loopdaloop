@@ -12,6 +12,12 @@ var kMinChangeTime = 0.05;
 //   contourFinishTime = function(offTime) returns time
 
 ////////////////////////////////////////////////////////////////////////////////
+// Contour interface
+//   addContour = function(valueFunction, param, noteSection)
+//   averageValue = function(valueFunction)
+//   valueAtTime = function(time, noteOnTime)
+
+////////////////////////////////////////////////////////////////////////////////
 // BasicEnvelopeContourer class
 module.BasicEnvelopeContourer = function(param, value) {
   this.param_ = param;
@@ -52,6 +58,10 @@ module.FlatContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.valueSetting.value);
 }
 
+module.FlatContour.prototype.valueAtTime = function(time, noteOnTime) {
+  return this.valueSetting.value;  
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillating contour
 module.OscillatingContour = function(valueSetting, contouredValue) {
@@ -87,6 +97,10 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
 
 module.OscillatingContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.centerValueSetting.value);
+}
+
+module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
+  return this.centerValueSetting.value;  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,6 +173,10 @@ module.ADSRContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.sustainValueSetting.value);
 }
 
+module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
+  return this.sustainValueSetting.value;  
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Identifiers for contour types
 module.kFlatContour = 'flat';
@@ -186,6 +204,10 @@ module.ContouredValue.prototype.initContour_ = function(identifier, contour) {
 
 module.ContouredValue.prototype.currentContour = function() {
   return this.contoursByIdentifier[this.currentContourSetting.value];
+}
+
+module.ContouredValue.prototype.valueAtTime = function(time, noteOnTime) {
+  return this.currentContour.valueAtTime(time, noteOnTime);
 }
 
 return module;

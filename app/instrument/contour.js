@@ -173,7 +173,7 @@ module.ADSRContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.sustainValueSetting.value);
 }
 
-module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
+module.ADSRContour.prototype.valueAtTime = function(time, noteOnTime) {
   return this.sustainValueSetting.value;  
 }
 
@@ -188,6 +188,8 @@ module.kContourTypes = [module.kFlatContour, module.kOscillatingContour, module.
 // Contoured value
 module.ContouredValue = function(context, valueSetting, isEnvelope) {
   this.isEnvelope = isEnvelope;
+  this.min = valueSetting.min;
+  this.max = valueSetting.max;
   this.context_ = context;
   this.currentContourSetting = new Setting.Choice(module.kContourTypes);
   this.contours_ = [];
@@ -207,7 +209,7 @@ module.ContouredValue.prototype.currentContour = function() {
 }
 
 module.ContouredValue.prototype.valueAtTime = function(time, noteOnTime) {
-  return this.currentContour.valueAtTime(time, noteOnTime);
+  return this.currentContour().valueAtTime(time, noteOnTime);
 }
 
 return module;

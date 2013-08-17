@@ -3,14 +3,6 @@ SettingsUI = (function() {
 "use strict";
 var module = {};
 
-module.kDisplayBounds = {};
-module.kDisplayBounds.x = 201;
-module.kDisplayBounds.y = 51;
-
-module.kDisplayMid = {};
-module.kDisplayMid.x = 100.5;
-module.kDisplayMid.y = 25.5;
-
 function roundForDisplay(number) {
   return Math.round(number * 100) / 100;
 }

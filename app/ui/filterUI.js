@@ -49,6 +49,7 @@ module.UI.prototype.updateIcon_ = function() {
   this.setIconClass(iconClass);
 }
 
+/*
 var kBounds = SettingsUI.kDisplayBounds;
 var kMid = SettingsUI.kDisplayMid;
 var kXPadding = 12.5;
@@ -141,6 +142,8 @@ module.UI.prototype.drawResponse_ = function() {
                                               kPhaseColor, kPhaseWidth, "none",
                                               this.group_.svgDoc, this.group_.svg));
 }
+
+*/
 
 return module;
 

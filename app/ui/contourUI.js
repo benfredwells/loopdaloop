@@ -130,9 +130,35 @@ module.ContourPanel.prototype.showHideContours_ = function() {
   this.adsrPanel_.setVisible(current == Contour.kADSRContour);
 }
 
+var kXSize = 200;
+var kYSize = 50;
+var kXPadding = 2;
+var kYPadding = 4;
+var kXStep = 0.5;
+var kNoteOn = 2;
+var kRelease = 2;
+var kBackgroundStroke = "#F2F2F2";
+var kBackgroundStrokeWidth = 2;
+var kBackgroundFill = "none";
+var kContourStroke = "#4040A0";
+var kContourStrokeWidth = 2;
+var kContourFill = "none";
+
 module.ContourPanel.prototype.drawContour_ = function() {
   this.svgControl_.clear();
-  this.svgControl_.drawLine(0, 0, 100, 100, "#4040A0", 5);
+  this.svgControl_.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
+  var pointList = new SVGUI.PointList();
+  var pointCount = (kXSize - 2 * kXPadding) / kXStep;
+  for (var i = 0; i < pointCount; i++) {
+    var x = kXPadding + (i * kXStep);
+    var time = (kNoteOn + kRelease) * i / pointCount;
+    var value = this.contouredValue_.valueAtTime(time, kNoteOn);
+    var relativeValue = (value - this.contouredValue_.min) /
+                        (this.contouredValue_.max - this.contouredValue_.min);
+    var y = kYSize - kYPadding - relativeValue * (kYSize - 2 * kYPadding);
+    pointList.addPoint(x, y);
+  }
+  this.svgControl_.drawPolyLine(pointList, kContourStroke, kContourStrokeWidth, kContourFill);
 }
 
 module.ContourPanel.prototype.setSelected = function(selected) {

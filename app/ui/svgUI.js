@@ -25,8 +25,8 @@ module.PointList.prototype.addPoint = function(x, y) {
 
 module.PointList.prototype.value = function() {
   var pointVals = [];
-  for (var i = 0; i < points.length; i++) {
-    pointVals.push(svgPointVal(points[i]));
+  for (var i = 0; i < this.points_.length; i++) {
+    pointVals.push(svgPointVal(this.points_[i]));
   }
   return pointVals.join(" ");
 }
@@ -47,8 +47,9 @@ module.SVGControl = function(container, divClass) {
 module.SVGControl.prototype = Object.create(SettingsUI.Control.prototype);
 
 module.SVGControl.prototype.clear = function() {
+  var svgControl = this;
   this.primitives_.forEach(function (primitive) {
-    this.svg_.removeChild(primitive);
+    svgControl.svg_.removeChild(primitive);
   });
   this.primitives_ = [];
 }
@@ -65,21 +66,21 @@ module.SVGControl.prototype.drawLine = function(x1, y1, x2, y2, color, width) {
   this.primitives_.push(line);
 }
 
-module.drawRect = function(x, y, width, height, color, strokeWidth, fill) {
-  var line = document.createElementNS(svgns, "rect");
-  line.setAttribute("x", svgNumberVal(x));
-  line.setAttribute("y", svgNumberVal(y));
-  line.setAttribute("width", svgNumberVal(width));
-  line.setAttribute("height", svgNumberVal(height));
-  line.setAttribute("stroke", color);
-  line.setAttribute("stroke-width", svgNumberVal(strokeWidth));
-  line.setAttribute("fill", fill);
-  this.svg_.appendChild(line);
-  this.primitives_.push(line);;
+module.SVGControl.prototype.drawRect = function(x, y, width, height, color, strokeWidth, fill) {
+  var rect = document.createElementNS(svgns, "rect");
+  rect.setAttribute("x", svgNumberVal(x));
+  rect.setAttribute("y", svgNumberVal(y));
+  rect.setAttribute("width", svgNumberVal(width));
+  rect.setAttribute("height", svgNumberVal(height));
+  rect.setAttribute("stroke", color);
+  rect.setAttribute("stroke-width", svgNumberVal(strokeWidth));
+  rect.setAttribute("fill", fill);
+  this.svg_.appendChild(rect);
+  this.primitives_.push(rect);;
 }
 
-module.drawPolyLine = function(pointList, color, width, fill, doc, svg) {
-  var line = doc.createElementNS(svgns, "polyline");
+module.SVGControl.prototype.drawPolyLine = function(pointList, color, width, fill) {
+  var line = document.createElementNS(svgns, "polyline");
   line.setAttribute("points", pointList.value());
   line.setAttribute("stroke", color);
   line.setAttribute("stroke-width", svgNumberVal(width));

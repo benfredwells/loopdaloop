@@ -54,6 +54,8 @@ module.UI.prototype.updateIcon_ = function() {
   this.setIconClass(iconClass);
 }
 
+/*
+
 var kBounds = SettingsUI.kDisplayBounds;
 var kMid = SettingsUI.kDisplayMid;
 var kAxisColor = "#999";
@@ -199,6 +201,7 @@ module.UI.prototype.drawWave_ = function() {
     case Instrument.kTriangleWave: this.drawTriangleWave_(); break;
   }
 }
+*/
 
 return module;
 

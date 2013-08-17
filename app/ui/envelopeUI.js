@@ -24,6 +24,8 @@ module.UI.prototype.updateDisplay_ = function() {
   //this.drawEnvelope_();
 }
 
+/*
+
 var kBounds = SettingsUI.kDisplayBounds;
 var kMid = SettingsUI.kDisplayMid;
 var kAxisColor = "#999";
@@ -120,6 +122,7 @@ module.UI.prototype.drawEnvelope_ = function() {
                                       kSustainColor, kEnvelopeStrokeWidth,
                                       this.group_.svgDoc, this.group_.svg);
 }
+*/
 
 return module;
 

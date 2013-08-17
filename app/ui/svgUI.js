@@ -12,13 +12,89 @@ function svgPointVal(point) {
   return svgNumberVal(point.x) + "," + svgNumberVal(point.y);
 }
 
-function svgPointArrayVal(points) {
+module.PointList = function() {
+  this.points_ = [];
+}
+
+module.PointList.prototype.addPoint = function(x, y) {
+  var point = {};
+  point.x = x;
+  point.y = y;
+  this.points_.push(point);
+}
+
+module.PointList.prototype.value = function() {
   var pointVals = [];
   for (var i = 0; i < points.length; i++) {
     pointVals.push(svgPointVal(points[i]));
   }
   return pointVals.join(" ");
 }
+
+module.SVGControl = function(container, divClass) {
+  SettingsUI.Control.call(this, container);
+
+  this.svg_ = document.createElementNS(svgns, "svg:svg");
+  this.div.appendChild(this.svg_);
+  this.div.classList.add(divClass);
+  this.primitives_ = [];
+  // SVG Defs not currently used. Useful for gradients
+  // and other reusable definitions.
+  //this.svgDefs_ = doc.createElementNS(svgns,'defs');
+  //svg.appendChild(defs);
+}
+
+module.SVGControl.prototype = Object.create(SettingsUI.Control.prototype);
+
+module.SVGControl.prototype.clear = function() {
+  this.primitives_.forEach(function (primitive) {
+    this.svg_.removeChild(primitive);
+  });
+  this.primitives_ = [];
+}
+
+module.SVGControl.prototype.drawLine = function(x1, y1, x2, y2, color, width) {
+  var line = document.createElementNS(svgns, "line");
+  line.setAttribute("x1", svgNumberVal(x1));
+  line.setAttribute("y1", svgNumberVal(y1));
+  line.setAttribute("x2", svgNumberVal(x2));
+  line.setAttribute("y2", svgNumberVal(y2));
+  line.setAttribute("stroke", color);
+  line.setAttribute("stroke-width", svgNumberVal(width));
+  this.svg_.appendChild(line);
+  this.primitives_.push(line);
+}
+
+module.drawRect = function(x, y, width, height, color, strokeWidth, fill) {
+  var line = document.createElementNS(svgns, "rect");
+  line.setAttribute("x", svgNumberVal(x));
+  line.setAttribute("y", svgNumberVal(y));
+  line.setAttribute("width", svgNumberVal(width));
+  line.setAttribute("height", svgNumberVal(height));
+  line.setAttribute("stroke", color);
+  line.setAttribute("stroke-width", svgNumberVal(strokeWidth));
+  line.setAttribute("fill", fill);
+  this.svg_.appendChild(line);
+  this.primitives_.push(line);;
+}
+
+module.drawPolyLine = function(pointList, color, width, fill, doc, svg) {
+  var line = doc.createElementNS(svgns, "polyline");
+  line.setAttribute("points", pointList.value());
+  line.setAttribute("stroke", color);
+  line.setAttribute("stroke-width", svgNumberVal(width));
+  line.setAttribute("fill", fill);
+  this.svg_.appendChild(line);
+  this.primitives_.push(line);
+  return line;
+}
+
+return module;
+
+})();
+
+/*
+Old stuff, might be handy later.
 
 function channelToHex(channel) {
   var hex = Math.round(channel).toString(16);
@@ -57,13 +133,6 @@ module.interpolateColors = function(colorAt0, colorAt1, pos) {
   return rgbToColor(rgb);
 }
 
-module.addPointToArray = function(x, y, array) {
-  var point = {};
-  point.x = x;
-  point.y = y;
-  array.push(point);
-}
-
 module.startPath = function(x, y) {
   var path = "M" + svgNumberVal(x) + " " + svgNumberVal(y) + " ";
   return path;
@@ -80,63 +149,6 @@ module.addCubicToPath = function(useDelta, path, x1, y1, x2, y2, x3, y3) {
   module.addPointToArray(x3, y3, points);
   path = path + svgPointArrayVal(points) + " ";
   return path;
-}
-
-module.SVGControl = function(container, divClass) {
-  SettingsUI.Control.call(this, container);
-
-  this.svg_ = document.createElementNS(svgns, "svg:svg");
-  this.div.appendChild(this.svg_);
-  this.div.classList.add(divClass);
-  this.primitives_ = [];
-  // SVG Defs not currently used. Useful for gradients
-  // and other reusable definitions.
-  //this.svgDefs_ = doc.createElementNS(svgns,'defs');
-  //svg.appendChild(defs);
-}
-
-module.SVGControl.prototype = Object.create(SettingsUI.Control.prototype);
-
-module.SVGControl.prototype.clear = function() {
-  this.primitives_.forEach(function (primitive) {
-    this.svg_.removeChild(primitive);
-  });
-  this.primitives_ = [];
-}
-
-module.SVGControl.prototype.drawLine = function(x1, y1, x2, y2, color, width) {
-  var line = document.createElementNS(svgns, "line");
-  line.setAttribute("x1", svgNumberVal(x1));
-  line.setAttribute("y1", svgNumberVal(y1));
-  line.setAttribute("x2", svgNumberVal(x2));
-  line.setAttribute("y2", svgNumberVal(y2));
-  line.setAttribute("stroke", color);
-  line.setAttribute("stroke-width", svgNumberVal(width));
-  this.svg_.appendChild(line);
-  this.primitives_.push(line);
-}
-
-module.createRect = function(x, y, width, height, color, strokeWidth, fill, doc, svg) {
-  var line = doc.createElementNS(svgns, "rect");
-  line.setAttribute("x", svgNumberVal(x));
-  line.setAttribute("y", svgNumberVal(y));
-  line.setAttribute("width", svgNumberVal(width));
-  line.setAttribute("height", svgNumberVal(height));
-  line.setAttribute("stroke", color);
-  line.setAttribute("stroke-width", svgNumberVal(strokeWidth));
-  line.setAttribute("fill", fill);
-  svg.appendChild(line);
-  return line;
-}
-
-module.createPolyLine = function(points, color, width, fill, doc, svg) {
-  var line = doc.createElementNS(svgns, "polyline");
-  line.setAttribute("points", svgPointArrayVal(points));
-  line.setAttribute("stroke", color);
-  line.setAttribute("stroke-width", svgNumberVal(width));
-  line.setAttribute("fill", fill);
-  svg.appendChild(line);
-  return line;
 }
 
 module.createPath = function(path, color, width, doc, svg) {
@@ -161,6 +173,4 @@ module.createCircle = function(cx, cy, r, color, width, fill, doc, svg) {
   return circle;
 }
 
-return module;
-
-})();
+*/

@@ -139,7 +139,8 @@ div {
 .contourPanelRow .settingName {
   background-image: url('assets/rightarrow.png');
   background-repeat: no-repeat;
-  background-position: left -2px top 6px;
+  background-position: left -2px top 22px;
+  padding-top: 20px;
 }
 
 .contourPanelRow.hover {
@@ -151,7 +152,7 @@ div {
 
 .contourPanelRow.selected .settingName {
   background-image: url('assets/downarrow.png');
-  background-position: left -2px top 7px;
+  background-position: left -2px top 23px;
 }
 
 .setting {

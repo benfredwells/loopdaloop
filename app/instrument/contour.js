@@ -100,7 +100,10 @@ module.OscillatingContour.prototype.averageValue = function(valueFunction) {
 }
 
 module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
-  return this.centerValueSetting.value;  
+  var base = this.centerValueSetting.value;
+  var amplitude = base * this.amplitudeSetting.value;
+  var periods = time * this.frequencySetting.value;
+  return base + amplitude * Math.sin(2 * Math.PI * periods);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

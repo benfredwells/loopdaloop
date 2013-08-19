@@ -39,7 +39,8 @@ module.kOscillating = 'Oscillating';
 module.kADSR = 'ADSR';
 
 module.kValue = 'Value';
-module.kCenterValue = 'Center Value';
+module.kMax = 'Maximum Value';
+module.kMin = 'Minimum Value';
 module.kInitialValue = 'Initial Value';
 module.kAttackDelay = 'Attack Delay';
 module.kAttackTime = 'Attack Time';

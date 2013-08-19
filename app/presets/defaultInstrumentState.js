@@ -29,8 +29,8 @@ module.Default = function() {
               value: 4
             },
             oscillating: {
-              centerValue: 4,
-              amplitude: 0.1,
+              maxValue: 5,
+              minValue: 3,
               frequency: 1
             },
             adsr: {
@@ -56,8 +56,8 @@ module.Default = function() {
               value: 4
             },
             oscillating: {
-              centerValue: 4,
-              amplitude: 0.1,
+              maxValue: 5,
+              minValue: 3,
               frequency: 1
             },
             adsr: {

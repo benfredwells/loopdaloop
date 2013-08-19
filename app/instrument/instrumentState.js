@@ -41,8 +41,8 @@ module.updateOscillatingContour = function(oscillatingContour, oscillatingContou
     oscillatingContourState = {};
   }
   var o = oscillatingContour;
-  updateSettingWithMidDefault(o.centerValueSetting, oscillatingContourState.centerValue);
-  updateSettingWithMinDefault(o.amplitudeSetting, oscillatingContourState.amplitude);
+  updateSettingWithMidDefault(o.maxValueSetting, oscillatingContourState.maxValue);
+  updateSettingWithMidDefault(o.minValueSetting, oscillatingContourState.minValue);
   updateSettingWithMinDefault(o.frequencySetting, oscillatingContourState.frequency);
 }
 

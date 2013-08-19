@@ -17,14 +17,13 @@ module.OscillatingContourPanel_ = function(container, onchange, oscillatingConto
                                            isEnvelope, formatter, steps) {
   SettingsUI.Panel.call(this, container);
   if (!isEnvelope) {
-    new SettingsUI.LinearRangeRow(this, Strings.kCenterValue, onchange,
-                                  oscillatingContour.centerValueSetting, formatter, steps);
+    new SettingsUI.LinearRangeRow(this, Strings.kMax, onchange,
+                                  oscillatingContour.maxValueSetting, formatter, steps);
   }
+  new SettingsUI.LinearRangeRow(this, Strings.kMin, onchange,
+                                oscillatingContour.minValueSetting, formatter, steps);
   new SettingsUI.ExponentialRangeRow(this, Strings.kSpeed, onchange,
                                      oscillatingContour.frequencySetting, null, 20);
-  new SettingsUI.ExponentialRangeRow(this, Strings.kAmplitude, onchange,
-                                     oscillatingContour.amplitudeSetting,
-                                     Strings.kMaxFormatter, 10);
 }
 
 module.OscillatingContourPanel_.prototype = Object.create(SettingsUI.Panel.prototype);

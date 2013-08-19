@@ -66,14 +66,23 @@ module.FlatContour.prototype.valueAtTime = function(time, noteOnTime) {
 // Oscillating contour
 module.OscillatingContour = function(valueSetting, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.centerValueSetting = Setting.copyNumber(valueSetting);
-  // TODO: make amplitude a constrained value
-  this.amplitudeSetting = new Setting.Number(0, 1);
+  this.minValueSetting = Setting.copyNumber(valueSetting);
+  this.maxValueSetting = Setting.copyNumber(valueSetting);
+  this.maxValueSetting.value = this.maxValueSetting.max;
+  this.minValueSetting.value = this.minValueSetting.min;
   this.frequencySetting = new Setting.Number(0, 100);
 }
 
+module.OscillatingContour.prototype.rawCenterValue_ = function() {
+  return (this.minValueSetting.value + this.maxValueSetting.value) / 2;
+}
+
+module.OscillatingContour.prototype.rawAmplitude_ = function() {
+  return (this.maxValueSetting.value - this.minValueSetting.value) / 2;
+}
+
 module.OscillatingContour.prototype.addContour = function(valueFunction, param, noteSection) {
-  var centerValue = valueFunction(this.centerValueSetting.value);
+  var centerValue = valueFunction(this.rawCenterValue_());
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(param, centerValue));
   else
@@ -85,7 +94,7 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
   oscillator.frequency.value = this.frequencySetting.value;
   noteSection.addOscillator(oscillator);
   var gain = this.contouredValue_.context_.createGainNode();
-  var amplitudeValue = this.amplitudeSetting.value * centerValue;
+  var amplitudeValue = valueFunction(this.rawAmplitude_());
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(gain.gain, amplitudeValue));
   else
@@ -96,14 +105,12 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
 }
 
 module.OscillatingContour.prototype.averageValue = function(valueFunction) {
-  return valueFunction(this.centerValueSetting.value);
+  return valueFunction(this.rawCenterValue_());
 }
 
 module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
-  var base = this.centerValueSetting.value;
-  var amplitude = base * this.amplitudeSetting.value;
   var periods = time * this.frequencySetting.value;
-  return base + amplitude * Math.sin(2 * Math.PI * periods);
+  return this.rawCenterValue_() + this.rawAmplitude_() * Math.sin(2 * Math.PI * periods);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

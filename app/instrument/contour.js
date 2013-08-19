@@ -183,8 +183,51 @@ module.ADSRContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.sustainValueSetting.value);
 }
 
+module.ADSRContour.prototype.interpolatedValue_ = function(time, startTime, endTime,
+                                                           startValue, endValue) {
+  var relTime = (time - startTime) / (endTime - startTime);
+  return startValue + (endValue - startValue) * relTime;
+}
+
+module.ADSRContour.prototype.onValueAtTime_ = function(time) {
+  var nextTime = this.attackDelaySetting.value;
+  if (time < nextTime)
+    return this.initialValueSetting.value;
+
+  var lastTime = nextTime;
+  nextTime += this.attackTimeSetting.value;
+  if (time < nextTime)
+    return this.interpolatedValue_(time, lastTime, nextTime,
+                                   this.initialValueSetting.value, this.attackValueSetting.value);
+
+  nextTime += this.attackHoldSetting.value;
+  if (time < nextTime)
+    return this.attackValueSetting.value;
+
+  lastTime = nextTime;
+  nextTime += this.decayTimeSetting.value;
+  if (time < nextTime)
+    return this.interpolatedValue_(time, lastTime, nextTime,
+                                   this.attackValueSetting.value, this.sustainValueSetting.value);
+
+  return this.sustainValueSetting.value;
+}
+
 module.ADSRContour.prototype.valueAtTime = function(time, noteOnTime) {
-  return this.sustainValueSetting.value;  
+  if (time <= noteOnTime)
+    return this.onValueAtTime_(time);
+
+  var sustainValue = this.onValueAtTime_(noteOnTime);
+  var offTime = time - noteOnTime;
+  if (offTime < this.sustainHoldSetting.value)
+    return sustainValue;
+
+  var finishTime = this.sustainHoldSetting.value + this.releaseTimeSetting.value;
+  if (offTime < finishTime)
+    return this.interpolatedValue_(offTime, this.sustainHoldSetting.value, finishTime,
+                                   sustainValue, this.finalValueSetting.value);
+
+  return this.finalValueSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

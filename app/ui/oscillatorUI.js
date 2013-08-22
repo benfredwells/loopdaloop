@@ -3,6 +3,26 @@ OscillatorUI = (function() {
 "use strict";
 var module = {};
 
+module.OscillatorVisualizer_ = function(container) {
+  SVGUI.SVGControl.call(this, container);
+  this.div.classList.add('categoryDisplay');
+}
+
+module.OscillatorVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
+
+var kXSize = 200;
+var kYSize = 50;
+var kXPadding = 2;
+var kYPadding = 4;
+var kBackgroundStroke = "#CCCCCC";
+var kBackgroundStrokeWidth = 2;
+var kBackgroundFill = "none";
+
+module.OscillatorVisualizer_.prototype.drawOscillator_ = function() {
+  this.clear();
+  this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
+}
+
 var kTypeDescriptions = {};
 kTypeDescriptions[Instrument.kSineWave] = Strings.kSine;
 kTypeDescriptions[Instrument.kSquareWave] = Strings.kSquare;
@@ -13,9 +33,12 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, selected);
   this.oscillator_ = oscillator;
 
+  this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv)
+
   var ui = this;
   var changeHandler = function() {
     ui.updateDisplay_();
+    ui.visualizer_.drawOscillator_();
   }
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
 
@@ -28,6 +51,7 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
                              changeHandler, oscillator.gainContour,
                              null, 10, false);
 
+  this.visualizer_.drawOscillator_();
   this.updateDisplay_();
 }
 

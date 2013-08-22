@@ -42,16 +42,16 @@ module.Control.prototype.isEnabled = function() {
 
 module.Row = function(container, title, onchange) {
   module.Control.call(this, container);
-  this.div.classList.add('settingRow');
+  this.div.classList.add('row');
 
-  var label = document.createElement('div');
-  label.classList.add('settingName');
-  label.innerHTML = title;
-  this.div.appendChild(label);
+  this.label = document.createElement('div');
+  this.label.classList.add('rowName');
+  this.label.innerHTML = title;
+  this.div.appendChild(this.label);
 
-  this.settingDiv = document.createElement('div');
-  this.settingDiv.classList.add('setting');
-  this.div.appendChild(this.settingDiv);
+  this.controlDiv = document.createElement('div');
+  this.controlDiv.classList.add('rowControl');
+  this.div.appendChild(this.controlDiv);
 
   this.onchange = onchange;
 }
@@ -62,7 +62,7 @@ module.SelectRow = function(container, title, onchange, choiceSetting, descripti
   module.Row.call(this, container, title, onchange);
 
   var select = document.createElement('select');
-  this.settingDiv.appendChild(select);
+  this.controlDiv.appendChild(select);
   for (var i = 0; i < choiceSetting.choices.length; i++) {
     var option = document.createElement('option');
     option.value = choiceSetting.choices[i];
@@ -87,7 +87,7 @@ module.CheckRow = function(container, title, onchange, booleanSetting) {
   var check = document.createElement('input');
   check.type = 'checkbox';
   check.classList.add('setting');
-  this.settingDiv.appendChild(check);
+  this.controlDiv.appendChild(check);
 
   var row = this;
   check.onchange = function() {
@@ -105,7 +105,7 @@ module.CheckRow.prototype = Object.create(module.Row.prototype);
 module.NumberRow = function(container, title, onchange, numberSetting, formatter) {
   module.Row.call(this, container, title, onchange);
   this.valueLabel_ = document.createElement('div');
-  this.valueLabel_.classList.add('settingValue');
+  this.valueLabel_.classList.add('rowValue');
   this.div.appendChild(this.valueLabel_);
 
   this.formatter_ = formatter;
@@ -132,7 +132,7 @@ module.LinearRangeRow = function(container, title, onchange, numberSetting, form
   range.min = 0;
   range.max = steps;
   range.classList.add('setting');
-  this.settingDiv.appendChild(range);
+  this.controlDiv.appendChild(range);
 
   var factor = (max - min) / steps;
 
@@ -163,7 +163,7 @@ module.ExponentialRangeRow = function(container, title, onchange, numberSetting,
   this.range_.min = 0;
   this.range_.max = steps + 1; // add one for the minimum value
   this.range_.classList.add('setting');
-  this.settingDiv.appendChild(this.range_);
+  this.controlDiv.appendChild(this.range_);
 
   var row = this;
   this.range_.onchange = function() {

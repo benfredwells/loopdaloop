@@ -89,7 +89,6 @@ function init() {
 // Temporary hack continued
 //    });
 
-    updateTitle();
     updateSize();
   });
 
@@ -108,20 +107,12 @@ function saveState() {
   chrome.storage.local.set(setting);
 }
 
-function updateTitle(ui) {
-  gInstrumentUIs.forEach(function (ui) {
-    if (ui.isSelected())
-      document.getElementById('synthesizerItemTitle').innerHTML = ui.title;
-  });
-}
-
 function categoryClicked(sender) {
   gInstrumentUIs.forEach(function (ui) {
     if (ui != sender) {
       ui.setSelected(false);
     }
   });
-  updateTitle();
   updateSize();
   saveState();
 }

@@ -13,7 +13,7 @@ div {
   height: 42px;
 }
 
-.synthCategory {
+.category {
   width: 46px;
   height: 40px;
   border-width: 1px;
@@ -24,16 +24,16 @@ div {
   background-image: -webkit-linear-gradient( 90deg, white, #DDD);
 }
 
-.synthCategory.hover {
+.category.hover {
   background-image: -webkit-linear-gradient( 90deg, #eee, #DDD);
 }
 
-.synthCategory.selected {
+.category.selected {
   background-image: none;
   border-bottom-color: #fff;
 }
 
-.synthCategoryIcon {
+.categoryIcon {
   height: 38px;
   width: 44px;
   border: none;
@@ -99,13 +99,6 @@ div {
   background-position: left 7px top 4px;
 }
 
-#synthesizerItemTitle {
-  font-size: 15px;
-  margin-top: 8px;
-  margin-bottom: 16px;
-  padding-left: 4px;
-}
-
 #details {
   background-color: #fff;
   width: 394px;
@@ -117,13 +110,13 @@ div {
   margin-top: -1px;
 }
 
-.settingRow {
+.row {
   min-height: 26px;
   padding-left: 4px;
   padding-right: 4px;
 }
 
-.settingName {
+.rowName {
   display: inline-block;
   padding-top: 4px;
   width: 150px;
@@ -131,12 +124,37 @@ div {
   padding-left: 12px;
 }
 
-.contourPanel .settingName {
+.rowControl {
+  display: inline-block;
+  padding-top: 4px;
+  width: 150px;
+}
+
+.rowValue {
+  display: inline-block;
+  padding-top: 4px;
+  width: 74px;
+  vertical-align: top;
+}
+
+.rowName.categoryName {
+  font-size: 15px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+
+.categoryDisplay {
+  height: 50px;
+  width: 200px;
+}
+
+.contourPanel .rowName {
   width: 138px;
   padding-left: 24px;
 }
 
-.contourPanelRow .settingName {
+.contourPanelRow .rowName {
   background-image: url('assets/rightarrow.png');
   background-repeat: no-repeat;
   background-position: left -2px top 22px;
@@ -150,30 +168,17 @@ div {
 .contourPanelRow.selected {
 }
 
-.contourPanelRow.selected .settingName {
+.contourPanelRow.selected .rowName {
   background-image: url('assets/downarrow.png');
   background-position: left -2px top 23px;
 }
 
-.setting {
-  display: inline-block;
-  padding-top: 4px;
-  width: 150px;
-}
-
-.settingValue {
-  display: inline-block;
-  padding-top: 4px;
-  width: 74px;
-  vertical-align: top;
-}
-
-.contourSVGDiv {
+.contourDisplay {
   height: 50px;
   width: 200px;
 }
 
-.settingRow select {
+select {
   font-size: 13px;
   color: #444;
   width: 140px;
@@ -181,11 +186,11 @@ div {
   margin-top: -4px;
 }
 
-.settingRow input {
+input {
   width: 140px;
 }
 
-.settingRow input[type="range"] {
+input[type="range"] {
   -webkit-appearance:none;
   height: 2px;
   background-color: #ccc;
@@ -195,7 +200,7 @@ div {
   outline: none;
 }
 
-.settingRow input::-webkit-slider-thumb {
+input::-webkit-slider-thumb {
   -webkit-appearance:none;
   width:10px;
   height:10px;

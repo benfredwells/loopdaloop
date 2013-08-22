@@ -5,27 +5,27 @@ var module = {};
 
 module.ContourVisualizer_ = function(container, contouredValue) {
   SVGUI.SVGControl.call(this, container);
-  this.div.classList.add('contourSVGDiv');
+  this.div.classList.add('contourDisplay');
   this.contouredValue_ = contouredValue;
 }
 
 module.ContourVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
 
-module.ContourVisualizer_.prototype.drawContour_ = function() {
-  var kXSize = 200;
-  var kYSize = 50;
-  var kXPadding = 2;
-  var kYPadding = 4;
-  var kXStep = 0.5;
-  var kNoteOn = 2;
-  var kRelease = 2;
-  var kBackgroundStroke = "#CCCCCC";
-  var kBackgroundStrokeWidth = 2;
-  var kBackgroundFill = "none";
-  var kContourStroke = "#4040A0";
-  var kContourStrokeWidth = 2;
-  var kContourFill = "none";
+var kXSize = 200;
+var kYSize = 50;
+var kXPadding = 2;
+var kYPadding = 4;
+var kXStep = 0.5;
+var kNoteOn = 2;
+var kRelease = 2;
+var kBackgroundStroke = "#CCCCCC";
+var kBackgroundStrokeWidth = 2;
+var kBackgroundFill = "none";
+var kContourStroke = "#4040A0";
+var kContourStrokeWidth = 2;
+var kContourFill = "none";
 
+module.ContourVisualizer_.prototype.drawContour_ = function() {
   this.clear();
   this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
   var pointList = new SVGUI.PointList();
@@ -112,7 +112,7 @@ module.ContourPanel = function(container, title, onchange, contouredValue, forma
   this.contourRow_ = new SettingsUI.Row(this, title, null);
   this.contourRow_.div.classList.add('contourPanelRow');
 
-  this.visualizer_ = new module.ContourVisualizer_(this.contourRow_.settingDiv,
+  this.visualizer_ = new module.ContourVisualizer_(this.contourRow_.controlDiv,
                                                    contouredValue);
 
   var contourGroup = this;

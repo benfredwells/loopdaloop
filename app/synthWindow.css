@@ -192,6 +192,7 @@ div {
   padding-top: 0px;
   margin-top: 8px;
   vertical-align: top;
+  outline: none;
 }
 
 .settingRow input::-webkit-slider-thumb {

@@ -3,6 +3,45 @@ ContourUI = (function() {
 "use strict";
 var module = {};
 
+module.ContourVisualizer_ = function(container, contouredValue) {
+  SVGUI.SVGControl.call(this, container);
+  this.div.classList.add('contourSVGDiv');
+  this.contouredValue_ = contouredValue;
+}
+
+module.ContourVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
+
+module.ContourVisualizer_.prototype.drawContour_ = function() {
+  var kXSize = 200;
+  var kYSize = 50;
+  var kXPadding = 2;
+  var kYPadding = 4;
+  var kXStep = 0.5;
+  var kNoteOn = 2;
+  var kRelease = 2;
+  var kBackgroundStroke = "#CCCCCC";
+  var kBackgroundStrokeWidth = 2;
+  var kBackgroundFill = "none";
+  var kContourStroke = "#4040A0";
+  var kContourStrokeWidth = 2;
+  var kContourFill = "none";
+
+  this.clear();
+  this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
+  var pointList = new SVGUI.PointList();
+  var pointCount = (kXSize - 2 * kXPadding) / kXStep;
+  for (var i = 0; i < pointCount; i++) {
+    var x = kXPadding + (i * kXStep);
+    var time = (kNoteOn + kRelease) * i / pointCount;
+    var value = this.contouredValue_.valueAtTime(time, kNoteOn);
+    var relativeValue = (value - this.contouredValue_.min) /
+                        (this.contouredValue_.max - this.contouredValue_.min);
+    var y = kYSize - kYPadding - relativeValue * (kYSize - 2 * kYPadding);
+    pointList.addPoint(x, y);
+  }
+  this.drawPolyLine(pointList, kContourStroke, kContourStrokeWidth, kContourFill);
+}
+
 module.FlatContourPanel_ = function(container, onchange, flatContour, isEnvelope,
                                     formatter, steps) {
   SettingsUI.Panel.call(this, container);
@@ -73,7 +112,8 @@ module.ContourPanel = function(container, title, onchange, contouredValue, forma
   this.contourRow_ = new SettingsUI.Row(this, title, null);
   this.contourRow_.div.classList.add('contourPanelRow');
 
-  this.svgControl_ = new SVGUI.SVGControl(this.contourRow_.settingDiv, 'contourSVGDiv');
+  this.visualizer_ = new module.ContourVisualizer_(this.contourRow_.settingDiv,
+                                                   contouredValue);
 
   var contourGroup = this;
   this.contourRow_.div.onclick = function() {
@@ -93,7 +133,7 @@ module.ContourPanel = function(container, title, onchange, contouredValue, forma
 
   var changeHandler = function() {
     contourGroup.showHideContours_();
-    contourGroup.drawContour_();
+    contourGroup.visualizer_.drawContour_();
     if (contourGroup.onchange)
       contourGroup.onchange();
   }
@@ -116,7 +156,7 @@ module.ContourPanel = function(container, title, onchange, contouredValue, forma
       contouredValue.isEnvelope, formatter, steps);
 
   this.showHideContours_();
-  this.drawContour_();
+  this.visualizer_.drawContour_();
   this.setSelected(selected);
 }
 
@@ -127,37 +167,6 @@ module.ContourPanel.prototype.showHideContours_ = function() {
   this.flatPanel_.setVisible(current == Contour.kFlatContour);
   this.oscillatingPanel_.setVisible(current == Contour.kOscillatingContour);
   this.adsrPanel_.setVisible(current == Contour.kADSRContour);
-}
-
-var kXSize = 200;
-var kYSize = 50;
-var kXPadding = 2;
-var kYPadding = 4;
-var kXStep = 0.5;
-var kNoteOn = 2;
-var kRelease = 2;
-var kBackgroundStroke = "#CCCCCC";
-var kBackgroundStrokeWidth = 2;
-var kBackgroundFill = "none";
-var kContourStroke = "#4040A0";
-var kContourStrokeWidth = 2;
-var kContourFill = "none";
-
-module.ContourPanel.prototype.drawContour_ = function() {
-  this.svgControl_.clear();
-  this.svgControl_.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
-  var pointList = new SVGUI.PointList();
-  var pointCount = (kXSize - 2 * kXPadding) / kXStep;
-  for (var i = 0; i < pointCount; i++) {
-    var x = kXPadding + (i * kXStep);
-    var time = (kNoteOn + kRelease) * i / pointCount;
-    var value = this.contouredValue_.valueAtTime(time, kNoteOn);
-    var relativeValue = (value - this.contouredValue_.min) /
-                        (this.contouredValue_.max - this.contouredValue_.min);
-    var y = kYSize - kYPadding - relativeValue * (kYSize - 2 * kYPadding);
-    pointList.addPoint(x, y);
-  }
-  this.svgControl_.drawPolyLine(pointList, kContourStroke, kContourStrokeWidth, kContourFill);
 }
 
 module.ContourPanel.prototype.setSelected = function(selected) {

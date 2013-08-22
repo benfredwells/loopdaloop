@@ -31,12 +31,11 @@ module.PointList.prototype.value = function() {
   return pointVals.join(" ");
 }
 
-module.SVGControl = function(container, divClass) {
+module.SVGControl = function(container) {
   SettingsUI.Control.call(this, container);
 
   this.svg_ = document.createElementNS(svgns, "svg:svg");
   this.div.appendChild(this.svg_);
-  this.div.classList.add(divClass);
   this.primitives_ = [];
   // SVG Defs not currently used. Useful for gradients
   // and other reusable definitions.

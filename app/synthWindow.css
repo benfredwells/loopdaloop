@@ -142,6 +142,8 @@ div {
   margin-top: 8px;
   margin-bottom: 16px;
   padding-left: 4px;
+  /* padding is 8px less, so width must be 8px more. */
+  width: 158px;
 }
 
 .categoryDisplay {

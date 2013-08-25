@@ -22,6 +22,12 @@ module.frequencyForNote = function(octave, note) {
   return module.middleAFrequency * Math.pow(kNoteFactor, noteIndex - kMiddleAIndex);
 };
 
+// Detune is as in the WebAudio W3C specification: percentage of a noteOffset.
+module.frequencyAdjustmentFactor = function(octaveOffset, noteOffset, detune) {
+  var octaves = octaveOffset + noteOffset / 12 + detune / 1200;
+  return Math.pow(2, octaves);
+}
+
 return module;
 
 })();

@@ -3,8 +3,9 @@ OscillatorUI = (function() {
 "use strict";
 var module = {};
 
-module.OscillatorVisualizer_ = function(container) {
+module.OscillatorVisualizer_ = function(container, oscillator) {
   SVGUI.SVGControl.call(this, container);
+  this.oscillator_ = oscillator;
   this.div.classList.add('categoryDisplay');
 }
 
@@ -12,15 +13,69 @@ module.OscillatorVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototyp
 
 var kXSize = 200;
 var kYSize = 50;
-var kXPadding = 2;
-var kYPadding = 4;
+var kXPadding = 0;
+var kYPadding = 1;
+var kYBottom = kYSize - kYPadding;
+var kHarmonics = (200 / 19);
+var kXFudge = 0.5; // To keep base harmonics aligned on pixels :-/
+var kYScale = 0.7;
 var kBackgroundStroke = "#CCCCCC";
 var kBackgroundStrokeWidth = 2;
 var kBackgroundFill = "none";
+var kHarmonicBackgroundStroke = "#DDDDDD";
+var kHarmonicBackgroundStrokeWidth = 1;
+var kHarmonicStroke = "#008000";
+var kHarmonicStrokeWidth = 2;
+
+module.OscillatorVisualizer_.prototype.harmonicAmplitude_ = function(harmonic) {
+  console.log(this.oscillator_.typeSetting.value);
+  switch (this.oscillator_.typeSetting.value) {
+    case Instrument.kSineWave: {
+      if (harmonic == 1) 
+        return 1
+      else
+        return 0;
+    }
+    case Instrument.kSquareWave: {
+      if (harmonic % 2 == 0)
+        return 0;
+      return 4 / (Math.PI * harmonic);
+    }
+    case Instrument.kSawtoothWave: {
+      return 2 / (Math.PI * harmonic);
+    }
+    case Instrument.kTriangleWave: {
+      if (harmonic % 2 == 0)
+        return 0;
+      return 8 / Math.pow((Math.PI * harmonic), 2);
+    }
+  }
+}
 
 module.OscillatorVisualizer_.prototype.drawOscillator_ = function() {
   this.clear();
   this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
+  var baseHarmonicXGap = (kXSize - 2 * kXPadding) / kHarmonics;
+  var currentX = kXPadding + baseHarmonicXGap + kXFudge;
+  while (currentX < kXSize - kXPadding) {
+    this.drawLine(currentX, kYPadding, currentX, kYSize - kYPadding,
+                  kHarmonicBackgroundStroke, kHarmonicBackgroundStrokeWidth);
+    currentX += baseHarmonicXGap;
+  }
+  var freqeuencyAdjust = ChromaticScale.frequencyAdjustmentFactor(
+      this.oscillator_.octaveOffsetSetting.value,
+      this.oscillator_.noteOffsetSetting.value,
+      this.oscillator_.detuneSetting.value);
+  var noteHarmonicXGap = baseHarmonicXGap * freqeuencyAdjust;
+  currentX = kXPadding + noteHarmonicXGap + kXFudge;
+  var harmonic = 1;
+  while (currentX < kXSize - kXPadding) {
+    var height = this.harmonicAmplitude_(harmonic) * (kYSize - 2 * kYPadding) * kYScale;
+    this.drawLine(currentX, kYBottom, currentX, kYBottom - height,
+                  kHarmonicStroke, kHarmonicStrokeWidth);
+    currentX += noteHarmonicXGap;
+    harmonic++;
+  }
 }
 
 var kTypeDescriptions = {};
@@ -33,7 +88,7 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, selected);
   this.oscillator_ = oscillator;
 
-  this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv)
+  this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv, oscillator);
 
   var ui = this;
   var changeHandler = function() {

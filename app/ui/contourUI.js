@@ -13,7 +13,7 @@ module.ContourVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
 
 var kXSize = 200;
 var kYSize = 50;
-var kXPadding = 2;
+var kXPadding = 0;
 var kYPadding = 4;
 var kXStep = 0.5;
 var kNoteOn = 2;

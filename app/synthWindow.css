@@ -30,6 +30,7 @@ div {
 
 .category.selected {
   background-color: #fff;
+  background-image: none;
   border-bottom-color: #fff;
 }
 

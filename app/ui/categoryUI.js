@@ -3,6 +3,16 @@ CategoryUI = (function() {
 "use strict";
 var module = {};
 
+module.CategoryVisualizer = function(container) {
+  SettingsUI.Panel.call(this, container);
+  this.div.classList.add('categoryDisplay');
+  this.svg = new SVGUI.SVGControl(this);
+}
+
+module.CategoryVisualizer.prototype = Object.create(SettingsUI.Panel.prototype);
+
+module.CategoryVisualizer.prototype.drawVisualization = function() {}
+
 module.UI = function(id, title, categoriesEl, detailsEl, selected) {
   this.id = id;
   this.title = title;

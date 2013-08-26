@@ -4,9 +4,8 @@ OscillatorUI = (function() {
 var module = {};
 
 module.OscillatorVisualizer_ = function(container, oscillator) {
-  SVGUI.SVGControl.call(this, container);
+  CategoryUI.CategoryVisualizer.call(this, container);
   this.oscillator_ = oscillator;
-  this.div.classList.add('categoryDisplay');
 }
 
 module.OscillatorVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
@@ -51,14 +50,14 @@ module.OscillatorVisualizer_.prototype.harmonicAmplitude_ = function(harmonic) {
   }
 }
 
-module.OscillatorVisualizer_.prototype.drawOscillator_ = function() {
-  this.clear();
-  this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
+module.OscillatorVisualizer_.prototype.drawVisualization = function() {
+  this.svg.clear();
+  this.svg.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
   var baseHarmonicXGap = (kXSize - 2 * kXPadding) / kHarmonics;
   var currentX = kXPadding + baseHarmonicXGap + kXFudge;
   while (currentX < kXSize - kXPadding) {
-    this.drawLine(currentX, kYPadding, currentX, kYSize - kYPadding,
-                  kHarmonicBackgroundStroke, kHarmonicBackgroundStrokeWidth);
+    this.svg.drawLine(currentX, kYPadding, currentX, kYSize - kYPadding,
+                      kHarmonicBackgroundStroke, kHarmonicBackgroundStrokeWidth);
     currentX += baseHarmonicXGap;
   }
   var freqeuencyAdjust = ChromaticScale.frequencyAdjustmentFactor(
@@ -70,8 +69,8 @@ module.OscillatorVisualizer_.prototype.drawOscillator_ = function() {
   var harmonic = 1;
   while (currentX < kXSize - kXPadding) {
     var height = this.harmonicAmplitude_(harmonic) * (kYSize - 2 * kYPadding) * kYScale;
-    this.drawLine(currentX, kYBottom, currentX, kYBottom - height,
-                  kHarmonicStroke, kHarmonicStrokeWidth);
+    this.svg.drawLine(currentX, kYBottom, currentX, kYBottom - height,
+                      kHarmonicStroke, kHarmonicStrokeWidth);
     currentX += noteHarmonicXGap;
     harmonic++;
   }
@@ -92,7 +91,6 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
   var ui = this;
   var changeHandler = function() {
     ui.updateDisplay_();
-    ui.visualizer_.drawOscillator_();
   }
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
 
@@ -105,16 +103,15 @@ module.UI = function(id, oscillator, title, categoriesEl, detailsEl, selected) {
                              changeHandler, oscillator.gainContour,
                              null, 10, false);
 
-  this.visualizer_.drawOscillator_();
   this.updateDisplay_();
 }
 
 module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.updateDisplay_ = function() {
-  //this.drawWave_();
   this.enablePanel_.setEnabled(this.oscillator_.enabledSetting.value);;
   this.updateIcon_();
+  this.visualizer_.drawVisualization();
 }
 
 module.UI.prototype.updateIcon_ = function() {

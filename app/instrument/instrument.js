@@ -84,43 +84,21 @@ module.Filter.prototype.createNoteSection_ = function(octave, note) {
   return filterSection;
 }
 
-module.Filter.prototype.getFrequencyResponse = function(octave, note, minHz, maxHz, steps) {
+module.Filter.prototype.getFrequencyResponse = function(octave, note, time, noteOnTime, harmonics, steps) {
   var node = this.createFilterNode_(octave, note);
   // Set up buffers
   var response = {};
   response.frequencies = new Float32Array(steps);
   response.mag = new Float32Array(steps);
   response.phase = new Float32Array(steps);
-  // Calculate frequencies
-  var factor = Math.pow(maxHz / minHz, 1 / steps);
-  var currentHz = minHz;
-  response.noteFrequency = ChromaticScale.frequencyForNote(octave, note);
-  var frequencyValueFunction = function(value) {
-    return response.noteFrequency * (value);
-  }
-  response.filterFrequency = this.frequencyContour.currentContour().averageValue(frequencyValueFunction);
+  var noteFrequency = ChromaticScale.frequencyForNote(octave, note);
+  response.filterFrequency = noteFrequency * this.frequencyContour.valueAtTime(time, noteOnTime);
   node.frequency.value = response.filterFrequency;
-  response.numHarmonics = 0;
-  response.harmonics = [];
-  response.filterIndex = 0;
+  var maxHz = noteFrequency * harmonics
   for (var i = 0; i < steps; ++i) {
-    response.frequencies[i] = currentHz;
-    currentHz = currentHz * factor;
-    if (currentHz < response.noteFrequency)
-      response.noteIndex = i;
-    if (currentHz < response.filterFrequency)
-      response.filterIndex = i;
-    if (currentHz > (response.numHarmonics + 1) * response.noteFrequency) {
-      response.harmonics.push(i - 1);
-      response.numHarmonics++;
-    }
+    response.frequencies[i] = maxHz * i / steps;
   }
   node.getFrequencyResponse(response.frequencies, response.mag, response.phase);
-  response.maxMag = 0;
-  for (var i = 0; i < steps; ++i) {
-    if (response.mag[i] > response.maxMag)
-      response.maxMag = response.mag[i];
-  }
   return response;
 }
 

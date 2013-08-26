@@ -11,7 +11,6 @@ module.UI = function(id, envelopeContour, instrument, title, categoriesEl, detai
                              null, envelopeContour,
                              instrument, null, 190);
   this.setIconClass('envelopeIcon');
-  changeHandler();
 }
 
 module.UI.prototype = Object.create(CategoryUI.UI.prototype);

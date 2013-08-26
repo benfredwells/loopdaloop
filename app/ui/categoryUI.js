@@ -7,6 +7,12 @@ module.CategoryVisualizer = function(container) {
   SettingsUI.Panel.call(this, container);
   this.div.classList.add('categoryDisplay');
   this.svg = new SVGUI.SVGControl(this);
+
+  var range = document.createElement('input');
+  range.type = 'range';
+  range.min = 0;
+  range.max = 100;
+  this.div.appendChild(range);
 }
 
 module.CategoryVisualizer.prototype = Object.create(SettingsUI.Panel.prototype);

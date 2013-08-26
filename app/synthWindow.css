@@ -188,8 +188,14 @@ select {
   margin-top: -4px;
 }
 
-input {
+.setting input {
   width: 140px;
+}
+
+.categoryDisplay input {
+  width: 200px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
 input[type="range"] {

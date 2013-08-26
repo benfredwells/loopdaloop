@@ -3,7 +3,7 @@ EnvelopeUI = (function() {
 "use strict";
 var module = {};
 
-module.UI = function(id, envelopeContour, title, categoriesEl, detailsEl, selected) {
+module.UI = function(id, envelopeContour, instrument, title, categoriesEl, detailsEl, selected) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, selected);
   this.envelopeContour_ = envelopeContour;
 
@@ -13,7 +13,7 @@ module.UI = function(id, envelopeContour, title, categoriesEl, detailsEl, select
   }
   new ContourUI.ContourPanel(this.settings, Strings.kEnvelope,
                              changeHandler, envelopeContour,
-                             null, 190);
+                             instrument, null, 190);
   this.setIconClass('envelopeIcon');
   changeHandler();
 }

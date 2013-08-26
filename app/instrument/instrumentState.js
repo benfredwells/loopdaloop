@@ -98,6 +98,14 @@ module.updateOscillator = function(oscillator, oscillatorState) {
   module.updateContouredValue(oscillator.gainContour, oscillatorState.gain);
 }
 
+module.updateDisplaySettings = function(displaySettings, displaySettingsState) {
+  if (!displaySettingsState) {
+    displaySettingsState = {};
+  }
+  updateSetting(displaySettings.noteOnTimeSetting, displaySettingsState.noteOnTime, 1);
+  updateSetting(displaySettings.releaseTimeSetting, displaySettingsState.releaseTime, 1);
+}
+
 module.updateInstrument = function(instrument, instrumentState) {
   if (!instrumentState) {
     reportError('instrumentState undefined');
@@ -109,7 +117,8 @@ module.updateInstrument = function(instrument, instrumentState) {
   for (var i = 0; i < instrumentState.filters.length; i++) {
     module.updateFilter(instrument.filters[i], instrumentState.filters[i]);
   }
-  module.updateContouredValue(instrument.envelopeContour, instrumentState.envelope)
+  module.updateContouredValue(instrument.envelopeContour, instrumentState.envelope);
+  module.updateDisplaySettings(instrument.displaySettings, instrumentState.displaySettings);
 }
 
 return module;

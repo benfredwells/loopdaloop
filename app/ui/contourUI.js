@@ -3,10 +3,11 @@ ContourUI = (function() {
 "use strict";
 var module = {};
 
-module.ContourVisualizer_ = function(container, contouredValue) {
+module.ContourVisualizer_ = function(container, contouredValue, displaySettings) {
   SVGUI.SVGControl.call(this, container);
   this.div.classList.add('contourDisplay');
   this.contouredValue_ = contouredValue;
+  this.displaySettings_ = displaySettings;
 }
 
 module.ContourVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
@@ -16,8 +17,6 @@ var kYSize = 50;
 var kXPadding = 0;
 var kYPadding = 4;
 var kXStep = 0.5;
-var kNoteOn = 2;
-var kRelease = 2;
 var kBackgroundStroke = "#CCCCCC";
 var kBackgroundStrokeWidth = 2;
 var kBackgroundFill = "none";
@@ -32,8 +31,10 @@ module.ContourVisualizer_.prototype.drawContour_ = function() {
   var pointCount = (kXSize - 2 * kXPadding) / kXStep;
   for (var i = 0; i < pointCount; i++) {
     var x = kXPadding + (i * kXStep);
-    var time = (kNoteOn + kRelease) * i / pointCount;
-    var value = this.contouredValue_.valueAtTime(time, kNoteOn);
+    var time = (this.displaySettings_.noteOnTimeSetting.value +
+                this.displaySettings_.releaseTimeSetting.value) *
+               i / pointCount;
+    var value = this.contouredValue_.valueAtTime(time, this.displaySettings_.noteOnTimeSetting.value);
     var relativeValue = (value - this.contouredValue_.min) /
                         (this.contouredValue_.max - this.contouredValue_.min);
     var y = kYSize - kYPadding - relativeValue * (kYSize - 2 * kYPadding);
@@ -103,7 +104,7 @@ kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
 kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
 kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
-module.ContourPanel = function(container, title, onchange, contouredValue, formatter, steps, selected) {
+module.ContourPanel = function(container, title, onchange, contouredValue, instrument, formatter, steps, selected) {
   SettingsUI.Panel.call(this, container);
 
   this.contouredValue_ = contouredValue;
@@ -113,7 +114,7 @@ module.ContourPanel = function(container, title, onchange, contouredValue, forma
   this.contourRow_.div.classList.add('contourPanelRow');
 
   this.visualizer_ = new module.ContourVisualizer_(this.contourRow_.controlDiv,
-                                                   contouredValue);
+                                                   contouredValue, instrument.displaySettings);
 
   var contourGroup = this;
   this.contourRow_.div.onclick = function() {

@@ -7,7 +7,7 @@ var kTypeDescriptions = {};
 kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
 kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
 
-module.UI = function(id, filter, title, categoriesEl, detailsEl, selected) {
+module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, selected) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, selected);
   this.filter_ = filter;
 
@@ -20,7 +20,7 @@ module.UI = function(id, filter, title, categoriesEl, detailsEl, selected) {
   this.enablePanel_ = new SettingsUI.Panel(this.settings);
   new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, filter.typeSetting, kTypeDescriptions);
   new ContourUI.ContourPanel(this.enablePanel_, Strings.kFrequency,
-                             changeHandler, filter.frequencyContour,
+                             changeHandler, filter.frequencyContour, instrument,
                              Strings.kMultiplierFormatter, 190);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kQ, changeHandler, filter.qSetting, null, 20);
 

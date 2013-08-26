@@ -49,37 +49,49 @@ function init() {
     var detailsEl = document.getElementById('details');
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorAID,
-        gInstrument.oscillators[0], Strings.kOscillator1,
+        gInstrument.oscillators[0],
+        gInstrument,
+        Strings.kOscillator1,
         categoriesEl,
         detailsEl,
         kOscillatorAID == selectedID));
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorBID,
-        gInstrument.oscillators[1], Strings.kOscillator2,
+        gInstrument.oscillators[1],
+        gInstrument,
+        Strings.kOscillator2,
         categoriesEl,
         detailsEl,
         kOscillatorBID == selectedID));
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorCID,
-        gInstrument.oscillators[2], Strings.kOscillator3,
+        gInstrument.oscillators[2],
+        gInstrument,
+        Strings.kOscillator3,
         categoriesEl,
         detailsEl,
         kOscillatorCID == selectedID));
     gInstrumentUIs.push(new FilterUI.UI(
         kFilterAID,
-        gInstrument.filters[0], Strings.kFilter1,
+        gInstrument.filters[0],
+        gInstrument,
+        Strings.kFilter1,
         categoriesEl,
         detailsEl,
         kFilterAID == selectedID));
     gInstrumentUIs.push(new FilterUI.UI(
         kFilterBID,
-        gInstrument.filters[1], Strings.kFilter2,
+        gInstrument.filters[1],
+        gInstrument,
+        Strings.kFilter2,
         categoriesEl,
         detailsEl,
         kFilterBID == selectedID));
     gInstrumentUIs.push(new EnvelopeUI.UI(
         kEnvelopeID,
-        gInstrument.envelopeContour, Strings.kEnvelope,
+        gInstrument.envelopeContour,
+        gInstrument,
+        Strings.kEnvelope,
         categoriesEl,
         detailsEl,
         kEnvelopeID == selectedID));

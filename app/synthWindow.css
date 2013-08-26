@@ -8,9 +8,22 @@ div {
   margin: 0px;
 }
 
-#categories {
+#header {
   padding: 0px;
   height: 42px;
+}
+
+#categories {
+  display: inline-block;
+}
+
+#testButton {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 80px;
+  vertical-align: top;
+  background-color: green;
 }
 
 .category {

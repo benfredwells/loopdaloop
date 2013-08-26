@@ -8,6 +8,7 @@ module.ContourVisualizer_ = function(container, contouredValue, displaySettings)
   this.div.classList.add('contourDisplay');
   this.contouredValue_ = contouredValue;
   this.displaySettings_ = displaySettings;
+  this.currentTime = 0;
 }
 
 module.ContourVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
@@ -17,23 +18,29 @@ var kYSize = 50;
 var kXPadding = 0;
 var kYPadding = 4;
 var kXStep = 0.5;
+var kXFudge = 0.5
 var kBackgroundStroke = "#CCCCCC";
 var kBackgroundStrokeWidth = 2;
 var kBackgroundFill = "none";
 var kContourStroke = "#4040A0";
 var kContourStrokeWidth = 2;
 var kContourFill = "none";
+var kCurrentTimeStroke = "#DDDDDD";
+var kCurrentTimeStrokeWidth = 1;
 
-module.ContourVisualizer_.prototype.drawContour_ = function() {
+module.ContourVisualizer_.prototype.drawContour = function() {
   this.clear();
   this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
+  var totalTime = this.displaySettings_.noteOnTimeSetting.value +
+                  this.displaySettings_.releaseTimeSetting.value;
+  var currentTimeX = kXPadding + kXFudge + (kXSize - 2 * kXPadding) * this.currentTime / totalTime;
+  this.drawLine(currentTimeX, 0, currentTimeX, kYSize,
+                kCurrentTimeStroke, kCurrentTimeStrokeWidth);
   var pointList = new SVGUI.PointList();
   var pointCount = (kXSize - 2 * kXPadding) / kXStep;
   for (var i = 0; i < pointCount; i++) {
     var x = kXPadding + (i * kXStep);
-    var time = (this.displaySettings_.noteOnTimeSetting.value +
-                this.displaySettings_.releaseTimeSetting.value) *
-               i / pointCount;
+    var time = totalTime * i / pointCount;
     var value = this.contouredValue_.valueAtTime(time, this.displaySettings_.noteOnTimeSetting.value);
     var relativeValue = (value - this.contouredValue_.min) /
                         (this.contouredValue_.max - this.contouredValue_.min);
@@ -134,7 +141,7 @@ module.ContourPanel = function(container, title, onchange, contouredValue, instr
 
   var changeHandler = function() {
     contourGroup.showHideContours_();
-    contourGroup.visualizer_.drawContour_();
+    contourGroup.visualizer_.drawContour();
     if (contourGroup.onchange)
       contourGroup.onchange();
   }
@@ -157,7 +164,7 @@ module.ContourPanel = function(container, title, onchange, contouredValue, instr
       contouredValue.isEnvelope, formatter, steps);
 
   this.showHideContours_();
-  this.visualizer_.drawContour_();
+  this.visualizer_.drawContour();
   this.setSelected(selected);
 }
 
@@ -177,6 +184,14 @@ module.ContourPanel.prototype.setSelected = function(selected) {
   else
     this.contourRow_.div.classList.remove('selected');
   this.selectPanel_.setVisible(selected);
+}
+
+module.ContourPanel.prototype.setCurrentTime = function(currentTime) {
+  this.visualizer_.currentTime = currentTime;
+}
+
+module.ContourPanel.prototype.drawContour = function() {
+  this.visualizer_.drawContour();
 }
 
 return module;

@@ -86,7 +86,19 @@ module.SVGControl.prototype.drawPolyLine = function(pointList, color, width, fil
   line.setAttribute("fill", fill);
   this.svg_.appendChild(line);
   this.primitives_.push(line);
-  return line;
+}
+
+module.SVGControl.prototype.drawText = function(text, x, y, anchor, color, size) {
+  var textNode = document.createElementNS(svgns, "text");
+  textNode.setAttribute("x", svgNumberVal(x));
+  textNode.setAttribute("y", svgNumberVal(y));
+  textNode.setAttribute("fill", color);
+  textNode.setAttribute("font-size", svgNumberVal(size));
+  textNode.setAttribute("text-anchor", anchor);
+  var textContents = document.createTextNode(text);
+  textNode.appendChild(textContents);
+  this.svg_.appendChild(textNode);
+  this.primitives_.push(textNode);
 }
 
 return module;

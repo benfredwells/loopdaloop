@@ -3,21 +3,63 @@ CategoryUI = (function() {
 "use strict";
 var module = {};
 
-module.CategoryVisualizer = function(container) {
+var kTimeSteps = 100;
+
+module.CategoryVisualizer = function(container, displaySettings, onchange) {
   SettingsUI.Panel.call(this, container);
   this.div.classList.add('categoryDisplay');
   this.svg = new SVGUI.SVGControl(this);
 
-  var range = document.createElement('input');
-  range.type = 'range';
-  range.min = 0;
-  range.max = 100;
-  this.div.appendChild(range);
+  var visualizer = this;
+  function changeHandler() {
+    if (visualizer.onchange)
+      visualizer.onchange();
+  }
+
+  this.timeRange = document.createElement('input');
+  this.timeRange.type = 'range';
+  this.timeRange.min = 0;
+  this.timeRange.max = kTimeSteps;
+  this.timeRange.value = 0;
+  this.timeRange.onchange = changeHandler;
+  this.div.appendChild(this.timeRange);
+
+  this.timeLabel = document.createElement('span');
+  this.div.appendChild(this.timeLabel);
+
+  this.displaySettings = displaySettings;
+  this.onchange = onchange;
+
+  this.xSize = 200;
+  this.ySize = 50;
 }
 
 module.CategoryVisualizer.prototype = Object.create(SettingsUI.Panel.prototype);
 
-module.CategoryVisualizer.prototype.drawVisualization = function() {}
+var kBackgroundStroke = "#CCCCCC";
+var kBackgroundStrokeWidth = 2;
+var kBackgroundFill = "none";
+var kTimePadding = 4;
+var kTimeY = 15;
+var kTimeSize = 12;
+var kTimeTextColor = "#888888";
+var kTimeAnchor = "end";
+
+module.CategoryVisualizer.prototype.drawVisualization = function() {
+  this.svg.clear();
+  this.svg.drawRect(0, 0, this.xSize, this.ySize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
+}
+
+module.CategoryVisualizer.prototype.drawTime = function() {
+  var timeString = Strings.kSecondsFormatter.format(this.currentTime());
+  this.svg.drawText(timeString, this.xSize - kTimePadding, kTimeY, kTimeAnchor, kTimeTextColor, kTimeSize);
+}
+
+module.CategoryVisualizer.prototype.currentTime = function() {
+  var rangeVal = this.timeRange.value;
+  return (rangeVal / kTimeSteps) * (this.displaySettings.noteOnTimeSetting.value +
+                                    this.displaySettings.releaseTimeSetting.value);
+}
 
 module.UI = function(id, title, categoriesEl, detailsEl, selected) {
   this.id = id;

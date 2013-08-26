@@ -3,24 +3,18 @@ OscillatorUI = (function() {
 "use strict";
 var module = {};
 
-module.OscillatorVisualizer_ = function(container, oscillator) {
-  CategoryUI.CategoryVisualizer.call(this, container);
+module.OscillatorVisualizer_ = function(container, oscillator, displaySettings, onchange) {
+  CategoryUI.CategoryVisualizer.call(this, container, displaySettings, onchange);
   this.oscillator_ = oscillator;
 }
 
-module.OscillatorVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
+module.OscillatorVisualizer_.prototype = Object.create(CategoryUI.CategoryVisualizer.prototype);
 
-var kXSize = 200;
-var kYSize = 50;
 var kXPadding = 0;
 var kYPadding = 1;
-var kYBottom = kYSize - kYPadding;
 var kHarmonics = (200 / 9);
 var kXFudge = 0.5; // To keep base harmonics aligned on pixels :-/
 var kYScale = 0.7;
-var kBackgroundStroke = "#CCCCCC";
-var kBackgroundStrokeWidth = 2;
-var kBackgroundFill = "none";
 var kHarmonicBackgroundStroke = "#DDDDDD";
 var kHarmonicBackgroundStrokeWidth = 1;
 var kHarmonicStroke = "#008000";
@@ -51,15 +45,17 @@ module.OscillatorVisualizer_.prototype.harmonicAmplitude_ = function(harmonic) {
 }
 
 module.OscillatorVisualizer_.prototype.drawVisualization = function() {
-  this.svg.clear();
-  this.svg.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
-  var baseHarmonicXGap = (kXSize - 2 * kXPadding) / kHarmonics;
+  CategoryUI.CategoryVisualizer.prototype.drawVisualization.call(this);
+  var baseHarmonicXGap = (this.xSize - 2 * kXPadding) / kHarmonics;
   var currentX = kXPadding + baseHarmonicXGap + kXFudge;
-  while (currentX < kXSize - kXPadding) {
-    this.svg.drawLine(currentX, kYPadding, currentX, kYSize - kYPadding,
+  while (currentX < this.xSize - kXPadding) {
+    this.svg.drawLine(currentX, kYPadding, currentX, this.ySize - kYPadding,
                       kHarmonicBackgroundStroke, kHarmonicBackgroundStrokeWidth);
     currentX += baseHarmonicXGap;
   }
+  this.drawTime();
+  var yBottom = this.ySize - kYPadding;
+  var gain = this.oscillator_.gainContour.valueAtTime(this.currentTime(), this.displaySettings.noteOnTimeSetting.value);
   var freqeuencyAdjust = ChromaticScale.frequencyAdjustmentFactor(
       this.oscillator_.octaveOffsetSetting.value,
       this.oscillator_.noteOffsetSetting.value,
@@ -67,9 +63,9 @@ module.OscillatorVisualizer_.prototype.drawVisualization = function() {
   var noteHarmonicXGap = baseHarmonicXGap * freqeuencyAdjust;
   currentX = kXPadding + noteHarmonicXGap + kXFudge;
   var harmonic = 1;
-  while (currentX < kXSize - kXPadding) {
-    var height = this.harmonicAmplitude_(harmonic) * (kYSize - 2 * kYPadding) * kYScale;
-    this.svg.drawLine(currentX, kYBottom, currentX, kYBottom - height,
+  while (currentX < this.xSize - kXPadding) {
+    var height = gain * this.harmonicAmplitude_(harmonic) * (this.ySize - 2 * kYPadding) * kYScale;
+    this.svg.drawLine(currentX, yBottom, currentX, yBottom - height,
                       kHarmonicStroke, kHarmonicStrokeWidth);
     currentX += noteHarmonicXGap;
     harmonic++;
@@ -86,12 +82,14 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, selected);
   this.oscillator_ = oscillator;
 
-  this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv, oscillator);
-
   var ui = this;
   var changeHandler = function() {
+    ui.gainContourPanel.setCurrentTime(ui.visualizer_.currentTime());
     ui.updateDisplay_();
   }
+  this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv, oscillator,
+                                                      instrument.displaySettings, changeHandler);
+
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
 
   this.enablePanel_ = new SettingsUI.Panel(this.settings);
@@ -99,9 +97,9 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kOctaveOffset, changeHandler, oscillator.octaveOffsetSetting, null, 8);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
-  new ContourUI.ContourPanel(this.enablePanel_, Strings.kGain,
-                             changeHandler, oscillator.gainContour, instrument,
-                             null, 10, false);
+  this.gainContourPanel = new ContourUI.ContourPanel(this.enablePanel_, Strings.kGain,
+                                                     changeHandler, oscillator.gainContour, instrument,
+                                                     null, 10, false);
 
   this.updateDisplay_();
 }
@@ -112,6 +110,7 @@ module.UI.prototype.updateDisplay_ = function() {
   this.enablePanel_.setEnabled(this.oscillator_.enabledSetting.value);;
   this.updateIcon_();
   this.visualizer_.drawVisualization();
+  this.gainContourPanel.drawContour();
 }
 
 module.UI.prototype.updateIcon_ = function() {

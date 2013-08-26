@@ -16,7 +16,7 @@ var kYSize = 50;
 var kXPadding = 0;
 var kYPadding = 1;
 var kYBottom = kYSize - kYPadding;
-var kHarmonics = (200 / 19);
+var kHarmonics = (200 / 9);
 var kXFudge = 0.5; // To keep base harmonics aligned on pixels :-/
 var kYScale = 0.7;
 var kBackgroundStroke = "#CCCCCC";
@@ -28,7 +28,6 @@ var kHarmonicStroke = "#008000";
 var kHarmonicStrokeWidth = 2;
 
 module.OscillatorVisualizer_.prototype.harmonicAmplitude_ = function(harmonic) {
-  console.log(this.oscillator_.typeSetting.value);
   switch (this.oscillator_.typeSetting.value) {
     case Instrument.kSineWave: {
       if (harmonic == 1) 

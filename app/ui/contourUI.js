@@ -111,33 +111,37 @@ kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
 kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
 kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
-module.ContourPanel = function(container, title, onchange, contouredValue, instrument, formatter, steps, selected) {
+module.ContourPanel = function(container, title, onchange, contouredValue, instrument,
+                               formatter, steps, asCategory, selected) {
   SettingsUI.Panel.call(this, container);
 
   this.contouredValue_ = contouredValue;
   this.onchange = onchange;
 
   this.contourRow_ = new SettingsUI.Row(this, title, null);
-  this.contourRow_.div.classList.add('contourPanelRow');
 
   this.visualizer_ = new module.ContourVisualizer_(this.contourRow_.controlDiv,
                                                    contouredValue, instrument.displaySettings);
+  this.selectPanel_ = new SettingsUI.Panel(this);
 
   var contourGroup = this;
-  this.contourRow_.div.onclick = function() {
-    contourGroup.setSelected(!contourGroup.selected_);
-  }
+  if (asCategory) {
+    this.contourRow_.label.classList.add('categoryName');
+  } else {
+    this.contourRow_.div.classList.add('contourPanelRow');
+    this.selectPanel_.div.classList.add('contourPanel');
+    this.contourRow_.div.onclick = function() {
+      contourGroup.setSelected(!contourGroup.selected_);
+    }
 
-  this.contourRow_.div.onmouseenter = function() {
-    this.classList.add('hover');
-  }
+    this.contourRow_.div.onmouseenter = function() {
+      this.classList.add('hover');
+    }
 
-  this.contourRow_.div.onmouseleave = function() {
-    this.classList.remove('hover');
+    this.contourRow_.div.onmouseleave = function() {
+      this.classList.remove('hover');
+    }
   }
-
-  this.selectPanel_ = new SettingsUI.Panel(this);
-  this.selectPanel_.div.classList.add('contourPanel');
 
   var changeHandler = function() {
     contourGroup.showHideContours_();

@@ -79,7 +79,7 @@ kTypeDescriptions[Instrument.kSawtoothWave] = Strings.kSawtooth;
 kTypeDescriptions[Instrument.kTriangleWave] = Strings.kTriangle;
 
 module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl, selected) {
-  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, selected);
+  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false, selected);
   this.oscillator_ = oscillator;
 
   var ui = this;
@@ -99,7 +99,7 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
   this.gainContourPanel = new ContourUI.ContourPanel(this.enablePanel_, Strings.kGain,
                                                      changeHandler, oscillator.gainContour, instrument,
-                                                     null, 10, false);
+                                                     null, 10, false, false);
 
   this.updateDisplay_();
 }

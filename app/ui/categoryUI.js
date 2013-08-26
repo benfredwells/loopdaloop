@@ -61,7 +61,7 @@ module.CategoryVisualizer.prototype.currentTime = function() {
                                     this.displaySettings.releaseTimeSetting.value);
 }
 
-module.UI = function(id, title, categoriesEl, detailsEl, selected) {
+module.UI = function(id, title, categoriesEl, detailsEl, hideTitle, selected) {
   this.id = id;
   this.title = title;
 
@@ -73,10 +73,13 @@ module.UI = function(id, title, categoriesEl, detailsEl, selected) {
   this.categoryIconEl_.classList.add('categoryIcon');
   this.categoryEl_.appendChild(this.categoryIconEl_);
 
-  this.titleRow = new SettingsUI.Row(detailsEl, title, null);
-  this.titleRow.label.classList.add('categoryName');
+  if (!hideTitle) {
+    this.titleRow = new SettingsUI.Row(detailsEl, title, null);
+    this.titleRow.label.classList.add('categoryName');
+  }
   this.settings = new SettingsUI.Panel(detailsEl);
 
+  this.hideTitle_ = hideTitle;
   this.setSelected(selected);
 
   var ui = this;
@@ -102,7 +105,10 @@ module.UI.prototype.setSelected = function(selected) {
     this.categoryEl_.classList.add('selected');
   else
     this.categoryEl_.classList.remove('selected');
-  this.titleRow.setVisible(selected);
+
+  if (!this.hideTitle_)
+    this.titleRow.setVisible(selected);
+
   this.settings.setVisible(selected);
 }
 

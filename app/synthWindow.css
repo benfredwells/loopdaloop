@@ -29,7 +29,7 @@ div {
 }
 
 .category.selected {
-  background-image: none;
+  background-color: #fff;
   border-bottom-color: #fff;
 }
 
@@ -137,15 +137,6 @@ div {
   vertical-align: top;
 }
 
-.rowName.categoryName {
-  font-size: 15px;
-  margin-top: 8px;
-  margin-bottom: 16px;
-  padding-left: 4px;
-  /* padding is 8px less, so width must be 8px more. */
-  width: 158px;
-}
-
 .categoryDisplay {
   height: 50px;
   width: 200px;
@@ -173,6 +164,16 @@ div {
 .contourPanelRow.selected .rowName {
   background-image: url('assets/downarrow.png');
   background-position: left -2px top 23px;
+}
+
+.rowName.categoryName {
+  font-size: 15px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding-left: 4px;
+  /* padding is 8px less, so width must be 8px more. */
+  width: 158px;
+  background-image: none;
 }
 
 .contourDisplay {

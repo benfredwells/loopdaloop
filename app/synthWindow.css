@@ -41,7 +41,8 @@ div {
 }
 
 #testButton:hover {
-  box-shadow: 0px 0px 2px 2px #EEE;
+  border-color: #BBB;
+  box-shadow: 0px 0px 1px 1px #EEE;
 }
 
 #testButton.selected {

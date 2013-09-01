@@ -78,18 +78,17 @@ kTypeDescriptions[Instrument.kSquareWave] = Strings.kSquare;
 kTypeDescriptions[Instrument.kSawtoothWave] = Strings.kSawtooth;
 kTypeDescriptions[Instrument.kTriangleWave] = Strings.kTriangle;
 
-module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl, selected) {
+module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl, selected, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false, selected);
   this.oscillator_ = oscillator;
 
+  this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv, oscillator,
+                                                      instrument.displaySettings, ontimechange);
+
   var ui = this;
   var changeHandler = function() {
-    ui.gainContourPanel.setCurrentTime(ui.visualizer_.currentTime());
     ui.updateDisplay_();
   }
-  this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv, oscillator,
-                                                      instrument.displaySettings, changeHandler);
-
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
 
   this.enablePanel_ = new SettingsUI.Panel(this.settings);
@@ -126,6 +125,12 @@ module.UI.prototype.updateIcon_ = function() {
     iconClass = 'disabledWaveIcon';
   }
   this.setIconClass(iconClass);
+}
+
+module.UI.prototype.setTime = function(time) {
+  this.gainContourPanel.setCurrentTime(time);
+  this.visualizer_.setCurrentTime(time);
+  this.updateDisplay_();
 }
 
 return module;

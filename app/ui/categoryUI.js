@@ -5,15 +5,15 @@ var module = {};
 
 var kTimeSteps = 100;
 
-module.CategoryVisualizer = function(container, displaySettings, onchange) {
+module.CategoryVisualizer = function(container, displaySettings, ontimechange) {
   SettingsUI.Panel.call(this, container);
   this.div.classList.add('categoryDisplay');
   this.svg = new SVGUI.SVGControl(this);
 
   var visualizer = this;
   function changeHandler() {
-    if (visualizer.onchange)
-      visualizer.onchange();
+    if (visualizer.ontimechange)
+      visualizer.ontimechange(visualizer.currentTime());
   }
 
   this.timeRange = document.createElement('input');
@@ -28,7 +28,7 @@ module.CategoryVisualizer = function(container, displaySettings, onchange) {
   this.div.appendChild(this.timeLabel);
 
   this.displaySettings = displaySettings;
-  this.onchange = onchange;
+  this.ontimechange = ontimechange;
 
   this.xSize = 200;
   this.ySize = 50;
@@ -59,6 +59,11 @@ module.CategoryVisualizer.prototype.currentTime = function() {
   var rangeVal = this.timeRange.value;
   return (rangeVal / kTimeSteps) * (this.displaySettings.noteOnTimeSetting.value +
                                     this.displaySettings.releaseTimeSetting.value);
+}
+
+module.CategoryVisualizer.prototype.setCurrentTime = function(time) {
+  var totalTime = this.displaySettings.noteOnTimeSetting.value + this.displaySettings.releaseTimeSetting.value;
+  this.timeRange.value = kTimeSteps * time / totalTime;
 }
 
 module.UI = function(id, title, categoriesEl, detailsEl, hideTitle, selected) {
@@ -123,6 +128,9 @@ module.UI.prototype.setIconClass = function(iconClass) {
       this.categoryIconEl_.classList.remove(className);
   }
   this.categoryIconEl_.classList.add(iconClass);
+}
+
+module.UI.prototype.setTime = function(time) {
 }
 
 return module;

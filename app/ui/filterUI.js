@@ -52,18 +52,17 @@ var kTypeDescriptions = {};
 kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
 kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
 
-module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, selected) {
+module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, selected, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false, selected);
   this.filter_ = filter;
 
+  this.visualizer_ = new module.FilterVisualizer_(this.titleRow.controlDiv, filter,
+                                                  instrument.displaySettings, ontimechange);
+
   var ui = this;
   var changeHandler = function() {
-    ui.frequencyContourPanel.setCurrentTime(ui.visualizer_.currentTime());
     ui.updateDisplay_();
   }
-  this.visualizer_ = new module.FilterVisualizer_(this.titleRow.controlDiv, filter,
-                                                  instrument.displaySettings, changeHandler);
-
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, filter.enabledSetting);
 
   this.enablePanel_ = new SettingsUI.Panel(this.settings);
@@ -97,6 +96,12 @@ module.UI.prototype.updateIcon_ = function() {
     iconClass = 'disabledFilterIcon';
   }
   this.setIconClass(iconClass);
+}
+
+module.UI.prototype.setTime = function(time) {
+  this.frequencyContourPanel.setCurrentTime(time);
+  this.visualizer_.setCurrentTime(time);
+  this.updateDisplay_();
 }
 
 return module;

@@ -22,8 +22,13 @@ var kEnvelopeID = 'envelope';
 
 var kSelectedFieldKey = 'instrumentWindowExpandedField';
 
-////////////////////////////////////////////////////////////////////////////////
-// Initialization
+// TODO: make this a class.
+
+function timeChange(newTime) {
+  gInstrumentUIs.forEach(function (ui) {
+    ui.setTime(newTime);
+  });
+}
 
 function init() {
   gContext = new webkitAudioContext();
@@ -54,7 +59,8 @@ function init() {
         Strings.kOscillator1,
         categoriesEl,
         detailsEl,
-        kOscillatorAID == selectedID));
+        kOscillatorAID == selectedID,
+        timeChange));
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorBID,
         gInstrument.oscillators[1],
@@ -62,7 +68,8 @@ function init() {
         Strings.kOscillator2,
         categoriesEl,
         detailsEl,
-        kOscillatorBID == selectedID));
+        kOscillatorBID == selectedID,
+        timeChange));
     gInstrumentUIs.push(new OscillatorUI.UI(
         kOscillatorCID,
         gInstrument.oscillators[2],
@@ -70,7 +77,8 @@ function init() {
         Strings.kOscillator3,
         categoriesEl,
         detailsEl,
-        kOscillatorCID == selectedID));
+        kOscillatorCID == selectedID,
+        timeChange));
     gInstrumentUIs.push(new FilterUI.UI(
         kFilterAID,
         gInstrument.filters[0],
@@ -78,7 +86,8 @@ function init() {
         Strings.kFilter1,
         categoriesEl,
         detailsEl,
-        kFilterAID == selectedID));
+        kFilterAID == selectedID,
+        timeChange));
     gInstrumentUIs.push(new FilterUI.UI(
         kFilterBID,
         gInstrument.filters[1],
@@ -86,7 +95,8 @@ function init() {
         Strings.kFilter2,
         categoriesEl,
         detailsEl,
-        kFilterBID == selectedID));
+        kFilterBID == selectedID,
+        timeChange));
     gInstrumentUIs.push(new EnvelopeUI.UI(
         kEnvelopeID,
         gInstrument.envelopeContour,

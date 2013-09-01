@@ -3,8 +3,8 @@ EnvelopeUI = (function() {
 "use strict";
 var module = {};
 
-module.UI = function(id, envelopeContour, instrument, title, categoriesEl, detailsEl, selected, ontimechange) {
-  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, true, selected);
+module.UI = function(id, envelopeContour, instrument, title, categoriesEl, detailsEl, ontimechange) {
+  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, true);
   this.envelopeContour_ = envelopeContour;
 
   this.contourPanel = new ContourUI.ContourPanel(this.settings, Strings.kEnvelope,

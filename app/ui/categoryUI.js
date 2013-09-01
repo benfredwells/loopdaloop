@@ -66,7 +66,7 @@ module.CategoryVisualizer.prototype.setCurrentTime = function(time) {
   this.timeRange.value = kTimeSteps * time / totalTime;
 }
 
-module.UI = function(id, title, categoriesEl, detailsEl, hideTitle, selected) {
+module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {
   this.id = id;
   this.title = title;
 
@@ -85,7 +85,6 @@ module.UI = function(id, title, categoriesEl, detailsEl, hideTitle, selected) {
   this.settings = new SettingsUI.Panel(detailsEl);
 
   this.hideTitle_ = hideTitle;
-  this.setSelected(selected);
 
   var ui = this;
   this.categoryEl_.onclick = function() {

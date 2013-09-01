@@ -78,8 +78,8 @@ kTypeDescriptions[Instrument.kSquareWave] = Strings.kSquare;
 kTypeDescriptions[Instrument.kSawtoothWave] = Strings.kSawtooth;
 kTypeDescriptions[Instrument.kTriangleWave] = Strings.kTriangle;
 
-module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl, selected, ontimechange) {
-  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false, selected);
+module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl, ontimechange) {
+  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
   this.oscillator_ = oscillator;
 
   this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv, oscillator,

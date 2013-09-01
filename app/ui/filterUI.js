@@ -52,8 +52,8 @@ var kTypeDescriptions = {};
 kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
 kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
 
-module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, selected, ontimechange) {
-  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false, selected);
+module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ontimechange) {
+  CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
   this.filter_ = filter;
 
   this.visualizer_ = new module.FilterVisualizer_(this.titleRow.controlDiv, filter,

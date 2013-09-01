@@ -1,5 +1,7 @@
 "use strict";
 
+// TODO: make this a class.
+
 var gContext = null;
 var gCurrentNote = null;
 var gInstrumentUIs = [];
@@ -20,9 +22,8 @@ var kFilterAID = 'fitlera';
 var kFilterBID = 'filterb';
 var kEnvelopeID = 'envelope';
 
-var kSelectedFieldKey = 'instrumentWindowExpandedField';
-
-// TODO: make this a class.
+var kDeadKeys = ['instrumentWindowExpandedField'];
+var kSelectedCategoryKey = 'selectedCategoryField';
 
 function timeChange(newTime) {
   gInstrumentUIs.forEach(function (ui) {
@@ -44,77 +45,73 @@ function init() {
   gInstrument = new Instrument.Instrument(gContext, gainNode);
   InstrumentState.updateInstrument(gInstrument, DefaultInstrumentState.Default());
 
-// Temporarily turned off because debugging with this sucks
-//  chrome.storage.local.get(kSelectedFieldKey, function(items) {
-//    var selectedID = items[kSelectedFieldKey];
-    var selectedID = kOscillatorAID;
-// End temporary hack
-    // Instrument UI setup
-    var categoriesEl = document.getElementById('categories');
-    var detailsEl = document.getElementById('details');
-    gInstrumentUIs.push(new OscillatorUI.UI(
-        kOscillatorAID,
-        gInstrument.oscillators[0],
-        gInstrument,
-        Strings.kOscillator1,
-        categoriesEl,
-        detailsEl,
-        kOscillatorAID == selectedID,
-        timeChange));
-    gInstrumentUIs.push(new OscillatorUI.UI(
-        kOscillatorBID,
-        gInstrument.oscillators[1],
-        gInstrument,
-        Strings.kOscillator2,
-        categoriesEl,
-        detailsEl,
-        kOscillatorBID == selectedID,
-        timeChange));
-    gInstrumentUIs.push(new OscillatorUI.UI(
-        kOscillatorCID,
-        gInstrument.oscillators[2],
-        gInstrument,
-        Strings.kOscillator3,
-        categoriesEl,
-        detailsEl,
-        kOscillatorCID == selectedID,
-        timeChange));
-    gInstrumentUIs.push(new FilterUI.UI(
-        kFilterAID,
-        gInstrument.filters[0],
-        gInstrument,
-        Strings.kFilter1,
-        categoriesEl,
-        detailsEl,
-        kFilterAID == selectedID,
-        timeChange));
-    gInstrumentUIs.push(new FilterUI.UI(
-        kFilterBID,
-        gInstrument.filters[1],
-        gInstrument,
-        Strings.kFilter2,
-        categoriesEl,
-        detailsEl,
-        kFilterBID == selectedID,
-        timeChange));
-    gInstrumentUIs.push(new EnvelopeUI.UI(
-        kEnvelopeID,
-        gInstrument.envelopeContour,
-        gInstrument,
-        Strings.kEnvelope,
-        categoriesEl,
-        detailsEl,
-        kEnvelopeID == selectedID));
+  // Instrument UI setup
+  var categoriesEl = document.getElementById('categories');
+  var detailsEl = document.getElementById('details');
+  gInstrumentUIs.push(new OscillatorUI.UI(
+      kOscillatorAID,
+      gInstrument.oscillators[0],
+      gInstrument,
+      Strings.kOscillator1,
+      categoriesEl,
+      detailsEl,
+      timeChange));
+  gInstrumentUIs.push(new OscillatorUI.UI(
+      kOscillatorBID,
+      gInstrument.oscillators[1],
+      gInstrument,
+      Strings.kOscillator2,
+      categoriesEl,
+      detailsEl,
+      timeChange));
+  gInstrumentUIs.push(new OscillatorUI.UI(
+      kOscillatorCID,
+      gInstrument.oscillators[2],
+      gInstrument,
+      Strings.kOscillator3,
+      categoriesEl,
+      detailsEl,
+      timeChange));
+  gInstrumentUIs.push(new FilterUI.UI(
+      kFilterAID,
+      gInstrument.filters[0],
+      gInstrument,
+      Strings.kFilter1,
+      categoriesEl,
+      detailsEl,
+      timeChange));
+  gInstrumentUIs.push(new FilterUI.UI(
+      kFilterBID,
+      gInstrument.filters[1],
+      gInstrument,
+      Strings.kFilter2,
+      categoriesEl,
+      detailsEl,
+      timeChange));
+  gInstrumentUIs.push(new EnvelopeUI.UI(
+      kEnvelopeID,
+      gInstrument.envelopeContour,
+      gInstrument,
+      Strings.kEnvelope,
+      categoriesEl,
+      detailsEl));
 
-    var headerEl = document.getElementById('header');
-    new TestButton.Button(headerEl, gInstrument);
+  var headerEl = document.getElementById('header');
+  new TestButton.Button(headerEl, gInstrument);
 
-    gInstrumentUIs.forEach(function (ui) {
-      ui.onclicked = categoryClicked;
-// Temporary hack continued
-//    });
-
+  gInstrumentUIs.forEach(function (ui) {
+    ui.onclicked = categoryClicked;
     updateSize();
+  });
+
+  chrome.storage.local.remove(kDeadKeys);
+  chrome.storage.local.get(kSelectedCategoryKey, function(items) {
+    var selectedID = items[kSelectedCategoryKey];
+    if (!selectedID)
+      selectedID = kOscillatorAID;
+    gInstrumentUIs.forEach(function (ui) {
+      ui.setSelected(ui.id == selectedID);
+    });
   });
 
 // Defined by background page.
@@ -128,7 +125,7 @@ function saveState() {
       selectedID = ui.id;
   });
   var setting = {};
-  setting[kSelectedFieldKey] = selectedID;
+  setting[kSelectedCategoryKey] = selectedID;
   chrome.storage.local.set(setting);
 }
 

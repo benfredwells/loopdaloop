@@ -3,9 +3,10 @@ TestButton = (function() {
 "use strict";
 var module = {};
 
-module.Button = function(parentDiv) {
+module.Button = function(parentDiv, instrument) {
   SettingsUI.Control.call(this, parentDiv);
   this.div.id = 'testButton';
+  this.instrument_ = instrument;
 
   this.textDiv = document.createElement('div');
   this.textDiv.id = 'testButtonText';
@@ -29,14 +30,29 @@ module.Button = function(parentDiv) {
 
 module.Button.prototype = Object.create(SettingsUI.Control.prototype);
 
+var kTestOctave = 4;
+var kTestNote = 9;
+
 module.Button.prototype.press_ = function() {
+  if (this.pressed)
+    return;
+
   this.pressed = true;
   this.div.classList.add('pressed');
+  this.playedNote_ = this.instrument_.createPlayedNote(kTestOctave, kTestNote);
+  this.playedNote_.noteOn(0);
 }
 
 module.Button.prototype.release_ = function() {
+  if (!this.pressed)
+    return;
+
   this.pressed = false;
   this.div.classList.remove('pressed');
+  if (this.playedNote_) {
+    this.playedNote_.noteOff(0);
+    this.playedNote_ = null;
+  }
 }
 
 module.Button.prototype.buttonMouseDown = function(event) {

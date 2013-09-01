@@ -97,7 +97,7 @@ function init() {
         kEnvelopeID == selectedID));
 
     var headerEl = document.getElementById('header');
-    new TestButton.Button(headerEl);
+    new TestButton.Button(headerEl, gInstrument);
 
     gInstrumentUIs.forEach(function (ui) {
       ui.onclicked = categoryClicked;

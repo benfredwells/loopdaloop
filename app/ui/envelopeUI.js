@@ -15,9 +15,21 @@ module.UI = function(id, envelopeContour, instrument, title, categoriesEl, detai
 
 module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
+module.UI.prototype.setSelected = function(selected) {
+  CategoryUI.UI.prototype.setSelected.call(this, selected);
+  // Bail out if still initializing
+  if (!this.contourPanel)
+    return;
+
+  if (selected) {
+    this.contourPanel.drawContour();
+  }
+}
+
 module.UI.prototype.setTime = function(time) {
   this.contourPanel.setCurrentTime(time);
-  this.contourPanel.drawContour();
+  if (this.isSelected())
+    this.contourPanel.drawContour();
 }
 
 return module;

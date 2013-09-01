@@ -106,6 +106,10 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
 module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.updateDisplay_ = function() {
+  // Bail out if still initializing
+  if (!this.enablePanel_)
+    return;
+
   this.enablePanel_.setEnabled(this.oscillator_.enabledSetting.value);;
   this.updateIcon_();
   this.visualizer_.drawVisualization();
@@ -130,7 +134,15 @@ module.UI.prototype.updateIcon_ = function() {
 module.UI.prototype.setTime = function(time) {
   this.gainContourPanel.setCurrentTime(time);
   this.visualizer_.setCurrentTime(time);
-  this.updateDisplay_();
+  if (this.isSelected())
+    this.updateDisplay_();
+}
+
+module.UI.prototype.setSelected = function(selected) {
+  CategoryUI.UI.prototype.setSelected.call(this, selected);
+  if (selected) {
+    this.updateDisplay_();
+  }
 }
 
 return module;

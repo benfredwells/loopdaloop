@@ -96,6 +96,9 @@ function init() {
         detailsEl,
         kEnvelopeID == selectedID));
 
+    var headerEl = document.getElementById('header');
+    new TestButton.Button(headerEl);
+
     gInstrumentUIs.forEach(function (ui) {
       ui.onclicked = categoryClicked;
 // Temporary hack continued

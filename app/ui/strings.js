@@ -58,6 +58,9 @@ module.kOscillator3 = 'Oscillator 3';
 module.kFilter1 = 'Filter 1';
 module.kFilter2 = 'Filter 2';
 
+module.kTest = 'Test';
+module.kTestShortcut =' (T)';
+
 return module;
 
 }());

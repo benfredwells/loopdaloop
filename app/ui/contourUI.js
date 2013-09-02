@@ -25,14 +25,17 @@ var kBackgroundStrokeWidth = 2;
 var kBackgroundFill = "none";
 var kReleaseBackgroundStroke = "none";
 var kReleaseBackgroundStrokeWidth = 1;
-var kReleaseBackgroundFill = "#EEEEEE";
+var kReleaseBackgroundFill = "#F5F5F5";
 var kContourStroke = "#4040A0";
 var kContourStrokeWidth = 2;
 var kContourFill = "none";
 var kCurrentTimeStroke = "#DDDDDD";
 var kCurrentTimeStrokeWidth = 1;
-var kSecondStroke = "#E4E4E4";
+var kSecondStroke = "#EEEEEE";
 var kSecondStrokeWidth = 1;
+var kTenthSecondStroke = "#E8E8E8";
+var kTenthSecondStrokeWidth = 0.5;
+var kTenthSecondMinGap = 3;
 
 module.ContourVisualizer_.prototype.drawContour = function() {
   this.clear();
@@ -48,8 +51,18 @@ module.ContourVisualizer_.prototype.drawContour = function() {
                 kYSize - 2 * padding, kReleaseBackgroundStroke,
                 kReleaseBackgroundStrokeWidth, kReleaseBackgroundFill);
 
+  var baseTenthSecondXGap = (kXSize - 2 * padding) / (totalTime * 10);
+  if (baseTenthSecondXGap >= kTenthSecondMinGap) {
+    var currentX = padding + baseTenthSecondXGap;
+    while (currentX < kXSize - padding) {
+      this.drawLine(currentX, padding, currentX, kYSize - padding,
+                    kTenthSecondStroke, kTenthSecondStrokeWidth);
+      currentX += baseTenthSecondXGap;
+    }
+  }
+
   var baseSecondXGap = (kXSize - 2 * padding) / totalTime;
-  var currentX = padding + baseSecondXGap;
+  currentX = padding + baseSecondXGap;
   while (currentX < kXSize - padding) {
     this.drawLine(currentX, padding, currentX, kYSize - padding,
                   kSecondStroke, kSecondStrokeWidth);

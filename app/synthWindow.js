@@ -25,7 +25,7 @@ var kEnvelopeID = 'envelope';
 var kDeadKeys = ['instrumentWindowExpandedField'];
 var kSelectedCategoryKey = 'selectedCategoryField';
 
-var kDefaultNoteOnTime = 1;
+var kDefaultNoteOnTime = 2;
 
 function timeChange(newTime) {
   gInstrumentUIs.forEach(function (ui) {

@@ -31,6 +31,8 @@ var kContourStrokeWidth = 2;
 var kContourFill = "none";
 var kCurrentTimeStroke = "#DDDDDD";
 var kCurrentTimeStrokeWidth = 1;
+var kSecondStroke = "#E4E4E4";
+var kSecondStrokeWidth = 1;
 
 module.ContourVisualizer_.prototype.drawContour = function() {
   this.clear();
@@ -39,11 +41,21 @@ module.ContourVisualizer_.prototype.drawContour = function() {
   if (totalTime == 0)
     return;
 
-  var releaseXStart = kXSize * this.noteOnTime / totalTime;
-  this.drawRect(releaseXStart, kBackgroundStrokeWidth / 2,
-                kXSize - releaseXStart - kBackgroundStrokeWidth / 2,
-                kYSize - kBackgroundStrokeWidth, kReleaseBackgroundStroke,
+  var padding = kBackgroundStrokeWidth / 2
+  var releaseXStart = (kXSize - 2 * padding) * this.noteOnTime / totalTime;
+  this.drawRect(releaseXStart, padding,
+                kXSize - releaseXStart - padding,
+                kYSize - 2 * padding, kReleaseBackgroundStroke,
                 kReleaseBackgroundStrokeWidth, kReleaseBackgroundFill);
+
+  var baseSecondXGap = (kXSize - 2 * padding) / totalTime;
+  var currentX = padding + baseSecondXGap;
+  while (currentX < kXSize - padding) {
+    this.drawLine(currentX, padding, currentX, kYSize - padding,
+                  kSecondStroke, kSecondStrokeWidth);
+    currentX += baseSecondXGap;
+  }
+
   var currentTimeX = kXPadding + kXFudge + (kXSize - 2 * kXPadding) * this.currentTime / totalTime;
   this.drawLine(currentTimeX, 0, currentTimeX, kYSize,
                 kCurrentTimeStroke, kCurrentTimeStrokeWidth);

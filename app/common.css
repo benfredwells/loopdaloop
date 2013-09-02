@@ -1,0 +1,77 @@
+body {
+  margin: 16px;
+  font-family: arial, sans-serif;
+  color: #444;
+}
+
+div {
+  margin: 0px;
+}
+
+div.page {
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #FFF;
+  padding: 20px;
+}
+
+div.title {
+  font-size: large;
+  margin-bottom: 10px;
+}
+
+div#keyboardTitle {
+  color: #1A8;
+}
+
+div.keyboard {
+  width: auto;
+  margin-top: 10px;
+}
+
+div.key {
+  display: inline-block;
+  position: fixed;
+  border: 1px solid black;
+  text-align: center;
+  -webkit-user-select: none;
+}
+
+div.key * {
+  position: relative;
+}
+
+div.white {
+  background: -webkit-linear-gradient( 90deg, white, #DDD);
+  z-index: 10;
+}
+
+div.white.playing {
+  background: -webkit-linear-gradient( 90deg, #FAA, #DDD);
+}
+
+div.white:hover {
+  background: -webkit-linear-gradient( 90deg, #FFA, #DDD);
+}
+
+div.white.playing:hover {
+  background: -webkit-linear-gradient( 90deg, #FAA, #DDD);
+}
+
+div.black {
+  background: -webkit-linear-gradient( 90deg, #555, black 10%, black 80%, #222);
+  color: #888;
+  z-index: 20;
+}
+
+div.black.playing {
+  background: -webkit-linear-gradient( 90deg, #633, #600 10%, #300 80%, #211);
+}
+
+div.black:hover {
+  background: -webkit-linear-gradient( 90deg, #663, #440 10%, #220 80%, #221);
+}
+
+div.black.playing:hover {
+  background: -webkit-linear-gradient( 90deg, #633, #600 10%, #300 80%, #211);
+}

@@ -100,7 +100,7 @@ function init() {
       timeChange));
 
   var headerEl = document.getElementById('header');
-  new TestButton.Button(headerEl, gInstrument);
+  new TestButton.Button(headerEl, gInstrument, gContext, timeChange);
 
   gInstrumentUIs.forEach(function (ui) {
     ui.onclicked = categoryClicked;

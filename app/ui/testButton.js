@@ -3,7 +3,7 @@ TestButton = (function() {
 "use strict";
 var module = {};
 
-module.Button = function(parentDiv, instrument) {
+module.Button = function(parentDiv, instrument, context, ontimechange) {
   SettingsUI.Control.call(this, parentDiv);
   this.div.id = 'testButton';
   this.instrument_ = instrument;
@@ -18,7 +18,13 @@ module.Button = function(parentDiv, instrument) {
   this.shortcutSpan.innerHTML = Strings.kTestShortcut;
   this.textDiv.appendChild(this.shortcutSpan);
 
+  this.context_ = context;
+  this.ontimechange = ontimechange;
+
   this.pressed = false;
+  this.noteStartTime = 0;
+  this.noteOffTime = 0;
+  this.noteReleaseTime = 0;
 
   var button = this;
   this.div.onmousedown = function(event) { button.buttonMouseDown(event); };
@@ -29,6 +35,24 @@ module.Button = function(parentDiv, instrument) {
 }
 
 module.Button.prototype = Object.create(SettingsUI.Control.prototype);
+
+var kResetTime = 3;
+
+module.Button.prototype.resetDisplay_ = function() {
+  this.ontimechange(0);
+}
+
+module.Button.prototype.updateDisplay_ = function() {
+  var timeDelta = this.context_.currentTime - this.noteStartTime;
+  var offDelta = this.context_.currentTime - this.noteOffTime;
+  this.ontimechange(timeDelta);
+  var button = this;
+  if (!this.pressed && offDelta > this.noteReleaseTime) {
+    setTimeout(function() { button.resetDisplay_(); }, kResetTime * 1000);
+  } else {
+    window.requestAnimationFrame(function() { button.updateDisplay_(); });
+  }
+}
 
 var kTestOctave = 4;
 var kTestNote = 9;
@@ -41,6 +65,10 @@ module.Button.prototype.press_ = function() {
   this.div.classList.add('pressed');
   this.playedNote_ = this.instrument_.createPlayedNote(kTestOctave, kTestNote);
   this.playedNote_.noteOn(0);
+
+  this.noteReleaseTime = this.instrument_.envelopeContour.releaseTime();
+  this.noteStartTime = this.context_.currentTime;
+  this.updateDisplay_();
 }
 
 module.Button.prototype.release_ = function() {
@@ -50,6 +78,7 @@ module.Button.prototype.release_ = function() {
   this.pressed = false;
   this.div.classList.remove('pressed');
   if (this.playedNote_) {
+    this.noteOffTime = this.context_.currentTime;
     this.playedNote_.noteOff(0);
     this.playedNote_ = null;
   }

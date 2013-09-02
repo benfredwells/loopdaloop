@@ -3,8 +3,8 @@ FilterUI = (function() {
 "use strict";
 var module = {};
 
-module.FilterVisualizer_ = function(container, filter, displaySettings, onchange) {
-  CategoryUI.CategoryVisualizer.call(this, container, displaySettings, onchange);
+module.FilterVisualizer_ = function(container, filter, onchange) {
+  CategoryUI.CategoryVisualizer.call(this, container, onchange);
   this.filter_ = filter;
 }
 
@@ -39,7 +39,7 @@ module.FilterVisualizer_.prototype.drawVisualization = function() {
   var response = this.filter_.getFrequencyResponse(kFreqOctave,
                                                    kFreqNote,
                                                    this.currentTime(),
-                                                   this.displaySettings.noteOnTimeSetting.value,
+                                                   this.noteOnTime,
                                                    kHarmonics,
                                                    this.xSize - 2 * kXPadding);
   var yBottom = this.ySize - kYPadding;
@@ -59,8 +59,7 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
   this.filter_ = filter;
 
-  this.visualizer_ = new module.FilterVisualizer_(this.titleRow.controlDiv, filter,
-                                                  instrument.displaySettings, ontimechange);
+  this.visualizer_ = new module.FilterVisualizer_(this.titleRow.controlDiv, filter, ontimechange);
 
   var ui = this;
   var changeHandler = function() {
@@ -76,7 +75,6 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kQ, changeHandler, filter.qSetting, null, 20);
 
   this.response_ = [];
-  this.updateDisplay_();
 }
 
 module.UI.prototype = Object.create(CategoryUI.UI.prototype);
@@ -105,9 +103,9 @@ module.UI.prototype.updateIcon_ = function() {
   this.setIconClass(iconClass);
 }
 
-module.UI.prototype.setTime = function(time) {
-  this.frequencyContourPanel.setCurrentTime(time);
-  this.visualizer_.setCurrentTime(time);
+module.UI.prototype.setCurrentTime = function(time, noteOnTime, releaseTime) {
+  this.frequencyContourPanel.setCurrentTime(time, noteOnTime, releaseTime);
+  this.visualizer_.setCurrentTime(time, noteOnTime, releaseTime);
   if (this.isSelected())
     this.updateDisplay_();
 }

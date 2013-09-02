@@ -3,8 +3,8 @@ OscillatorUI = (function() {
 "use strict";
 var module = {};
 
-module.OscillatorVisualizer_ = function(container, oscillator, displaySettings, onchange) {
-  CategoryUI.CategoryVisualizer.call(this, container, displaySettings, onchange);
+module.OscillatorVisualizer_ = function(container, oscillator, onchange) {
+  CategoryUI.CategoryVisualizer.call(this, container, onchange);
   this.oscillator_ = oscillator;
 }
 
@@ -58,7 +58,7 @@ module.OscillatorVisualizer_.prototype.drawVisualization = function() {
     return;
 
   var yBottom = this.ySize - kYPadding;
-  var gain = this.oscillator_.gainContour.valueAtTime(this.currentTime(), this.displaySettings.noteOnTimeSetting.value);
+  var gain = this.oscillator_.gainContour.valueAtTime(this.currentTime(), this.noteOnTime);
   var freqeuencyAdjust = ChromaticScale.frequencyAdjustmentFactor(
       this.oscillator_.octaveOffsetSetting.value,
       this.oscillator_.noteOffsetSetting.value,
@@ -85,8 +85,7 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
   this.oscillator_ = oscillator;
 
-  this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv, oscillator,
-                                                      instrument.displaySettings, ontimechange);
+  this.visualizer_ = new module.OscillatorVisualizer_(this.titleRow.controlDiv, oscillator, ontimechange);
 
   var ui = this;
   var changeHandler = function() {
@@ -102,8 +101,6 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
   this.gainContourPanel = new ContourUI.ContourPanel(this.enablePanel_, Strings.kGain,
                                                      changeHandler, oscillator.gainContour, instrument,
                                                      null, 10, false, false);
-
-  this.updateDisplay_();
 }
 
 module.UI.prototype = Object.create(CategoryUI.UI.prototype);
@@ -134,9 +131,9 @@ module.UI.prototype.updateIcon_ = function() {
   this.setIconClass(iconClass);
 }
 
-module.UI.prototype.setTime = function(time) {
-  this.gainContourPanel.setCurrentTime(time);
-  this.visualizer_.setCurrentTime(time);
+module.UI.prototype.setCurrentTime = function(time, noteOnTime, releaseTime) {
+  this.gainContourPanel.setCurrentTime(time, noteOnTime, releaseTime);
+  this.visualizer_.setCurrentTime(time, noteOnTime, releaseTime);
   if (this.isSelected())
     this.updateDisplay_();
 }

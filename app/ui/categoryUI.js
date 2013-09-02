@@ -5,7 +5,7 @@ var module = {};
 
 var kTimeSteps = 100;
 
-module.CategoryVisualizer = function(container, displaySettings, ontimechange) {
+module.CategoryVisualizer = function(container, ontimechange) {
   SettingsUI.Panel.call(this, container);
   this.div.classList.add('categoryDisplay');
   this.svg = new SVGUI.SVGControl(this);
@@ -27,11 +27,13 @@ module.CategoryVisualizer = function(container, displaySettings, ontimechange) {
   this.timeLabel = document.createElement('span');
   this.div.appendChild(this.timeLabel);
 
-  this.displaySettings = displaySettings;
   this.ontimechange = ontimechange;
 
   this.xSize = 200;
   this.ySize = 50;
+
+  this.noteOnTime = 0;
+  this.releaseTime = 0;
 }
 
 module.CategoryVisualizer.prototype = Object.create(SettingsUI.Panel.prototype);
@@ -57,13 +59,13 @@ module.CategoryVisualizer.prototype.drawTime = function() {
 
 module.CategoryVisualizer.prototype.currentTime = function() {
   var rangeVal = this.timeRange.value;
-  return (rangeVal / kTimeSteps) * (this.displaySettings.noteOnTimeSetting.value +
-                                    this.displaySettings.releaseTimeSetting.value);
+  return (rangeVal / kTimeSteps) * (this.noteOnTime + this.releaseTime);
 }
 
-module.CategoryVisualizer.prototype.setCurrentTime = function(time) {
-  var totalTime = this.displaySettings.noteOnTimeSetting.value + this.displaySettings.releaseTimeSetting.value;
-  this.timeRange.value = kTimeSteps * time / totalTime;
+module.CategoryVisualizer.prototype.setCurrentTime = function(time, noteOnTime, releaseTime) {
+  this.noteOnTime = noteOnTime;
+  this.releaseTime = releaseTime;
+  this.timeRange.value = kTimeSteps * time / (this.noteOnTime + this.releaseTime);
 }
 
 module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {
@@ -129,7 +131,7 @@ module.UI.prototype.setIconClass = function(iconClass) {
   this.categoryIconEl_.classList.add(iconClass);
 }
 
-module.UI.prototype.setTime = function(time) {
+module.UI.prototype.setCurrentTime = function(time, noteOnTime, releaseTime) {
 }
 
 return module;

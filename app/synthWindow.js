@@ -25,9 +25,12 @@ var kEnvelopeID = 'envelope';
 var kDeadKeys = ['instrumentWindowExpandedField'];
 var kSelectedCategoryKey = 'selectedCategoryField';
 
+var kDefaultNoteOnTime = 1;
+var kDefaultReleaseTime = 1;
+
 function timeChange(newTime) {
   gInstrumentUIs.forEach(function (ui) {
-    ui.setTime(newTime);
+    ui.setCurrentTime(newTime, kDefaultNoteOnTime, kDefaultReleaseTime);
   });
 }
 
@@ -101,6 +104,7 @@ function init() {
 
   gInstrumentUIs.forEach(function (ui) {
     ui.onclicked = categoryClicked;
+    ui.setCurrentTime(0, kDefaultNoteOnTime, kDefaultReleaseTime);
     updateSize();
   });
 

@@ -3,12 +3,13 @@ ContourUI = (function() {
 "use strict";
 var module = {};
 
-module.ContourVisualizer_ = function(container, contouredValue, displaySettings) {
+module.ContourVisualizer_ = function(container, contouredValue) {
   SVGUI.SVGControl.call(this, container);
   this.div.classList.add('contourDisplay');
   this.contouredValue_ = contouredValue;
-  this.displaySettings_ = displaySettings;
   this.currentTime = 0;
+  this.noteOnTime_ = 0;
+  this.releaseTime_ = 0;
 }
 
 module.ContourVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
@@ -31,8 +32,7 @@ var kCurrentTimeStrokeWidth = 1;
 module.ContourVisualizer_.prototype.drawContour = function() {
   this.clear();
   this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
-  var totalTime = this.displaySettings_.noteOnTimeSetting.value +
-                  this.displaySettings_.releaseTimeSetting.value;
+  var totalTime = this.noteOnTime_ + this.releaseTime_;
   var currentTimeX = kXPadding + kXFudge + (kXSize - 2 * kXPadding) * this.currentTime / totalTime;
   this.drawLine(currentTimeX, 0, currentTimeX, kYSize,
                 kCurrentTimeStroke, kCurrentTimeStrokeWidth);
@@ -41,7 +41,7 @@ module.ContourVisualizer_.prototype.drawContour = function() {
   for (var i = 0; i < pointCount; i++) {
     var x = kXPadding + (i * kXStep);
     var time = totalTime * i / pointCount;
-    var value = this.contouredValue_.valueAtTime(time, this.displaySettings_.noteOnTimeSetting.value);
+    var value = this.contouredValue_.valueAtTime(time, this.noteOnTime_);
     var relativeValue = (value - this.contouredValue_.min) /
                         (this.contouredValue_.max - this.contouredValue_.min);
     var y = kYSize - kYPadding - relativeValue * (kYSize - 2 * kYPadding);
@@ -120,8 +120,7 @@ module.ContourPanel = function(container, title, onchange, contouredValue, instr
 
   this.contourRow_ = new SettingsUI.Row(this, title, null);
 
-  this.visualizer_ = new module.ContourVisualizer_(this.contourRow_.controlDiv,
-                                                   contouredValue, instrument.displaySettings);
+  this.visualizer_ = new module.ContourVisualizer_(this.contourRow_.controlDiv, contouredValue);
   this.selectPanel_ = new SettingsUI.Panel(this);
 
   var contourGroup = this;
@@ -168,7 +167,6 @@ module.ContourPanel = function(container, title, onchange, contouredValue, instr
       contouredValue.isEnvelope, formatter, steps);
 
   this.showHideContours_();
-  this.visualizer_.drawContour();
   this.setSelected(selected);
 }
 
@@ -190,8 +188,10 @@ module.ContourPanel.prototype.setSelected = function(selected) {
   this.selectPanel_.setVisible(selected);
 }
 
-module.ContourPanel.prototype.setCurrentTime = function(currentTime) {
+module.ContourPanel.prototype.setCurrentTime = function(currentTime, noteOnTime, releaseTime) {
   this.visualizer_.currentTime = currentTime;
+  this.visualizer_.noteOnTime_ = noteOnTime;
+  this.visualizer_.releaseTime_ = releaseTime;
 }
 
 module.ContourPanel.prototype.drawContour = function() {

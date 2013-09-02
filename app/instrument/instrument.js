@@ -103,13 +103,6 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, time, note
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Instrument display settings class
-module.DisplaySettings = function() {
-  this.noteOnTimeSetting = new Setting.Number(0.2, 4);
-  this.releaseTimeSetting = new Setting.Number(0.2, 4);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // Instrument class
 module.Instrument = function(context, destinationNode) {
   this.context_ = context;
@@ -123,7 +116,6 @@ module.Instrument = function(context, destinationNode) {
   for (var i = 0; i < kFilterCount; i++) {
     this.filters.push(new module.Filter(context));
   }
-  this.displaySettings = new module.DisplaySettings();
 }
 
 module.Instrument.prototype.createEnvelope_ = function() {

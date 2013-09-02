@@ -21,9 +21,10 @@ module.Button = function(parentDiv, instrument, context, ontimechange) {
   this.context_ = context;
   this.ontimechange = ontimechange;
 
-  this.noteOnTime = 0;
-  this.noteOffTime = 0;
-  this.noteReleaseTime = 0;
+  this.noteOnTime_ = 0;
+  this.noteOffTime_ = 0;
+  this.noteReleaseTime_ = 0;
+  this.currentTime_ = 0;
 
   var button = this;
   this.div.onmousedown = function(event) { button.buttonMouseDown(event); };
@@ -35,21 +36,21 @@ module.Button = function(parentDiv, instrument, context, ontimechange) {
 
 module.Button.prototype = Object.create(SettingsUI.Control.prototype);
 
-var kResetTime = 3;
+var kResetTime = 2;
 
 module.Button.prototype.resetDisplay_ = function() {
-  this.ontimechange(0, this.noteDuration);
+  this.ontimechange(this.currentTime_, this.noteDuration_, this.noteReleaseTime_);
 }
 
 module.Button.prototype.updateDisplay_ = function() {
-  var timeDelta = this.context_.currentTime - this.noteOnTime;
-  var offDelta = this.context_.currentTime - this.noteOffTime;
-  this.noteDuration = timeDelta;
+  var timeDelta = this.context_.currentTime - this.noteOnTime_;
+  var offDelta = this.context_.currentTime - this.noteOffTime_;
+  this.noteDuration_ = timeDelta;
   if (!this.playedNote_)
-    this.noteDuration = this.noteOffTime - this.noteOnTime;
-  this.ontimechange(timeDelta, this.noteDuration);
+    this.noteDuration_ = this.noteOffTime_ - this.noteOnTime_;
+  this.ontimechange(timeDelta, this.noteDuration_, this.noteReleaseTime_);
   var button = this;
-  if (!this.playedNote_ && offDelta > this.noteReleaseTime) {
+  if (!this.playedNote_ && offDelta > this.noteReleaseTime_) {
     setTimeout(function() { button.resetDisplay_(); }, kResetTime * 1000);
   } else {
     window.requestAnimationFrame(function() { button.updateDisplay_(); });
@@ -67,8 +68,8 @@ module.Button.prototype.press_ = function() {
   this.playedNote_ = this.instrument_.createPlayedNote(kTestOctave, kTestNote);
   this.playedNote_.noteOn(0);
 
-  this.noteReleaseTime = this.instrument_.envelopeContour.releaseTime();
-  this.noteOnTime = this.context_.currentTime;
+  this.noteReleaseTime_ = this.instrument_.envelopeContour.releaseTime();
+  this.noteOnTime_ = this.context_.currentTime;
   this.updateDisplay_();
 }
 
@@ -78,10 +79,14 @@ module.Button.prototype.release_ = function() {
 
   this.div.classList.remove('pressed');
   if (this.playedNote_) {
-    this.noteOffTime = this.context_.currentTime;
+    this.noteOffTime_ = this.context_.currentTime;
     this.playedNote_.noteOff(0);
     this.playedNote_ = null;
   }
+}
+
+module.Button.prototype.setCurrentTime = function(currentTime) {
+  this.currentTime_ = currentTime;
 }
 
 module.Button.prototype.buttonMouseDown = function(event) {

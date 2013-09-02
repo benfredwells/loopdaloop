@@ -42,7 +42,6 @@ module.ContourVisualizer_.prototype.drawContour = function() {
     return;
 
   var padding = kBackgroundStrokeWidth / 2
-  console.log(this.noteDuration);
   var releaseXStart = (kXSize - 2 * padding) * this.noteDuration / totalTime;
   this.drawRect(releaseXStart, padding,
                 kXSize - releaseXStart - padding,

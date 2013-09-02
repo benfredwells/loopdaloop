@@ -28,16 +28,25 @@ var kSelectedCategoryKey = 'selectedCategoryField';
 var kDefaultNoteDuration = 2;
 var lastNoteDuration = kDefaultNoteDuration;
 
+var gTestButton = null;
+
 function visualizationTimeChange(newTime) {
+  if (newTime > lastNoteDuration + gInstrument.envelopeContour.releaseTime()) {
+    newTime = lastNoteDuration + gInstrument.envelopeContour.releaseTime();
+  }
   gInstrumentUIs.forEach(function (ui) {
     ui.setCurrentTime(newTime, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
   });
+  gTestButton.setCurrentTime(newTime);
 }
 
-function testNoteTimeChange(newTime, noteDuration) {
+function testNoteTimeChange(newTime, noteDuration, releaseTime) {
   lastNoteDuration = noteDuration;
+  if (newTime > lastNoteDuration + releaseTime) {
+    newTime = lastNoteDuration + releaseTime;
+  }
   gInstrumentUIs.forEach(function (ui) {
-    ui.setCurrentTime(newTime, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
+    ui.setCurrentTime(newTime, lastNoteDuration, releaseTime);
   });
 }
 
@@ -108,13 +117,14 @@ function init() {
       visualizationTimeChange));
 
   var headerEl = document.getElementById('header');
-  new TestButton.Button(headerEl, gInstrument, gContext, testNoteTimeChange);
+  gTestButton = new TestButton.Button(headerEl, gInstrument, gContext, testNoteTimeChange);
 
   gInstrumentUIs.forEach(function (ui) {
     ui.onclicked = categoryClicked;
     ui.setCurrentTime(0, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
     updateSize();
   });
+  gTestButton.setCurrentTime(0);
 
   chrome.storage.local.remove(kDeadKeys);
   chrome.storage.local.get(kSelectedCategoryKey, function(items) {

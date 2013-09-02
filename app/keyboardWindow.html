@@ -5,13 +5,10 @@
   <script src='ui/keyboardPiano.js'></script>
   <script src='keyboardWindow.js'></script>
   <link rel='stylesheet' href='common.css'/>
+  <link rel='stylesheet' href='keyboardWindow.css'/>
 </head>
 <body>
-  <div class='page'>
-    <div id='keyboardTitle' class='title'>Keyboard</div>
-    <input type='range' id='octave' min='0' max='8' title='Use [ or ] to change'>Octave:</input>
-    <span id='selectedOctave'></span><br>
-    <div class='keyboard' id ='keyboard'></div>
-  </div>
+  <div class='keyboard' id ='keyboard'></div>
+  <input type='range' id='octave' min='0' max='8' title='Use [ or ] to change'>Octave:</input><span id='selectedOctave'></span><br>
 </body>
 </html>

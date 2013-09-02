@@ -22,10 +22,6 @@ module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.setSelected = function(selected) {
   CategoryUI.UI.prototype.setSelected.call(this, selected);
-  // Bail out if still initializing
-  if (!this.contourPanel)
-    return;
-
   if (selected) {
     this.contourPanel.drawContour();
   }

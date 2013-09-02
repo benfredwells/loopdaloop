@@ -80,10 +80,6 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
 module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.updateDisplay_ = function() {
-  // Bail out if still initializing
-  if (!this.enablePanel_)
-    return;
-
   this.enablePanel_.setEnabled(this.filter_.enabledSetting.value);;
   this.updateIcon_();
   this.visualizer_.drawVisualization();

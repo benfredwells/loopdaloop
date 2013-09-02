@@ -32,6 +32,9 @@ module.FilterVisualizer_.prototype.drawVisualization = function() {
     currentX += baseHarmonicXGap;
   }
   this.drawTime();
+  if (!this.filter_.enabledSetting.value)
+    return;
+
   var magPoints = new SVGUI.PointList();
   var response = this.filter_.getFrequencyResponse(kFreqOctave,
                                                    kFreqNote,

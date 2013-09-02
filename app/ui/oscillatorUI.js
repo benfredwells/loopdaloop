@@ -54,6 +54,9 @@ module.OscillatorVisualizer_.prototype.drawVisualization = function() {
     currentX += baseHarmonicXGap;
   }
   this.drawTime();
+  if (!this.oscillator_.enabledSetting.value)
+    return;
+
   var yBottom = this.ySize - kYPadding;
   var gain = this.oscillator_.gainContour.valueAtTime(this.currentTime(), this.displaySettings.noteOnTimeSetting.value);
   var freqeuencyAdjust = ChromaticScale.frequencyAdjustmentFactor(

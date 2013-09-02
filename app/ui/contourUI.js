@@ -23,6 +23,9 @@ var kXFudge = 0.5
 var kBackgroundStroke = "#CCCCCC";
 var kBackgroundStrokeWidth = 2;
 var kBackgroundFill = "none";
+var kReleaseBackgroundStroke = "none";
+var kReleaseBackgroundStrokeWidth = 1;
+var kReleaseBackgroundFill = "#EEEEEE";
 var kContourStroke = "#4040A0";
 var kContourStrokeWidth = 2;
 var kContourFill = "none";
@@ -33,6 +36,14 @@ module.ContourVisualizer_.prototype.drawContour = function() {
   this.clear();
   this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
   var totalTime = this.noteOnTime + this.releaseTime;
+  if (totalTime == 0)
+    return;
+
+  var releaseXStart = kXSize * this.noteOnTime / totalTime;
+  this.drawRect(releaseXStart, kBackgroundStrokeWidth / 2,
+                kXSize - releaseXStart - kBackgroundStrokeWidth / 2,
+                kYSize - kBackgroundStrokeWidth, kReleaseBackgroundStroke,
+                kReleaseBackgroundStrokeWidth, kReleaseBackgroundFill);
   var currentTimeX = kXPadding + kXFudge + (kXSize - 2 * kXPadding) * this.currentTime / totalTime;
   this.drawLine(currentTimeX, 0, currentTimeX, kYSize,
                 kCurrentTimeStroke, kCurrentTimeStrokeWidth);

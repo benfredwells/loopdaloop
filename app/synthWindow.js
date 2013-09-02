@@ -96,7 +96,8 @@ function init() {
       gInstrument,
       Strings.kEnvelope,
       categoriesEl,
-      detailsEl));
+      detailsEl,
+      timeChange));
 
   var headerEl = document.getElementById('header');
   new TestButton.Button(headerEl, gInstrument);

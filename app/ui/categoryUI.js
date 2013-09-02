@@ -53,7 +53,7 @@ module.CategoryVisualizer.prototype.drawVisualization = function() {
 }
 
 module.CategoryVisualizer.prototype.drawTime = function() {
-  var timeString = Strings.kSecondsFormatter.format(this.currentTime());
+  var timeString = Strings.kSecondsFormatter.format(this.currentTime().toFixed(2));
   this.svg.drawText(timeString, this.xSize - kTimePadding, kTimeY, kTimeAnchor, kTimeTextColor, kTimeSize);
 }
 

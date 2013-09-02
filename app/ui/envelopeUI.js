@@ -7,6 +7,11 @@ module.UI = function(id, envelopeContour, instrument, title, categoriesEl, detai
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, true);
   this.envelopeContour_ = envelopeContour;
 
+  var ui = this;
+  function changeHandler() {
+    if (ontimechange)
+      ontimechange(ui.contourPanel.currentTime());
+  }
   this.contourPanel = new ContourUI.ContourPanel(this.settings, Strings.kEnvelope,
                                                  null, envelopeContour,
                                                  instrument, null, 190, true, true);

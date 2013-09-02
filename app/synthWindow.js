@@ -26,11 +26,10 @@ var kDeadKeys = ['instrumentWindowExpandedField'];
 var kSelectedCategoryKey = 'selectedCategoryField';
 
 var kDefaultNoteOnTime = 1;
-var kDefaultReleaseTime = 1;
 
 function timeChange(newTime) {
   gInstrumentUIs.forEach(function (ui) {
-    ui.setCurrentTime(newTime, kDefaultNoteOnTime, kDefaultReleaseTime);
+    ui.setCurrentTime(newTime, kDefaultNoteOnTime, gInstrument.envelopeContour.releaseTime());
   });
 }
 
@@ -104,7 +103,7 @@ function init() {
 
   gInstrumentUIs.forEach(function (ui) {
     ui.onclicked = categoryClicked;
-    ui.setCurrentTime(0, kDefaultNoteOnTime, kDefaultReleaseTime);
+    ui.setCurrentTime(0, kDefaultNoteOnTime, gInstrument.envelopeContour.releaseTime());
     updateSize();
   });
 

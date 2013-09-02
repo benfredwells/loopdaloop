@@ -62,6 +62,10 @@ module.FlatContour.prototype.valueAtTime = function(time, noteOnTime) {
   return this.valueSetting.value;  
 }
 
+module.FlatContour.prototype.releaseTime = function() {
+  return kMinChangeTime;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillating contour
 module.OscillatingContour = function(valueSetting, contouredValue) {
@@ -111,6 +115,10 @@ module.OscillatingContour.prototype.averageValue = function(valueFunction) {
 module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
   var periods = time * this.frequencySetting.value;
   return this.rawCenterValue_() + this.rawAmplitude_() * Math.sin(2 * Math.PI * periods);
+}
+
+module.OscillatingContour.prototype.releaseTime = function() {
+  return kMinChangeTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -230,6 +238,10 @@ module.ADSRContour.prototype.valueAtTime = function(time, noteOnTime) {
   return this.finalValueSetting.value;
 }
 
+module.ADSRContour.prototype.releaseTime = function() {
+  return this.sustainHoldSetting.value + this.releaseTimeSetting.value;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Identifiers for contour types
 module.kFlatContour = 'flat';
@@ -263,6 +275,10 @@ module.ContouredValue.prototype.currentContour = function() {
 
 module.ContouredValue.prototype.valueAtTime = function(time, noteOnTime) {
   return this.currentContour().valueAtTime(time, noteOnTime);
+}
+
+module.ContouredValue.prototype.releaseTime = function() {
+  return this.currentContour().releaseTime();
 }
 
 return module;

@@ -8,8 +8,8 @@ module.ContourVisualizer_ = function(container, contouredValue) {
   this.div.classList.add('contourDisplay');
   this.contouredValue_ = contouredValue;
   this.currentTime = 0;
-  this.noteOnTime_ = 0;
-  this.releaseTime_ = 0;
+  this.noteOnTime = 0;
+  this.releaseTime = 0;
 }
 
 module.ContourVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
@@ -32,7 +32,7 @@ var kCurrentTimeStrokeWidth = 1;
 module.ContourVisualizer_.prototype.drawContour = function() {
   this.clear();
   this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
-  var totalTime = this.noteOnTime_ + this.releaseTime_;
+  var totalTime = this.noteOnTime + this.releaseTime;
   var currentTimeX = kXPadding + kXFudge + (kXSize - 2 * kXPadding) * this.currentTime / totalTime;
   this.drawLine(currentTimeX, 0, currentTimeX, kYSize,
                 kCurrentTimeStroke, kCurrentTimeStrokeWidth);
@@ -41,7 +41,7 @@ module.ContourVisualizer_.prototype.drawContour = function() {
   for (var i = 0; i < pointCount; i++) {
     var x = kXPadding + (i * kXStep);
     var time = totalTime * i / pointCount;
-    var value = this.contouredValue_.valueAtTime(time, this.noteOnTime_);
+    var value = this.contouredValue_.valueAtTime(time, this.noteOnTime);
     var relativeValue = (value - this.contouredValue_.min) /
                         (this.contouredValue_.max - this.contouredValue_.min);
     var y = kYSize - kYPadding - relativeValue * (kYSize - 2 * kYPadding);
@@ -188,10 +188,14 @@ module.ContourPanel.prototype.setSelected = function(selected) {
   this.selectPanel_.setVisible(selected);
 }
 
+module.ContourPanel.prototype.currentTime = function() {
+  return this.visualizer_.currentTime;
+}
+
 module.ContourPanel.prototype.setCurrentTime = function(currentTime, noteOnTime, releaseTime) {
   this.visualizer_.currentTime = currentTime;
-  this.visualizer_.noteOnTime_ = noteOnTime;
-  this.visualizer_.releaseTime_ = releaseTime;
+  this.visualizer_.noteOnTime = noteOnTime;
+  this.visualizer_.releaseTime = releaseTime;
 }
 
 module.ContourPanel.prototype.drawContour = function() {

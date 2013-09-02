@@ -27,8 +27,8 @@ module.UI.prototype.setSelected = function(selected) {
   }
 }
 
-module.UI.prototype.setCurrentTime = function(time, noteOnTime, releaseTime) {
-  this.contourPanel.setCurrentTime(time, noteOnTime, releaseTime);
+module.UI.prototype.setCurrentTime = function(time, noteDuration, releaseTime) {
+  this.contourPanel.setCurrentTime(time, noteDuration, releaseTime);
   if (this.isSelected())
     this.contourPanel.drawContour();
 }

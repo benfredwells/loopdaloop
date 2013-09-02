@@ -58,7 +58,7 @@ module.OscillatorVisualizer_.prototype.drawVisualization = function() {
     return;
 
   var yBottom = this.ySize - kYPadding;
-  var gain = this.oscillator_.gainContour.valueAtTime(this.currentTime(), this.noteOnTime);
+  var gain = this.oscillator_.gainContour.valueAtTime(this.currentTime(), this.noteDuration);
   var freqeuencyAdjust = ChromaticScale.frequencyAdjustmentFactor(
       this.oscillator_.octaveOffsetSetting.value,
       this.oscillator_.noteOffsetSetting.value,
@@ -127,9 +127,9 @@ module.UI.prototype.updateIcon_ = function() {
   this.setIconClass(iconClass);
 }
 
-module.UI.prototype.setCurrentTime = function(time, noteOnTime, releaseTime) {
-  this.gainContourPanel.setCurrentTime(time, noteOnTime, releaseTime);
-  this.visualizer_.setCurrentTime(time, noteOnTime, releaseTime);
+module.UI.prototype.setCurrentTime = function(time, noteDuration, releaseTime) {
+  this.gainContourPanel.setCurrentTime(time, noteDuration, releaseTime);
+  this.visualizer_.setCurrentTime(time, noteDuration, releaseTime);
   if (this.isSelected())
     this.updateDisplay_();
 }

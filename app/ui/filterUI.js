@@ -39,7 +39,7 @@ module.FilterVisualizer_.prototype.drawVisualization = function() {
   var response = this.filter_.getFrequencyResponse(kFreqOctave,
                                                    kFreqNote,
                                                    this.currentTime(),
-                                                   this.noteOnTime,
+                                                   this.noteDuration,
                                                    kHarmonics,
                                                    this.xSize - 2 * kXPadding);
   var yBottom = this.ySize - kYPadding;
@@ -70,8 +70,8 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
   this.enablePanel_ = new SettingsUI.Panel(this.settings);
   new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, filter.typeSetting, kTypeDescriptions);
   this.frequencyContourPanel = new ContourUI.ContourPanel(this.enablePanel_, Strings.kFrequency,
-                                   changeHandler, filter.frequencyContour, instrument,
-                                   Strings.kMultiplierFormatter, 190, false, false);
+                                                          changeHandler, filter.frequencyContour, instrument,
+                                                          Strings.kMultiplierFormatter, 190, false, false);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kQ, changeHandler, filter.qSetting, null, 20);
 
   this.response_ = [];
@@ -99,9 +99,9 @@ module.UI.prototype.updateIcon_ = function() {
   this.setIconClass(iconClass);
 }
 
-module.UI.prototype.setCurrentTime = function(time, noteOnTime, releaseTime) {
-  this.frequencyContourPanel.setCurrentTime(time, noteOnTime, releaseTime);
-  this.visualizer_.setCurrentTime(time, noteOnTime, releaseTime);
+module.UI.prototype.setCurrentTime = function(time, noteDuration, releaseTime) {
+  this.frequencyContourPanel.setCurrentTime(time, noteDuration, releaseTime);
+  this.visualizer_.setCurrentTime(time, noteDuration, releaseTime);
   if (this.isSelected())
     this.updateDisplay_();
 }

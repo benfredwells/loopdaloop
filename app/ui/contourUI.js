@@ -8,7 +8,7 @@ module.ContourVisualizer_ = function(container, contouredValue) {
   this.div.classList.add('contourDisplay');
   this.contouredValue_ = contouredValue;
   this.currentTime = 0;
-  this.noteOnTime = 0;
+  this.noteDuration = 0;
   this.releaseTime = 0;
 }
 
@@ -37,12 +37,13 @@ var kSecondStrokeWidth = 1;
 module.ContourVisualizer_.prototype.drawContour = function() {
   this.clear();
   this.drawRect(0, 0, kXSize, kYSize, kBackgroundStroke, kBackgroundStrokeWidth, kBackgroundFill);
-  var totalTime = this.noteOnTime + this.releaseTime;
+  var totalTime = this.noteDuration + this.releaseTime;
   if (totalTime == 0)
     return;
 
   var padding = kBackgroundStrokeWidth / 2
-  var releaseXStart = (kXSize - 2 * padding) * this.noteOnTime / totalTime;
+  console.log(this.noteDuration);
+  var releaseXStart = (kXSize - 2 * padding) * this.noteDuration / totalTime;
   this.drawRect(releaseXStart, padding,
                 kXSize - releaseXStart - padding,
                 kYSize - 2 * padding, kReleaseBackgroundStroke,
@@ -64,7 +65,7 @@ module.ContourVisualizer_.prototype.drawContour = function() {
   for (var i = 0; i < pointCount; i++) {
     var x = kXPadding + (i * kXStep);
     var time = totalTime * i / pointCount;
-    var value = this.contouredValue_.valueAtTime(time, this.noteOnTime);
+    var value = this.contouredValue_.valueAtTime(time, this.noteDuration);
     var relativeValue = (value - this.contouredValue_.min) /
                         (this.contouredValue_.max - this.contouredValue_.min);
     var y = kYSize - kYPadding - relativeValue * (kYSize - 2 * kYPadding);
@@ -215,9 +216,9 @@ module.ContourPanel.prototype.currentTime = function() {
   return this.visualizer_.currentTime;
 }
 
-module.ContourPanel.prototype.setCurrentTime = function(currentTime, noteOnTime, releaseTime) {
+module.ContourPanel.prototype.setCurrentTime = function(currentTime, noteDuration, releaseTime) {
   this.visualizer_.currentTime = currentTime;
-  this.visualizer_.noteOnTime = noteOnTime;
+  this.visualizer_.noteDuration = noteDuration;
   this.visualizer_.releaseTime = releaseTime;
 }
 

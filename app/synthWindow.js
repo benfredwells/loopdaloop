@@ -25,11 +25,19 @@ var kEnvelopeID = 'envelope';
 var kDeadKeys = ['instrumentWindowExpandedField'];
 var kSelectedCategoryKey = 'selectedCategoryField';
 
-var kDefaultNoteOnTime = 2;
+var kDefaultNoteDuration = 2;
+var lastNoteDuration = kDefaultNoteDuration;
 
-function timeChange(newTime) {
+function visualizationTimeChange(newTime) {
   gInstrumentUIs.forEach(function (ui) {
-    ui.setCurrentTime(newTime, kDefaultNoteOnTime, gInstrument.envelopeContour.releaseTime());
+    ui.setCurrentTime(newTime, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
+  });
+}
+
+function testNoteTimeChange(newTime, noteDuration) {
+  lastNoteDuration = noteDuration;
+  gInstrumentUIs.forEach(function (ui) {
+    ui.setCurrentTime(newTime, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
   });
 }
 
@@ -57,7 +65,7 @@ function init() {
       Strings.kOscillator1,
       categoriesEl,
       detailsEl,
-      timeChange));
+      visualizationTimeChange));
   gInstrumentUIs.push(new OscillatorUI.UI(
       kOscillatorBID,
       gInstrument.oscillators[1],
@@ -65,7 +73,7 @@ function init() {
       Strings.kOscillator2,
       categoriesEl,
       detailsEl,
-      timeChange));
+      visualizationTimeChange));
   gInstrumentUIs.push(new OscillatorUI.UI(
       kOscillatorCID,
       gInstrument.oscillators[2],
@@ -73,7 +81,7 @@ function init() {
       Strings.kOscillator3,
       categoriesEl,
       detailsEl,
-      timeChange));
+      visualizationTimeChange));
   gInstrumentUIs.push(new FilterUI.UI(
       kFilterAID,
       gInstrument.filters[0],
@@ -81,7 +89,7 @@ function init() {
       Strings.kFilter1,
       categoriesEl,
       detailsEl,
-      timeChange));
+      visualizationTimeChange));
   gInstrumentUIs.push(new FilterUI.UI(
       kFilterBID,
       gInstrument.filters[1],
@@ -89,7 +97,7 @@ function init() {
       Strings.kFilter2,
       categoriesEl,
       detailsEl,
-      timeChange));
+      visualizationTimeChange));
   gInstrumentUIs.push(new EnvelopeUI.UI(
       kEnvelopeID,
       gInstrument.envelopeContour,
@@ -97,14 +105,14 @@ function init() {
       Strings.kEnvelope,
       categoriesEl,
       detailsEl,
-      timeChange));
+      visualizationTimeChange));
 
   var headerEl = document.getElementById('header');
-  new TestButton.Button(headerEl, gInstrument, gContext, timeChange);
+  new TestButton.Button(headerEl, gInstrument, gContext, testNoteTimeChange);
 
   gInstrumentUIs.forEach(function (ui) {
     ui.onclicked = categoryClicked;
-    ui.setCurrentTime(0, kDefaultNoteOnTime, gInstrument.envelopeContour.releaseTime());
+    ui.setCurrentTime(0, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
     updateSize();
   });
 

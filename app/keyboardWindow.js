@@ -14,9 +14,9 @@ function init() {
     var octave = items[kOctaveKey];
     if (!octave)
       octave = 4;
-    var el = document.getElementById('octave');
-    el.onchange = octaveChanged;
-    el.value = octave;
+//    var el = document.getElementById('octave');
+//    el.onchange = octaveChanged;
+//    el.value = octave;
     setOctave();
   });
 }
@@ -27,7 +27,8 @@ window.onload = init;
 // Settings accessors
 
 function octave() {
-  return parseInt(document.getElementById('octave').value);
+  return 4;
+//  return parseInt(document.getElementById('octave').value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,9 +43,9 @@ function saveState() {
 function setOctave() {
   gKeyboard.octave = octave();
 
-  var el = document.getElementById('octave');
-  var outEl = document.getElementById('selectedOctave');
-  outEl.innerHTML = el.value;
+//  var el = document.getElementById('octave');
+//  var outEl = document.getElementById('selectedOctave');
+//  outEl.innerHTML = el.value;
 }
 
 function octaveChanged() {

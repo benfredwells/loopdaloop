@@ -29,9 +29,9 @@ chrome.app.runtime.onLaunched.addListener(function() {
 function showKeyboard() {
   var keyboardParams = {
     width: 800,
-    height: 400,
+    height: 350,
     minWidth: 800,
-    minHeight: 400,
+    minHeight: 350,
     left: 400,
     top: 100,
     id: 'keyboard'

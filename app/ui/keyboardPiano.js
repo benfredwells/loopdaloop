@@ -10,7 +10,7 @@ var kKeyIsWhite = [true, false, true, false, true, true, false,
 var kKeyOffset = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12];
 var kKeyOctaveOffset = 14;
 var kTextOffset = 30;
-var kKeyboardHeightGap = 150;
+var kKeyboardHeightGap = 95;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private

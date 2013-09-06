@@ -32,7 +32,7 @@ module.PointList.prototype.value = function() {
 }
 
 module.SVGControl = function(container) {
-  SettingsUI.Control.call(this, container);
+  UI.Control.call(this, container);
 
   this.svg_ = document.createElementNS(svgns, "svg:svg");
   this.div.appendChild(this.svg_);
@@ -43,7 +43,7 @@ module.SVGControl = function(container) {
   //svg.appendChild(defs);
 }
 
-module.SVGControl.prototype = Object.create(SettingsUI.Control.prototype);
+module.SVGControl.prototype = Object.create(UI.Control.prototype);
 
 module.SVGControl.prototype.clear = function() {
   var svgControl = this;

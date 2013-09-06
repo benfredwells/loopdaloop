@@ -3,45 +3,8 @@ SettingsUI = (function() {
 "use strict";
 var module = {};
 
-function roundForDisplay(number) {
-  return Math.round(number * 100) / 100;
-}
-
-// Container cal be a DOM element or another Control
-module.Control = function(container) {
-  this.div = document.createElement('div');
-  var containerEl = container;
-  if (container.div)
-    containerEl = container.div;
-  containerEl.appendChild(this.div);
-  this.enabled_ = true;
-  this.visible_ = true;
-}
-
-module.Control.prototype.updateHidden_ = function() {
-  this.div.hidden = !this.visible_ || !this.enabled_;
-}
-
-module.Control.prototype.setVisible = function(visible) {
-  this.visible_ = visible;
-  this.updateHidden_();
-}
-
-module.Control.prototype.isVisible = function() {
-  return this.visible_;
-}
-
-module.Control.prototype.setEnabled = function(enabled) {
-  this.enabled_ = enabled;
-  this.updateHidden_();
-}
-
-module.Control.prototype.isEnabled = function() {
-  return this.enabled_;
-}
-
 module.Row = function(container, title, onchange) {
-  module.Control.call(this, container);
+  UI.Control.call(this, container);
   this.div.classList.add('row');
 
   this.label = document.createElement('div');
@@ -56,7 +19,7 @@ module.Row = function(container, title, onchange) {
   this.onchange = onchange;
 }
 
-module.Row.prototype = Object.create(module.Control.prototype);
+module.Row.prototype = Object.create(UI.Control.prototype);
 
 module.SelectRow = function(container, title, onchange, choiceSetting, descriptions) {
   module.Row.call(this, container, title, onchange);
@@ -100,6 +63,10 @@ module.CheckRow = function(container, title, onchange, booleanSetting) {
 }
 
 module.CheckRow.prototype = Object.create(module.Row.prototype);
+
+function roundForDisplay(number) {
+  return Math.round(number * 100) / 100;
+}
 
 // formatter can be null
 module.NumberRow = function(container, title, onchange, numberSetting, formatter) {
@@ -198,12 +165,6 @@ module.ExponentialRangeRow.prototype.setValue_ = function(newValue) {
   var index = Math.round((index - this.minExponent_) / this.exponentFactor_) + 1;
   this.range_.value = index;
 }
-
-module.Panel = function(container) {
-  module.Control.call(this, container);
-}
-
-module.Panel.prototype = Object.create(module.Control.prototype);
 
 return module;
 

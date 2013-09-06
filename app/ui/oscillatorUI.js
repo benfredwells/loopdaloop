@@ -93,7 +93,7 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
   }
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
 
-  this.enablePanel_ = new SettingsUI.Panel(this.settings);
+  this.enablePanel_ = new UI.Panel(this.settings);
   new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, oscillator.typeSetting, kTypeDescriptions);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kOctaveOffset, changeHandler, oscillator.octaveOffsetSetting, null, 8);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);

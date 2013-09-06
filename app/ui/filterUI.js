@@ -67,7 +67,7 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
   }
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, filter.enabledSetting);
 
-  this.enablePanel_ = new SettingsUI.Panel(this.settings);
+  this.enablePanel_ = new UI.Panel(this.settings);
   new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, filter.typeSetting, kTypeDescriptions);
   this.frequencyContourPanel = new ContourUI.ContourPanel(this.enablePanel_, Strings.kFrequency,
                                                           changeHandler, filter.frequencyContour, instrument,

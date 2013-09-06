@@ -4,7 +4,7 @@ TestButton = (function() {
 var module = {};
 
 module.Button = function(parentDiv, instrument, context, ontimechange) {
-  SettingsUI.Control.call(this, parentDiv);
+  UI.Control.call(this, parentDiv);
   this.div.id = 'testButton';
   this.instrument_ = instrument;
 
@@ -34,7 +34,7 @@ module.Button = function(parentDiv, instrument, context, ontimechange) {
   window.onkeyup = function(event) { button.keyUp(event); };
 }
 
-module.Button.prototype = Object.create(SettingsUI.Control.prototype);
+module.Button.prototype = Object.create(UI.Control.prototype);
 
 var kResetTime = 2;
 

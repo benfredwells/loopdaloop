@@ -88,17 +88,17 @@ module.ContourVisualizer_.prototype.drawContour = function() {
 
 module.FlatContourPanel_ = function(container, onchange, flatContour, isEnvelope,
                                     formatter, steps) {
-  SettingsUI.Panel.call(this, container);
+  UI.Panel.call(this, container);
   if (!isEnvelope)
     new SettingsUI.LinearRangeRow(this, Strings.kValue, onchange,
                                   flatContour.valueSetting, formatter, steps);
 }
 
-module.FlatContourPanel_.prototype = Object.create(SettingsUI.Panel.prototype);
+module.FlatContourPanel_.prototype = Object.create(UI.Panel.prototype);
 
 module.OscillatingContourPanel_ = function(container, onchange, oscillatingContour,
                                            isEnvelope, formatter, steps) {
-  SettingsUI.Panel.call(this, container);
+  UI.Panel.call(this, container);
   if (!isEnvelope) {
     new SettingsUI.LinearRangeRow(this, Strings.kMax, onchange,
                                   oscillatingContour.maxValueSetting, formatter, steps);
@@ -109,11 +109,11 @@ module.OscillatingContourPanel_ = function(container, onchange, oscillatingConto
                                      oscillatingContour.frequencySetting, null, 20);
 }
 
-module.OscillatingContourPanel_.prototype = Object.create(SettingsUI.Panel.prototype);
+module.OscillatingContourPanel_.prototype = Object.create(UI.Panel.prototype);
 
 module.ADSRContourPanel_ = function(container, onchange, adsrContour,
                                     isEnvelope, formatter, steps) {
-  SettingsUI.Panel.call(this, container);
+  UI.Panel.call(this, container);
 
   var contourPanel = this;
   var createValueRow = function(title, setting) {
@@ -140,7 +140,7 @@ module.ADSRContourPanel_ = function(container, onchange, adsrContour,
   }
 }
 
-module.ADSRContourPanel_.prototype = Object.create(SettingsUI.Panel.prototype);
+module.ADSRContourPanel_.prototype = Object.create(UI.Panel.prototype);
 
 var kTypeDescriptions = {};
 kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
@@ -149,7 +149,7 @@ kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
 module.ContourPanel = function(container, title, onchange, contouredValue, instrument,
                                formatter, steps, asCategory, selected) {
-  SettingsUI.Panel.call(this, container);
+  UI.Panel.call(this, container);
 
   this.contouredValue_ = contouredValue;
   this.onchange = onchange;
@@ -157,7 +157,7 @@ module.ContourPanel = function(container, title, onchange, contouredValue, instr
   this.contourRow_ = new SettingsUI.Row(this, title, null);
 
   this.visualizer_ = new module.ContourVisualizer_(this.contourRow_.controlDiv, contouredValue);
-  this.selectPanel_ = new SettingsUI.Panel(this);
+  this.selectPanel_ = new UI.Panel(this);
 
   var contourGroup = this;
   if (asCategory) {
@@ -206,7 +206,7 @@ module.ContourPanel = function(container, title, onchange, contouredValue, instr
   this.setSelected(selected);
 }
 
-module.ContourPanel.prototype = Object.create(SettingsUI.Panel.prototype);
+module.ContourPanel.prototype = Object.create(UI.Panel.prototype);
 
 module.ContourPanel.prototype.showHideContours_ = function() {
   var current = this.contouredValue_.currentContourSetting.value

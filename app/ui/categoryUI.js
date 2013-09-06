@@ -6,7 +6,7 @@ var module = {};
 var kTimeSteps = 100;
 
 module.CategoryVisualizer = function(container, ontimechange) {
-  SettingsUI.Panel.call(this, container);
+  UI.Panel.call(this, container);
   this.div.classList.add('categoryDisplay');
   this.svg = new SVGUI.SVGControl(this);
 
@@ -36,7 +36,7 @@ module.CategoryVisualizer = function(container, ontimechange) {
   this.releaseTime = 0;
 }
 
-module.CategoryVisualizer.prototype = Object.create(SettingsUI.Panel.prototype);
+module.CategoryVisualizer.prototype = Object.create(UI.Panel.prototype);
 
 var kBackgroundStroke = "#CCCCCC";
 var kBackgroundStrokeWidth = 2;
@@ -84,7 +84,7 @@ module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {
     this.titleRow = new SettingsUI.Row(detailsEl, title, null);
     this.titleRow.label.classList.add('categoryName');
   }
-  this.settings = new SettingsUI.Panel(detailsEl);
+  this.settings = new UI.Panel(detailsEl);
 
   this.hideTitle_ = hideTitle;
 

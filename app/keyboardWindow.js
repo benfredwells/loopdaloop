@@ -1,24 +1,26 @@
 "use strict";
 
+//TODO: make this a class
 var gKeyboard = null;
+var gOctaveSelector = null;
 
 var kOctaveKey = 'keyboardWindowOctaveField';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
-
 function init() {
   // Player setup
-  chrome.storage.local.get(kOctaveKey, function(items) {
+//  chrome.storage.local.get(kOctaveKey, function(items) {
     gKeyboard = new KeyboardPiano.Piano(gInstrument, document.getElementById('keyboard'), document.getElementById('octave'));
-    var octave = items[kOctaveKey];
-    if (!octave)
-      octave = 4;
+    gOctaveSelector = new OctaveUI.Selector(document.body);
+//    var octave = items[kOctaveKey];
+//    if (!octave)
+//      octave = 4;
 //    var el = document.getElementById('octave');
 //    el.onchange = octaveChanged;
 //    el.value = octave;
     setOctave();
-  });
+//  });
 }
 
 window.onload = init;

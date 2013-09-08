@@ -67,4 +67,15 @@ div.black.playing:hover {
   height: 40px;
   margin-top: 20px;
   background-image: url("assets/octaveselect.png");
+  -webkit-filter: brightness(3.0);
+}
+
+#currentOctaveDisplay {
+  position: absolute;
+  width: 80px;
+  height: 40px;
+  top: 291px;
+  left: 200px;
+  background-image: url("assets/octaveselect.png");
+  background-position: left -95px top 0px;
 }

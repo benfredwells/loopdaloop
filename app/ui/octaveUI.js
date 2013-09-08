@@ -21,6 +21,10 @@ module.Selector = function(container) {
   upButton.classList.add('octaveShortcut');
   upButton.innerHTML = '&rarr;';
   this.div.appendChild(upButton);
+
+  this.currentDiv = document.createElement('div');
+  this.currentDiv.id = 'currentOctaveDisplay';
+  this.div.appendChild(this.currentDiv);
 }
 
 module.Selector.prototype = Object.create(UI.Control.prototype);

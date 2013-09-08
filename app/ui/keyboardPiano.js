@@ -12,6 +12,10 @@ var kKeyOctaveOffset = 14;
 var kTextOffset = 30;
 var kKeyboardHeightGap = 95;
 
+var kKeyShortcuts = ['Z', 'S', 'X', 'D', 'C', 'V', 'G', 'B', 'H', 'N',
+                     'J', 'M', 'Q', '2', 'W', '3', 'E', 'R', '5', 'T',
+                     '6', 'Y', '7', 'U', 'I', '9', 'O', '0', 'P'];
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private
 function asPixels(num) {
@@ -19,6 +23,7 @@ function asPixels(num) {
 }
 
 function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
+  console.log('note: ' + note + ' octave: ' + octaveDelta);
   var key = this;
 
   //////////////////////////////////////////////////////////////////////////////
@@ -145,89 +150,57 @@ KeyboardPianoKey.prototype.stopPlaying = function() {
 // Public
 module.Piano = function(parentElement, instrument) {
   UI.Control.call(this, parentElement);
+
   var keyboard = this;
-
-  keyboard.updateTouchKeys = function(event) {
-    var oldTouchKeys = keyboard.touchKeys_;
-    keyboard.touchKeys_ = [];
-    for (var i = 0; i < event.touches.length; i++) {
-      var touch = event.touches[i];
-      var el = document.elementFromPoint(touch.pageX, touch.pageY);
-      if (el && el.key_) {
-        el.key_.startPlaying();
-        var oldIndex = oldTouchKeys.indexOf(el.key_);
-        if (oldIndex != -1)
-          oldTouchKeys.splice(oldIndex, 1);
-        keyboard.touchKeys_.push(el.key_);
-      }
-    }
-    oldTouchKeys.forEach(function(key) {
-      key.stopPlaying();
-    });
-  }
-  
-  keyboard.touchStart = function(event) {
-    keyboard.updateTouchKeys(event);
+  var touchStart = function(event) {
+    keyboard.updateTouchKeys_(event);
     event.preventDefault();
   }
-
-  keyboard.touchEnd = function(event) {
-    keyboard.updateTouchKeys(event);
+  var touchEnd = function(event) {
+    keyboard.updateTouchKeys_(event);
     event.preventDefault();
   }
-
-  keyboard.touchMove = function(event) {
-    keyboard.updateTouchKeys(event);
+  var touchMove = function(event) {
+    keyboard.updateTouchKeys_(event);
     event.preventDefault();
   }
+  this.div.ontouchstart = touchStart;
+  this.div.ontouchend = touchEnd;
+  this.div.ontouchmove = touchMove;
 
-  //////////////////////////////////////////////////////////////////////////////
-  // Private fields.
-  keyboard.keys_ = [];
-  keyboard.mouseDown_ = false;
-  keyboard.mouseKey_ = null;
-  keyboard.touchKeys_ = [];
+  this.keys_ = [];
+  this.mouseDown_ = false;
+  this.mouseKey_ = null;
+  this.touchKeys_ = [];
 
-  //////////////////////////////////////////////////////////////////////////////
-  // Setup events.
-  keyboard.div.ontouchstart = keyboard.touchStart;
-  keyboard.div.ontouchend = keyboard.touchEnd;
-  keyboard.div.ontouchmove = keyboard.touchMove;
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Setup keys.
-  keyboard.keys_.push(new KeyboardPianoKey('Z',  0, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('S',  1, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('X',  2, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('D',  3, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('C',  4, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('V',  5, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('G',  6, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('B',  7, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('H',  8, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('N',  9, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('J', 10, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('M', 11, 0, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('Q',  0, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('2',  1, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('W',  2, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('3',  3, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('E',  4, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('R',  5, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('5',  6, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('T',  7, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('6',  8, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('Y',  9, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('7', 10, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('U', 11, 1, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('I',  0, 2, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('9',  1, 2, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('O',  2, 2, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('0',  3, 2, keyboard, instrument));
-  keyboard.keys_.push(new KeyboardPianoKey('P',  4, 2, keyboard, instrument));
+  for (var i = 0; i < kKeyShortcuts.length; i++) {
+    this.keys_.push(new KeyboardPianoKey(kKeyShortcuts[i],
+                                         i % ChromaticScale.notesInOctave,
+                                         Math.floor(i / ChromaticScale.notesInOctave),
+                                         keyboard, instrument));
+  };
 }
 
 module.Piano.prototype = Object.create(UI.Control.prototype);
+
+module.Piano.prototype.updateTouchKeys_ = function(event) {
+  var oldTouchKeys = this.touchKeys_;
+  this.touchKeys_ = [];
+  for (var i = 0; i < event.touches.length; i++) {
+    var touch = event.touches[i];
+    var el = document.elementFromPoint(touch.pageX, touch.pageY);
+    if (el && el.key_) {
+      el.key_.startPlaying();
+      var oldIndex = oldTouchKeys.indexOf(el.key_);
+      if (oldIndex != -1)
+        oldTouchKeys.splice(oldIndex, 1);
+      this.touchKeys_.push(el.key_);
+    }
+  }
+  oldTouchKeys.forEach(function(key) {
+    key.stopPlaying();
+  });
+}
 
 module.Piano.prototype.handleKeyDown = function(event) {
   this.keys_.forEach(function(key) {

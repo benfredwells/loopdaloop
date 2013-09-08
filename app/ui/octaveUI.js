@@ -81,10 +81,9 @@ module.Selector.prototype.handleResize = function() {
 }
 
 module.Selector.prototype.handleKeyDown = function(event) {
-  console.log(event.keyCode);
-  if (event.keyCode == 219) { // '[' is 219
+  if (event.keyCode == 37) { // down arrow is 37
     this.downOctave();
-  } else if (event.keyCode == 221) { // ']' is 221
+  } else if (event.keyCode == 39) { // up arrow is 39
     this.upOctave();
   }
 }

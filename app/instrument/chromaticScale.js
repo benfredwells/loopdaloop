@@ -9,6 +9,7 @@ module.notes = ['C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb',
                 'G', 'G#/Ab', 'A', 'A#/Bb', 'B'];
 // Middle A frequency could be overridden, so it's exposed.
 module.middleAFrequency = 440;
+module.notesInOctave = 12;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constants for working out note frequencies

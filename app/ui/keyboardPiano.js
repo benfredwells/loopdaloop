@@ -22,29 +22,10 @@ function asPixels(num) {
   return Math.round(num).toString() + 'px';
 }
 
-function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
-  console.log('note: ' + note + ' octave: ' + octaveDelta);
+function PianoKey(keyboard, keyChar, note, octaveDelta, instrument) {
+  UI.Control.call(this, keyboard);
   var key = this;
 
-  //////////////////////////////////////////////////////////////////////////////
-  // Sizing
-  key.resize = function() {
-    var isWhite = kKeyIsWhite[note];
-    var offset = octaveDelta * kKeyOctaveOffset + kKeyOffset[note % 12];
-    offset = (offset + 1) * (key.keyboard_.whiteKeyWidth_ / 2) + keyboard.left_;
-    var height;
-    if (isWhite) {
-      height = key.keyboard_.whiteKeyHeight_;
-      key.element_.style.width = asPixels(key.keyboard_.whiteKeyWidth_);
-      key.element_.style.left = asPixels(offset - (key.keyboard_.whiteKeyWidth_ / 2));
-    } else {
-      height = key.keyboard_.blackKeyHeight_;
-      key.element_.style.width = asPixels(key.keyboard_.blackKeyWidth_);
-      key.element_.style.left = asPixels(offset - (key.keyboard_.blackKeyWidth_ / 2));
-    }
-    key.element_.style.height = asPixels(height);
-    key.text_.style.top = asPixels(height - kTextOffset);
-  }
 
   //////////////////////////////////////////////////////////////////////////////
   // Key events
@@ -124,9 +105,29 @@ function KeyboardPianoKey(keyChar, note, octaveDelta, keyboard, instrument) {
   key.text_ = text;
 }
 
+PianoKey.prototype = Object.create(UI.Control.prototype);
+
+PianoKey.prototype.handleResize = function() {
+  var isWhite = kKeyIsWhite[this.note_];
+  var offset = this.octaveDelta_ * kKeyOctaveOffset + kKeyOffset[this.note_ % ChromaticScale.notesInOctave];
+  offset = (offset + 1) * (this.keyboard_.whiteKeyWidth_ / 2) + this.keyboard_.left_;
+  var height;
+  if (isWhite) {
+    height = this.keyboard_.whiteKeyHeight_;
+    this.element_.style.width = asPixels(this.keyboard_.whiteKeyWidth_);
+    this.element_.style.left = asPixels(offset - (this.keyboard_.whiteKeyWidth_ / 2));
+  } else {
+    height = this.keyboard_.blackKeyHeight_;
+    this.element_.style.width = asPixels(this.keyboard_.blackKeyWidth_);
+    this.element_.style.left = asPixels(offset - (this.keyboard_.blackKeyWidth_ / 2));
+  }
+  this.element_.style.height = asPixels(height);
+  this.text_.style.top = asPixels(height - kTextOffset);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Play control
-KeyboardPianoKey.prototype.startPlaying = function() {
+PianoKey.prototype.startPlaying = function() {
   if (this.playingNote_)
     return;
 
@@ -137,7 +138,7 @@ KeyboardPianoKey.prototype.startPlaying = function() {
   this.element_.classList.add('playing');
 }
 
-KeyboardPianoKey.prototype.stopPlaying = function() {
+PianoKey.prototype.stopPlaying = function() {
   if (!this.playingNote_)
     return;
 
@@ -174,10 +175,11 @@ module.Piano = function(parentElement, instrument) {
   this.touchKeys_ = [];
 
   for (var i = 0; i < kKeyShortcuts.length; i++) {
-    this.keys_.push(new KeyboardPianoKey(kKeyShortcuts[i],
-                                         i % ChromaticScale.notesInOctave,
-                                         Math.floor(i / ChromaticScale.notesInOctave),
-                                         keyboard, instrument));
+    this.keys_.push(new PianoKey(keyboard,
+                                 kKeyShortcuts[i],
+                                 i % ChromaticScale.notesInOctave,
+                                 Math.floor(i / ChromaticScale.notesInOctave),
+                                 instrument));
   };
 }
 
@@ -231,7 +233,7 @@ module.Piano.prototype.handleResize = function(event) {
   var gap = maxWidth - numWhites * this.whiteKeyWidth_;
   this.left_ = this.div.offsetLeft + gap / 2;
   this.keys_.forEach(function(key) {
-    key.resize();
+    key.handleResize();
   });
 }
 

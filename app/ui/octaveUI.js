@@ -44,7 +44,6 @@ module.Selector = function(container) {
   this.div.appendChild(this.thumbDiv);
 
   this.currentOctave_ = kMinOctave;
-  this.positionThumb_();
 }
 
 module.Selector.prototype = Object.create(UI.Control.prototype);
@@ -73,6 +72,10 @@ module.Selector.prototype.upOctave = function() {
     return;
 
   this.currentOctave_++;
+  this.positionThumb_();
+}
+
+module.Selector.prototype.handleResize = function() {
   this.positionThumb_();
 }
 

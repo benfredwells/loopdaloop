@@ -70,12 +70,11 @@ div.black.playing:hover {
   -webkit-filter: brightness(3.0);
 }
 
-#currentOctaveDisplay {
+#octaveThumb {
   position: absolute;
   width: 80px;
   height: 40px;
   top: 291px;
   left: 200px;
   background-image: url("assets/octaveselect.png");
-  background-position: left -95px top 0px;
 }

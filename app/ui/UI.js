@@ -3,6 +3,10 @@ UI = (function() {
 "use strict";
 var module = {};
 
+module.asPixels = function(num) {
+  return Math.round(num).toString() + 'px';
+}
+
 // Container cal be a DOM element or another Control
 module.Control = function(container) {
   this.div = document.createElement('div');

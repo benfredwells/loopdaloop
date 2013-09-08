@@ -24,29 +24,32 @@ function asPixels(num) {
 
 function PianoKey(keyboard, keyChar, note, octaveDelta, instrument) {
   UI.Control.call(this, keyboard);
+
+  this.keyboard_ = keyboard;
+  this.keyCode_ = keyChar.charCodeAt(0);
+  this.note_ = note;
+  this.octaveDelta_ = octaveDelta;
+  this.instrument_ = instrument;
+  this.playingNote_ = null;
+
+  var isWhite = kKeyIsWhite[note];
+  var offset = octaveDelta * kKeyOctaveOffset + kKeyOffset[note % ChromaticScale.notesInOctave];
+  this.div.classList.add('key');
+  if (isWhite) {
+    this.div.classList.add('white');
+  } else {
+    this.div.classList.add('black');
+  }
+
+  this.text_ = document.createElement('span');
+  this.text_.innerHTML = keyChar;
+  this.div.appendChild(this.text_);
+
+  // Set |key_| for touch handling.
+  this.text_.key_ = key;
+  this.div.key_ = key;
+
   var key = this;
-
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Key events
-  key.down = function(event) {
-    if (key.keyCode_ != event.keyCode)
-      return;
-    if (key.playingNote_)
-      return;
-    key.startPlaying();
-    event.stopPropagation();
-  }
-
-  key.up = function(event) {
-    if (key.keyCode_ != event.keyCode)
-      return;
-    if (!key.playingNote_)
-      return;
-    key.stopPlaying();
-    event.stopPropagation();
-  }
-
   key.mouseOver = function(event) {
     if (keyboard.mouseDown_ && keyboard.mouseKey_ != key) {
       if (keyboard.mouseKey_)
@@ -71,41 +74,30 @@ function PianoKey(keyboard, keyChar, note, octaveDelta, instrument) {
       key.stopPlaying();
     }
   }
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Private fields
-  key.keyboard_ = keyboard;
-  key.keyCode_ = keyChar.charCodeAt(0);
-  key.note_ = note;
-  key.octaveDelta_ = octaveDelta;
-  key.instrument_ = instrument;
-  key.playingNote_ = null;
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Create UI
-  var isWhite = kKeyIsWhite[note];
-  var offset = octaveDelta * kKeyOctaveOffset + kKeyOffset[note % 12];
-  var el = document.createElement('div');
-  el.classList.add('key');
-  if (isWhite) {
-    el.classList.add('white');
-  } else {
-    el.classList.add('black');
-  }
-  var text = document.createElement('span');
-  text.innerHTML = keyChar;
-  text.key_ = key;
-  el.appendChild(text);
-  el.onmouseover = key.mouseOver;
-  el.onmousedown = key.mouseDown;
-  el.onmouseup = key.mouseUp;
-  el.key_ = key;
-  key.keyboard_.div.appendChild(el);
-  key.element_ = el;
-  key.text_ = text;
+  this.div.onmouseover = key.mouseOver;
+  this.div.onmousedown = key.mouseDown;
+  this.div.onmouseup = key.mouseUp;
 }
 
 PianoKey.prototype = Object.create(UI.Control.prototype);
+
+PianoKey.prototype.handleKeyDown = function(event) {
+  if (this.keyCode_ != event.keyCode)
+    return;
+  if (this.playingNote_)
+    return;
+  this.startPlaying();
+  event.stopPropagation();
+}
+
+PianoKey.prototype.handleKeyUp = function(event) {
+  if (this.keyCode_ != event.keyCode)
+    return;
+  if (!this.playingNote_)
+    return;
+  this.stopPlaying();
+  event.stopPropagation();
+}
 
 PianoKey.prototype.handleResize = function() {
   var isWhite = kKeyIsWhite[this.note_];
@@ -114,19 +106,17 @@ PianoKey.prototype.handleResize = function() {
   var height;
   if (isWhite) {
     height = this.keyboard_.whiteKeyHeight_;
-    this.element_.style.width = asPixels(this.keyboard_.whiteKeyWidth_);
-    this.element_.style.left = asPixels(offset - (this.keyboard_.whiteKeyWidth_ / 2));
+    this.div.style.width = asPixels(this.keyboard_.whiteKeyWidth_);
+    this.div.style.left = asPixels(offset - (this.keyboard_.whiteKeyWidth_ / 2));
   } else {
     height = this.keyboard_.blackKeyHeight_;
-    this.element_.style.width = asPixels(this.keyboard_.blackKeyWidth_);
-    this.element_.style.left = asPixels(offset - (this.keyboard_.blackKeyWidth_ / 2));
+    this.div.style.width = asPixels(this.keyboard_.blackKeyWidth_);
+    this.div.style.left = asPixels(offset - (this.keyboard_.blackKeyWidth_ / 2));
   }
-  this.element_.style.height = asPixels(height);
+  this.div.style.height = asPixels(height);
   this.text_.style.top = asPixels(height - kTextOffset);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Play control
 PianoKey.prototype.startPlaying = function() {
   if (this.playingNote_)
     return;
@@ -135,7 +125,7 @@ PianoKey.prototype.startPlaying = function() {
       this.keyboard_.octave + this.octaveDelta_,
       this.note_);
   this.playingNote_.noteOn(0);
-  this.element_.classList.add('playing');
+  this.div.classList.add('playing');
 }
 
 PianoKey.prototype.stopPlaying = function() {
@@ -144,13 +134,24 @@ PianoKey.prototype.stopPlaying = function() {
 
   this.playingNote_.noteOff(0);
   this.playingNote_ = null;
-  this.element_.classList.remove('playing');
+  this.div.classList.remove('playing');
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Public
 module.Piano = function(parentElement, instrument) {
   UI.Control.call(this, parentElement);
+
+  this.keys_ = [];
+  this.mouseDown_ = false;
+  this.mouseKey_ = null;
+  this.touchKeys_ = [];
+
+  for (var i = 0; i < kKeyShortcuts.length; i++) {
+    this.keys_.push(new PianoKey(this,
+                                 kKeyShortcuts[i],
+                                 i % ChromaticScale.notesInOctave,
+                                 Math.floor(i / ChromaticScale.notesInOctave),
+                                 instrument));
+  };
 
   var keyboard = this;
   var touchStart = function(event) {
@@ -168,19 +169,6 @@ module.Piano = function(parentElement, instrument) {
   this.div.ontouchstart = touchStart;
   this.div.ontouchend = touchEnd;
   this.div.ontouchmove = touchMove;
-
-  this.keys_ = [];
-  this.mouseDown_ = false;
-  this.mouseKey_ = null;
-  this.touchKeys_ = [];
-
-  for (var i = 0; i < kKeyShortcuts.length; i++) {
-    this.keys_.push(new PianoKey(keyboard,
-                                 kKeyShortcuts[i],
-                                 i % ChromaticScale.notesInOctave,
-                                 Math.floor(i / ChromaticScale.notesInOctave),
-                                 instrument));
-  };
 }
 
 module.Piano.prototype = Object.create(UI.Control.prototype);
@@ -206,13 +194,13 @@ module.Piano.prototype.updateTouchKeys_ = function(event) {
 
 module.Piano.prototype.handleKeyDown = function(event) {
   this.keys_.forEach(function(key) {
-    key.down(event);
+    key.handleKeyDown(event);
   });
 }
 
 module.Piano.prototype.handleKeyUp = function(event) {
   this.keys_.forEach(function(key) {
-    key.up(event);
+    key.handleKeyUp(event);
   });
 }
 

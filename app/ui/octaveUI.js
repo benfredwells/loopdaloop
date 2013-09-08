@@ -55,6 +55,7 @@ module.Selector.prototype.positionThumb_ = function() {
   var backgroundX = this.backgroundDiv.offsetLeft;
   var delta = kPageSize * this.currentOctave_;
   var x = backgroundX + delta;
+  this.thumbDiv.style.top = UI.asPixels(y);
   this.thumbDiv.style.left = UI.asPixels(x);
   this.thumbDiv.style.width = UI.asPixels(137);
 }
@@ -77,6 +78,15 @@ module.Selector.prototype.upOctave = function() {
 
 module.Selector.prototype.handleResize = function() {
   this.positionThumb_();
+}
+
+module.Selector.prototype.handleKeyDown = function(event) {
+  console.log(event.keyCode);
+  if (event.keyCode == 219) { // '[' is 219
+    this.downOctave();
+  } else if (event.keyCode == 221) { // ']' is 221
+    this.upOctave();
+  }
 }
 
 return module;

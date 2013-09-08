@@ -11,8 +11,9 @@ var kOctaveKey = 'keyboardWindowOctaveField';
 function init() {
   // Player setup
 //  chrome.storage.local.get(kOctaveKey, function(items) {
-    gKeyboard = new KeyboardPiano.Piano(gInstrument, document.getElementById('keyboard'), document.getElementById('octave'));
+    gKeyboard = new KeyboardPiano.Piano(document.body, gInstrument);
     gOctaveSelector = new OctaveUI.Selector(document.body);
+    resize();
 //    var octave = items[kOctaveKey];
 //    if (!octave)
 //      octave = 4;
@@ -23,7 +24,29 @@ function init() {
 //  });
 }
 
+function keyDown(event) {
+  gKeyboard.handleKeyDown(event);
+  gOctaveSelector.handleKeyDown(event);
+}
+
+function keyUp(event) {
+  gKeyboard.handleKeyUp(event);
+}
+
+function mouseUp(event) {
+  gKeyboard.handleMouseUp(event);
+}
+
+function resize() {
+  gKeyboard.handleResize();
+  gOctaveSelector.handleResize();
+}
+
 window.onload = init;
+window.onkeydown = keyDown;
+window.onkeyup = keyUp;
+window.onmouseup = mouseUp;
+window.onresize = resize;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Settings accessors

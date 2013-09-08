@@ -6,10 +6,11 @@ var module = {};
 var kMinOctave = 0;
 var kMaxOctave = 7;
 
-module.Selector = function(container) {
+module.Selector = function(container, onoctavechange) {
   UI.Control.call(this, container);
 
   this.div.id = 'octaveSelectorContainer';
+  this.onoctavechange = onoctavechange;
   
   var downButton = document.createElement('div');
   downButton.classList.add('octaveShortcut');
@@ -31,9 +32,9 @@ module.Selector = function(container) {
       return;
 
     if (this == downButton) {
-      selector.downOctave();
+      selector.downOctave_();
     } else {
-      selector.upOctave();
+      selector.upOctave_();
     }
   }
   upButton.onclick = buttonClickHandler;
@@ -60,20 +61,24 @@ module.Selector.prototype.positionThumb_ = function() {
   this.thumbDiv.style.width = UI.asPixels(137);
 }
 
-module.Selector.prototype.downOctave = function() {
-  if (this.currentOctave_ == kMinOctave)
+module.Selector.prototype.downOctave_ = function() {
+  if (this.currentOctave_ <= kMinOctave)
     return;
 
   this.currentOctave_--;
   this.positionThumb_();
+  if (this.onoctavechange)
+    this.onoctavechange();
 }
 
-module.Selector.prototype.upOctave = function() {
-  if (this.currentOctave_ == kMaxOctave)
+module.Selector.prototype.upOctave_ = function() {
+  if (this.currentOctave_ >= kMaxOctave)
     return;
 
   this.currentOctave_++;
   this.positionThumb_();
+  if (this.onoctavechange)
+    this.onoctavechange();
 }
 
 module.Selector.prototype.handleResize = function() {
@@ -82,10 +87,19 @@ module.Selector.prototype.handleResize = function() {
 
 module.Selector.prototype.handleKeyDown = function(event) {
   if (event.keyCode == 37) { // down arrow is 37
-    this.downOctave();
+    this.downOctave_();
   } else if (event.keyCode == 39) { // up arrow is 39
-    this.upOctave();
+    this.upOctave_();
   }
+}
+
+module.Selector.prototype.currentOctave = function() {
+  return this.currentOctave_;
+}
+
+module.Selector.prototype.setCurrentOctave = function(octave) {
+  this.currentOctave_ = octave;
+  this.positionThumb_();
 }
 
 return module;

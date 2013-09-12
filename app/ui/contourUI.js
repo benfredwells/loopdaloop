@@ -14,7 +14,7 @@ module.ContourVisualizer_ = function(container, contouredValue) {
 
 module.ContourVisualizer_.prototype = Object.create(SVGUI.SVGControl.prototype);
 
-var kXSize = 200;
+var kXSize = UIConstants.visualizationWidth;
 var kYSize = 50;
 var kXPadding = 0;
 var kYPadding = 4;

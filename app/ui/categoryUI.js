@@ -29,7 +29,7 @@ module.CategoryVisualizer = function(container, ontimechange) {
 
   this.ontimechange = ontimechange;
 
-  this.xSize = 200;
+  this.xSize = UIConstants.visualizationWidth;
   this.ySize = 50;
 
   this.noteDuration = 0;

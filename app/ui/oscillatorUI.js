@@ -12,7 +12,7 @@ module.OscillatorVisualizer_.prototype = Object.create(CategoryUI.CategoryVisual
 
 var kXPadding = 0;
 var kYPadding = 1;
-var kHarmonics = (200 / 9);
+var kHarmonics = (UIConstants.visualizationWidth / 9);
 var kXFudge = 0.5; // To keep base harmonics aligned on pixels :-/
 var kYScale = 0.7;
 var kHarmonicBackgroundStroke = "#DDDDDD";

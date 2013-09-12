@@ -176,7 +176,7 @@ div {
 
 .categoryDisplay {
   height: 50px;
-  width: 200px;
+  width: 225px;
 }
 
 .contourPanel .rowName {
@@ -215,7 +215,7 @@ div {
 
 .contourDisplay {
   height: 50px;
-  width: 200px;
+  width: 225px;
 }
 
 select {
@@ -231,7 +231,7 @@ select {
 }
 
 .categoryDisplay input {
-  width: 200px;
+  width: 225px;
   margin-left: 0px;
   margin-right: 0px;
 }

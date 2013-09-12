@@ -9,7 +9,7 @@ var gInstrument = null;
 
 var kOutputGain = 0.01;
 
-var kHeightPadding = 100;
+var kHeightPadding = 120;
 var kCompressorThreshold = -30;
 var kCompressorKnee = 10;
 var kCompressorAttack = 0.01;
@@ -122,7 +122,6 @@ function init() {
   gInstrumentUIs.forEach(function (ui) {
     ui.onclicked = categoryClicked;
     ui.setCurrentTime(0, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
-    updateSize();
   });
   gTestButton.setCurrentTime(0);
 
@@ -134,6 +133,7 @@ function init() {
     gInstrumentUIs.forEach(function (ui) {
       ui.setSelected(ui.id == selectedID);
     });
+    updateSize();
   });
 
 // Defined by background page.
@@ -162,12 +162,12 @@ function categoryClicked(sender) {
 }
 
 function updateSize() {
-  //var height = 0;
-  //gInstrumentUIs.forEach(function(ui) {
-  //  height = height + ui.element.clientHeight;
-  //});
-  //height = height + kHeightPadding;
-  //window.resizeTo(window.outerWidth, height);
+  var height = 0;
+  gInstrumentUIs.forEach(function(ui) {
+    height = height + ui.height();
+  });
+  height = height + kHeightPadding;
+  window.resizeTo(window.outerWidth, height);
 }
 
 window.onload = init;

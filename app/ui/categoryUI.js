@@ -87,6 +87,7 @@ module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {
   this.settings = new UI.Panel(detailsEl);
 
   this.hideTitle_ = hideTitle;
+  this.setSelected(false);
 
   var ui = this;
   this.categoryEl_.onclick = function() {
@@ -132,6 +133,16 @@ module.UI.prototype.setIconClass = function(iconClass) {
 }
 
 module.UI.prototype.setCurrentTime = function(time, noteDuration, releaseTime) {
+}
+
+module.UI.prototype.height = function() {
+  if (!this.isSelected())
+    return 0;
+
+  var result = this.settings.div.clientHeight;
+  if (!this.hideTitle_)
+    result = result + this.titleRow.div.clientHeight;
+  return result;
 }
 
 return module;

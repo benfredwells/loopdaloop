@@ -46,8 +46,8 @@ function PianoKey(keyboard, keyChar, note, octaveDelta, instrument) {
   this.div.appendChild(this.text_);
 
   // Set |key_| for touch handling.
-  this.text_.key_ = key;
-  this.div.key_ = key;
+  this.text_.key_ = this;
+  this.div.key_ = this;
 
   var key = this;
   key.mouseOver = function(event) {

@@ -81,12 +81,12 @@ module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.updateDisplay_ = function() {
   this.enablePanel_.setEnabled(this.filter_.enabledSetting.value);;
-  this.updateIcon_();
+  this.updateIcon();
   this.visualizer_.drawVisualization();
   this.frequencyContourPanel.drawContour();
 }
 
-module.UI.prototype.updateIcon_ = function() {
+module.UI.prototype.updateIcon = function() {
   var iconClass;
   if (this.filter_.enabledSetting.value) {
     switch (this.filter_.typeSetting.value) {

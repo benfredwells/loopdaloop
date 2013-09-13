@@ -132,6 +132,7 @@ function init() {
       selectedID = kOscillatorAID;
     gInstrumentUIs.forEach(function (ui) {
       ui.setSelected(ui.id == selectedID);
+      ui.updateIcon();
     });
     updateSize();
   });

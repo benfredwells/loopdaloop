@@ -107,12 +107,12 @@ module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
 module.UI.prototype.updateDisplay_ = function() {
   this.enablePanel_.setEnabled(this.oscillator_.enabledSetting.value);;
-  this.updateIcon_();
+  this.updateIcon();
   this.visualizer_.drawVisualization();
   this.gainContourPanel.drawContour();
 }
 
-module.UI.prototype.updateIcon_ = function() {
+module.UI.prototype.updateIcon = function() {
   var iconClass;
   if (this.oscillator_.enabledSetting.value) {
     switch (this.oscillator_.typeSetting.value) {

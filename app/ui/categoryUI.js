@@ -145,6 +145,10 @@ module.UI.prototype.height = function() {
   return result;
 }
 
+module.UI.prototype.updateIcon = function() {
+  // By default do nothing.
+}
+
 return module;
 
 })();

@@ -65,12 +65,16 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
   var changeHandler = function() {
     ui.updateDisplay_();
   }
+  var sizeChangeHandler = function() {
+    if (ui.onsizechange)
+      ui.onsizechange(ui);
+  }
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, filter.enabledSetting);
 
   this.enablePanel_ = new UI.Panel(this.settings);
   new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, filter.typeSetting, kTypeDescriptions);
   this.frequencyContourPanel = new ContourUI.ContourPanel(this.enablePanel_, Strings.kFrequency,
-                                                          changeHandler, filter.frequencyContour, instrument,
+                                                          changeHandler, sizeChangeHandler, filter.frequencyContour, instrument,
                                                           Strings.kMultiplierFormatter, 190, false, false);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kQ, changeHandler, filter.qSetting, null, 20);
 

@@ -120,7 +120,8 @@ function init() {
   gTestButton = new TestButton.Button(headerEl, gInstrument, gContext, testNoteTimeChange);
 
   gInstrumentUIs.forEach(function (ui) {
-    ui.onclicked = categoryClicked;
+    ui.onselect = categorySelected;
+    ui.onsizechange = categorySizeChanged;
     ui.setCurrentTime(0, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
   });
   gTestButton.setCurrentTime(0);
@@ -152,7 +153,7 @@ function saveState() {
   chrome.storage.local.set(setting);
 }
 
-function categoryClicked(sender) {
+function categorySelected(sender) {
   gInstrumentUIs.forEach(function (ui) {
     if (ui != sender) {
       ui.setSelected(false);
@@ -160,6 +161,10 @@ function categoryClicked(sender) {
   });
   updateSize();
   saveState();
+}
+
+function categorySizeChanged(sender) {
+  updateSize();
 }
 
 function updateSize() {

@@ -94,8 +94,8 @@ module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {
     if (ui.isSelected())
       return;
     ui.setSelected(true);
-    if (ui.onclicked)
-      ui.onclicked(ui);
+    if (ui.onselect)
+      ui.onselect(ui);
   }
 
   this.categoryEl_.onmouseenter = function() {

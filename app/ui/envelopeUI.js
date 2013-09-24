@@ -12,8 +12,12 @@ module.UI = function(id, envelopeContour, instrument, title, categoriesEl, detai
     if (ontimechange)
       ontimechange(ui.contourPanel.currentTime());
   }
+  var sizeChangeHandler = function() {
+    if (ui.onsizechange)
+      ui.onsizechange(ui);
+  }
   this.contourPanel = new ContourUI.ContourPanel(this.settings, Strings.kEnvelope,
-                                                 changeHandler, envelopeContour,
+                                                 changeHandler, sizeChangeHandler, envelopeContour,
                                                  instrument, null, 190, true, true);
   this.setIconClass('envelopeIcon');
 }

@@ -91,6 +91,10 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
   var changeHandler = function() {
     ui.updateDisplay_();
   }
+  var sizeChangeHandler = function() {
+    if (ui.onsizechange)
+      ui.onsizechange(ui);
+  }
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
 
   this.enablePanel_ = new UI.Panel(this.settings);
@@ -99,7 +103,7 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);
   this.gainContourPanel = new ContourUI.ContourPanel(this.enablePanel_, Strings.kGain,
-                                                     changeHandler, oscillator.gainContour, instrument,
+                                                     changeHandler, sizeChangeHandler, oscillator.gainContour, instrument,
                                                      null, 10, false, false);
 }
 

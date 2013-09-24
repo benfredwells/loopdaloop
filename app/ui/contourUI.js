@@ -147,12 +147,13 @@ kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
 kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
 kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
 
-module.ContourPanel = function(container, title, onchange, contouredValue, instrument,
+module.ContourPanel = function(container, title, onchange, onsizechange, contouredValue, instrument,
                                formatter, steps, asCategory, selected) {
   UI.Panel.call(this, container);
 
   this.contouredValue_ = contouredValue;
   this.onchange = onchange;
+  this.onsizechange = onsizechange;
 
   this.contourRow_ = new SettingsUI.Row(this, title, null);
 
@@ -167,6 +168,8 @@ module.ContourPanel = function(container, title, onchange, contouredValue, instr
     this.selectPanel_.div.classList.add('contourPanel');
     this.contourRow_.div.onclick = function() {
       contourGroup.setSelected(!contourGroup.selected_);
+      if (contourGroup.onsizechange)
+        contourGroup.onsizechange();
     }
 
     this.contourRow_.div.onmouseenter = function() {
@@ -184,9 +187,14 @@ module.ContourPanel = function(container, title, onchange, contouredValue, instr
     if (contourGroup.onchange)
       contourGroup.onchange();
   }
+  var selectChangeHandler = function() {
+    changeHandler();
+    if (contourGroup.onsizechange)
+      contourGroup.onsizechange();
+  }
   new SettingsUI.SelectRow(this.selectPanel_,
                            Strings.kType,
-                           changeHandler,
+                           selectChangeHandler,
                            contouredValue.currentContourSetting,
                            kTypeDescriptions);
   this.flatPanel_ = new module.FlatContourPanel_(

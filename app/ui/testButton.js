@@ -30,6 +30,9 @@ module.Button = function(parentDiv, instrument, context, ontimechange) {
   this.div.onmousedown = function(event) { button.buttonMouseDown(event); };
   this.div.onmouseup = function(event) { button.buttonMouseUp(event); };
   this.div.onmouseleave = function(event) { button.buttonMouseLeave(event); };
+  this.div.ontouchstart = function(event) { button.buttonTouchStart(event); };
+  this.div.ontouchend = function(event) { button.buttonTouchEnd(event); };
+
   window.onkeydown = function(event) { button.keyDown(event); };
   window.onkeyup = function(event) { button.keyUp(event); };
 }
@@ -102,6 +105,17 @@ module.Button.prototype.buttonMouseUp = function(event) {
 module.Button.prototype.buttonMouseLeave = function(event) {
   if (this.playedNote_)
     this.release_();
+}
+
+module.Button.prototype.buttonTouchStart = function(event) {
+  this.press_();
+  event.preventDefault();
+}
+
+module.Button.prototype.buttonTouchEnd = function(event) {
+  if (this.playedNote_)
+    this.release_();
+  event.preventDefault();
 }
 
 module.Button.prototype.keyDown = function(event) {

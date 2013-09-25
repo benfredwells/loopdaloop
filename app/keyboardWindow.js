@@ -34,6 +34,7 @@ function keyUp(event) {
 
 function mouseUp(event) {
   gKeyboard.handleMouseUp(event);
+  gOctaveSelector.handleMouseUp(event);
 }
 
 function resize() {

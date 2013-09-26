@@ -63,6 +63,11 @@ module.kFourthOrder = 'fourth';
 module.kSixthOrder = 'sixth';
 module.kFilterOrders = [module.kSecondOrder, module.kFourthOrder, module.kSixthOrder];
 
+var kFilterOrderNodes = {};
+kFilterOrderNodes[module.kSecondOrder] = 1;
+kFilterOrderNodes[module.kFourthOrder] = 2;
+kFilterOrderNodes[module.kSixthOrder] = 3;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Filter class
 module.Filter = function(context) {
@@ -91,13 +96,7 @@ module.Filter.prototype.createNoteSection_ = function(octave, note) {
   var filterSection = new PlayedNote.NoteSection(filterNode);
   this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);
 
-  switch (this.orderSetting.value) {
-   case module.kSixthOrder:
-    filterNode = this.createFilterNode_(octave, note);
-    filterSection.pushNode(filterNode);
-    this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);
-    // fall through
-   case module.kFourthOrder:
+  for (var i=1; i<kFilterOrderNodes[this.orderSetting.value]; i++) {
     filterNode = this.createFilterNode_(octave, note);
     filterSection.pushNode(filterNode);
     this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);
@@ -115,11 +114,16 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, time, note
   var noteFrequency = ChromaticScale.frequencyForNote(octave, note);
   response.filterFrequency = noteFrequency * this.frequencyContour.valueAtTime(time, noteOnTime);
   node.frequency.value = response.filterFrequency;
-  var maxHz = noteFrequency * harmonics
+  var maxHz = noteFrequency * harmonics;
+  var nodes = kFilterOrderNodes[this.orderSetting.value];
   for (var i = 0; i < steps; ++i) {
     response.frequencies[i] = maxHz * i / steps;
   }
   node.getFrequencyResponse(response.frequencies, response.mag, response.phase);
+  for (var i = 0; i < steps; ++i) {
+    response.mag[i] = Math.pow(response.mag[i], nodes);
+    response.phase[i] = response.phase[i] * nodes;
+  }
   return response;
 }
 

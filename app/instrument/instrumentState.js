@@ -82,6 +82,7 @@ module.updateFilter = function(filter, filterState) {
   }
   updateSetting(filter.enabledSetting, filterState.enabled, false);
   updateSetting(filter.typeSetting, filterState.type, filter.typeSetting.choices[0]);
+  updateSetting(filter.orderSetting, filterState.order, filter.orderSetting.choices[0]);
   updateSettingWithMinDefault(filter.qSetting, filterState.q);
   module.updateContouredValue(filter.frequencyContour, filterState.frequency);
 }

@@ -57,11 +57,19 @@ module.kHighPassFilter = 'highpass';
 module.kFilterTypes = [module.kLowPassFilter, module.kHighPassFilter];
 
 ////////////////////////////////////////////////////////////////////////////////
+// Identifiers for filter strength
+module.kSecondOrder = 'second';
+module.kFourthOrder = 'fourth';
+module.kSixthOrder = 'sixth';
+module.kFilterOrders = [module.kSecondOrder, module.kFourthOrder, module.kSixthOrder];
+
+////////////////////////////////////////////////////////////////////////////////
 // Filter class
 module.Filter = function(context) {
   this.context_ = context;
   this.enabledSetting = new Setting.Boolean();
   this.typeSetting = new Setting.Choice(module.kFilterTypes);
+  this.orderSetting = new Setting.Choice(module.kFilterOrders);
   this.qSetting = new Setting.Number(0, 20);
   this.frequencyContour = new Contour.ContouredValue(context, new Setting.Number(0.5, 10), false);
 }

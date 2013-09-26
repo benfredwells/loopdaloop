@@ -82,13 +82,26 @@ module.Filter.prototype.createFilterNode_ = function(octave, note) {
 }
 
 module.Filter.prototype.createNoteSection_ = function(octave, note) {
-  var filterNode = this.createFilterNode_(octave, note);
-  var filterSection = new PlayedNote.NoteSection(filterNode);
   var noteFrequency = ChromaticScale.frequencyForNote(octave, note);
   var frequencyValueFunction = function(value) {
     return noteFrequency * value;
   }
-  this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection)
+
+  var filterNode = this.createFilterNode_(octave, note);
+  var filterSection = new PlayedNote.NoteSection(filterNode);
+  this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);
+
+  switch (this.orderSetting.value) {
+   case module.kSixthOrder:
+    filterNode = this.createFilterNode_(octave, note);
+    filterSection.pushNode(filterNode);
+    this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);
+    // fall through
+   case module.kFourthOrder:
+    filterNode = this.createFilterNode_(octave, note);
+    filterSection.pushNode(filterNode);
+    this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);
+  }
   return filterSection;
 }
 

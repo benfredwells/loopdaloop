@@ -22,6 +22,7 @@ module.kOctaveOffset = 'Octave offset';
 module.kNoteOffset = 'Semitone offset';
 module.kDetune = 'Detune';
 module.kFrequency = 'Frequency';
+module.kOrder = 'Order';
 module.kQ = 'Resonance';
 module.kGain = 'Gain';
 module.kEnvelope = 'Envelope';
@@ -33,6 +34,10 @@ module.kTriangle = 'Triangle';
 
 module.kLowPass = 'Low Pass';
 module.kHighPass = 'High Pass';
+
+module.kSecondOrder = 'Second (12db / octave)';
+module.kFourthOrder = 'Fourth (24db / octave)';
+module.kSixthOrder = 'Sixth (36db / octave)';
 
 module.kFlat = 'Flat';
 module.kOscillating = 'Oscillating';

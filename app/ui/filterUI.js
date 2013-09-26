@@ -55,6 +55,11 @@ var kTypeDescriptions = {};
 kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
 kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
 
+var kOrderDescriptions = {};
+kOrderDescriptions[Instrument.kSecondOrder] = Strings.kSecondOrder;
+kOrderDescriptions[Instrument.kFourthOrder] = Strings.kFourthOrder;
+kOrderDescriptions[Instrument.kSixthOrder] = Strings.kSixthOrder;
+
 module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
   this.filter_ = filter;
@@ -73,6 +78,7 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
 
   this.enablePanel_ = new UI.Panel(this.settings);
   new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, filter.typeSetting, kTypeDescriptions);
+  new SettingsUI.SelectRow(this.enablePanel_, Strings.kOrder, changeHandler, filter.orderSetting, kOrderDescriptions);
   this.frequencyContourPanel = new ContourUI.ContourPanel(this.enablePanel_, Strings.kFrequency,
                                                           changeHandler, sizeChangeHandler, filter.frequencyContour, instrument,
                                                           Strings.kMultiplierFormatter, 190, false, false);

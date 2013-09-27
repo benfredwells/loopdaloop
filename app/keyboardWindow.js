@@ -37,6 +37,10 @@ function mouseUp(event) {
   gOctaveSelector.handleMouseUp(event);
 }
 
+function blur(event) {
+  gKeyboard.handleBlur(event);
+}
+
 function resize() {
   gKeyboard.handleResize();
   gOctaveSelector.handleResize();
@@ -47,6 +51,7 @@ window.onkeydown = keyDown;
 window.onkeyup = keyUp;
 window.onmouseup = mouseUp;
 window.onresize = resize;
+window.onblur = blur;
 
 function saveState() {
   var setting = {};

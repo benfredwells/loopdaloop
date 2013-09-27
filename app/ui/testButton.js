@@ -35,6 +35,7 @@ module.Button = function(parentDiv, instrument, context, ontimechange) {
 
   window.onkeydown = function(event) { button.keyDown(event); };
   window.onkeyup = function(event) { button.keyUp(event); };
+  window.onblur = function(event) { button.windowBlur(); };
 }
 
 module.Button.prototype = Object.create(UI.Control.prototype);
@@ -116,6 +117,10 @@ module.Button.prototype.buttonTouchEnd = function(event) {
   if (this.playedNote_)
     this.release_();
   event.preventDefault();
+}
+
+module.Button.prototype.windowBlur = function() {
+  this.release_();
 }
 
 module.Button.prototype.keyDown = function(event) {

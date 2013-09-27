@@ -225,6 +225,15 @@ module.Piano.prototype.handleResize = function(event) {
   });
 }
 
+module.Piano.prototype.handleBlur = function(event) {
+  if (this.mouseDown_)
+    return;
+  this.keys_.forEach(function(key) {
+    key.stopPlaying();
+  });
+  this.touchKeys_ = [];
+}
+
 return module;
 
 }());

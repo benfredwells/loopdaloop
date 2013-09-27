@@ -74,7 +74,11 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
     if (ui.onsizechange)
       ui.onsizechange(ui);
   }
-  new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, filter.enabledSetting);
+  var enabledChangeHandler = function() {
+    changeHandler();
+    sizeChangeHandler();
+  }
+  new SettingsUI.CheckRow(this.settings, Strings.kEnabled, enabledChangeHandler, filter.enabledSetting);
 
   this.enablePanel_ = new UI.Panel(this.settings);
   new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, filter.typeSetting, kTypeDescriptions);

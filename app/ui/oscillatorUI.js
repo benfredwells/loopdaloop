@@ -95,7 +95,11 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
     if (ui.onsizechange)
       ui.onsizechange(ui);
   }
-  new SettingsUI.CheckRow(this.settings, Strings.kEnabled, changeHandler, oscillator.enabledSetting);
+  var enabledChangeHandler = function() {
+    changeHandler();
+    sizeChangeHandler();
+  }
+  new SettingsUI.CheckRow(this.settings, Strings.kEnabled, enabledChangeHandler, oscillator.enabledSetting);
 
   this.enablePanel_ = new UI.Panel(this.settings);
   new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, oscillator.typeSetting, kTypeDescriptions);

@@ -8,8 +8,9 @@ chrome.app.runtime.onLaunched.addListener(function() {
   }
 
   var instrumentParams = {
-    width: 1000,
-    height: 1000,
+    width: 444,
+    height: 353,
+    resizable: false,
     left: 20,
     top: 100,
     id: 'instrumentv2'

@@ -55,8 +55,24 @@ module.Selector = function(container, onoctavechange) {
       selector.updateForMousePosition_(event.clientX);
     }
   }
+  var touchStart = function(event) {
+    if (event.changedTouches.length < 1)
+      return;
+    selector.updateForMousePosition_(event.changedTouches[0].pageX);
+    event.preventDefault();
+  }
+  var touchMove = function(event) {
+    if (event.changedTouches.length < 1)
+      return;
+    selector.updateForMousePosition_(event.changedTouches[0].pageX);
+    event.preventDefault();
+  }
   this.thumbDiv.onmousedown = mouseDownHandler;
+  this.thumbDiv.ontouchstart = touchStart;
+  this.thumbDiv.ontouchmove = touchMove;
   this.backgroundDiv.onmousedown = mouseDownHandler;
+  this.backgroundDiv.ontouchstart = touchStart;
+  this.backgroundDiv.ontouchmove = touchMove;
 
   this.currentOctave_ = kMinOctave;
   this.dragging_ = false;

@@ -9,8 +9,8 @@ var gInstrument = null;
 
 var kOutputGain = 0.01;
 
-var kHeightPadding = 119;
-var kWidth = 448;
+var kHeightPadding = 92;
+var kWidth = 444;
 var kCompressorThreshold = -30;
 var kCompressorKnee = 10;
 var kCompressorAttack = 0.01;
@@ -174,7 +174,11 @@ function updateSize() {
     height = height + ui.height();
   });
   height = height + kHeightPadding;
-  window.resizeTo(kWidth, height);
+  var win = chrome.app.window.current();
+  var bounds = win.getBounds();
+  bounds.width = kWidth;
+  bounds.height = height;
+  win.setBounds(bounds);
 }
 
 window.onload = init;

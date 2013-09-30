@@ -70,6 +70,7 @@ module.FlatContour.prototype.releaseTime = function() {
 // Oscillating contour
 module.OscillatingContour = function(valueSetting, contouredValue) {
   this.contouredValue_ = contouredValue;
+  this.typeSetting = new Setting.Choice(AudioConstants.kWaveTypes);
   this.minValueSetting = Setting.copyNumber(valueSetting);
   this.maxValueSetting = Setting.copyNumber(valueSetting);
   this.maxValueSetting.value = this.maxValueSetting.max;
@@ -93,8 +94,7 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
     param.value = centerValue;
 
   var oscillator = this.contouredValue_.context_.createOscillator();
-  // TODO: make this controllable.
-  oscillator.type = 'sine';
+  oscillator.type = this.typeSetting.value;
   oscillator.frequency.value = this.frequencySetting.value;
   noteSection.addOscillator(oscillator);
   var gain = this.contouredValue_.context_.createGainNode();

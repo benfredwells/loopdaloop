@@ -26,11 +26,17 @@ module.kOrder = 'Order';
 module.kQ = 'Resonance';
 module.kGain = 'Gain';
 module.kEnvelope = 'Envelope';
+module.kOscillation = 'Oscillation';
 
 module.kSine = 'Sine';
 module.kSquare = 'Square';
 module.kSawtooth = 'Sawtooth';
 module.kTriangle = 'Triangle';
+module.kOscillatorTypeDescriptions = {};
+module.kOscillatorTypeDescriptions[AudioConstants.kSineWave] = module.kSine;
+module.kOscillatorTypeDescriptions[AudioConstants.kSquareWave] = module.kSquare;
+module.kOscillatorTypeDescriptions[AudioConstants.kSawtoothWave] = module.kSawtooth;
+module.kOscillatorTypeDescriptions[AudioConstants.kTriangleWave] = module.kTriangle;
 
 module.kLowPass = 'Low Pass';
 module.kHighPass = 'High Pass';

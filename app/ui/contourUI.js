@@ -99,6 +99,7 @@ module.FlatContourPanel_.prototype = Object.create(UI.Panel.prototype);
 module.OscillatingContourPanel_ = function(container, onchange, oscillatingContour,
                                            isEnvelope, formatter, steps) {
   UI.Panel.call(this, container);
+  new SettingsUI.SelectRow(this, Strings.kOscillation, onchange, oscillatingContour.typeSetting, Strings.kOscillatorTypeDescriptions);
   if (!isEnvelope) {
     new SettingsUI.LinearRangeRow(this, Strings.kMax, onchange,
                                   oscillatingContour.maxValueSetting, formatter, steps);

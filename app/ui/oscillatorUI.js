@@ -75,12 +75,6 @@ module.OscillatorVisualizer_.prototype.drawVisualization = function() {
   }
 }
 
-var kTypeDescriptions = {};
-kTypeDescriptions[AudioConstants.kSineWave] = Strings.kSine;
-kTypeDescriptions[AudioConstants.kSquareWave] = Strings.kSquare;
-kTypeDescriptions[AudioConstants.kSawtoothWave] = Strings.kSawtooth;
-kTypeDescriptions[AudioConstants.kTriangleWave] = Strings.kTriangle;
-
 module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
   this.oscillator_ = oscillator;
@@ -102,7 +96,7 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
   new SettingsUI.CheckRow(this.settings, Strings.kEnabled, enabledChangeHandler, oscillator.enabledSetting);
 
   this.enablePanel_ = new UI.Panel(this.settings);
-  new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, oscillator.typeSetting, kTypeDescriptions);
+  new SettingsUI.SelectRow(this.enablePanel_, Strings.kType, changeHandler, oscillator.typeSetting, Strings.kOscillatorTypeDescriptions);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kOctaveOffset, changeHandler, oscillator.octaveOffsetSetting, null, 8);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kNoteOffset, changeHandler, oscillator.noteOffsetSetting, null, 16);
   new SettingsUI.LinearRangeRow(this.enablePanel_, Strings.kDetune, changeHandler, oscillator.detuneSetting, String.kPercentFormatter, 100);

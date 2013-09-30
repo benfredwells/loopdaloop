@@ -8,19 +8,11 @@ var kFilterCount = 2;
 var kOscillatorCount = 3;
 
 ////////////////////////////////////////////////////////////////////////////////
-// Identifiers for waves
-module.kSineWave = 'sine';
-module.kSquareWave = 'square';
-module.kSawtoothWave = 'sawtooth';
-module.kTriangleWave = 'triangle';
-module.kWaveTypes = [module.kSineWave, module.kSquareWave, module.kSawtoothWave, module.kTriangleWave];
-
-////////////////////////////////////////////////////////////////////////////////
 // Oscillator class
 module.Oscillator = function(context) {
   this.context_ = context;
   this.enabledSetting = new Setting.Boolean();
-  this.typeSetting = new Setting.Choice(module.kWaveTypes);
+  this.typeSetting = new Setting.Choice(AudioConstants.kWaveTypes);
   this.octaveOffsetSetting = new Setting.Number(-4, 4);
   this.noteOffsetSetting = new Setting.Number(-8, 8);
   this.detuneSetting = new Setting.Number(-50, 50);
@@ -51,30 +43,12 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Identifiers for filter types
-module.kLowPassFilter = 'lowpass';
-module.kHighPassFilter = 'highpass';
-module.kFilterTypes = [module.kLowPassFilter, module.kHighPassFilter];
-
-////////////////////////////////////////////////////////////////////////////////
-// Identifiers for filter strength
-module.kSecondOrder = 'second';
-module.kFourthOrder = 'fourth';
-module.kSixthOrder = 'sixth';
-module.kFilterOrders = [module.kSecondOrder, module.kFourthOrder, module.kSixthOrder];
-
-var kFilterOrderNodes = {};
-kFilterOrderNodes[module.kSecondOrder] = 1;
-kFilterOrderNodes[module.kFourthOrder] = 2;
-kFilterOrderNodes[module.kSixthOrder] = 3;
-
-////////////////////////////////////////////////////////////////////////////////
 // Filter class
 module.Filter = function(context) {
   this.context_ = context;
   this.enabledSetting = new Setting.Boolean();
-  this.typeSetting = new Setting.Choice(module.kFilterTypes);
-  this.orderSetting = new Setting.Choice(module.kFilterOrders);
+  this.typeSetting = new Setting.Choice(AudioConstants.kFilterTypes);
+  this.orderSetting = new Setting.Choice(AudioConstants.kFilterOrders);
   this.qSetting = new Setting.Number(0, 20);
   this.frequencyContour = new Contour.ContouredValue(context, new Setting.Number(0.5, 10), false);
 }
@@ -96,7 +70,7 @@ module.Filter.prototype.createNoteSection_ = function(octave, note) {
   var filterSection = new PlayedNote.NoteSection(filterNode);
   this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);
 
-  for (var i=1; i<kFilterOrderNodes[this.orderSetting.value]; i++) {
+  for (var i=1; i<AudioConstants.kFilterOrderNodes[this.orderSetting.value]; i++) {
     filterNode = this.createFilterNode_(octave, note);
     filterSection.pushNode(filterNode);
     this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);

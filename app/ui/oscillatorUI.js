@@ -22,21 +22,21 @@ var kHarmonicStrokeWidth = 2;
 
 module.OscillatorVisualizer_.prototype.harmonicAmplitude_ = function(harmonic) {
   switch (this.oscillator_.typeSetting.value) {
-    case Instrument.kSineWave: {
+    case AudioConstants.kSineWave: {
       if (harmonic == 1) 
         return 1
       else
         return 0;
     }
-    case Instrument.kSquareWave: {
+    case AudioConstants.kSquareWave: {
       if (harmonic % 2 == 0)
         return 0;
       return 4 / (Math.PI * harmonic);
     }
-    case Instrument.kSawtoothWave: {
+    case AudioConstants.kSawtoothWave: {
       return 2 / (Math.PI * harmonic);
     }
-    case Instrument.kTriangleWave: {
+    case AudioConstants.kTriangleWave: {
       if (harmonic % 2 == 0)
         return 0;
       return 8 / Math.pow((Math.PI * harmonic), 2);
@@ -76,10 +76,10 @@ module.OscillatorVisualizer_.prototype.drawVisualization = function() {
 }
 
 var kTypeDescriptions = {};
-kTypeDescriptions[Instrument.kSineWave] = Strings.kSine;
-kTypeDescriptions[Instrument.kSquareWave] = Strings.kSquare;
-kTypeDescriptions[Instrument.kSawtoothWave] = Strings.kSawtooth;
-kTypeDescriptions[Instrument.kTriangleWave] = Strings.kTriangle;
+kTypeDescriptions[AudioConstants.kSineWave] = Strings.kSine;
+kTypeDescriptions[AudioConstants.kSquareWave] = Strings.kSquare;
+kTypeDescriptions[AudioConstants.kSawtoothWave] = Strings.kSawtooth;
+kTypeDescriptions[AudioConstants.kTriangleWave] = Strings.kTriangle;
 
 module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
@@ -124,10 +124,10 @@ module.UI.prototype.updateIcon = function() {
   var iconClass;
   if (this.oscillator_.enabledSetting.value) {
     switch (this.oscillator_.typeSetting.value) {
-      case Instrument.kSineWave: iconClass = 'sineWaveIcon'; break;
-      case Instrument.kSquareWave: iconClass = 'squareWaveIcon'; break;
-      case Instrument.kSawtoothWave: iconClass = 'sawtoothWaveIcon'; break;
-      case Instrument.kTriangleWave: iconClass = 'triangleWaveIcon'; break;
+      case AudioConstants.kSineWave: iconClass = 'sineWaveIcon'; break;
+      case AudioConstants.kSquareWave: iconClass = 'squareWaveIcon'; break;
+      case AudioConstants.kSawtoothWave: iconClass = 'sawtoothWaveIcon'; break;
+      case AudioConstants.kTriangleWave: iconClass = 'triangleWaveIcon'; break;
     }
   } else {
     iconClass = 'disabledWaveIcon';

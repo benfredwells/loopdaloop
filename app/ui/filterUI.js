@@ -52,13 +52,13 @@ module.FilterVisualizer_.prototype.drawVisualization = function() {
 }
 
 var kTypeDescriptions = {};
-kTypeDescriptions[Instrument.kLowPassFilter] = Strings.kLowPass;
-kTypeDescriptions[Instrument.kHighPassFilter] = Strings.kHighPass;
+kTypeDescriptions[AudioConstants.kLowPassFilter] = Strings.kLowPass;
+kTypeDescriptions[AudioConstants.kHighPassFilter] = Strings.kHighPass;
 
 var kOrderDescriptions = {};
-kOrderDescriptions[Instrument.kSecondOrder] = Strings.kSecondOrder;
-kOrderDescriptions[Instrument.kFourthOrder] = Strings.kFourthOrder;
-kOrderDescriptions[Instrument.kSixthOrder] = Strings.kSixthOrder;
+kOrderDescriptions[AudioConstants.kSecondOrder] = Strings.kSecondOrder;
+kOrderDescriptions[AudioConstants.kFourthOrder] = Strings.kFourthOrder;
+kOrderDescriptions[AudioConstants.kSixthOrder] = Strings.kSixthOrder;
 
 module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
@@ -104,8 +104,8 @@ module.UI.prototype.updateIcon = function() {
   var iconClass;
   if (this.filter_.enabledSetting.value) {
     switch (this.filter_.typeSetting.value) {
-      case Instrument.kLowPassFilter: iconClass = 'lowPassFilterIcon'; break;
-      case Instrument.kHighPassFilter: iconClass = 'highPassFilterIcon'; break;
+      case AudioConstants.kLowPassFilter: iconClass = 'lowPassFilterIcon'; break;
+      case AudioConstants.kHighPassFilter: iconClass = 'highPassFilterIcon'; break;
     }
   } else {
     iconClass = 'disabledFilterIcon';

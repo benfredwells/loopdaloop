@@ -114,7 +114,34 @@ module.OscillatingContour.prototype.averageValue = function(valueFunction) {
 
 module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
   var periods = time * this.frequencySetting.value;
-  return this.rawCenterValue_() + this.rawAmplitude_() * Math.sin(2 * Math.PI * periods);
+  var periodOffset = periods - Math.floor(periods);
+  var factor = 0;
+  switch (this.typeSetting.value) {
+   case AudioConstants.kSineWave:
+    factor = Math.sin(2 * Math.PI * periodOffset);
+    break;
+   case AudioConstants.kSquareWave:
+    if (periodOffset < 0.5)
+      factor = 1
+    else
+      factor = -1;
+    break;
+   case AudioConstants.kSawtoothWave:
+    if (periodOffset < 0.5)
+      factor = 2 * periodOffset
+    else
+      factor = 2 * (periodOffset - 1);
+    break;
+   case AudioConstants.kTriangleWave:
+    if (periodOffset < 0.25)
+      factor = 4 * periodOffset
+    else if (periodOffset < 0.75)
+      factor = 1 - 4 * (periodOffset - 0.25);
+    else
+      factor = 4 * (periodOffset - 1)
+    break;
+  }
+  return this.rawCenterValue_() + this.rawAmplitude_() * factor;
 }
 
 module.OscillatingContour.prototype.releaseTime = function() {

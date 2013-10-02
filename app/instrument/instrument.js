@@ -89,7 +89,7 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, time, note
   response.filterFrequency = noteFrequency * this.frequencyContour.valueAtTime(time, noteOnTime);
   node.frequency.value = response.filterFrequency;
   var maxHz = noteFrequency * harmonics;
-  var nodes = kFilterOrderNodes[this.orderSetting.value];
+  var nodes = AudioConstants.kFilterOrderNodes[this.orderSetting.value];
   for (var i = 0; i < steps; ++i) {
     response.frequencies[i] = maxHz * i / steps;
   }

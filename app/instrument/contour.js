@@ -270,11 +270,140 @@ module.ADSRContour.prototype.releaseTime = function() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// n Stage Contourer class
+module.NStageContourer = function(contour, param, valueFunction) {
+  this.contour_ = contour;
+  this.param_ = param;
+  this.valueFunction_ = valueFunction;
+}
+
+module.NStageContourer.prototype.contourOn = function(onTime) {
+  var nextTime = onTime;
+  var v = this.valueFunction_;
+  // Envelopes always start at 0, and have no attack delay.
+  if (this.contour_.contouredValue_.isEnvelope) {
+    this.param_.setValueAtTime(0, nextTime);
+  } else {
+    this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
+    nextTime += this.contour_.attackDelaySetting.value;
+    this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
+  }
+  nextTime += this.contour_.attackTimeSetting.value;
+  this.param_.linearRampToValueAtTime(v(this.contour_.attackValueSetting.value), nextTime);
+  nextTime += this.contour_.attackHoldSetting.value;
+  this.param_.setValueAtTime(v(this.contour_.attackValueSetting.value), nextTime);
+  nextTime += this.contour_.decayTimeSetting.value;
+  this.param_.linearRampToValueAtTime(v(this.contour_.sustainValueSetting.value), nextTime);
+}
+
+module.NStageContourer.prototype.contourOff = function(offTime) {
+  var nextTime = offTime;
+  this.param_.cancelScheduledValues(offTime);
+  this.param_.setValueAtTime(this.param_.value, nextTime);
+  nextTime += this.contour_.sustainHoldSetting.value;
+  this.param_.setValueAtTime(this.param_.value, nextTime);
+  nextTime += this.contour_.releaseTimeSetting.value;
+  var finalValue = this.valueFunction_(this.contour_.finalValueSetting.value);
+  // Envelopes always finish at 0.
+  if (this.contour_.contouredValue_.isEnvelope)
+    finalValue = 0;
+  this.param_.linearRampToValueAtTime(finalValue, nextTime);
+}
+
+module.NStageContourer.prototype.contourFinishTime = function(offTime) {
+  return offTime + this.contour_.sustainHoldSetting.value +
+         this.contour_.releaseTimeSetting.value;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// n Stage contoured value
+module.kMaxIntermediateStages = 4;
+
+module.IntermediateContourStage = function(valueSetting) {
+  this.stageBeginValueSetting = Setting.copyNumber(valueSetting);
+  this.stageTimeSetting = new Setting.Number(0, 10);
+}
+
+module.NStageContour = function(valueSetting, contouredValue) {
+  this.contouredValue_ = contouredValue;
+  this.initialValueSetting = Setting.copyNumber(valueSetting);
+  this.firstStageTimeSetting = new Setting.Number(kMinChangeTime, 10);
+  this.numIntermediateStagesSetting = new Setting.Number(0, kIntermediateStages);
+  this.intermediateStages = [];
+  for (var i = 0; i < kMaxIntermediateStages; i++) {
+    this.intermediateStages.push(new module.IntermediateContourStage(valueSetting));
+  }
+  this.sustainValueSetting = Setting.copyNumber(valueSetting);
+  this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
+  this.finalValueSetting = Setting.copyNumber(valueSetting);
+}
+
+module.NStageContour.prototype.addContour = function(valueFunction, param, noteSection) {
+  noteSection.addContour(new module.ADSRContourer(this, param, valueFunction));
+}
+
+module.NStageContour.prototype.averageValue = function(valueFunction) {
+  return valueFunction(this.sustainValueSetting.value);
+}
+
+module.NStageContour.prototype.interpolatedValue_ = function(time, startTime, endTime,
+                                                           startValue, endValue) {
+  var relTime = (time - startTime) / (endTime - startTime);
+  return startValue + (endValue - startValue) * relTime;
+}
+
+module.NStageContour.prototype.onValueAtTime_ = function(time) {
+  var nextTime = this.attackDelaySetting.value;
+  if (time < nextTime)
+    return this.initialValueSetting.value;
+
+  var lastTime = nextTime;
+  nextTime += this.attackTimeSetting.value;
+  if (time < nextTime)
+    return this.interpolatedValue_(time, lastTime, nextTime,
+                                   this.initialValueSetting.value, this.attackValueSetting.value);
+
+  nextTime += this.attackHoldSetting.value;
+  if (time < nextTime)
+    return this.attackValueSetting.value;
+
+  lastTime = nextTime;
+  nextTime += this.decayTimeSetting.value;
+  if (time < nextTime)
+    return this.interpolatedValue_(time, lastTime, nextTime,
+                                   this.attackValueSetting.value, this.sustainValueSetting.value);
+
+  return this.sustainValueSetting.value;
+}
+
+module.NStageContour.prototype.valueAtTime = function(time, noteOnTime) {
+  if (time <= noteOnTime)
+    return this.onValueAtTime_(time);
+
+  var sustainValue = this.onValueAtTime_(noteOnTime);
+  var offTime = time - noteOnTime;
+  if (offTime < this.sustainHoldSetting.value)
+    return sustainValue;
+
+  var finishTime = this.sustainHoldSetting.value + this.releaseTimeSetting.value;
+  if (offTime < finishTime)
+    return this.interpolatedValue_(offTime, this.sustainHoldSetting.value, finishTime,
+                                   sustainValue, this.finalValueSetting.value);
+
+  return this.finalValueSetting.value;
+}
+
+module.NStageContour.prototype.releaseTime = function() {
+  return this.sustainHoldSetting.value + this.releaseTimeSetting.value;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Identifiers for contour types
 module.kFlatContour = 'flat';
 module.kOscillatingContour = 'oscillating';
 module.kADSRContour = 'adsr';
-module.kContourTypes = [module.kFlatContour, module.kOscillatingContour, module.kADSRContour];
+module.kNStageContour = 'nstage';
+module.kContourTypes = [module.kFlatContour, module.kOscillatingContour, module.kADSRContour, module.kNStageContour];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Contoured value

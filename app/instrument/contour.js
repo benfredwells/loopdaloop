@@ -285,22 +285,19 @@ module.NStageContourer.prototype.contourOn = function(onTime) {
     this.param_.setValueAtTime(0, nextTime);
   } else {
     this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
-    nextTime += this.contour_.attackDelaySetting.value;
-    this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
   }
-  nextTime += this.contour_.attackTimeSetting.value;
-  this.param_.linearRampToValueAtTime(v(this.contour_.attackValueSetting.value), nextTime);
-  nextTime += this.contour_.attackHoldSetting.value;
-  this.param_.setValueAtTime(v(this.contour_.attackValueSetting.value), nextTime);
-  nextTime += this.contour_.decayTimeSetting.value;
+  nextTime += this.contour_.firstStageTimeSetting.value;
+  for (var i = 0; i < this.contour_.numIntermediateStagesSetting.value; i++) {
+    var stage = this.contour_.intermediateStages[i];
+    this.param_.linearRampToValueAtTime(v(stage.beginValueSetting.value), nextTime);
+    nextTime += stage.durationSetting.value;
+  }
   this.param_.linearRampToValueAtTime(v(this.contour_.sustainValueSetting.value), nextTime);
 }
 
 module.NStageContourer.prototype.contourOff = function(offTime) {
   var nextTime = offTime;
   this.param_.cancelScheduledValues(offTime);
-  this.param_.setValueAtTime(this.param_.value, nextTime);
-  nextTime += this.contour_.sustainHoldSetting.value;
   this.param_.setValueAtTime(this.param_.value, nextTime);
   nextTime += this.contour_.releaseTimeSetting.value;
   var finalValue = this.valueFunction_(this.contour_.finalValueSetting.value);
@@ -311,8 +308,7 @@ module.NStageContourer.prototype.contourOff = function(offTime) {
 }
 
 module.NStageContourer.prototype.contourFinishTime = function(offTime) {
-  return offTime + this.contour_.sustainHoldSetting.value +
-         this.contour_.releaseTimeSetting.value;
+  return offTime + this.contour_.releaseTimeSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -320,8 +316,8 @@ module.NStageContourer.prototype.contourFinishTime = function(offTime) {
 module.kMaxIntermediateStages = 4;
 
 module.IntermediateContourStage = function(valueSetting) {
-  this.stageBeginValueSetting = Setting.copyNumber(valueSetting);
-  this.stageTimeSetting = new Setting.Number(0, 10);
+  this.beginValueSetting = Setting.copyNumber(valueSetting);
+  this.durationSetting = new Setting.Number(0, 10);
 }
 
 module.NStageContour = function(valueSetting, contouredValue) {
@@ -339,7 +335,7 @@ module.NStageContour = function(valueSetting, contouredValue) {
 }
 
 module.NStageContour.prototype.addContour = function(valueFunction, param, noteSection) {
-  noteSection.addContour(new module.ADSRContourer(this, param, valueFunction));
+  noteSection.addContour(new module.NStageContourer(this, param, valueFunction));
 }
 
 module.NStageContour.prototype.averageValue = function(valueFunction) {
@@ -394,7 +390,7 @@ module.NStageContour.prototype.valueAtTime = function(time, noteOnTime) {
 }
 
 module.NStageContour.prototype.releaseTime = function() {
-  return this.sustainHoldSetting.value + this.releaseTimeSetting.value;
+  return this.releaseTimeSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -418,6 +414,7 @@ module.ContouredValue = function(context, valueSetting, isEnvelope) {
   this.initContour_(module.kFlatContour, new module.FlatContour(valueSetting, this));
   this.initContour_(module.kOscillatingContour, new module.OscillatingContour(valueSetting, this));
   this.initContour_(module.kADSRContour, new module.ADSRContour(valueSetting, this));
+  this.initContour_(module.kNStageContour, new module.NStageContour(valueSetting, this));
 }
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {

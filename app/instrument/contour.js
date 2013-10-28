@@ -15,7 +15,8 @@ var kMinChangeTime = 0.05;
 // Contour interface
 //   addContour = function(valueFunction, param, noteSection)
 //   averageValue = function(valueFunction)
-//   valueAtTime = function(time, noteOnTime)
+//   valueAtTime = function(time, noteOnTime) - |time| is time from when the
+//                                              note starts playing.
 
 ////////////////////////////////////////////////////////////////////////////////
 // BasicEnvelopeContourer class
@@ -324,9 +325,9 @@ module.NStageContour = function(valueSetting, contouredValue) {
   this.contouredValue_ = contouredValue;
   this.initialValueSetting = Setting.copyNumber(valueSetting);
   this.firstStageTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.numIntermediateStagesSetting = new Setting.Number(0, kIntermediateStages);
+  this.numIntermediateStagesSetting = new Setting.Number(0, module.kMaxIntermediateStages);
   this.intermediateStages = [];
-  for (var i = 0; i < kMaxIntermediateStages; i++) {
+  for (var i = 0; i < module.kMaxIntermediateStages; i++) {
     this.intermediateStages.push(new module.IntermediateContourStage(valueSetting));
   }
   this.sustainValueSetting = Setting.copyNumber(valueSetting);
@@ -348,26 +349,28 @@ module.NStageContour.prototype.interpolatedValue_ = function(time, startTime, en
   return startValue + (endValue - startValue) * relTime;
 }
 
+// n is zero based
+module.NStageContour.prototype.nthOnStageEndValue_ = function(n) {
+  var result = this.sustainValueSetting.value;
+  if (n < this.numIntermediateStagesSetting.value - 1)
+    result = this.intermediateStages[n].beginValueSetting.value;
+  return result;
+}
+
 module.NStageContour.prototype.onValueAtTime_ = function(time) {
-  var nextTime = this.attackDelaySetting.value;
-  if (time < nextTime)
-    return this.initialValueSetting.value;
-
-  var lastTime = nextTime;
-  nextTime += this.attackTimeSetting.value;
+  var lastTime = 0;
+  var nextTime = this.firstStageTimeSetting.value;
   if (time < nextTime)
     return this.interpolatedValue_(time, lastTime, nextTime,
-                                   this.initialValueSetting.value, this.attackValueSetting.value);
+                                   this.initialValueSetting.value, this.nthOnStageEndValue_(0));
 
-  nextTime += this.attackHoldSetting.value;
-  if (time < nextTime)
-    return this.attackValueSetting.value;
-
-  lastTime = nextTime;
-  nextTime += this.decayTimeSetting.value;
-  if (time < nextTime)
-    return this.interpolatedValue_(time, lastTime, nextTime,
-                                   this.attackValueSetting.value, this.sustainValueSetting.value);
+  for (var i = 0; i < this.numIntermediateStagesSetting.value; i++) {
+    lastTime = nextTime;
+    nextTime += this.intermediateStages[i].durationSetting.value;
+    if (time < nextTime)
+      return this.interpolatedValue_(time, lastTime, nextTime,
+                                     this.nthOnStageEndValue_(i), this.nthOnStageEndValue_(i + 1));
+  }
 
   return this.sustainValueSetting.value;
 }
@@ -378,12 +381,9 @@ module.NStageContour.prototype.valueAtTime = function(time, noteOnTime) {
 
   var sustainValue = this.onValueAtTime_(noteOnTime);
   var offTime = time - noteOnTime;
-  if (offTime < this.sustainHoldSetting.value)
-    return sustainValue;
-
-  var finishTime = this.sustainHoldSetting.value + this.releaseTimeSetting.value;
+  var finishTime = this.releaseTimeSetting.value;
   if (offTime < finishTime)
-    return this.interpolatedValue_(offTime, this.sustainHoldSetting.value, finishTime,
+    return this.interpolatedValue_(offTime, offTime, finishTime,
                                    sustainValue, this.finalValueSetting.value);
 
   return this.finalValueSetting.value;
@@ -397,7 +397,8 @@ module.NStageContour.prototype.releaseTime = function() {
 // Identifiers for contour types
 module.kFlatContour = 'flat';
 module.kOscillatingContour = 'oscillating';
-module.kADSRContour = 'adsr';
+module.kADSRContour = 'adsr'
+;
 module.kNStageContour = 'nstage';
 module.kContourTypes = [module.kFlatContour, module.kOscillatingContour, module.kADSRContour, module.kNStageContour];
 

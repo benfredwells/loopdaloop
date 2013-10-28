@@ -86,62 +86,67 @@ module.ContourVisualizer_.prototype.drawContour = function() {
   this.drawPolyLine(pointList, kContourStroke, kContourStrokeWidth, kContourFill);
 }
 
-module.FlatContourPanel_ = function(container, onchange, flatContour, isEnvelope,
-                                    formatter, steps) {
+module.ContourTypePanel_ = function(container, onchange, formatter, steps) {
   UI.Panel.call(this, container);
-  if (!isEnvelope)
-    new SettingsUI.LinearRangeRow(this, Strings.kValue, onchange,
-                                  flatContour.valueSetting, formatter, steps);
+  this.onchange = onchange;
+  this.formatter = formatter;
+  this.steps = steps;
 }
 
-module.FlatContourPanel_.prototype = Object.create(UI.Panel.prototype);
+module.ContourTypePanel_.prototype = Object.create(UI.Panel.prototype);
+
+module.ContourTypePanel_.prototype.createValueRow_ = function(title, setting) {
+  new SettingsUI.LinearRangeRow(this, title, this.onchange, setting, this.formatter, this.steps);
+}
+
+module.ContourTypePanel_.prototype.createTimeRow_ = function(title, setting) {
+  new SettingsUI.ExponentialRangeRow(this, title, this.onchange, setting, Strings.kSecondsFormatter, 10);
+}
+
+module.FlatContourPanel_ = function(container, onchange, flatContour, isEnvelope,
+                                    formatter, steps) {
+  module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
+  if (!isEnvelope)
+    this.createValueRow_(Strings.kValue, flatContour.valueSetting);
+}
+
+module.FlatContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
 
 module.OscillatingContourPanel_ = function(container, onchange, oscillatingContour,
                                            isEnvelope, formatter, steps) {
-  UI.Panel.call(this, container);
+  module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
   new SettingsUI.SelectRow(this, Strings.kOscillation, onchange, oscillatingContour.typeSetting, Strings.kOscillatorTypeDescriptions);
-  if (!isEnvelope) {
-    new SettingsUI.LinearRangeRow(this, Strings.kMax, onchange,
-                                  oscillatingContour.maxValueSetting, formatter, steps);
-  }
-  new SettingsUI.LinearRangeRow(this, Strings.kMin, onchange,
-                                oscillatingContour.minValueSetting, formatter, steps);
+  if (!isEnvelope)
+    this.createValueRow_(Strings.kMax, oscillatingContour.maxValueSetting);
+  this.createValueRow_(Strings.kMin, oscillatingContour.minValueSetting);
   new SettingsUI.ExponentialRangeRow(this, Strings.kSpeed, onchange,
                                      oscillatingContour.frequencySetting, null, 20);
 }
 
-module.OscillatingContourPanel_.prototype = Object.create(UI.Panel.prototype);
+module.OscillatingContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
 
 module.ADSRContourPanel_ = function(container, onchange, adsrContour,
                                     isEnvelope, formatter, steps) {
-  UI.Panel.call(this, container);
-
-  var contourPanel = this;
-  var createValueRow = function(title, setting) {
-    new SettingsUI.LinearRangeRow(contourPanel, title, onchange, setting, formatter, steps);
-  }
-  var createTimeRow = function(title, setting) {
-    new SettingsUI.ExponentialRangeRow(contourPanel, title, onchange, setting, Strings.kSecondsFormatter, 10);
-  }
+  module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
   if (!isEnvelope) {
-    createValueRow(Strings.kInitialValue, adsrContour.initialValueSetting);
-    createTimeRow(Strings.kAttackDelay, adsrContour.attackDelaySetting);
+    this.createValueRow_(Strings.kInitialValue, adsrContour.initialValueSetting);
+    this.createTimeRow_(Strings.kAttackDelay, adsrContour.attackDelaySetting);
   }
-  createTimeRow(Strings.kAttackTime, adsrContour.attackTimeSetting);
+  this.createTimeRow_(Strings.kAttackTime, adsrContour.attackTimeSetting);
   if (!isEnvelope) {
-    createValueRow(Strings.kAttackValue, adsrContour.attackValueSetting);
+    this.createValueRow_(Strings.kAttackValue, adsrContour.attackValueSetting);
   }
-  createTimeRow(Strings.kAttackHold, adsrContour.attackHoldSetting);
-  createTimeRow(Strings.kDecayTime, adsrContour.decayTimeSetting);
-  createValueRow(Strings.kSustainValue, adsrContour.sustainValueSetting);
-  createTimeRow(Strings.kSustainHold, adsrContour.sustainHoldSetting);
-  createTimeRow(Strings.kReleaseTime, adsrContour.releaseTimeSetting);
+  this.createTimeRow_(Strings.kAttackHold, adsrContour.attackHoldSetting);
+  this.createTimeRow_(Strings.kDecayTime, adsrContour.decayTimeSetting);
+  this.createValueRow_(Strings.kSustainValue, adsrContour.sustainValueSetting);
+  this.createTimeRow_(Strings.kSustainHold, adsrContour.sustainHoldSetting);
+  this.createTimeRow_(Strings.kReleaseTime, adsrContour.releaseTimeSetting);
   if (!isEnvelope) {
-    createValueRow(Strings.kFinalValue, adsrContour.finalValueSetting);
+    this.createValueRow_(Strings.kFinalValue, adsrContour.finalValueSetting);
   }
 }
 
-module.ADSRContourPanel_.prototype = Object.create(UI.Panel.prototype);
+module.ADSRContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
 
 module.ContourPanel = function(container, title, onchange, onsizechange, contouredValue, instrument,
                                formatter, steps, asCategory, selected) {

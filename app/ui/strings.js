@@ -48,6 +48,12 @@ module.kSixthOrder = 'Sixth (36db / octave)';
 module.kFlat = 'Flat';
 module.kOscillating = 'Oscillating';
 module.kADSR = 'ADSR';
+module.kNStage = 'N Stage';
+module.kContourTypeDescriptions = {};
+module.kContourTypeDescriptions[Contour.kFlatContour] = module.kFlat;
+module.kContourTypeDescriptions[Contour.kOscillatingContour] = module.kOscillating;
+module.kContourTypeDescriptions[Contour.kADSRContour] = module.kADSR;
+module.kContourTypeDescriptions[Contour.kNStageContour] = module.kNStage;
 
 module.kValue = 'Value';
 module.kMax = 'Maximum Value';

@@ -143,11 +143,6 @@ module.ADSRContourPanel_ = function(container, onchange, adsrContour,
 
 module.ADSRContourPanel_.prototype = Object.create(UI.Panel.prototype);
 
-var kTypeDescriptions = {};
-kTypeDescriptions[Contour.kFlatContour] = Strings.kFlat;
-kTypeDescriptions[Contour.kOscillatingContour] = Strings.kOscillating;
-kTypeDescriptions[Contour.kADSRContour] = Strings.kADSR;
-
 module.ContourPanel = function(container, title, onchange, onsizechange, contouredValue, instrument,
                                formatter, steps, asCategory, selected) {
   UI.Panel.call(this, container);
@@ -197,7 +192,7 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
                            Strings.kType,
                            selectChangeHandler,
                            contouredValue.currentContourSetting,
-                           kTypeDescriptions);
+                           Strings.kContourTypeDescriptions);
   this.flatPanel_ = new module.FlatContourPanel_(
       this.selectPanel_, changeHandler,
       contouredValue.contoursByIdentifier[Contour.kFlatContour],

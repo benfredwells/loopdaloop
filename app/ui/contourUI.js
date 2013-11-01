@@ -133,9 +133,7 @@ module.ADSRContourPanel_ = function(container, onchange, adsrContour,
     this.createTimeRow_(Strings.kAttackDelay, adsrContour.attackDelaySetting);
   }
   this.createTimeRow_(Strings.kAttackTime, adsrContour.attackTimeSetting);
-  if (!isEnvelope) {
-    this.createValueRow_(Strings.kAttackValue, adsrContour.attackValueSetting);
-  }
+  this.createValueRow_(Strings.kAttackValue, adsrContour.attackValueSetting);
   this.createTimeRow_(Strings.kAttackHold, adsrContour.attackHoldSetting);
   this.createTimeRow_(Strings.kDecayTime, adsrContour.decayTimeSetting);
   this.createValueRow_(Strings.kSustainValue, adsrContour.sustainValueSetting);
@@ -147,6 +145,28 @@ module.ADSRContourPanel_ = function(container, onchange, adsrContour,
 }
 
 module.ADSRContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
+
+module.NStageContourPanel_ = function(container, onchange, nStageContour,
+                                      isEnvelope, formatter, steps) {
+  module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
+  if (!isEnvelope) {
+    this.createValueRow_(Strings.kInitialValue, nStageContour.initialValueSetting);
+  }
+  this.createTimeRow_(Strings.kStage1Duration, nStageContour.firstStageTimeSetting);
+  for (var i = 0; i < nStageContour.numIntermediateStages(); i++) {
+    this.createValueRow_(Strings.kIntermediateStageBeginValues[i],
+                         nStageContour.intermediateStages[i].beginValueSetting);
+    this.createValueRow_(Strings.kIntermediateStageDurations[i],
+                         nStageContour.intermediateStages[i].durationSetting);
+  }
+  this.createValueRow_(Strings.kSustainValue, nStageContour.sustainValueSetting);
+  this.createTimeRow_(Strings.kReleaseTime, nStageContour.releaseTimeSetting);
+  if (!isEnvelope) {
+    this.createValueRow_(Strings.kFinalValue, nStageContour.finalValueSetting);
+  }
+}
+
+module.NStageContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
 
 module.ContourPanel = function(container, title, onchange, onsizechange, contouredValue, instrument,
                                formatter, steps, asCategory, selected) {
@@ -210,6 +230,10 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
       this.selectPanel_, changeHandler,
       contouredValue.contoursByIdentifier[Contour.kADSRContour],
       contouredValue.isEnvelope, formatter, steps);
+  this.nStagePanel_ = new module.NStageContourPanel_(
+      this.selectPanel_, changeHandler,
+      contouredValue.contoursByIdentifier[Contour.kNStageContour],
+      contouredValue.isEnvelope, formatter, steps);
 
   this.showHideContours_();
   this.setSelected(selected);
@@ -222,6 +246,7 @@ module.ContourPanel.prototype.showHideContours_ = function() {
   this.flatPanel_.setVisible(current == Contour.kFlatContour);
   this.oscillatingPanel_.setVisible(current == Contour.kOscillatingContour);
   this.adsrPanel_.setVisible(current == Contour.kADSRContour);
+  this.nStagePanel_.setVisible(current == Contour.kNStageContour);
 }
 
 module.ContourPanel.prototype.setSelected = function(selected) {

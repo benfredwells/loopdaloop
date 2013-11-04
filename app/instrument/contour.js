@@ -329,7 +329,7 @@ module.NStageContourer.prototype.contourFinishTime = function(offTime) {
 ////////////////////////////////////////////////////////////////////////////////
 // n Stage contoured value
 module.kMaxIntermediateStages = 5;
-module.kMinStages = 2;
+module.kMinStages = 3;
 module.kMaxStages = module.kMinStages + module.kMaxIntermediateStages;
 
 module.IntermediateContourStage = function(valueSetting) {

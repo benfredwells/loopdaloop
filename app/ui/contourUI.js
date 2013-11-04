@@ -149,11 +149,13 @@ module.ADSRContourPanel_.prototype = Object.create(module.ContourTypePanel_.prot
 module.NStageContourPanel_ = function(container, onchange, nStageContour,
                                       isEnvelope, formatter, steps) {
   module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
+  new SettingsUI.LinearRangeRow(this, Strings.kNumberOfStages, onchange, nStageContour.numStagesSetting,
+                                null, Contour.kMaxIntermediateStages);
   if (!isEnvelope) {
     this.createValueRow_(Strings.kInitialValue, nStageContour.initialValueSetting);
   }
   this.createTimeRow_(Strings.kStage1Duration, nStageContour.firstStageTimeSetting);
-  for (var i = 0; i < nStageContour.numIntermediateStages(); i++) {
+  for (var i = 0; i < Contour.kMaxIntermediateStages; i++) {
     this.createValueRow_(Strings.kIntermediateStageBeginValues[i],
                          nStageContour.intermediateStages[i].beginValueSetting);
     this.createValueRow_(Strings.kIntermediateStageDurations[i],

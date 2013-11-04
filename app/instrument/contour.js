@@ -225,16 +225,30 @@ module.ADSRContour.prototype.interpolatedValue_ = function(time, startTime, endT
   return startValue + (endValue - startValue) * relTime;
 }
 
+module.ADSRContour.prototype.initialValue_ = function() {
+  if (this.isEnvelope)
+    return 0;
+
+  return this.initialValueSetting.value;
+}
+
+module.ADSRContour.prototype.finalValue_ = function() {
+  if (this.isEnvelope)
+    return 0;
+
+  return this.finalValueSetting.value;
+}
+
 module.ADSRContour.prototype.onValueAtTime_ = function(time) {
   var nextTime = this.attackDelaySetting.value;
   if (time < nextTime)
-    return this.initialValueSetting.value;
+    return this.initialValue_();
 
   var lastTime = nextTime;
   nextTime += this.attackTimeSetting.value;
   if (time < nextTime)
     return this.interpolatedValue_(time, lastTime, nextTime,
-                                   this.initialValueSetting.value, this.attackValueSetting.value);
+                                   this.initialValue_(), this.attackValueSetting.value);
 
   nextTime += this.attackHoldSetting.value;
   if (time < nextTime)
@@ -261,9 +275,9 @@ module.ADSRContour.prototype.valueAtTime = function(time, noteOnTime) {
   var finishTime = this.sustainHoldSetting.value + this.releaseTimeSetting.value;
   if (offTime < finishTime)
     return this.interpolatedValue_(offTime, this.sustainHoldSetting.value, finishTime,
-                                   sustainValue, this.finalValueSetting.value);
+                                   sustainValue, this.finalValue_());
 
-  return this.finalValueSetting.value;
+  return this.finalValue_();
 }
 
 module.ADSRContour.prototype.releaseTime = function() {
@@ -355,6 +369,20 @@ module.NStageContour.prototype.interpolatedValue_ = function(time, startTime, en
   return startValue + (endValue - startValue) * relTime;
 }
 
+module.NStageContour.prototype.initialValue_ = function() {
+  if (this.isEnvelope)
+    return 0;
+
+  return this.initialValueSetting.value;
+}
+
+module.NStageContour.prototype.finalValue_ = function() {
+  if (this.isEnvelope)
+    return 0;
+
+  return this.finalValueSetting.value;
+}
+
 // n is zero based
 module.NStageContour.prototype.nthOnStageEndValue_ = function(n) {
   var result = this.sustainValueSetting.value;
@@ -368,7 +396,7 @@ module.NStageContour.prototype.onValueAtTime_ = function(time) {
   var nextTime = this.firstStageTimeSetting.value;
   if (time < nextTime)
     return this.interpolatedValue_(time, lastTime, nextTime,
-                                   this.initialValueSetting.value, this.nthOnStageEndValue_(0));
+                                   this.initialValue_(), this.nthOnStageEndValue_(0));
 
   for (var i = 0; i < this.numIntermediateStages(); i++) {
     lastTime = nextTime;
@@ -389,10 +417,10 @@ module.NStageContour.prototype.valueAtTime = function(time, noteOnTime) {
   var offTime = time - noteOnTime;
   var finishTime = this.releaseTimeSetting.value;
   if (offTime < finishTime)
-    return this.interpolatedValue_(offTime, offTime, finishTime,
-                                   sustainValue, this.finalValueSetting.value);
+    return this.interpolatedValue_(offTime, 0, finishTime,
+                                   sustainValue, this.finalValue_());
 
-  return this.finalValueSetting.value;
+  return this.finalValue_();
 }
 
 module.NStageContour.prototype.releaseTime = function() {

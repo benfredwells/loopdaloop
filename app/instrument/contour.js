@@ -160,11 +160,9 @@ module.ADSRContourer = function(contour, param, valueFunction) {
 module.ADSRContourer.prototype.contourOn = function(onTime) {
   var nextTime = onTime;
   var v = this.valueFunction_;
-  // Envelopes always start at 0, and have no attack delay.
-  if (this.contour_.contouredValue_.isEnvelope) {
-    this.param_.setValueAtTime(0, nextTime);
-  } else {
-    this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
+  // Envelopes have no attack delay.
+  this.param_.setValueAtTime(v(this.contour_.initialValue_()), nextTime);
+  if (!this.contour_.contouredValue_.isEnvelope) {
     nextTime += this.contour_.attackDelaySetting.value;
     this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
   }
@@ -183,11 +181,7 @@ module.ADSRContourer.prototype.contourOff = function(offTime) {
   nextTime += this.contour_.sustainHoldSetting.value;
   this.param_.setValueAtTime(this.param_.value, nextTime);
   nextTime += this.contour_.releaseTimeSetting.value;
-  var finalValue = this.valueFunction_(this.contour_.finalValueSetting.value);
-  // Envelopes always finish at 0.
-  if (this.contour_.contouredValue_.isEnvelope)
-    finalValue = 0;
-  this.param_.linearRampToValueAtTime(finalValue, nextTime);
+  this.param_.linearRampToValueAtTime(this.valueFunction_(this.contour_.finalValue_()), nextTime);
 }
 
 module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
@@ -295,12 +289,7 @@ module.NStageContourer = function(contour, param, valueFunction) {
 module.NStageContourer.prototype.contourOn = function(onTime) {
   var nextTime = onTime;
   var v = this.valueFunction_;
-  // Envelopes always start at 0, and have no attack delay.
-  if (this.contour_.contouredValue_.isEnvelope) {
-    this.param_.setValueAtTime(0, nextTime);
-  } else {
-    this.param_.setValueAtTime(v(this.contour_.initialValueSetting.value), nextTime);
-  }
+  this.param_.setValueAtTime(v(this.contour_.initialValue_()), nextTime);
   nextTime += this.contour_.firstStageTimeSetting.value;
   for (var i = 0; i < this.contour_.numIntermediateStages(); i++) {
     var stage = this.contour_.intermediateStages[i];
@@ -315,11 +304,7 @@ module.NStageContourer.prototype.contourOff = function(offTime) {
   this.param_.cancelScheduledValues(offTime);
   this.param_.setValueAtTime(this.param_.value, nextTime);
   nextTime += this.contour_.releaseTimeSetting.value;
-  var finalValue = this.valueFunction_(this.contour_.finalValueSetting.value);
-  // Envelopes always finish at 0.
-  if (this.contour_.contouredValue_.isEnvelope)
-    finalValue = 0;
-  this.param_.linearRampToValueAtTime(finalValue, nextTime);
+  this.param_.linearRampToValueAtTime(this.valueFunction_(this.contour_.finalValue_()), nextTime);
 }
 
 module.NStageContourer.prototype.contourFinishTime = function(offTime) {
@@ -334,7 +319,7 @@ module.kMaxStages = module.kMinStages + module.kMaxIntermediateStages;
 
 module.IntermediateContourStage = function(valueSetting) {
   this.beginValueSetting = Setting.copyNumber(valueSetting);
-  this.durationSetting = new Setting.Number(0, 10);
+  this.durationSetting = new Setting.Number(kMinChangeTime, 10);
 }
 
 module.NStageContour = function(valueSetting, contouredValue) {
@@ -384,6 +369,9 @@ module.NStageContour.prototype.finalValue_ = function() {
 }
 
 // n is zero based
+// There is one stage before the intermediate stages
+// n = 0 begin value -> intermediate stage 0 end value
+// 
 module.NStageContour.prototype.nthOnStageEndValue_ = function(n) {
   var result = this.sustainValueSetting.value;
   if (n < this.numIntermediateStages())

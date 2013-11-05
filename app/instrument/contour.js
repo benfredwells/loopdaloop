@@ -386,7 +386,7 @@ module.NStageContour.prototype.finalValue_ = function() {
 // n is zero based
 module.NStageContour.prototype.nthOnStageEndValue_ = function(n) {
   var result = this.sustainValueSetting.value;
-  if (n < this.numIntermediateStages() - 1)
+  if (n < this.numIntermediateStages())
     result = this.intermediateStages[n].beginValueSetting.value;
   return result;
 }

@@ -158,8 +158,8 @@ module.NStageContourPanel_ = function(container, onchange, nStageContour,
   for (var i = 0; i < Contour.kMaxIntermediateStages; i++) {
     this.createValueRow_(Strings.kIntermediateStageBeginValues[i],
                          nStageContour.intermediateStages[i].beginValueSetting);
-    this.createValueRow_(Strings.kIntermediateStageDurations[i],
-                         nStageContour.intermediateStages[i].durationSetting);
+    this.createTimeRow_(Strings.kIntermediateStageDurations[i],
+                        nStageContour.intermediateStages[i].durationSetting);
   }
   this.createValueRow_(Strings.kSustainValue, nStageContour.sustainValueSetting);
   this.createTimeRow_(Strings.kReleaseTime, nStageContour.releaseTimeSetting);

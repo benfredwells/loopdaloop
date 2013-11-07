@@ -96,11 +96,11 @@ module.ContourTypePanel_ = function(container, onchange, formatter, steps) {
 module.ContourTypePanel_.prototype = Object.create(UI.Panel.prototype);
 
 module.ContourTypePanel_.prototype.createValueRow_ = function(title, setting) {
-  new SettingsUI.LinearRangeRow(this, title, this.onchange, setting, this.formatter, this.steps);
+  return new SettingsUI.LinearRangeRow(this, title, this.onchange, setting, this.formatter, this.steps);
 }
 
 module.ContourTypePanel_.prototype.createTimeRow_ = function(title, setting) {
-  new SettingsUI.ExponentialRangeRow(this, title, this.onchange, setting, Strings.kSecondsFormatter, 10);
+  return new SettingsUI.ExponentialRangeRow(this, title, this.onchange, setting, Strings.kSecondsFormatter, 10);
 }
 
 module.FlatContourPanel_ = function(container, onchange, flatContour, isEnvelope,
@@ -146,29 +146,48 @@ module.ADSRContourPanel_ = function(container, onchange, adsrContour,
 
 module.ADSRContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
 
-module.NStageContourPanel_ = function(container, onchange, nStageContour,
+module.NStageContourPanel_ = function(container, onchange, onstructurechange, nStageContour,
                                       isEnvelope, formatter, steps) {
   module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
-  new SettingsUI.LinearRangeRow(this, Strings.kNumberOfStages, onchange, nStageContour.numStagesSetting,
+  this.nStageContour_ = nStageContour;
+  var panel = this;
+  var numStagesChanged = function() {
+    panel.showHideStages_();
+    onstructurechange();
+  }
+  new SettingsUI.LinearRangeRow(this, Strings.kNumberOfStages, numStagesChanged, nStageContour.numStagesSetting,
                                 null, Contour.kMaxIntermediateStages);
   if (!isEnvelope) {
     this.createValueRow_(Strings.kInitialValue, nStageContour.initialValueSetting);
   }
   this.createTimeRow_(Strings.kStage1Duration, nStageContour.firstStageTimeSetting);
+  this.intermediateStageBeginRows = [];
+  this.intermediateStageDurationRows = [];
   for (var i = 0; i < Contour.kMaxIntermediateStages; i++) {
-    this.createValueRow_(Strings.kIntermediateStageBeginValues[i],
-                         nStageContour.intermediateStages[i].beginValueSetting);
-    this.createTimeRow_(Strings.kIntermediateStageDurations[i],
-                        nStageContour.intermediateStages[i].durationSetting);
+    this.intermediateStageBeginRows.push(
+        this.createValueRow_(Strings.kIntermediateStageBeginValues[i],
+                             nStageContour.intermediateStages[i].beginValueSetting));
+    this.intermediateStageDurationRows.push(
+        this.createTimeRow_(Strings.kIntermediateStageDurations[i],
+                            nStageContour.intermediateStages[i].durationSetting));
   }
   this.createValueRow_(Strings.kSustainValue, nStageContour.sustainValueSetting);
   this.createTimeRow_(Strings.kReleaseTime, nStageContour.releaseTimeSetting);
   if (!isEnvelope) {
     this.createValueRow_(Strings.kFinalValue, nStageContour.finalValueSetting);
   }
+  this.showHideStages_();
 }
 
 module.NStageContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
+
+module.NStageContourPanel_.prototype.showHideStages_ = function() {
+  var numIntermediateStages = this.nStageContour_.numStagesSetting.value - Contour.kMinStages;
+  for (var i = 0; i < Contour.kMaxIntermediateStages; i++) {
+    this.intermediateStageBeginRows[i].setVisible(i < numIntermediateStages);
+    this.intermediateStageDurationRows[i].setVisible(i < numIntermediateStages);
+  }
+}
 
 module.ContourPanel = function(container, title, onchange, onsizechange, contouredValue, instrument,
                                formatter, steps, asCategory, selected) {
@@ -210,14 +229,14 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
     if (contourGroup.onchange)
       contourGroup.onchange();
   }
-  var selectChangeHandler = function() {
+  var structureChangeHandler = function() {
     changeHandler();
     if (contourGroup.onsizechange)
       contourGroup.onsizechange();
   }
   new SettingsUI.SelectRow(this.selectPanel_,
                            Strings.kType,
-                           selectChangeHandler,
+                           structureChangeHandler,
                            contouredValue.currentContourSetting,
                            Strings.kContourTypeDescriptions);
   this.flatPanel_ = new module.FlatContourPanel_(
@@ -233,7 +252,7 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
       contouredValue.contoursByIdentifier[Contour.kADSRContour],
       contouredValue.isEnvelope, formatter, steps);
   this.nStagePanel_ = new module.NStageContourPanel_(
-      this.selectPanel_, changeHandler,
+      this.selectPanel_, changeHandler, structureChangeHandler,
       contouredValue.contoursByIdentifier[Contour.kNStageContour],
       contouredValue.isEnvelope, formatter, steps);
 

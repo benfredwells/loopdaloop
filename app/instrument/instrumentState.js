@@ -51,13 +51,10 @@ module.updateADSRContour = function(adsrContour, adsrContourState) {
     adsrContourState = {};
   }
   updateSettingWithMinDefault(adsrContour.initialValueSetting, adsrContourState.initialValue);
-  updateSettingWithMinDefault(adsrContour.attackDelaySetting, adsrContourState.attackDelay);
   updateSettingWithMinDefault(adsrContour.attackTimeSetting, adsrContourState.attackTime);
   updateSettingWithMaxDefault(adsrContour.attackValueSetting, adsrContourState.attackValue);
-  updateSettingWithMinDefault(adsrContour.attackHoldSetting, adsrContourState.attackHold);
   updateSettingWithMinDefault(adsrContour.decayTimeSetting, adsrContourState.decayTime);
   updateSettingWithMidDefault(adsrContour.sustainValueSetting, adsrContourState.sustainValue);
-  updateSettingWithMinDefault(adsrContour.sustainHoldSetting, adsrContourState.sustainHold);
   updateSettingWithMinDefault(adsrContour.releaseTimeSetting, adsrContourState.releaseTime);
   updateSettingWithMinDefault(adsrContour.finalValueSetting, adsrContourState.finalValue);
 }

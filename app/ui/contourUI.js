@@ -128,20 +128,15 @@ module.OscillatingContourPanel_.prototype = Object.create(module.ContourTypePane
 module.ADSRContourPanel_ = function(container, onchange, adsrContour,
                                     isEnvelope, formatter, steps) {
   module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
-  if (!isEnvelope) {
+  if (!isEnvelope)
     this.createValueRow_(Strings.kInitialValue, adsrContour.initialValueSetting);
-    this.createTimeRow_(Strings.kAttackDelay, adsrContour.attackDelaySetting);
-  }
   this.createTimeRow_(Strings.kAttackTime, adsrContour.attackTimeSetting);
   this.createValueRow_(Strings.kAttackValue, adsrContour.attackValueSetting);
-  this.createTimeRow_(Strings.kAttackHold, adsrContour.attackHoldSetting);
   this.createTimeRow_(Strings.kDecayTime, adsrContour.decayTimeSetting);
   this.createValueRow_(Strings.kSustainValue, adsrContour.sustainValueSetting);
-  this.createTimeRow_(Strings.kSustainHold, adsrContour.sustainHoldSetting);
   this.createTimeRow_(Strings.kReleaseTime, adsrContour.releaseTimeSetting);
-  if (!isEnvelope) {
+  if (!isEnvelope)
     this.createValueRow_(Strings.kFinalValue, adsrContour.finalValueSetting);
-  }
 }
 
 module.ADSRContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);

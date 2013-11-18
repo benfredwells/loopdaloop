@@ -228,12 +228,12 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
   }
 
   var changeHandler = function() {
-    contourGroup.showHideContours_();
     contourGroup.visualizer_.drawContour();
     if (contourGroup.onchange)
       contourGroup.onchange();
   }
   var structureChangeHandler = function() {
+    contourGroup.showHideContours_();
     changeHandler();
     if (contourGroup.onsizechange)
       contourGroup.onsizechange();

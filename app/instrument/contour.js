@@ -5,6 +5,38 @@ var module = {};
 
 var kMinChangeTime = 0.05;
 
+module.kMaxIntermediateStages = 5;
+module.kMinStages = 3;
+module.kMaxStages = module.kMinStages + module.kMaxIntermediateStages;
+
+////////////////////////////////////////////////////////////////////////////////
+// Contour settings shared by the different contour types.
+var IntermediateContourStage = function(valueSetting) {
+  this.beginValueSetting = Setting.copyNumber(valueSetting);
+  this.durationSetting = new Setting.Number(kMinChangeTime, 10);
+}
+
+var SharedContourSettings = function(valueSetting) {
+  // N Stage settings
+  this.initialValueSetting = Setting.copyNumber(valueSetting);
+  this.firstStageTimeSetting = new Setting.Number(kMinChangeTime, 10);
+  this.numStagesSetting = new Setting.Number(module.kMinStages, module.kMaxStages);
+  this.intermediateStages = [];
+  for (var i = 0; i < module.kMaxIntermediateStages; i++) {
+    this.intermediateStages.push(new IntermediateContourStage(valueSetting));
+  }
+  this.sustainValueSetting = Setting.copyNumber(valueSetting);
+  this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
+  this.finalValueSetting = Setting.copyNumber(valueSetting);
+  // Oscillation settings
+  this.oscillationTypeSetting = new Setting.Choice(AudioConstants.kWaveTypes);
+  this.oscillationMinValueSetting = Setting.copyNumber(valueSetting);
+  this.oscillationMaxValueSetting = Setting.copyNumber(valueSetting);
+  this.oscillationMaxValueSetting.value = this.oscillationMaxValueSetting.max;
+  this.oscillationMinValueSetting.value = this.oscillationMinValueSetting.min;
+  this.oscillatoinFrequencySetting = new Setting.Number(0, 100);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Contourer interface
 //   contourOn = function(onTime)
@@ -42,9 +74,9 @@ module.BasicEnvelopeContourer.prototype.contourFinishTime = function(offTime) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Flat contour
-module.FlatContour = function(valueSetting, contouredValue) {
+module.FlatContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.valueSetting = Setting.copyNumber(valueSetting);
+  this.valueSetting = sharedSettings.sustainValueSetting;
 }
 
 module.FlatContour.prototype.addContour = function(valueFunction, param, noteSection) {
@@ -69,14 +101,12 @@ module.FlatContour.prototype.releaseTime = function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillating contour
-module.OscillatingContour = function(valueSetting, contouredValue) {
+module.OscillatingContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.typeSetting = new Setting.Choice(AudioConstants.kWaveTypes);
-  this.minValueSetting = Setting.copyNumber(valueSetting);
-  this.maxValueSetting = Setting.copyNumber(valueSetting);
-  this.maxValueSetting.value = this.maxValueSetting.max;
-  this.minValueSetting.value = this.minValueSetting.min;
-  this.frequencySetting = new Setting.Number(0, 100);
+  this.typeSetting = sharedSettings.oscillationTypeSetting;
+  this.minValueSetting = sharedSettings.oscillationMinValueSetting;
+  this.maxValueSetting = sharedSettings.oscillationMaxValueSetting;
+  this.frequencySetting = sharedSettings.oscillatoinFrequencySetting;
 }
 
 module.OscillatingContour.prototype.rawCenterValue_ = function() {
@@ -182,15 +212,15 @@ module.ADSRContourer.prototype.contourFinishTime = function(offTime) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // ADSR contoured value
-module.ADSRContour = function(valueSetting, contouredValue) {
+module.ADSRContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.initialValueSetting = Setting.copyNumber(valueSetting);
-  this.attackTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.attackValueSetting = Setting.copyNumber(valueSetting);
-  this.decayTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.sustainValueSetting = Setting.copyNumber(valueSetting);
-  this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.finalValueSetting = Setting.copyNumber(valueSetting);
+  this.initialValueSetting = sharedSettings.initialValueSetting;
+  this.attackTimeSetting = sharedSettings.firstStageTimeSetting;
+  this.attackValueSetting = sharedSettings.intermediateStages[0].beginValueSetting;
+  this.decayTimeSetting = sharedSettings.intermediateStages[0].durationSetting;
+  this.sustainValueSetting = sharedSettings.sustainValueSetting;
+  this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
+  this.finalValueSetting = sharedSettings.finalValueSetting;
 }
 
 module.ADSRContour.prototype.addContour = function(valueFunction, param, noteSection) {
@@ -288,27 +318,18 @@ module.NStageContourer.prototype.contourFinishTime = function(offTime) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // n Stage contoured value
-module.kMaxIntermediateStages = 5;
-module.kMinStages = 3;
-module.kMaxStages = module.kMinStages + module.kMaxIntermediateStages;
-
-module.IntermediateContourStage = function(valueSetting) {
-  this.beginValueSetting = Setting.copyNumber(valueSetting);
-  this.durationSetting = new Setting.Number(kMinChangeTime, 10);
-}
-
-module.NStageContour = function(valueSetting, contouredValue) {
+module.NStageContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.initialValueSetting = Setting.copyNumber(valueSetting);
-  this.firstStageTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.numStagesSetting = new Setting.Number(module.kMinStages, module.kMaxStages);
+  this.initialValueSetting = sharedSettings.initialValueSetting;
+  this.firstStageTimeSetting = sharedSettings.firstStageTimeSetting;
+  this.numStagesSetting = sharedSettings.numStagesSetting;
   this.intermediateStages = [];
   for (var i = 0; i < module.kMaxIntermediateStages; i++) {
-    this.intermediateStages.push(new module.IntermediateContourStage(valueSetting));
+    this.intermediateStages.push(sharedSettings.intermediateStages[i]);
   }
-  this.sustainValueSetting = Setting.copyNumber(valueSetting);
-  this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.finalValueSetting = Setting.copyNumber(valueSetting);
+  this.sustainValueSetting = sharedSettings.sustainValueSetting;
+  this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
+  this.finalValueSetting = sharedSettings.finalValueSetting;
 }
 
 module.NStageContour.prototype.numIntermediateStages = function() {
@@ -405,14 +426,15 @@ module.ContouredValue = function(context, valueSetting, isEnvelope) {
   this.isEnvelope = isEnvelope;
   this.min = valueSetting.min;
   this.max = valueSetting.max;
+  this.sharedSettings = new SharedContourSettings(valueSetting);
   this.context_ = context;
   this.currentContourSetting = new Setting.Choice(module.kContourTypes);
   this.contours_ = [];
   this.contoursByIdentifier = {};
-  this.initContour_(module.kFlatContour, new module.FlatContour(valueSetting, this));
-  this.initContour_(module.kOscillatingContour, new module.OscillatingContour(valueSetting, this));
-  this.initContour_(module.kADSRContour, new module.ADSRContour(valueSetting, this));
-  this.initContour_(module.kNStageContour, new module.NStageContour(valueSetting, this));
+  this.initContour_(module.kFlatContour, new module.FlatContour(this.sharedSettings, this));
+  this.initContour_(module.kOscillatingContour, new module.OscillatingContour(this.sharedSettings, this));
+  this.initContour_(module.kADSRContour, new module.ADSRContour(this.sharedSettings, this));
+  this.initContour_(module.kNStageContour, new module.NStageContour(this.sharedSettings, this));
 }
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {

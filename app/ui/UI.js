@@ -10,9 +10,12 @@ module.asPixels = function(num) {
 // Container cal be a DOM element or another Control
 module.Control = function(container) {
   this.div = document.createElement('div');
+  this.children = [];
   var containerEl = container;
-  if (container.div)
+  if (container.div) {
     containerEl = container.div;
+    container.children.push(this);
+  }
   containerEl.appendChild(this.div);
   this.enabled_ = true;
   this.visible_ = true;

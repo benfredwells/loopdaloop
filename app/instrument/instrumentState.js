@@ -29,34 +29,42 @@ function updateSettingWithMidDefault(setting, value) {
   updateSetting(setting, value, (setting.max + setting.min) / 2);
 }
 
-module.updateFlatContour = function(flatContour, flatContourState) {
-  if (!flatContourState) {
-    flatContourState = {};
-  }
-  updateSettingWithMaxDefault(flatContour.valueSetting, flatContourState.value);
+function updateSettingWithRatioedDefault(setting, value, ratio) {
+  updateSetting(setting, value, (setting.max + setting.min) * ratio);
 }
 
-module.updateOscillatingContour = function(oscillatingContour, oscillatingContourState) {
-  if (!oscillatingContourState) {
-    oscillatingContourState = {};
+module.updateIntermediateContourStage = function(intermediateStages, intermediateStageStates, index) {
+  var intermediateStageState = {};
+  if (intermediateStageStates && intermediateStageStates[index]) {
+    intermediateStageState = intermediateStageStates[index];
   }
-  var o = oscillatingContour;
-  updateSettingWithMidDefault(o.maxValueSetting, oscillatingContourState.maxValue);
-  updateSettingWithMidDefault(o.minValueSetting, oscillatingContourState.minValue);
-  updateSettingWithMinDefault(o.frequencySetting, oscillatingContourState.frequency);
+  // Make first stage max
+  if (index == 0) {
+    updateSettingWithMaxDefault(intermediateStages[index].beginValueSetting, intermediateStageState.beginValue);
+  } else {
+    updateSettingWithMidDefault(intermediateStages[index].beginValueSetting, intermediateStageState.beginValue);
+  }
+  updateSettingWithMinDefault(intermediateStages[index].durationSetting, intermediateStageState.duration);
 }
 
-module.updateADSRContour = function(adsrContour, adsrContourState) {
-  if (!adsrContourState) {
-    adsrContourState = {};
+// Uses the same state holder as the contoured value, as the seperation is more design
+// than the normalized structure.
+module.updateSharedContourSettings = function(sharedSettings, contouredValueState) {
+  updateSettingWithMinDefault(sharedSettings.initialValueSetting, contouredValueState.initialValue);
+  updateSettingWithMinDefault(sharedSettings.firstStageTimeSetting, contouredValueState.attackTime);
+  updateSettingWithMinDefault(sharedSettings.numStagesSetting, contouredValueState.numStages);
+  for (var i = 0; i < Contour.kMaxIntermediateStages; i++) {
+    module.updateIntermediateContourStage(sharedSettings.intermediateStages,
+                                          contouredValueState.intermediateStages,
+                                          i);
   }
-  updateSettingWithMinDefault(adsrContour.initialValueSetting, adsrContourState.initialValue);
-  updateSettingWithMinDefault(adsrContour.attackTimeSetting, adsrContourState.attackTime);
-  updateSettingWithMaxDefault(adsrContour.attackValueSetting, adsrContourState.attackValue);
-  updateSettingWithMinDefault(adsrContour.decayTimeSetting, adsrContourState.decayTime);
-  updateSettingWithMidDefault(adsrContour.sustainValueSetting, adsrContourState.sustainValue);
-  updateSettingWithMinDefault(adsrContour.releaseTimeSetting, adsrContourState.releaseTime);
-  updateSettingWithMinDefault(adsrContour.finalValueSetting, adsrContourState.finalValue);
+  updateSettingWithMidDefault(sharedSettings.sustainValueSetting, contouredValueState.sustainValue);
+  updateSettingWithMinDefault(sharedSettings.releaseTimeSetting, contouredValueState.releaseTime);
+  updateSettingWithMinDefault(sharedSettings.finalValueSetting, contouredValueState.finalValue);
+  updateSetting(sharedSettings.oscillationTypeSetting, contouredValueState.oscillationType, AudioConstants.kSineWave);
+  updateSettingWithMaxDefault(sharedSettings.oscillationMaxValueSetting, contouredValueState.oscillationMaxValue);
+  updateSettingWithMinDefault(sharedSettings.oscillationMinValueSetting, contouredValueState.oscillationMinValue);
+  updateSettingWithRatioedDefault(sharedSettings.oscillationFrequencySetting, contouredValueState.oscillationFrequency, 0.02);
 }
 
 module.updateContouredValue = function(contouredValue, contouredValueState) {
@@ -65,12 +73,7 @@ module.updateContouredValue = function(contouredValue, contouredValueState) {
     contouredValueState.contours = {};
   }
   updateSetting(contouredValue.currentContourSetting, contouredValueState.currentContour, Contour.kFlatContour);
-  module.updateFlatContour(contouredValue.contoursByIdentifier[Contour.kFlatContour],
-                           contouredValueState.contours[Contour.kFlatContour]);
-  module.updateOscillatingContour(contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
-                                  contouredValueState.contours[Contour.kOscillatingContour]);
-  module.updateADSRContour(contouredValue.contoursByIdentifier[Contour.kADSRContour],
-                           contouredValueState.contours[Contour.kADSRContour]);
+  module.updateSharedContourSettings(contouredValue.sharedContourSettings, contouredValueState);
 }
 
 module.updateFilter = function(filter, filterState) {

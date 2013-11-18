@@ -24,25 +24,7 @@ module.Default = function() {
         type: 'lowpass',
         frequency: {
           currentContour: 'flat',
-          contours: {
-            flat: {
-              value: 4
-            },
-            oscillating: {
-              maxValue: 5,
-              minValue: 3,
-              frequency: 1
-            },
-            adsr: {
-              initialValue: 4,
-              attackTime: 0.1,
-              attackValue: 8,
-              decayTime: 0.5,
-              sustainValue: 4,
-              releaseTime: 0.1,
-              finalValue: 8
-            }
-          }
+          sustainValue: 4
         }
       },
       {
@@ -51,38 +33,19 @@ module.Default = function() {
         q: 0,
         frequency: {
           currentContour: 'flat',
-          contours: {
-            flat: {
-              value: 4
-            },
-            oscillating: {
-              maxValue: 5,
-              minValue: 3,
-              frequency: 1
-            },
-            adsr: {
-              initialValue: 4,
-              attackTime: 0.1,
-              attackValue: 8,
-              decayTime: 0.5,
-              sustainValue: 4,
-              releaseTime: 0.1,
-              finalValue: 8
-            }
-          }
+          sustainValue: 4
         }
       }
     ],
     envelope: {
       currentContour: 'adsr',
-      contours: {
-        adsr: {
-          attackTime: 0.1,
-          decayTime: 0.5,
-          sustainValue: 0.5,
-          releaseTime: 0.3
+      firstStageTime: 0.1,
+      intermediateStages: [
+        {
+          duration: 0.2
         }
-      }
+      ],
+      releaseTime: 0.3
     }
   };
 }

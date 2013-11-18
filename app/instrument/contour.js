@@ -34,7 +34,7 @@ var SharedContourSettings = function(valueSetting) {
   this.oscillationMaxValueSetting = Setting.copyNumber(valueSetting);
   this.oscillationMaxValueSetting.value = this.oscillationMaxValueSetting.max;
   this.oscillationMinValueSetting.value = this.oscillationMinValueSetting.min;
-  this.oscillatoinFrequencySetting = new Setting.Number(0, 100);
+  this.oscillationFrequencySetting = new Setting.Number(0, 100);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ module.OscillatingContour = function(sharedSettings, contouredValue) {
   this.typeSetting = sharedSettings.oscillationTypeSetting;
   this.minValueSetting = sharedSettings.oscillationMinValueSetting;
   this.maxValueSetting = sharedSettings.oscillationMaxValueSetting;
-  this.frequencySetting = sharedSettings.oscillatoinFrequencySetting;
+  this.frequencySetting = sharedSettings.oscillationFrequencySetting;
 }
 
 module.OscillatingContour.prototype.rawCenterValue_ = function() {
@@ -426,15 +426,15 @@ module.ContouredValue = function(context, valueSetting, isEnvelope) {
   this.isEnvelope = isEnvelope;
   this.min = valueSetting.min;
   this.max = valueSetting.max;
-  this.sharedSettings = new SharedContourSettings(valueSetting);
+  this.sharedContourSettings = new SharedContourSettings(valueSetting);
   this.context_ = context;
   this.currentContourSetting = new Setting.Choice(module.kContourTypes);
   this.contours_ = [];
   this.contoursByIdentifier = {};
-  this.initContour_(module.kFlatContour, new module.FlatContour(this.sharedSettings, this));
-  this.initContour_(module.kOscillatingContour, new module.OscillatingContour(this.sharedSettings, this));
-  this.initContour_(module.kADSRContour, new module.ADSRContour(this.sharedSettings, this));
-  this.initContour_(module.kNStageContour, new module.NStageContour(this.sharedSettings, this));
+  this.initContour_(module.kFlatContour, new module.FlatContour(this.sharedContourSettings, this));
+  this.initContour_(module.kOscillatingContour, new module.OscillatingContour(this.sharedContourSettings, this));
+  this.initContour_(module.kADSRContour, new module.ADSRContour(this.sharedContourSettings, this));
+  this.initContour_(module.kNStageContour, new module.NStageContour(this.sharedContourSettings, this));
 }
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {

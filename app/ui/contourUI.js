@@ -95,6 +95,15 @@ module.ContourTypePanel_ = function(container, onchange, formatter, steps) {
 
 module.ContourTypePanel_.prototype = Object.create(UI.Panel.prototype);
 
+module.ContourTypePanel_.prototype.setVisible = function(visible) {
+  UI.Panel.prototype.setVisible.call(this, visible);
+  if (visible) {
+    this.children.forEach(function(row) {
+      row.updateControl();
+    });
+  }
+}
+
 module.ContourTypePanel_.prototype.createValueRow_ = function(title, setting) {
   return new SettingsUI.LinearRangeRow(this, title, this.onchange, setting, this.formatter, this.steps);
 }

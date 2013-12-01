@@ -205,12 +205,12 @@ module.NStageContourer.prototype.contourOff = function(offTime) {
   var nextTime = offTime;
   this.param_.cancelScheduledValues(offTime);
   this.param_.setValueAtTime(this.param_.value, nextTime);
-  nextTime += this.contour_.releaseTime());
+  nextTime += this.contour_.releaseTime();
   this.param_.linearRampToValueAtTime(this.valueFunction_(this.contour_.finalValue()), nextTime);
 }
 
 module.NStageContourer.prototype.contourFinishTime = function(offTime) {
-  return offTime + this.contour_.releaseTime());
+  return offTime + this.contour_.releaseTime();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -251,11 +251,11 @@ module.BaseNStageContour.prototype.intermediateStageDuration = function(i) {
 }
 
 module.BaseNStageContour.prototype.sustainValue = function(i) {
-  return sustainValueSetting.value;
+  return this.sustainValueSetting.value;
 }
 
 module.BaseNStageContour.prototype.releaseTime = function(i) {
-  return releaseTimeSetting.value;
+  return this.releaseTimeSetting.value;
 }
 
 module.BaseNStageContour.prototype.finalValue = function() {
@@ -283,28 +283,28 @@ module.BaseNStageContour.prototype.interpolatedValue_ = function(time, startTime
 // There is one stage before the intermediate stages
 // n = 0 begin value -> intermediate stage 0 end value
 module.BaseNStageContour.prototype.nthOnStageEndValue_ = function(n) {
-  var result = this.sustainValue());
+  var result = this.sustainValue()
   if (n < this.numIntermediateStages())
-    result = this.intermediateStagesBeginValue(i);
+    result = this.intermediateStageBeginValue(n);
   return result;
 }
 
 module.BaseNStageContour.prototype.onValueAtTime_ = function(time) {
   var lastTime = 0;
-  var nextTime = this.firstStageTime());
+  var nextTime = this.firstStageTime();
   if (time < nextTime)
     return this.interpolatedValue_(time, lastTime, nextTime,
                                    this.initialValue(), this.nthOnStageEndValue_(0));
 
   for (var i = 0; i < this.numIntermediateStages(); i++) {
     lastTime = nextTime;
-    nextTime += this.intermediateStagesDuration(i);
+    nextTime += this.intermediateStageDuration(i);
     if (time < nextTime)
       return this.interpolatedValue_(time, lastTime, nextTime,
                                      this.nthOnStageEndValue_(i), this.nthOnStageEndValue_(i + 1));
   }
 
-  return this.sustainValue());
+  return this.sustainValue();
 }
 
 module.BaseNStageContour.prototype.valueAtTime = function(time, noteOnTime) {
@@ -330,10 +330,10 @@ module.ADSRContour = function(sharedSettings, contouredValue) {
   this.decayTimeSetting = sharedSettings.intermediateStages[0].durationSetting;
 }
 
-module.ADSRContour.prototype = Objects.create(module.BaseNStageContour.prototype);
+module.ADSRContour.prototype = Object.create(module.BaseNStageContour.prototype);
 
 module.ADSRContour.prototype.firstStageTime = function() {
-  return attackTimeSetting.value;
+  return this.attackTimeSetting.value;
 }
 
 module.ADSRContour.prototype.numIntermediateStages = function() {
@@ -341,11 +341,11 @@ module.ADSRContour.prototype.numIntermediateStages = function() {
 }
 
 module.ADSRContour.prototype.intermediateStageBeginValue = function(i) {
-  return attackValueSetting.value;
+  return this.attackValueSetting.value;
 }
 
 module.ADSRContour.prototype.intermediateStageDuration = function(i) {
-  return decayTimeSetting.value;
+  return this.decayTimeSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -360,22 +360,22 @@ module.NStageContour = function(sharedSettings, contouredValue) {
   }
 }
 
-module.NStageContour.prototype = Objects.create(module.BaseNStageContour.prototype);
+module.NStageContour.prototype = Object.create(module.BaseNStageContour.prototype);
 
 module.NStageContour.prototype.firstStageTime = function() {
-  return firstStageTimeSetting.value;
+  return this.firstStageTimeSetting.value;
 }
 
 module.NStageContour.prototype.numIntermediateStages = function() {
-  return numStagesSetting.value - kMinStages;
+  return this.numStagesSetting.value - module.kMinStages;
 }
 
 module.NStageContour.prototype.intermediateStageBeginValue = function(i) {
-  return intermediageStates[i].beginValueSetting.value;
+  return this.intermediateStages[i].beginValueSetting.value;
 }
 
 module.NStageContour.prototype.intermediateStageDuration = function(i) {
-  return intermediateStages[i].durationSetting.value;
+  return this.intermediateStages[i].durationSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

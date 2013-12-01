@@ -251,11 +251,11 @@ module.BaseNStageContour.prototype.intermediateStageDuration = function(i) {
 }
 
 module.BaseNStageContour.prototype.sustainValue = function(i) {
-  return sustainValueSetting.value();
+  return sustainValueSetting.value;
 }
 
 module.BaseNStageContour.prototype.releaseTime = function(i) {
-  return releaseTimeSetting.value();
+  return releaseTimeSetting.value;
 }
 
 module.BaseNStageContour.prototype.finalValue = function() {
@@ -324,30 +324,58 @@ module.BaseNStageContour.prototype.valueAtTime = function(time, noteOnTime) {
 ////////////////////////////////////////////////////////////////////////////////
 // ADSR contoured value
 module.ADSRContour = function(sharedSettings, contouredValue) {
-  this.contouredValue_ = contouredValue;
-  this.initialValueSetting = sharedSettings.initialValueSetting;
+  module.BaseNStageContour.call(this, sharedSettings, contouredValue);
   this.attackTimeSetting = sharedSettings.firstStageTimeSetting;
   this.attackValueSetting = sharedSettings.intermediateStages[0].beginValueSetting;
   this.decayTimeSetting = sharedSettings.intermediateStages[0].durationSetting;
-  this.sustainValueSetting = sharedSettings.sustainValueSetting;
-  this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
-  this.finalValueSetting = sharedSettings.finalValueSetting;
+}
+
+module.ADSRContour.prototype = Objects.create(module.BaseNStageContour.prototype);
+
+module.ADSRContour.prototype.firstStageTime = function() {
+  return attackTimeSetting.value;
+}
+
+module.ADSRContour.prototype.numIntermediateStages = function() {
+  return 1;
+}
+
+module.ADSRContour.prototype.intermediateStageBeginValue = function(i) {
+  return attackValueSetting.value;
+}
+
+module.ADSRContour.prototype.intermediateStageDuration = function(i) {
+  return decayTimeSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // n Stage contoured value
 module.NStageContour = function(sharedSettings, contouredValue) {
-  this.contouredValue_ = contouredValue;
-  this.initialValueSetting = sharedSettings.initialValueSetting;
+  module.BaseNStageContour.call(this, sharedSettings, contouredValue);
   this.firstStageTimeSetting = sharedSettings.firstStageTimeSetting;
   this.numStagesSetting = sharedSettings.numStagesSetting;
   this.intermediateStages = [];
   for (var i = 0; i < module.kMaxIntermediateStages; i++) {
     this.intermediateStages.push(sharedSettings.intermediateStages[i]);
   }
-  this.sustainValueSetting = sharedSettings.sustainValueSetting;
-  this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
-  this.finalValueSetting = sharedSettings.finalValueSetting;
+}
+
+module.NStageContour.prototype = Objects.create(module.BaseNStageContour.prototype);
+
+module.NStageContour.prototype.firstStageTime = function() {
+  return firstStageTimeSetting.value;
+}
+
+module.NStageContour.prototype.numIntermediateStages = function() {
+  return numStagesSetting.value - kMinStages;
+}
+
+module.NStageContour.prototype.intermediateStageBeginValue = function(i) {
+  return intermediageStates[i].beginValueSetting.value;
+}
+
+module.NStageContour.prototype.intermediateStageDuration = function(i) {
+  return intermediateStages[i].durationSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

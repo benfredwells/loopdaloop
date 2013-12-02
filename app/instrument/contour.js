@@ -477,7 +477,8 @@ module.kNStageOscillatingContour = 'nstageoscillating';
 module.kContourTypes = [module.kFlatContour,
                         module.kOscillatingContour,
                         module.kADSRContour,
-                        module.kNStageContour];
+                        module.kNStageContour,
+                        module.kNStageOscillatingContour];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Contoured value
@@ -494,6 +495,7 @@ module.ContouredValue = function(context, valueSetting, isEnvelope) {
   this.initContour_(module.kOscillatingContour, new module.OscillatingContour(this.sharedContourSettings, this));
   this.initContour_(module.kADSRContour, new module.ADSRContour(this.sharedContourSettings, this));
   this.initContour_(module.kNStageContour, new module.NStageContour(this.sharedContourSettings, this));
+  this.initContour_(module.kNStageOscillatingContour, new module.NStageOscillatingContour(this.sharedContourSettings, this));
 }
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {

@@ -193,6 +193,19 @@ module.NStageContourPanel_.prototype.showHideStages_ = function() {
   }
 }
 
+module.NStageOscillatingContourPanel_ = function(container, onchange, onstructurechange, nStageOscillatingContour,
+                                                 isEnvelope, formatter, steps) {
+  module.NStageContourPanel_.call(this, container, onchange, onstructurechange, nStageOscillatingContour, 
+                                  isEnvelope, formatter, steps);
+  new SettingsUI.ExponentialRangeRow(this, Strings.kSpeed, onchange,
+                                     nStageOscillatingContour.oscillationFrequencySetting, null, 20);
+  new SettingsUI.LinearRangeRow(this, Strings.k)
+  new SettingsUI.ExponentialRangeRow(this, Strings.kTimeConstant, onchange,
+                                     nStageOscillatingContour.oscillationTimeConstantSetting, null, 20);
+}
+
+module.NStageOscillatingContourPanel_.prototype = Object.create(module.NStageContourPanel_.prototype);
+
 module.ContourPanel = function(container, title, onchange, onsizechange, contouredValue, instrument,
                                formatter, steps, asCategory, selected) {
   UI.Panel.call(this, container);

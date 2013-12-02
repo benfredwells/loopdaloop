@@ -13,10 +13,12 @@ module.kMaxFormatter = new module.Formatter('', ' of max');
 module.kPercentFormatter = new module.Formatter('', '%');
 module.kMultiplierFormatter = new module.Formatter('x', '');
 module.kSecondsFormatter = new module.Formatter('', ' s');
+module.kFrequencyFormatter = new module.Formatter('', ' Hz');
 
 module.kEnabled = 'Enabled';
 module.kType = 'Type';
 module.kSpeed = 'Speed';
+module.kTimeConstant = 'Time Constant';
 module.kAmplitude = 'Amplitude';
 module.kOctaveOffset = 'Octave offset';
 module.kNoteOffset = 'Semitone offset';
@@ -49,11 +51,13 @@ module.kFlat = 'Flat';
 module.kOscillating = 'Oscillating';
 module.kADSR = 'ADSR';
 module.kNStage = 'N Stage';
+module.kNStageOscillating = 'N Stage Oscillating';
 module.kContourTypeDescriptions = {};
 module.kContourTypeDescriptions[Contour.kFlatContour] = module.kFlat;
 module.kContourTypeDescriptions[Contour.kOscillatingContour] = module.kOscillating;
 module.kContourTypeDescriptions[Contour.kADSRContour] = module.kADSR;
 module.kContourTypeDescriptions[Contour.kNStageContour] = module.kNStage;
+module.kContourTypeDescriptions[Contour.kNStageOscillatingContour] = module.kNStageOscillating;
 
 module.kValue = 'Value';
 module.kMax = 'Maximum Value';

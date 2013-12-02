@@ -28,13 +28,17 @@ var SharedContourSettings = function(valueSetting) {
   this.sustainValueSetting = Setting.copyNumber(valueSetting);
   this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
   this.finalValueSetting = Setting.copyNumber(valueSetting);
-  // Oscillation settings
+  // N Stage oscillation settings
+  this.oscillationAmountSetting = new Setting.Number(0, 1);
+  // Vanilla oscillation settings
   this.oscillationTypeSetting = new Setting.Choice(AudioConstants.kWaveTypes);
   this.oscillationMinValueSetting = Setting.copyNumber(valueSetting);
   this.oscillationMaxValueSetting = Setting.copyNumber(valueSetting);
   this.oscillationMaxValueSetting.value = this.oscillationMaxValueSetting.max;
   this.oscillationMinValueSetting.value = this.oscillationMinValueSetting.min;
   this.oscillationFrequencySetting = new Setting.Number(0, 100);
+  // Shared oscillation settings
+  this.oscillationTimeConstant = new Setting.Number(0, 10);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

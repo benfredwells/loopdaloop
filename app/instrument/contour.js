@@ -370,7 +370,18 @@ module.BaseNStageContour.prototype.onValueAtTime_ = function(time) {
   return this.sustainValue();
 }
 
-module.BaseNStageContour.prototype.valueAtTime = function(time, noteOnTime) {
+module.BaseNStageContour.prototype.oscillationAmount_ = function(time) {
+  if (!this.hasOscillation())
+    return 0;
+
+  var periods = time * this.oscillationFrequency();
+  var periodOffset = periods - Math.floor(periods);
+  var amount = this.oscillationAmount() * Math.sin(2 * Math.PI * periodOffset);
+  var factor = 1 - Math.exp(-time / this.oscillationTimeConstant());
+  return amount * factor;
+}
+
+module.BaseNStageContour.prototype.baseValueAtTime_ = function(time, noteOnTime) {
   if (time <= noteOnTime)
     return this.onValueAtTime_(time);
 
@@ -382,6 +393,10 @@ module.BaseNStageContour.prototype.valueAtTime = function(time, noteOnTime) {
                                    sustainValue, this.finalValue());
 
   return this.finalValue();
+}
+
+module.BaseNStageContour.prototype.valueAtTime = function(time, noteOnTime) {
+  return this.baseValueAtTime_(time, noteOnTime) * (1 + this.oscillationAmount_(time));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

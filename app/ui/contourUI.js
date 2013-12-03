@@ -198,10 +198,13 @@ module.NStageOscillatingContourPanel_ = function(container, onchange, onstructur
   module.NStageContourPanel_.call(this, container, onchange, onstructurechange, nStageOscillatingContour, 
                                   isEnvelope, formatter, steps);
   new SettingsUI.ExponentialRangeRow(this, Strings.kSpeed, onchange,
-                                     nStageOscillatingContour.oscillationFrequencySetting, null, 20);
-  new SettingsUI.LinearRangeRow(this, Strings.k)
+                                     nStageOscillatingContour.oscillationFrequencySetting,
+                                     Strings.kFrequencyFormatter, 20);
+  new SettingsUI.LinearRangeRow(this, Strings.kAmplitude, onchange,
+                                nStageOscillatingContour.oscillationAmountSetting, null, 20);
   new SettingsUI.ExponentialRangeRow(this, Strings.kTimeConstant, onchange,
-                                     nStageOscillatingContour.oscillationTimeConstantSetting, null, 20);
+                                     nStageOscillatingContour.oscillationTimeConstantSetting,
+                                     Strings.kSecondsFormatter, 20);
 }
 
 module.NStageOscillatingContourPanel_.prototype = Object.create(module.NStageContourPanel_.prototype);
@@ -272,6 +275,10 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
       this.selectPanel_, changeHandler, structureChangeHandler,
       contouredValue.contoursByIdentifier[Contour.kNStageContour],
       contouredValue.isEnvelope, formatter, steps);
+  this.nStageOscillatingPanel_ = new module.NStageOscillatingContourPanel_(
+      this.selectPanel_, changeHandler, structureChangeHandler,
+      contouredValue.contoursByIdentifier[Contour.kNStageOscillatingContour],
+      contouredValue.isEnvelope, formatter, steps);
 
   this.showHideContours_();
   this.setSelected(selected);
@@ -285,6 +292,7 @@ module.ContourPanel.prototype.showHideContours_ = function() {
   this.oscillatingPanel_.setVisible(current == Contour.kOscillatingContour);
   this.adsrPanel_.setVisible(current == Contour.kADSRContour);
   this.nStagePanel_.setVisible(current == Contour.kNStageContour);
+  this.nStageOscillatingPanel_.setVisible(current == Contour.kNStageOscillatingContour);
 }
 
 module.ContourPanel.prototype.setSelected = function(selected) {

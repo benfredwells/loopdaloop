@@ -224,18 +224,18 @@ module.NStageOscillationGainContourer = function(contour, param) {
   this.param_ = param;
 }
 
-module.NStageContourer.prototype.contourOn = function(onTime) {
+module.NStageOscillationGainContourer.prototype.contourOn = function(onTime) {
   this.param_.setValueAtTime(0, onTime);
   this.param_.setTargetAtTime(this.contour_.oscillationAmount(),
-                              0,
+                              onTime,
                               this.contour_.oscillationTimeConstant());
 }
 
-module.NStageContourer.prototype.contourOff = function(offTime) {
+module.NStageOscillationGainContourer.prototype.contourOff = function(offTime) {
 }
 
-module.NStageContourer.prototype.contourFinishTime = function(offTime) {
-  return 0;
+module.NStageOscillationGainContourer.prototype.contourFinishTime = function(offTime) {
+  return offTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -328,6 +328,7 @@ module.BaseNStageContour.prototype.addContour = function(valueFunction, param, n
   var envelopeGain = this.contouredValue_.context_.createGainNode();
   noteSection.addContour(new module.NStageContourer(this, envelopeGain.gain, valueFunction));
   noteSection.addNode(envelopeGain);
+  amplitudeGain.connect(envelopeGain);
   envelopeGain.connect(param);
 }
 

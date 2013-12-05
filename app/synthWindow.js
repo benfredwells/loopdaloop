@@ -7,7 +7,7 @@ var gCurrentNote = null;
 var gInstrumentUIs = [];
 var gInstrument = null;
 
-var kOutputGain = 0.01;
+var kOutputGain = 0.05;
 
 var kHeightPadding = 92;
 var kWidth = 444;

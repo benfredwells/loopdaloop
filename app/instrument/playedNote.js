@@ -86,7 +86,7 @@ module.NoteSection.prototype.releaseTrigger = function(time) {
 
 module.NoteSection.prototype.dismantle = function() {
   this.oscillatorNodes_.forEach(function (oscillator) {
-    oscillator.noteOff(0);
+    oscillator.noteOff(kLatency);
   });
   this.allNodes_.forEach(function (node) {
     node.disconnect();  
@@ -105,6 +105,11 @@ module.NoteSection.prototype.finishTime = function(offTime) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // PlayedNote class
+
+// Always delay note on and off by this amount to account for the underlying
+// context getting ahead. Without this, the context can get ahead of us leading
+// to nasty effects occasionally.
+var kLatency = 0.02;
 
 module.Note = function(context,
                        destinationNode) {
@@ -127,7 +132,7 @@ module.Note.prototype.pushSections = function(sectionArray) {
 
 module.Note.prototype.noteOn = function(delay) {
   var note = this;
-  var onTime = this.context_.currentTime + delay;
+  var onTime = this.context_.currentTime + delay + kLatency;
   this.currentSections.forEach(function(section) {
     section.outputNode.connect(note.destinationNode);
   });
@@ -149,7 +154,7 @@ module.Note.prototype.updateFinishTime_ = function(releaseTime) {
 
 module.Note.prototype.noteOff = function(delay) {
   var thisNote = this;
-  var releaseTime = this.context_.currentTime + delay;
+  var releaseTime = this.context_.currentTime + delay + kLatency;
   thisNote.sections.forEach(function(section) {
     section.releaseTrigger(releaseTime);
   });
@@ -162,7 +167,7 @@ module.Note.prototype.isFinished = function() {
   if (!this.finishTime)
     return false;
 
-  return (this.finishTime < this.context_.currentTime);
+  return (this.finishTime + kLatency < this.context_.currentTime);
 }
 
 module.Note.prototype.dismantle = function() {

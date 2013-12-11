@@ -158,36 +158,47 @@ module.OscillatingContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.rawCenterValue_());
 }
 
+module.OscillatingContour.prototype.factor_ = function(time) {
+  if (this.typeSetting.value == module.kConstantOscillation ||
+      this.timeConstantSetting.value == 0)
+    return 1;
+
+  var factor = Math.exp(-time / this.timeConstantSetting.value);
+  if (this.typeSetting.value == module.kSwellingOscillation)
+    factor = 1 - factor;
+  return factor;
+}
+
 module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
   var periods = time * this.frequencySetting.value;
   var periodOffset = periods - Math.floor(periods);
-  var factor = 0;
+  var oscillation = 0;
   switch (this.waveSetting.value) {
    case AudioConstants.kSineWave:
-    factor = Math.sin(2 * Math.PI * periodOffset);
+    oscillation = Math.sin(2 * Math.PI * periodOffset);
     break;
    case AudioConstants.kSquareWave:
     if (periodOffset < 0.5)
-      factor = 1
+      oscillation = 1
     else
-      factor = -1;
+      oscillation = -1;
     break;
    case AudioConstants.kSawtoothWave:
     if (periodOffset < 0.5)
-      factor = 2 * periodOffset
+      oscillation = 2 * periodOffset
     else
-      factor = 2 * (periodOffset - 1);
+      oscillation = 2 * (periodOffset - 1);
     break;
    case AudioConstants.kTriangleWave:
     if (periodOffset < 0.25)
-      factor = 4 * periodOffset
+      oscillation = 4 * periodOffset
     else if (periodOffset < 0.75)
-      factor = 1 - 4 * (periodOffset - 0.25);
+      oscillation = 1 - 4 * (periodOffset - 0.25);
     else
-      factor = 4 * (periodOffset - 1)
+      oscillation = 4 * (periodOffset - 1)
     break;
   }
-  return this.rawCenterValue_() + this.rawAmplitude_() * factor;
+  return this.rawCenterValue_() + this.rawAmplitude_() * oscillation * this.factor_(time);
 }
 
 module.OscillatingContour.prototype.releaseTime = function() {

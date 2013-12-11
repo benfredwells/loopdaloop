@@ -67,7 +67,8 @@ module.BasicEnvelopeContourer.prototype.contourOn = function(onTime) {
 }
 
 module.BasicEnvelopeContourer.prototype.contourOff = function(offTime) {
-  this.param_.cancelScheduledValues(offTime);
+  this.param_.cancelScheduledValues(0);
+  this.param_.value = this.param_.value;
   this.param_.setValueAtTime(this.param_.value, offTime);
   this.param_.linearRampToValueAtTime(0, offTime + kMinChangeTime);
 }
@@ -206,8 +207,9 @@ module.NStageContourer.prototype.contourOn = function(onTime) {
 }
 
 module.NStageContourer.prototype.contourOff = function(offTime) {
+  this.param_.cancelScheduledValues(0);
+  this.param_.value = this.param_.value;
   var nextTime = offTime;
-  this.param_.cancelScheduledValues(offTime);
   this.param_.setValueAtTime(this.param_.value, nextTime);
   nextTime += this.contour_.releaseTime();
   this.param_.linearRampToValueAtTime(this.valueFunction_(this.contour_.finalValue()), nextTime);

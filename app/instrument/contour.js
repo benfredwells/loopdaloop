@@ -379,7 +379,9 @@ module.BaseNStageContour.prototype.oscillationAmount_ = function(time) {
   var periods = time * this.oscillationFrequency();
   var periodOffset = periods - Math.floor(periods);
   var amount = this.oscillationAmount() * Math.sin(2 * Math.PI * periodOffset);
-  var factor = 1 - Math.exp(-time / this.oscillationTimeConstant());
+  var factor = 1;
+  if (this.oscillationTimeConstant() > 0)
+    factor = factor - Math.exp(-time / this.oscillationTimeConstant());
   return amount * factor;
 }
 

@@ -246,8 +246,6 @@ module.BaseNStageContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
   this.initialValueSetting = sharedSettings.initialValueSetting;
   this.sustainValueSetting = sharedSettings.sustainValueSetting;
-  this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
-  this.finalValueSetting = sharedSettings.finalValueSetting;
 }
 
 module.BaseNStageContour.prototype.initialValue = function() {
@@ -277,19 +275,18 @@ module.BaseNStageContour.prototype.intermediateStageDuration = function(i) {
   return 0;
 }
 
-module.BaseNStageContour.prototype.sustainValue = function(i) {
+module.BaseNStageContour.prototype.sustainValue = function() {
   return this.sustainValueSetting.value;
 }
 
-module.BaseNStageContour.prototype.releaseTime = function(i) {
-  return this.releaseTimeSetting.value;
+// Subclasses should override this if they have a release
+module.BaseNStageContour.prototype.releaseTime = function() {
+  return 0;
 }
 
+// Subclasses should override this if they have a release
 module.BaseNStageContour.prototype.finalValue = function() {
-  if (this.isEnvelope)
-    return 0;
-
-  return this.finalValueSetting.value;
+  return this.sustainValue();
 }
 
 // Subclasses should override this if they oscillate
@@ -410,6 +407,8 @@ module.ADSRContour = function(sharedSettings, contouredValue) {
   this.attackTimeSetting = sharedSettings.firstStageTimeSetting;
   this.attackValueSetting = sharedSettings.intermediateStages[0].beginValueSetting;
   this.decayTimeSetting = sharedSettings.intermediateStages[0].durationSetting;
+  this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
+  this.finalValueSetting = sharedSettings.finalValueSetting;
 }
 
 module.ADSRContour.prototype = Object.create(module.BaseNStageContour.prototype);
@@ -430,6 +429,19 @@ module.ADSRContour.prototype.intermediateStageDuration = function(i) {
   return this.decayTimeSetting.value;
 }
 
+// Subclasses should override this if they have a release
+module.ADSRContour.prototype.releaseTime = function() {
+  return this.releaseTimeSetting.value;
+}
+
+// Subclasses should override this if they have a release
+module.ADSRContour.prototype.finalValue = function() {
+  if (this.isEnvelope)
+    return 0;
+
+  return this.finalValueSetting.value;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // n Stage contoured value
 module.NStageContour = function(sharedSettings, contouredValue) {
@@ -440,6 +452,8 @@ module.NStageContour = function(sharedSettings, contouredValue) {
   for (var i = 0; i < module.kMaxIntermediateStages; i++) {
     this.intermediateStages.push(sharedSettings.intermediateStages[i]);
   }
+  this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
+  this.finalValueSetting = sharedSettings.finalValueSetting;
 }
 
 module.NStageContour.prototype = Object.create(module.BaseNStageContour.prototype);
@@ -458,6 +472,19 @@ module.NStageContour.prototype.intermediateStageBeginValue = function(i) {
 
 module.NStageContour.prototype.intermediateStageDuration = function(i) {
   return this.intermediateStages[i].durationSetting.value;
+}
+
+// Subclasses should override this if they have a release
+module.NStageContour.prototype.releaseTime = function() {
+  return this.releaseTimeSetting.value;
+}
+
+// Subclasses should override this if they have a release
+module.NStageContour.prototype.finalValue = function() {
+  if (this.isEnvelope)
+    return 0;
+
+  return this.finalValueSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

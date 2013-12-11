@@ -124,7 +124,7 @@ module.FlatContourPanel_.prototype = Object.create(module.ContourTypePanel_.prot
 module.OscillatingContourPanel_ = function(container, onchange, oscillatingContour,
                                            isEnvelope, formatter, steps) {
   module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
-  new SettingsUI.SelectRow(this, Strings.kOscillation, onchange, oscillatingContour.typeSetting, Strings.kOscillatorTypeDescriptions);
+  new SettingsUI.SelectRow(this, Strings.kWave, onchange, oscillatingContour.waveSetting, Strings.kOscillatorTypeDescriptions);
   if (!isEnvelope)
     this.createValueRow_(Strings.kMax, oscillatingContour.maxValueSetting);
   this.createValueRow_(Strings.kMin, oscillatingContour.minValueSetting);

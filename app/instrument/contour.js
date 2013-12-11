@@ -9,6 +9,13 @@ module.kMaxIntermediateStages = 5;
 module.kMinStages = 3;
 module.kMaxStages = module.kMinStages + module.kMaxIntermediateStages;
 
+module.kConstantOscillation = 'constant';
+module.kSwellingOscillation = 'swell';
+module.kFadingOscillation = 'fade';
+module.kOscillationTypes = [module.kConstantOscillation,
+                            module.kSwellingOscillation,
+                            module.kFadingOscillation];
+
 ////////////////////////////////////////////////////////////////////////////////
 // Contour settings shared by the different contour types.
 var IntermediateContourStage = function(valueSetting) {
@@ -29,16 +36,17 @@ var SharedContourSettings = function(valueSetting) {
   this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
   this.finalValueSetting = Setting.copyNumber(valueSetting);
   // Vanilla oscillation settings
-  this.oscillationTypeSetting = new Setting.Choice(AudioConstants.kWaveTypes);
+  this.oscillationWaveSetting = new Setting.Choice(AudioConstants.kWaveTypes);
   this.oscillationMinValueSetting = Setting.copyNumber(valueSetting);
   this.oscillationMaxValueSetting = Setting.copyNumber(valueSetting);
   this.oscillationMaxValueSetting.value = this.oscillationMaxValueSetting.max;
   this.oscillationMinValueSetting.value = this.oscillationMinValueSetting.min;
   // N Stage oscillation settings
   this.oscillationAmountSetting = new Setting.Number(0, 1);
-  this.oscillationTimeConstantSetting = new Setting.Number(0, 10);
   // Shared oscillation settings
   this.oscillationFrequencySetting = new Setting.Number(0, 20);
+  this.oscillationTimeConstantSetting = new Setting.Number(0, 10);
+  this.oscillationTypeSetting = new Setting.Choice(module.kOscillationTypes);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,10 +116,12 @@ module.FlatContour.prototype.releaseTime = function() {
 // Oscillating contour
 module.OscillatingContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.typeSetting = sharedSettings.oscillationTypeSetting;
+  this.waveSetting = sharedSettings.oscillationWaveSetting;
   this.minValueSetting = sharedSettings.oscillationMinValueSetting;
   this.maxValueSetting = sharedSettings.oscillationMaxValueSetting;
   this.frequencySetting = sharedSettings.oscillationFrequencySetting;
+  this.typeSetting = sharedSettings.oscillationTypeSetting;
+  this.timeConstantSetting = sharedSettings.oscillationTimeConstantSetting;
 }
 
 module.OscillatingContour.prototype.rawCenterValue_ = function() {
@@ -130,7 +140,7 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
     param.value = centerValue;
 
   var oscillator = this.contouredValue_.context_.createOscillator();
-  oscillator.type = this.typeSetting.value;
+  oscillator.type = this.waveSetting.value;
   oscillator.frequency.value = this.frequencySetting.value;
   noteSection.addOscillator(oscillator);
   var gain = this.contouredValue_.context_.createGainNode();
@@ -152,7 +162,7 @@ module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
   var periods = time * this.frequencySetting.value;
   var periodOffset = periods - Math.floor(periods);
   var factor = 0;
-  switch (this.typeSetting.value) {
+  switch (this.waveSetting.value) {
    case AudioConstants.kSineWave:
     factor = Math.sin(2 * Math.PI * periodOffset);
     break;

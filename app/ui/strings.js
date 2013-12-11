@@ -29,7 +29,7 @@ module.kOrder = 'Order';
 module.kQ = 'Resonance';
 module.kGain = 'Gain';
 module.kEnvelope = 'Envelope';
-module.kOscillation = 'Wave Type';
+module.kWave = 'Wave';
 
 module.kSine = 'Sine';
 module.kSquare = 'Square';

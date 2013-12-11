@@ -62,11 +62,12 @@ module.updateSharedContourSettings = function(sharedSettings, contouredValueStat
   updateSettingWithMinDefault(sharedSettings.releaseTimeSetting, contouredValueState.releaseTime);
   updateSettingWithMinDefault(sharedSettings.finalValueSetting, contouredValueState.finalValue);
   updateSettingWithMidDefault(sharedSettings.oscillationAmountSetting, contouredValueState.oscillationAmount);
-  updateSetting(sharedSettings.oscillationTypeSetting, contouredValueState.oscillationType, AudioConstants.kSineWave);
+  updateSetting(sharedSettings.oscillationWaveSetting, contouredValueState.oscillationType, AudioConstants.kSineWave);
   updateSettingWithMaxDefault(sharedSettings.oscillationMaxValueSetting, contouredValueState.oscillationMaxValue);
   updateSettingWithMinDefault(sharedSettings.oscillationMinValueSetting, contouredValueState.oscillationMinValue);
   updateSettingWithRatioedDefault(sharedSettings.oscillationFrequencySetting, contouredValueState.oscillationFrequency, 0.02);
   updateSettingWithRatioedDefault(sharedSettings.oscillationTimeConstantSetting, contouredValueState.oscillationTimeConstant, 0.05);
+  updateSetting(sharedSettings.oscillationTypeSetting, contouredValueState.oscillationType, Contour.kConstantOscillation);
 }
 
 module.updateContouredValue = function(contouredValue, contouredValueState) {

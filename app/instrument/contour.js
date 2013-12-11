@@ -38,7 +38,7 @@ var SharedContourSettings = function(valueSetting) {
   this.oscillationAmountSetting = new Setting.Number(0, 1);
   this.oscillationTimeConstantSetting = new Setting.Number(0, 10);
   // Shared oscillation settings
-  this.oscillationFrequencySetting = new Setting.Number(0, 100);
+  this.oscillationFrequencySetting = new Setting.Number(0, 20);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

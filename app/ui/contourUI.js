@@ -292,7 +292,7 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
   if (!contouredValue.isEnvelope) {
     this.sweepPanel_ = new module.SweepContourPanel_(
         this.selectPanel_, changeHandler,
-        contouredValue.contoursByIdentifier[Contour.kADSRContour],
+        contouredValue.contoursByIdentifier[Contour.kSweepContour],
         contouredValue.isEnvelope, formatter, steps);
   }
 
@@ -305,11 +305,12 @@ module.ContourPanel.prototype = Object.create(UI.Panel.prototype);
 module.ContourPanel.prototype.showHideContours_ = function() {
   var current = this.contouredValue_.currentContourSetting.value
   this.flatPanel_.setVisible(current == Contour.kFlatContour);
-  this.sweepPanel_.setVisible(current == Contour.kSweepContour);
   this.oscillatingPanel_.setVisible(current == Contour.kOscillatingContour);
   this.adsrPanel_.setVisible(current == Contour.kADSRContour);
   this.nStagePanel_.setVisible(current == Contour.kNStageContour);
   this.nStageOscillatingPanel_.setVisible(current == Contour.kNStageOscillatingContour);
+  if (this.sweepPanel_)
+    this.sweepPanel_.setVisible(current == Contour.kSweepContour);
 }
 
 module.ContourPanel.prototype.setSelected = function(selected) {

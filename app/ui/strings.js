@@ -99,6 +99,14 @@ module.kIntermediateStageDurations[3] = module.kStage5Duration;
 module.kIntermediateStageBeginValues[4] = module.kStage6BeginValue;
 module.kIntermediateStageDurations[4] = module.kStage6Duration;
 
+module.kConstant = 'Constant';
+module.kFading = 'Fading';
+module.kSwelling = 'Swelling';
+module.kOscillationTypeDescriptions = {};
+module.kOscillationTypeDescriptions[Contour.kConstantOscillation] = module.kConstant;
+module.kOscillationTypeDescriptions[Contour.kFadingOscillation] = module.kFading;
+module.kOscillationTypeDescriptions[Contour.kSwellingOscillation] = module.kSwelling;
+
 module.kOscillator1 = 'Oscillator 1';
 module.kOscillator2 = 'Oscillator 2';
 module.kOscillator3 = 'Oscillator 3';

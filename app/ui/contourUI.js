@@ -121,18 +121,35 @@ module.FlatContourPanel_ = function(container, onchange, flatContour, isEnvelope
 
 module.FlatContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
 
-module.OscillatingContourPanel_ = function(container, onchange, oscillatingContour,
+module.OscillatingContourPanel_ = function(container, onchange, onstructurechange, 
+                                           oscillatingContour,
                                            isEnvelope, formatter, steps) {
   module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
+  this.oscillatingContour_ = oscillatingContour;
+  var panel = this;
+  var typeChanged = function() {
+    panel.showHideTimeConstant_();
+    onstructurechange();
+  }
+  new SettingsUI.SelectRow(this, Strings.kType, typeChanged, oscillatingContour.typeSetting, Strings.kOscillationTypeDescriptions);
+  this.timeConstantRow_ = new SettingsUI.ExponentialRangeRow(
+      this, Strings.kTimeConstant, onchange,
+      oscillatingContour.timeConstantSetting,
+      Strings.kSecondsFormatter, 20);
   new SettingsUI.SelectRow(this, Strings.kWave, onchange, oscillatingContour.waveSetting, Strings.kOscillatorTypeDescriptions);
   if (!isEnvelope)
     this.createValueRow_(Strings.kMax, oscillatingContour.maxValueSetting);
   this.createValueRow_(Strings.kMin, oscillatingContour.minValueSetting);
   new SettingsUI.ExponentialRangeRow(this, Strings.kSpeed, onchange,
                                      oscillatingContour.frequencySetting, null, 20);
+  this.showHideTimeConstant_();
 }
 
 module.OscillatingContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
+
+module.OscillatingContourPanel_.prototype.showHideTimeConstant_ = function() {
+  this.timeConstantRow_.setVisible(this.oscillatingContour_.typeSetting.value != Contour.kConstantOscillation);
+}
 
 module.SweepContourPanel_ = function(container, onchange, sweepContour,
                                     isEnvelope, formatter, steps) {
@@ -274,7 +291,7 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
       contouredValue.contoursByIdentifier[Contour.kFlatContour],
       contouredValue.isEnvelope, formatter, steps);
   this.oscillatingPanel_ = new module.OscillatingContourPanel_(
-      this.selectPanel_, changeHandler,
+      this.selectPanel_, changeHandler, structureChangeHandler,
       contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
       contouredValue.isEnvelope, formatter, steps);
   this.adsrPanel_ = new module.ADSRContourPanel_(

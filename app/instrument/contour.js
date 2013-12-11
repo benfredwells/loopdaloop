@@ -401,6 +401,23 @@ module.BaseNStageContour.prototype.valueAtTime = function(time, noteOnTime) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Sweep contoured value
+module.SweepContour = function(sharedSettings, contouredValue) {
+  module.BaseNStageContour.call(this, sharedSettings, contouredValue);
+  this.sweepTimeSetting = sharedSettings.firstStageTimeSetting;
+}
+
+module.SweepContour.prototype = Object.create(module.BaseNStageContour.prototype);
+
+module.SweepContour.prototype.firstStageTime = function() {
+  return this.sweepTimeSetting.value;
+}
+
+module.SweepContour.prototype.numIntermediateStages = function() {
+  return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // ADSR contoured value
 module.ADSRContour = function(sharedSettings, contouredValue) {
   module.BaseNStageContour.call(this, sharedSettings, contouredValue);
@@ -429,12 +446,10 @@ module.ADSRContour.prototype.intermediateStageDuration = function(i) {
   return this.decayTimeSetting.value;
 }
 
-// Subclasses should override this if they have a release
 module.ADSRContour.prototype.releaseTime = function() {
   return this.releaseTimeSetting.value;
 }
 
-// Subclasses should override this if they have a release
 module.ADSRContour.prototype.finalValue = function() {
   if (this.isEnvelope)
     return 0;
@@ -474,12 +489,10 @@ module.NStageContour.prototype.intermediateStageDuration = function(i) {
   return this.intermediateStages[i].durationSetting.value;
 }
 
-// Subclasses should override this if they have a release
 module.NStageContour.prototype.releaseTime = function() {
   return this.releaseTimeSetting.value;
 }
 
-// Subclasses should override this if they have a release
 module.NStageContour.prototype.finalValue = function() {
   if (this.isEnvelope)
     return 0;
@@ -521,7 +534,14 @@ module.kOscillatingContour = 'oscillating';
 module.kADSRContour = 'adsr';
 module.kNStageContour = 'nstage';
 module.kNStageOscillatingContour = 'nstageoscillating';
+module.kSweepContour = 'sweep';
 module.kContourTypes = [module.kFlatContour,
+                        module.kOscillatingContour,
+                        module.kADSRContour,
+                        module.kNStageContour,
+                        module.kNStageOscillatingContour];
+module.kContourTypes = [module.kFlatContour,
+                        module.kSweepContour,
                         module.kOscillatingContour,
                         module.kADSRContour,
                         module.kNStageContour,
@@ -539,6 +559,7 @@ module.ContouredValue = function(context, valueSetting, isEnvelope) {
   this.contours_ = [];
   this.contoursByIdentifier = {};
   this.initContour_(module.kFlatContour, new module.FlatContour(this.sharedContourSettings, this));
+  this.initContour_(module.kSweepContour, new module.SweepContour(this.sharedContourSettings, this));
   this.initContour_(module.kOscillatingContour, new module.OscillatingContour(this.sharedContourSettings, this));
   this.initContour_(module.kADSRContour, new module.ADSRContour(this.sharedContourSettings, this));
   this.initContour_(module.kNStageContour, new module.NStageContour(this.sharedContourSettings, this));

@@ -265,7 +265,7 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
       contourGroup.onsizechange();
   }
   new SettingsUI.SelectRow(this.selectPanel_,
-                           Strings.kType,
+                           Strings.kContourType,
                            structureChangeHandler,
                            contouredValue.currentContourSetting,
                            Strings.kContourTypeDescriptions);

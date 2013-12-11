@@ -17,6 +17,7 @@ module.kFrequencyFormatter = new module.Formatter('', ' Hz');
 
 module.kEnabled = 'Enabled';
 module.kType = 'Type';
+module.kContourType = 'Contour';
 module.kSpeed = 'Speed';
 module.kTimeConstant = 'Time Constant';
 module.kAmplitude = 'Amplitude';
@@ -28,7 +29,7 @@ module.kOrder = 'Order';
 module.kQ = 'Resonance';
 module.kGain = 'Gain';
 module.kEnvelope = 'Envelope';
-module.kOscillation = 'Oscillation';
+module.kOscillation = 'Wave Type';
 
 module.kSine = 'Sine';
 module.kSquare = 'Square';

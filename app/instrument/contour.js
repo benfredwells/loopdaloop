@@ -113,6 +113,30 @@ module.FlatContour.prototype.releaseTime = function() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Oscillation growth contour
+module.OscillationGrowthContourer = function(param, contour) {
+  this.param_ = param;
+  this.contour_ = contour;
+}
+
+module.OscillationGrowthContourer.prototype.contourOn = function(onTime) {
+  if (this.contour_.typeSetting.value == module.kSwellingOscillation) {
+    this.param_.setValueAtTime(0, onTime);
+    this.param_.setTargetAtTime(1, onTime, this.contour_.timeConstantSetting.value);
+  } else { // must be fading, as constant won't come in here
+    this.param_.setValueAtTime(1, onTime);
+    this.param_.setTargetAtTime(0, onTime, this.contour_.timeConstantSetting.value);
+  }
+}
+
+module.OscillationGrowthContourer.prototype.contourOff = function(offTime) {
+}
+
+module.OscillationGrowthContourer.prototype.contourFinishTime = function(offTime) {
+  return offTime;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Oscillating contour
 module.OscillatingContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
@@ -143,6 +167,14 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
   oscillator.type = this.waveSetting.value;
   oscillator.frequency.value = this.frequencySetting.value;
   noteSection.addOscillator(oscillator);
+  var lastNode = oscillator;
+  if (this.typeSetting.value != module.kConstantOscillation) {
+    var growthGain = this.contouredValue_.context_.createGainNode();
+    noteSection.addContour(new module.OscillationGrowthContourer(growthGain.gain, this));
+    noteSection.addNode(growthGain);
+    oscillator.connect(growthGain);
+    lastNode = growthGain;
+  }
   var gain = this.contouredValue_.context_.createGainNode();
   var amplitudeValue = valueFunction(this.rawAmplitude_());
   if (this.contouredValue_.isEnvelope)
@@ -150,7 +182,7 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
   else
     gain.gain.value = amplitudeValue;
   noteSection.addNode(gain);
-  oscillator.connect(gain);
+  lastNode.connect(gain);
   gain.connect(param);
 }
 

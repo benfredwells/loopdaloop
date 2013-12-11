@@ -207,6 +207,9 @@ module.NStageContourer.prototype.contourOn = function(onTime) {
 }
 
 module.NStageContourer.prototype.contourOff = function(offTime) {
+  if (this.contour_.releaseTime() == 0)
+    return;
+
   this.param_.cancelScheduledValues(0);
   this.param_.value = this.param_.value;
   var nextTime = offTime;
@@ -535,11 +538,11 @@ module.kADSRContour = 'adsr';
 module.kNStageContour = 'nstage';
 module.kNStageOscillatingContour = 'nstageoscillating';
 module.kSweepContour = 'sweep';
-module.kContourTypes = [module.kFlatContour,
-                        module.kOscillatingContour,
-                        module.kADSRContour,
-                        module.kNStageContour,
-                        module.kNStageOscillatingContour];
+module.kEnvelopeContourTypes = [module.kFlatContour,
+                                module.kOscillatingContour,
+                                module.kADSRContour,
+                                module.kNStageContour,
+                                module.kNStageOscillatingContour];
 module.kContourTypes = [module.kFlatContour,
                         module.kSweepContour,
                         module.kOscillatingContour,
@@ -555,15 +558,19 @@ module.ContouredValue = function(context, valueSetting, isEnvelope) {
   this.max = valueSetting.max;
   this.sharedContourSettings = new SharedContourSettings(valueSetting);
   this.context_ = context;
-  this.currentContourSetting = new Setting.Choice(module.kContourTypes);
+  if (isEnvelope)
+    this.currentContourSetting = new Setting.Choice(module.kEnvelopeContourTypes);
+  else
+    this.currentContourSetting = new Setting.Choice(module.kContourTypes);
   this.contours_ = [];
   this.contoursByIdentifier = {};
   this.initContour_(module.kFlatContour, new module.FlatContour(this.sharedContourSettings, this));
-  this.initContour_(module.kSweepContour, new module.SweepContour(this.sharedContourSettings, this));
   this.initContour_(module.kOscillatingContour, new module.OscillatingContour(this.sharedContourSettings, this));
   this.initContour_(module.kADSRContour, new module.ADSRContour(this.sharedContourSettings, this));
   this.initContour_(module.kNStageContour, new module.NStageContour(this.sharedContourSettings, this));
   this.initContour_(module.kNStageOscillatingContour, new module.NStageOscillatingContour(this.sharedContourSettings, this));
+  if (!isEnvelope)
+    this.initContour_(module.kSweepContour, new module.SweepContour(this.sharedContourSettings, this));
 }
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {

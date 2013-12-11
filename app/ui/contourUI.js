@@ -134,6 +134,16 @@ module.OscillatingContourPanel_ = function(container, onchange, oscillatingConto
 
 module.OscillatingContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
 
+module.SweepContourPanel_ = function(container, onchange, sweepContour,
+                                    isEnvelope, formatter, steps) {
+  module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
+  this.createValueRow_(Strings.kInitialValue, sweepContour.initialValueSetting);
+  this.createTimeRow_(Strings.kSweepTime, sweepContour.sweepTimeSetting);
+  this.createValueRow_(Strings.kSweepEndValue, sweepContour.sustainValueSetting);
+}
+
+module.SweepContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
+
 module.ADSRContourPanel_ = function(container, onchange, adsrContour,
                                     isEnvelope, formatter, steps) {
   module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
@@ -279,6 +289,12 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
       this.selectPanel_, changeHandler, structureChangeHandler,
       contouredValue.contoursByIdentifier[Contour.kNStageOscillatingContour],
       contouredValue.isEnvelope, formatter, steps);
+  if (!contouredValue.isEnvelope) {
+    this.sweepPanel_ = new module.SweepContourPanel_(
+        this.selectPanel_, changeHandler,
+        contouredValue.contoursByIdentifier[Contour.kADSRContour],
+        contouredValue.isEnvelope, formatter, steps);
+  }
 
   this.showHideContours_();
   this.setSelected(selected);
@@ -289,6 +305,7 @@ module.ContourPanel.prototype = Object.create(UI.Panel.prototype);
 module.ContourPanel.prototype.showHideContours_ = function() {
   var current = this.contouredValue_.currentContourSetting.value
   this.flatPanel_.setVisible(current == Contour.kFlatContour);
+  this.sweepPanel_.setVisible(current == Contour.kSweepContour);
   this.oscillatingPanel_.setVisible(current == Contour.kOscillatingContour);
   this.adsrPanel_.setVisible(current == Contour.kADSRContour);
   this.nStagePanel_.setVisible(current == Contour.kNStageContour);

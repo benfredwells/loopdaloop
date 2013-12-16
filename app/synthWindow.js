@@ -16,6 +16,7 @@ var kCompressorKnee = 10;
 var kCompressorAttack = 0.01;
 var kCompressorRelease = 1;
 
+var kPitchID = 'pitch';
 var kOscillatorAID = 'oscillatora';
 var kOscillatorBID = 'oscillatorb';
 var kOscillatorCID = 'oscillatorc';
@@ -68,6 +69,14 @@ function init() {
   // Instrument UI setup
   var categoriesEl = document.getElementById('categories');
   var detailsEl = document.getElementById('details');
+  gInstrumentUIs.push(new PitchUI.UI(
+      kPitchID,
+      gInstrument.pitchContour,
+      gInstrument,
+      Strings.kPitch,
+      categoriesEl,
+      detailsEl,
+      visualizationTimeChange));
   gInstrumentUIs.push(new OscillatorUI.UI(
       kOscillatorAID,
       gInstrument.oscillators[0],

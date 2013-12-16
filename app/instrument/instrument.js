@@ -105,6 +105,7 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, time, note
 // Instrument class
 module.Instrument = function(context, destinationNode) {
   this.context_ = context;
+  this.pitchContour = new Contour.ContouredValue(context, new Setting.Number(-12, 12), false);
   this.envelopeContour = new Contour.ContouredValue(context, new Setting.Number(0, 1), true);
   this.destinationNode_ = destinationNode;
   this.oscillators = [];

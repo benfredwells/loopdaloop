@@ -28,7 +28,6 @@ module.kFrequency = 'Frequency';
 module.kOrder = 'Order';
 module.kQ = 'Resonance';
 module.kGain = 'Gain';
-module.kEnvelope = 'Envelope';
 module.kWave = 'Wave';
 
 module.kSine = 'Sine';
@@ -107,11 +106,13 @@ module.kOscillationTypeDescriptions[Contour.kConstantOscillation] = module.kCons
 module.kOscillationTypeDescriptions[Contour.kFadingOscillation] = module.kFading;
 module.kOscillationTypeDescriptions[Contour.kSwellingOscillation] = module.kSwelling;
 
+module.kPitch = 'Pitch';
 module.kOscillator1 = 'Oscillator 1';
 module.kOscillator2 = 'Oscillator 2';
 module.kOscillator3 = 'Oscillator 3';
 module.kFilter1 = 'Filter 1';
 module.kFilter2 = 'Filter 2';
+module.kEnvelope = 'Envelope';
 
 module.kTest = 'Test';
 module.kTestShortcut =' (T)';

@@ -107,6 +107,7 @@ module.updateInstrument = function(instrument, instrumentState) {
     reportError('instrumentState undefined');
     return;
   }
+  module.updateContouredValue(instrument.pitchContour, instrumentState.pitch);
   for (var i = 0; i < instrumentState.oscillators.length; i++) {
     module.updateOscillator(instrument.oscillators[i], instrumentState.oscillators[i]);
   }

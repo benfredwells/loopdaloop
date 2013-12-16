@@ -20,21 +20,25 @@ module.Oscillator = function(context) {
 }
 
 module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
-  var oscillator = this.context_.createOscillator();
-  oscillator.frequency.value = Math.round(
-      ChromaticScale.frequencyForNote(octave + this.octaveOffsetSetting.value,
-                                      note + this.noteOffsetSetting.value));
-  oscillator.detune.value = this.detuneSetting.value;
-  oscillator.type = this.typeSetting.value;
-  return oscillator;
+  var node = this.context_.createOscillator();
+  node.detune.value = this.detuneSetting.value;
+  node.type = this.typeSetting.value;
+  return node;
 }
 
-module.Oscillator.prototype.createNoteSection_ = function(octave, note) {
+module.Oscillator.prototype.createNoteSection_ = function(octave, note, pitchContour) {
   var section = new PlayedNote.NoteSection(null);
-  var oscillator = this.createOscillatorNode_(octave, note);
-  section.pushOscillator(oscillator);
+  var oscillatorNode = this.createOscillatorNode_(octave, note);
+  section.pushOscillator(oscillatorNode);
   var gainNode = this.context_.createGainNode();
   section.pushNode(gainNode);
+  var oscillator = this;
+  var frequencyValueFunction = function(value) {
+    return ChromaticScale.frequencyForNote(
+      octave + oscillator.octaveOffsetSetting.value,
+      note + oscillator.noteOffsetSetting.value + value);
+  }
+  pitchContour.currentContour().addContour(frequencyValueFunction, oscillatorNode.frequency, section);
   var gainValueFunction = function(value) {
     return value;
   }
@@ -131,10 +135,11 @@ module.Instrument.prototype.createEnvelope_ = function() {
 // Public methods
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
   var playedNote = new PlayedNote.Note(this.context_, this.destinationNode_);
+  var instrument = this;
   var oscillatorSections = [];
   this.oscillators.forEach(function(oscillator) {
     if (oscillator.enabledSetting.value)
-      oscillatorSections.push(oscillator.createNoteSection_(octave, note));
+      oscillatorSections.push(oscillator.createNoteSection_(octave, note, instrument.pitchContour));
   });
   playedNote.pushSections(oscillatorSections);
   this.filters.forEach(function(filter) {

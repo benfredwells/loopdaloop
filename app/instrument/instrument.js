@@ -11,7 +11,7 @@ var kOscillatorCount = 3;
 // Pitch class
 module.Pitch = function(context) {
   this.unitsSetting = new Setting.Choice(AudioConstants.kPitchUnits);
-  this.contour = new Contour.ContouredValue(context, new Setting.Number(-12, 12), false);
+  this.contour = new Contour.ContouredValue(context, new Setting.Number(-1, 1), false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,11 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note, pitch) {
   section.pushNode(gainNode);
   var oscillator = this;
   var detuneValueFunction = function(value) {
-    return oscillator.detuneSetting.value + value * 100;
+    var multiplier = 100;
+    if (pitch.unitsSetting.value == AudioConstants.kOctaves)
+      multiplier = 1200;
+
+    return oscillator.detuneSetting.value + value * multiplier;
   }
   pitch.contour.currentContour().addContour(detuneValueFunction, oscillatorNode.detune, section);
   var gainValueFunction = function(value) {

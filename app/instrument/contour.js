@@ -176,7 +176,7 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
     lastNode = growthGain;
   }
   var gain = this.contouredValue_.context_.createGainNode();
-  var amplitudeValue = valueFunction(this.rawAmplitude_());
+  var amplitudeValue = (valueFunction(this.maxValueSetting.value) - valueFunction(this.minValueSetting.value)) / 2;
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(gain.gain, amplitudeValue));
   else

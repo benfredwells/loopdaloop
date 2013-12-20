@@ -102,12 +102,19 @@ module.updateOscillator = function(oscillator, oscillatorState) {
   module.updateContouredValue(oscillator.gainContour, oscillatorState.gain);
 }
 
+module.updatePitch = function(pitch, pitchState){
+  if (!pitchState) {
+    pitchState = {};
+  }
+  module.updateContouredValue(pitch.contour, pitchState.contour);
+}
+
 module.updateInstrument = function(instrument, instrumentState) {
   if (!instrumentState) {
     reportError('instrumentState undefined');
     return;
   }
-  module.updateContouredValue(instrument.pitchContour, instrumentState.pitch);
+  module.updatePitch(instrument.pitch, instrumentState.pitch);
   for (var i = 0; i < instrumentState.oscillators.length; i++) {
     module.updateOscillator(instrument.oscillators[i], instrumentState.oscillators[i]);
   }

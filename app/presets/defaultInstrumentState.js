@@ -6,13 +6,15 @@ var module = {};
 
 module.Default = function() {
   return {
-    pitch: { 
-      currentContour: 'flat',
-      initialValue: 0,
-      sustainValue: 0,
-      finalValue: 0,
-      oscillationMinValue: -0.1,
-      oscillationMaxValue: 0.1
+    pitch: {
+      contour: { 
+        currentContour: 'flat',
+        initialValue: 0,
+        sustainValue: 0,
+        finalValue: 0,
+        oscillationMinValue: -0.1,
+        oscillationMaxValue: 0.1
+      }
     },
     oscillators: [
       {

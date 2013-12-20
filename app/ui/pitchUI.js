@@ -3,9 +3,8 @@ PitchUI = (function() {
 "use strict";
 var module = {};
 
-module.UI = function(id, pitchContour, instrument, title, categoriesEl, detailsEl, ontimechange) {
+module.UI = function(id, pitch, instrument, title, categoriesEl, detailsEl, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, true);
-  this.pitchContour_ = pitchContour;
 
   var ui = this;
   function changeHandler() {
@@ -17,7 +16,7 @@ module.UI = function(id, pitchContour, instrument, title, categoriesEl, detailsE
       ui.onsizechange(ui);
   }
   this.contourPanel = new ContourUI.ContourPanel(this.settings, Strings.kPitch,
-                                                 changeHandler, sizeChangeHandler, pitchContour,
+                                                 changeHandler, sizeChangeHandler, pitch.contour,
                                                  instrument, null, 240, true, true);
   this.setIconClass('pitchIcon');
 }

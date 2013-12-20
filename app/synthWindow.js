@@ -71,7 +71,7 @@ function init() {
   var detailsEl = document.getElementById('details');
   gInstrumentUIs.push(new PitchUI.UI(
       kPitchID,
-      gInstrument.pitchContour,
+      gInstrument.pitch,
       gInstrument,
       Strings.kPitch,
       categoriesEl,

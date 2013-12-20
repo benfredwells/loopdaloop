@@ -28,8 +28,9 @@ module.Oscillator = function(context) {
 
 module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
   var node = this.context_.createOscillator();
-  node.detune.value = this.detuneSetting.value;
   node.type = this.typeSetting.value;
+  node.frequency.value = ChromaticScale.frequencyForNote(octave + this.octaveOffsetSetting.value,
+                                                         note + this.noteOffsetSetting.value);
   return node;
 }
 
@@ -40,12 +41,10 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note, pitch) {
   var gainNode = this.context_.createGainNode();
   section.pushNode(gainNode);
   var oscillator = this;
-  var frequencyValueFunction = function(value) {
-    return ChromaticScale.frequencyForNote(
-      octave + oscillator.octaveOffsetSetting.value,
-      note + oscillator.noteOffsetSetting.value + value);
+  var detuneValueFunction = function(value) {
+    return oscillator.detuneSetting.value + value * 100;
   }
-  pitch.contour.currentContour().addContour(frequencyValueFunction, oscillatorNode.frequency, section);
+  pitch.contour.currentContour().addContour(detuneValueFunction, oscillatorNode.detune, section);
   var gainValueFunction = function(value) {
     return value;
   }

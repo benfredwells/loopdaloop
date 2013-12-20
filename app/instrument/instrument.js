@@ -10,6 +10,7 @@ var kOscillatorCount = 3;
 ////////////////////////////////////////////////////////////////////////////////
 // Pitch class
 module.Pitch = function(context) {
+  this.unitsSetting = new Setting.Choice(AudioConstants.kPitchUnits);
   this.contour = new Contour.ContouredValue(context, new Setting.Number(-12, 12), false);
 }
 
@@ -138,7 +139,6 @@ module.Instrument.prototype.createEnvelope_ = function() {
   return section;
 }
 
-// Public methods
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
   var playedNote = new PlayedNote.Note(this.context_, this.destinationNode_);
   var instrument = this;

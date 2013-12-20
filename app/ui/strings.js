@@ -30,6 +30,13 @@ module.kQ = 'Resonance';
 module.kGain = 'Gain';
 module.kWave = 'Wave';
 
+module.kUnits = 'Units';
+module.kSemitones = 'Semitones';
+module.kOctaves = 'Octaves';
+module.kPitchUnitDescriptions = {};
+module.kPitchUnitDescriptions[AudioConstants.kSemitones] = module.kSemitones;
+module.kPitchUnitDescriptions[AudioConstants.kOctaves] = module.kOctaves;
+
 module.kSine = 'Sine';
 module.kSquare = 'Square';
 module.kSawtooth = 'Sawtooth';

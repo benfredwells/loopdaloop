@@ -4,6 +4,12 @@ AudioConstants = (function() {
 var module = {};
 
 ////////////////////////////////////////////////////////////////////////////////
+// Identifiers for pitch
+module.kSemitones = 'semitone';
+module.kOctaves = 'octave';
+module.kPitchUnits = [module.kSemitones, module.kOctaves];
+
+////////////////////////////////////////////////////////////////////////////////
 // Identifiers for waves
 module.kSineWave = 'sine';
 module.kSquareWave = 'square';

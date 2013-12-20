@@ -18,6 +18,7 @@ module.UI = function(id, pitch, instrument, title, categoriesEl, detailsEl, onti
   this.contourPanel = new ContourUI.ContourPanel(this.settings, Strings.kPitch,
                                                  changeHandler, sizeChangeHandler, pitch.contour,
                                                  instrument, null, 240, true, true);
+  new SettingsUI.SelectRow(this.settings, Strings.kUnits, null, pitch.unitsSetting, Strings.kPitchUnitDescriptions);
   this.setIconClass('pitchIcon');
 }
 

@@ -106,6 +106,7 @@ module.updatePitch = function(pitch, pitchState){
   if (!pitchState) {
     pitchState = {};
   }
+  updateSetting(pitch.unitsSetting, pitchState.units, AudioConstants.kSemitones);
   module.updateContouredValue(pitch.contour, pitchState.contour);
 }
 

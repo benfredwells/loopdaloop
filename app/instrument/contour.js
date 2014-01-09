@@ -163,8 +163,7 @@ module.OscillatingContour.prototype.addContour = function(valueFunction, param, 
   else
     param.value = centerValue;
 
-  var oscillator = this.contouredValue_.context_.createOscillator();
-  oscillator.type = this.waveSetting.value;
+  var oscillator = Oscillator.createNode(this.contouredValue_.context_, this.waveSetting.value);
   oscillator.frequency.value = this.frequencySetting.value;
   noteSection.addOscillator(oscillator);
   var lastNode = oscillator;
@@ -370,8 +369,7 @@ module.BaseNStageContour.prototype.addContour = function(valueFunction, param, n
   if (!this.hasOscillation())
     return;
 
-  var oscillator = this.contouredValue_.context_.createOscillator();
-  oscillator.type = AudioConstants.kSineWave;
+  var oscillator = Oscillator.createNode(this.contouredValue_.context_, AudioConstants.kSineWave);
   oscillator.frequency.value = this.oscillationFrequency();
   noteSection.addOscillator(oscillator);
 

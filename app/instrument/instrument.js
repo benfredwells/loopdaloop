@@ -27,8 +27,7 @@ module.Oscillator = function(context) {
 }
 
 module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
-  var node = this.context_.createOscillator();
-  node.type = this.typeSetting.value;
+  var node = Oscillator.createNode(this.context_, this.typeSetting.value);
   node.frequency.value = ChromaticScale.frequencyForNote(octave + this.octaveOffsetSetting.value,
                                                          note + this.noteOffsetSetting.value);
   return node;

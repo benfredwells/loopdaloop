@@ -14,6 +14,13 @@ function createPeriodicWave(context, type) {
     real.push(1);
     imag.push(0);
     imag.push(0);
+  } else if (type == AudioConstants.kSawtoothWave) {
+    real.push(0);
+    imag.push(0);
+    for (var i = 0; i < 4095; i++) {
+      real.push(0);
+      imag.push(-1 / ((i + 1) * Math.PI));
+    }
   }
   return context.createPeriodicWave(new Float32Array(real), new Float32Array(imag));
 }
@@ -35,7 +42,8 @@ function getPeriodicWave(context, type) {
 }
 
 function needsPeriodicWave(type) {
-  return type == AudioConstants.kSineWave;
+  return type == AudioConstants.kSineWave ||
+         type == AudioConstants.kSawtoothWave;
 }
 
 module.createNode = function(context, type) {
@@ -64,10 +72,7 @@ module.oscillatorValue = function(type, frequency, time) {
       oscillation = -1;
     break;
    case AudioConstants.kSawtoothWave:
-    if (periodOffset < 0.5)
-      oscillation = 2 * periodOffset
-    else
-      oscillation = 2 * (periodOffset - 1);
+    oscillation = 2 * (periodOffset - 0.5)
     break;
    case AudioConstants.kTriangleWave:
     if (periodOffset < 0.25)

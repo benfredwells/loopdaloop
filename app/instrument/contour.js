@@ -3,7 +3,7 @@ Contour = (function() {
 "use strict";
 var module = {};
 
-var kMinChangeTime = 0.05;
+var kMinChangeTime = 0.0005;
 
 module.kMaxIntermediateStages = 5;
 module.kMinStages = 3;

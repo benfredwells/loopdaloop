@@ -201,34 +201,7 @@ module.OscillatingContour.prototype.factor_ = function(time) {
 }
 
 module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
-  var periods = time * this.frequencySetting.value;
-  var periodOffset = periods - Math.floor(periods);
-  var oscillation = 0;
-  switch (this.waveSetting.value) {
-   case AudioConstants.kSineWave:
-    oscillation = Math.sin(2 * Math.PI * periodOffset);
-    break;
-   case AudioConstants.kSquareWave:
-    if (periodOffset < 0.5)
-      oscillation = 1
-    else
-      oscillation = -1;
-    break;
-   case AudioConstants.kSawtoothWave:
-    if (periodOffset < 0.5)
-      oscillation = 2 * periodOffset
-    else
-      oscillation = 2 * (periodOffset - 1);
-    break;
-   case AudioConstants.kTriangleWave:
-    if (periodOffset < 0.25)
-      oscillation = 4 * periodOffset
-    else if (periodOffset < 0.75)
-      oscillation = 1 - 4 * (periodOffset - 0.25);
-    else
-      oscillation = 4 * (periodOffset - 1)
-    break;
-  }
+  var oscillation = Oscillator.oscillatorValue(this.waveSetting.value, this.frequencySetting.value, time);
   return this.rawCenterValue_() + this.rawAmplitude_() * oscillation * this.factor_(time);
 }
 
@@ -427,9 +400,8 @@ module.BaseNStageContour.prototype.oscillationAmount_ = function(time) {
   if (!this.hasOscillation())
     return 0;
 
-  var periods = time * this.oscillationFrequency();
-  var periodOffset = periods - Math.floor(periods);
-  var amount = this.oscillationAmount() * Math.sin(2 * Math.PI * periodOffset);
+  var oscillatorValue = Oscillator.oscillatorValue(AudioConstants.kSineWave, this.oscillationFrequency(), time);
+  var amount = this.oscillationAmount() * oscillatorValue;
   var factor = 1;
   if (this.oscillationTimeConstant() > 0)
     factor = factor - Math.exp(-time / this.oscillationTimeConstant());

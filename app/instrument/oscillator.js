@@ -49,6 +49,38 @@ module.createNode = function(context, type) {
   return node;
 }
 
+module.oscillatorValue = function(type, frequency, time) {
+  var periods = time * frequency;
+  var periodOffset = periods - Math.floor(periods);
+  var oscillation = 0;
+  switch (type) {
+   case AudioConstants.kSineWave:
+    oscillation = Math.cos(2 * Math.PI * periodOffset);
+    break;
+   case AudioConstants.kSquareWave:
+    if (periodOffset < 0.5)
+      oscillation = 1
+    else
+      oscillation = -1;
+    break;
+   case AudioConstants.kSawtoothWave:
+    if (periodOffset < 0.5)
+      oscillation = 2 * periodOffset
+    else
+      oscillation = 2 * (periodOffset - 1);
+    break;
+   case AudioConstants.kTriangleWave:
+    if (periodOffset < 0.25)
+      oscillation = 4 * periodOffset
+    else if (periodOffset < 0.75)
+      oscillation = 1 - 4 * (periodOffset - 0.25);
+    else
+      oscillation = 4 * (periodOffset - 1)
+    break;
+  }
+  return oscillation;
+}
+
 return module;
 
 }());

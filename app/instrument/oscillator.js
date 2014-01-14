@@ -83,12 +83,10 @@ module.oscillatorValue = function(type, frequency, time) {
     oscillation = 2 * (periodOffset - 0.5)
     break;
    case AudioConstants.kTriangleWave:
-    if (periodOffset < 0.25)
-      oscillation = 4 * periodOffset
-    else if (periodOffset < 0.75)
-      oscillation = 1 - 4 * (periodOffset - 0.25);
+    if (periodOffset < 0.5)
+      oscillation = 4 * (periodOffset - 0.25)
     else
-      oscillation = 4 * (periodOffset - 1)
+      oscillation = 1 - 4 * (periodOffset - 0.5);
     break;
   }
   return oscillation;

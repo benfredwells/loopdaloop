@@ -89,7 +89,7 @@ module.BasicEnvelopeContourer.prototype.contourFinishTime = function(offTime) {
 // Flat contour
 module.FlatContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
-  this.valueSetting = sharedSettings.sustainValueSetting;
+  this.valueSetting = sharedSettings.intermediateStages[0].beginValueSetting;
 }
 
 module.FlatContour.prototype.addContour = function(valueFunction, param, noteSection) {

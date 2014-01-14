@@ -53,12 +53,11 @@ module.updateSharedContourSettings = function(sharedSettings, contouredValueStat
   updateSettingWithMinDefault(sharedSettings.initialValueSetting, contouredValueState.initialValue);
   updateSettingWithMinDefault(sharedSettings.firstStageTimeSetting, contouredValueState.attackTime);
   updateSettingWithMinDefault(sharedSettings.numStagesSetting, contouredValueState.numStages);
-  for (var i = 0; i < Contour.kMaxIntermediateStages; i++) {
+  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++) {
     module.updateIntermediateContourStage(sharedSettings.intermediateStages,
                                           contouredValueState.intermediateStages,
                                           i);
   }
-  updateSettingWithMidDefault(sharedSettings.sustainValueSetting, contouredValueState.sustainValue);
   updateSettingWithMinDefault(sharedSettings.releaseTimeSetting, contouredValueState.releaseTime);
   updateSettingWithMinDefault(sharedSettings.finalValueSetting, contouredValueState.finalValue);
   updateSettingWithMidDefault(sharedSettings.oscillationAmountSetting, contouredValueState.oscillationAmount);

@@ -156,7 +156,7 @@ module.SweepContourPanel_ = function(container, onchange, sweepContour,
   module.ContourTypePanel_.call(this, container, onchange, formatter, steps);
   this.createValueRow_(Strings.kInitialValue, sweepContour.initialValueSetting);
   this.createTimeRow_(Strings.kSweepTime, sweepContour.sweepTimeSetting);
-  this.createValueRow_(Strings.kSweepEndValue, sweepContour.sustainValueSetting);
+  this.createValueRow_(Strings.kSweepEndValue, sweepContour.finalValueSetting);
 }
 
 module.SweepContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
@@ -194,7 +194,7 @@ module.NStageContourPanel_ = function(container, onchange, onstructurechange, nS
   this.createTimeRow_(Strings.kStage1Duration, nStageContour.firstStageTimeSetting);
   this.intermediateStageBeginRows = [];
   this.intermediateStageDurationRows = [];
-  for (var i = 0; i < Contour.kMaxIntermediateStages; i++) {
+  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++) {
     this.intermediateStageBeginRows.push(
         this.createValueRow_(Strings.kIntermediateStageBeginValues[i],
                              nStageContour.intermediateStages[i].beginValueSetting));
@@ -202,7 +202,6 @@ module.NStageContourPanel_ = function(container, onchange, onstructurechange, nS
         this.createTimeRow_(Strings.kIntermediateStageDurations[i],
                             nStageContour.intermediateStages[i].durationSetting));
   }
-  this.createValueRow_(Strings.kSustainValue, nStageContour.sustainValueSetting);
   this.createTimeRow_(Strings.kReleaseTime, nStageContour.releaseTimeSetting);
   if (!isEnvelope) {
     this.createValueRow_(Strings.kFinalValue, nStageContour.finalValueSetting);
@@ -218,6 +217,7 @@ module.NStageContourPanel_.prototype.showHideStages_ = function() {
     this.intermediateStageBeginRows[i].setVisible(i < numIntermediateStages);
     this.intermediateStageDurationRows[i].setVisible(i < numIntermediateStages);
   }
+  this.intermediateStageBeginRows[numIntermediateStages].setVisible(true);
 }
 
 module.NStageOscillatingContourPanel_ = function(container, onchange, onstructurechange, nStageOscillatingContour,

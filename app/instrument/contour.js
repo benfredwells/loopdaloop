@@ -5,7 +5,9 @@ var module = {};
 
 var kMinChangeTime = 0.0005;
 
-module.kMaxIntermediateStages = 5;
+// There is one more set of stage values for the sustain.
+module.kMaxIntermediateStageValues = 6;
+module.kMaxIntermediateStages =  module.kMaxIntermediateStageValues - 1;
 module.kMinStages = 3;
 module.kMaxStages = module.kMinStages + module.kMaxIntermediateStages;
 
@@ -29,10 +31,9 @@ var SharedContourSettings = function(valueSetting) {
   this.firstStageTimeSetting = new Setting.Number(kMinChangeTime, 10);
   this.numStagesSetting = new Setting.Number(module.kMinStages, module.kMaxStages);
   this.intermediateStages = [];
-  for (var i = 0; i < module.kMaxIntermediateStages; i++) {
+  for (var i = 0; i < module.kMaxIntermediateStageValues; i++) {
     this.intermediateStages.push(new IntermediateContourStage(valueSetting));
   }
-  this.sustainValueSetting = Setting.copyNumber(valueSetting);
   this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
   this.finalValueSetting = Setting.copyNumber(valueSetting);
   // Vanilla oscillation settings
@@ -273,7 +274,7 @@ module.NStageOscillationGainContourer.prototype.contourFinishTime = function(off
 module.BaseNStageContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
   this.initialValueSetting = sharedSettings.initialValueSetting;
-  this.sustainValueSetting = sharedSettings.sustainValueSetting;
+  this.finalValueSetting = sharedSettings.finalValueSetting;
 }
 
 module.BaseNStageContour.prototype.initialValue = function() {
@@ -303,8 +304,9 @@ module.BaseNStageContour.prototype.intermediateStageDuration = function(i) {
   return 0;
 }
 
+// Subclasses should override this
 module.BaseNStageContour.prototype.sustainValue = function() {
-  return this.sustainValueSetting.value;
+  return 0;
 }
 
 // Subclasses should override this if they have a release
@@ -312,9 +314,11 @@ module.BaseNStageContour.prototype.releaseTime = function() {
   return 0;
 }
 
-// Subclasses should override this if they have a release
 module.BaseNStageContour.prototype.finalValue = function() {
-  return this.sustainValue();
+  if (this.isEnvelope)
+    return 0;
+
+  return this.finalValueSetting.value;
 }
 
 // Subclasses should override this if they oscillate
@@ -439,6 +443,10 @@ module.SweepContour.prototype.firstStageTime = function() {
   return this.sweepTimeSetting.value;
 }
 
+module.SweepContour.prototype.sustainValue = function() {
+  return finalValue();
+}
+
 module.SweepContour.prototype.numIntermediateStages = function() {
   return 0;
 }
@@ -450,8 +458,8 @@ module.ADSRContour = function(sharedSettings, contouredValue) {
   this.attackTimeSetting = sharedSettings.firstStageTimeSetting;
   this.attackValueSetting = sharedSettings.intermediateStages[0].beginValueSetting;
   this.decayTimeSetting = sharedSettings.intermediateStages[0].durationSetting;
+  this.sustainValueSetting = sharedSettings.intermediateStages[1].beginValueSetting;
   this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
-  this.finalValueSetting = sharedSettings.finalValueSetting;
 }
 
 module.ADSRContour.prototype = Object.create(module.BaseNStageContour.prototype);
@@ -472,15 +480,12 @@ module.ADSRContour.prototype.intermediateStageDuration = function(i) {
   return this.decayTimeSetting.value;
 }
 
-module.ADSRContour.prototype.releaseTime = function() {
-  return this.releaseTimeSetting.value;
+module.ADSRContour.prototype.sustainValue = function() {
+  return this.sustainValueSetting.value;
 }
 
-module.ADSRContour.prototype.finalValue = function() {
-  if (this.isEnvelope)
-    return 0;
-
-  return this.finalValueSetting.value;
+module.ADSRContour.prototype.releaseTime = function() {
+  return this.releaseTimeSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -490,11 +495,10 @@ module.NStageContour = function(sharedSettings, contouredValue) {
   this.firstStageTimeSetting = sharedSettings.firstStageTimeSetting;
   this.numStagesSetting = sharedSettings.numStagesSetting;
   this.intermediateStages = [];
-  for (var i = 0; i < module.kMaxIntermediateStages; i++) {
+  for (var i = 0; i < module.kMaxIntermediateStageValues; i++) {
     this.intermediateStages.push(sharedSettings.intermediateStages[i]);
   }
   this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
-  this.finalValueSetting = sharedSettings.finalValueSetting;
 }
 
 module.NStageContour.prototype = Object.create(module.BaseNStageContour.prototype);
@@ -515,15 +519,12 @@ module.NStageContour.prototype.intermediateStageDuration = function(i) {
   return this.intermediateStages[i].durationSetting.value;
 }
 
-module.NStageContour.prototype.releaseTime = function() {
-  return this.releaseTimeSetting.value;
+module.NStageContour.prototype.sustainValue = function() {
+  return this.intermediateStages[this.numIntermediateStages()].beginValueSetting.value;
 }
 
-module.NStageContour.prototype.finalValue = function() {
-  if (this.isEnvelope)
-    return 0;
-
-  return this.finalValueSetting.value;
+module.NStageContour.prototype.releaseTime = function() {
+  return this.releaseTimeSetting.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

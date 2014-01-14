@@ -385,9 +385,10 @@ module.BaseNStageContour.prototype.nthOnStageEndValue_ = function(n) {
 module.BaseNStageContour.prototype.onValueAtTime_ = function(time) {
   var lastTime = 0;
   var nextTime = this.firstStageTime();
-  if (time < nextTime)
+  if (time < nextTime) {
     return this.interpolatedValue_(time, lastTime, nextTime,
                                    this.initialValue(), this.nthOnStageEndValue_(0));
+  }
 
   for (var i = 0; i < this.numIntermediateStages(); i++) {
     lastTime = nextTime;

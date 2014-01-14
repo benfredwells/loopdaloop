@@ -12,6 +12,7 @@ module.CategoryVisualizer = function(container, ontimechange) {
 
   var visualizer = this;
   function changeHandler() {
+    visualizer.currentTime_ = visualizer.currentTimeFromRange_();
     if (visualizer.ontimechange)
       visualizer.ontimechange(visualizer.currentTime());
   }
@@ -34,6 +35,7 @@ module.CategoryVisualizer = function(container, ontimechange) {
 
   this.noteDuration = 0;
   this.releaseTime = 0;
+  this.currentTime_ = 0;
 }
 
 module.CategoryVisualizer.prototype = Object.create(UI.Panel.prototype);
@@ -58,6 +60,10 @@ module.CategoryVisualizer.prototype.drawTime = function() {
 }
 
 module.CategoryVisualizer.prototype.currentTime = function() {
+  return this.currentTime_;
+}
+
+module.CategoryVisualizer.prototype.currentTimeFromRange_ = function() {
   var rangeVal = this.timeRange.value;
   return (rangeVal / kTimeSteps) * (this.noteDuration + this.releaseTime);
 }
@@ -66,6 +72,7 @@ module.CategoryVisualizer.prototype.setCurrentTime = function(time, noteDuration
   this.noteDuration = noteDuration;
   this.releaseTime = releaseTime;
   this.timeRange.value = kTimeSteps * time / (this.noteDuration + this.releaseTime);
+  this.currentTime_ = time;
 }
 
 module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {

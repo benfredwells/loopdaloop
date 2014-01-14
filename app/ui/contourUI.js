@@ -213,7 +213,7 @@ module.NStageContourPanel_.prototype = Object.create(module.ContourTypePanel_.pr
 
 module.NStageContourPanel_.prototype.showHideStages_ = function() {
   var numIntermediateStages = this.nStageContour_.numStagesSetting.value - Contour.kMinStages;
-  for (var i = 0; i < Contour.kMaxIntermediateStages; i++) {
+  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++) {
     this.intermediateStageBeginRows[i].setVisible(i < numIntermediateStages);
     this.intermediateStageDurationRows[i].setVisible(i < numIntermediateStages);
   }

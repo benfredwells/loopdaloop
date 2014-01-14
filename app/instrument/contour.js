@@ -444,7 +444,7 @@ module.SweepContour.prototype.firstStageTime = function() {
 }
 
 module.SweepContour.prototype.sustainValue = function() {
-  return finalValue();
+  return this.finalValue();
 }
 
 module.SweepContour.prototype.numIntermediateStages = function() {

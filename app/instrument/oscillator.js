@@ -21,6 +21,13 @@ function createPeriodicWave(context, type) {
       real.push(0);
       imag.push(-1 / ((i + 1) * Math.PI));
     }
+  } else if (type == AudioConstants.kTriangleWave) {
+    real.push(0);
+    imag.push(0);
+    for (var i = 0; i < 4095; i++) {
+      real.push(-4 / ((i + 1) * Math.PI * (i + 1) * Math.PI));
+      imag.push(0);
+    }
   }
   return context.createPeriodicWave(new Float32Array(real), new Float32Array(imag));
 }
@@ -43,7 +50,8 @@ function getPeriodicWave(context, type) {
 
 function needsPeriodicWave(type) {
   return type == AudioConstants.kSineWave ||
-         type == AudioConstants.kSawtoothWave;
+         type == AudioConstants.kSawtoothWave ||
+         type == AudioConstants.kTriangleWave;
 }
 
 module.createNode = function(context, type) {

@@ -67,6 +67,7 @@ module.updateSharedContourSettings = function(sharedSettings, contouredValueStat
   updateSettingWithRatioedDefault(sharedSettings.oscillationFrequencySetting, contouredValueState.oscillationFrequency, 0.02);
   updateSettingWithRatioedDefault(sharedSettings.oscillationTimeConstantSetting, contouredValueState.oscillationTimeConstant, 0.05);
   updateSetting(sharedSettings.oscillationTypeSetting, contouredValueState.oscillationType, Contour.kConstantOscillation);
+  updateSetting(sharedSettings.sweepTimeSetting, contouredValueState.sweepTimeSetting, 1);
 }
 
 module.updateContouredValue = function(contouredValue, contouredValueState) {

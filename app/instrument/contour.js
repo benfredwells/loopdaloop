@@ -48,6 +48,8 @@ var SharedContourSettings = function(valueSetting) {
   this.oscillationFrequencySetting = new Setting.Number(0, 20);
   this.oscillationTimeConstantSetting = new Setting.Number(0, 10);
   this.oscillationTypeSetting = new Setting.Choice(module.kOscillationTypes);
+  // Sweep settings
+  this.sweepTimeSetting = new Setting.Number(kMinChangeTime, 10);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -435,7 +437,8 @@ module.BaseNStageContour.prototype.valueAtTime = function(time, noteOnTime) {
 // Sweep contoured value
 module.SweepContour = function(sharedSettings, contouredValue) {
   module.BaseNStageContour.call(this, sharedSettings, contouredValue);
-  this.sweepTimeSetting = sharedSettings.firstStageTimeSetting;
+  this.sweepTimeSetting = sharedSettings.sweepTimeSetting;
+  this.finalValueSetting = sharedSettings.intermediateStages[0].beginValueSetting;
 }
 
 module.SweepContour.prototype = Object.create(module.BaseNStageContour.prototype);

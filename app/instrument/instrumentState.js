@@ -95,7 +95,7 @@ module.updateOscillator = function(oscillator, oscillatorState) {
     oscillatorState = {};
   }
   updateSetting(oscillator.enabledSetting, oscillatorState.enabled, false);
-  updateSetting(oscillator.typeSetting, oscillatorState.type, oscillator.typeSetting.choices[0]);
+  updateSetting(oscillator.typeSetting, oscillatorState.type, AudioConstants.kSawtoothWave);
   updateSetting(oscillator.octaveOffsetSetting, oscillatorState.octaveOffset, 0);
   updateSetting(oscillator.noteOffsetSetting, oscillatorState.noteOffset, 0);
   updateSetting(oscillator.detuneSetting, oscillatorState.detune, 0);
@@ -116,10 +116,10 @@ module.updateInstrument = function(instrument, instrumentState) {
     return;
   }
   module.updatePitch(instrument.pitch, instrumentState.pitch);
-  for (var i = 0; i < instrumentState.oscillators.length; i++) {
+  for (var i = 0; i < instrument.oscillators.length; i++) {
     module.updateOscillator(instrument.oscillators[i], instrumentState.oscillators[i]);
   }
-  for (var i = 0; i < instrumentState.filters.length; i++) {
+  for (var i = 0; i < instrument.filters.length; i++) {
     module.updateFilter(instrument.filters[i], instrumentState.filters[i]);
   }
   module.updateContouredValue(instrument.envelopeContour, instrumentState.envelope);

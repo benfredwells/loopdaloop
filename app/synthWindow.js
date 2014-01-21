@@ -9,8 +9,8 @@ var gInstrument = null;
 
 var kOutputGain = 0.05;
 
-var kHeightPadding = 92;
-var kWidth = 444;
+var kHeightPadding = 100;
+var kWidth = 440;
 var kCompressorThreshold = -30;
 var kCompressorKnee = 10;
 var kCompressorAttack = 0.01;

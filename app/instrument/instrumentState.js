@@ -33,7 +33,7 @@ function updateSettingWithRatioedDefault(setting, value, ratio) {
   updateSetting(setting, value, (setting.max + setting.min) * ratio);
 }
 
-module.updateIntermediateContourStage = function(intermediateStages, intermediateStageStates, index) {
+function updateIntermediateContourStage(intermediateStages, intermediateStageStates, index) {
   var intermediateStageState = {};
   if (intermediateStageStates && intermediateStageStates[index]) {
     intermediateStageState = intermediateStageStates[index];
@@ -47,39 +47,66 @@ module.updateIntermediateContourStage = function(intermediateStages, intermediat
   updateSettingWithMinDefault(intermediateStages[index].durationSetting, intermediateStageState.duration);
 }
 
-// Uses the same state holder as the contoured value, as the seperation is more design
-// than the normalized structure.
-module.updateSharedContourSettings = function(sharedSettings, contouredValueState) {
-  updateSettingWithMinDefault(sharedSettings.initialValueSetting, contouredValueState.initialValue);
-  updateSettingWithMinDefault(sharedSettings.firstStageTimeSetting, contouredValueState.attackTime);
-  updateSettingWithMinDefault(sharedSettings.numStagesSetting, contouredValueState.numStages);
-  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++) {
-    module.updateIntermediateContourStage(sharedSettings.intermediateStages,
-                                          contouredValueState.intermediateStages,
-                                          i);
-  }
-  updateSettingWithMinDefault(sharedSettings.releaseTimeSetting, contouredValueState.releaseTime);
-  updateSettingWithMinDefault(sharedSettings.finalValueSetting, contouredValueState.finalValue);
-  updateSettingWithMidDefault(sharedSettings.oscillationAmountSetting, contouredValueState.oscillationAmount);
-  updateSetting(sharedSettings.oscillationWaveSetting, contouredValueState.oscillationType, AudioConstants.kSineWave);
-  updateSettingWithMaxDefault(sharedSettings.oscillationMaxValueSetting, contouredValueState.oscillationMaxValue);
-  updateSettingWithMinDefault(sharedSettings.oscillationMinValueSetting, contouredValueState.oscillationMinValue);
-  updateSettingWithRatioedDefault(sharedSettings.oscillationFrequencySetting, contouredValueState.oscillationFrequency, 0.02);
-  updateSettingWithRatioedDefault(sharedSettings.oscillationTimeConstantSetting, contouredValueState.oscillationTimeConstant, 0.05);
-  updateSetting(sharedSettings.oscillationTypeSetting, contouredValueState.oscillationType, Contour.kConstantOscillation);
-  updateSetting(sharedSettings.sweepTimeSetting, contouredValueState.sweepTimeSetting, 1);
+function getIntermediateContourStageState(intermediateStage) {
+  var intermediateStageState = {};
+
+  intermediateStageState.beginValue = intermediateStage.beginValueSetting.value;
+  intermediateStageState.duration = intermediateStage.durationSetting.value;
+
+  return intermediateStageState;
 }
 
-module.updateContouredValue = function(contouredValue, contouredValueState) {
+function updateContouredValue(contouredValue, contouredValueState) {
   if (!contouredValueState) {
     contouredValueState = {};
     contouredValueState.contours = {};
   }
   updateSetting(contouredValue.currentContourSetting, contouredValueState.currentContour, Contour.kFlatContour);
-  module.updateSharedContourSettings(contouredValue.sharedContourSettings, contouredValueState);
+  updateSettingWithMinDefault(contouredValue.sharedContourSettings.initialValueSetting, contouredValueState.initialValue);
+  updateSettingWithMinDefault(contouredValue.sharedContourSettings.firstStageTimeSetting, contouredValueState.attackTime);
+  updateSettingWithMinDefault(contouredValue.sharedContourSettings.numStagesSetting, contouredValueState.numStages);
+  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++) {
+    updateIntermediateContourStage(contouredValue.sharedContourSettings.intermediateStages,
+                                   contouredValueState.intermediateStages,
+                                   i);
+  }
+  updateSettingWithMinDefault(contouredValue.sharedContourSettings.releaseTimeSetting, contouredValueState.releaseTime);
+  updateSettingWithMinDefault(contouredValue.sharedContourSettings.finalValueSetting, contouredValueState.finalValue);
+  updateSettingWithMidDefault(contouredValue.sharedContourSettings.oscillationAmountSetting, contouredValueState.oscillationAmount);
+  updateSetting(contouredValue.sharedContourSettings.oscillationWaveSetting, contouredValueState.oscillationType, AudioConstants.kSineWave);
+  updateSettingWithMaxDefault(contouredValue.sharedContourSettings.oscillationMaxValueSetting, contouredValueState.oscillationMaxValue);
+  updateSettingWithMinDefault(contouredValue.sharedContourSettings.oscillationMinValueSetting, contouredValueState.oscillationMinValue);
+  updateSettingWithRatioedDefault(contouredValue.sharedContourSettings.oscillationFrequencySetting, contouredValueState.oscillationFrequency, 0.02);
+  updateSettingWithRatioedDefault(contouredValue.sharedContourSettings.oscillationTimeConstantSetting, contouredValueState.oscillationTimeConstant, 0.05);
+  updateSetting(contouredValue.sharedContourSettings.oscillationTypeSetting, contouredValueState.oscillationType, Contour.kConstantOscillation);
+  updateSetting(contouredValue.sharedContourSettings.sweepTimeSetting, contouredValueState.sweepTimeSetting, 1);
 }
 
-module.updateFilter = function(filter, filterState) {
+function getContouredValueState(contouredValue) {
+  var contouredValueState = {};
+
+  contouredValueState.currentContour = contouredValue.currentContourSetting.value;
+  contouredValueState.initialValue = contouredValue.sharedContourSettings.initialValueSetting.value;
+  contouredValueState.attackTime = contouredValue.sharedContourSettings.firstStageTimeSetting.value;
+  contouredValueState.numStages = contouredValue.sharedContourSettings.numStagesSetting.value;
+  contouredValueState.intermediateStages = [];
+  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++)
+    contouredValueState.intermediateStages[i] = getIntermediateContourStageState(contouredValue.sharedContourSettings.intermediateStages[i]);
+  contouredValueState.releaseTime = contouredValue.sharedContourSettings.releaseTimeSetting.value;
+  contouredValueState.finalValue = contouredValue.sharedContourSettings.finalValueSetting.value;
+  contouredValueState.oscillationAmount = contouredValue.sharedContourSettings.oscillationAmountSetting.value;
+  contouredValueState.oscillationType = contouredValue.sharedContourSettings.oscillationWaveSetting.value;
+  contouredValueState.oscillationMaxValue = contouredValue.sharedContourSettings.oscillationMaxValueSetting.value;
+  contouredValueState.oscillationMinValue = contouredValue.sharedContourSettings.oscillationMinValueSetting.value;
+  contouredValueState.oscillationFrequency = contouredValue.sharedContourSettings.oscillationFrequencySetting.value;
+  contouredValueState.oscillationTimeConstant = contouredValue.sharedContourSettings.oscillationTimeConstantSetting.value;
+  contouredValueState.oscillationType = contouredValue.sharedContourSettings.oscillationTypeSetting.value;
+  contouredValueState.sweepTimeSetting = contouredValue.sharedContourSettings.sweepTimeSetting.value;
+
+  return contouredValueState;
+}
+
+function updateFilter(filter, filterState) {
   if (!filterState) {
     filterState = {};
   }
@@ -87,10 +114,10 @@ module.updateFilter = function(filter, filterState) {
   updateSetting(filter.typeSetting, filterState.type, filter.typeSetting.choices[0]);
   updateSetting(filter.orderSetting, filterState.order, filter.orderSetting.choices[0]);
   updateSettingWithMinDefault(filter.qSetting, filterState.q);
-  module.updateContouredValue(filter.frequencyContour, filterState.frequency);
+  updateContouredValue(filter.frequencyContour, filterState.frequency);
 }
 
-module.updateOscillator = function(oscillator, oscillatorState) {
+function updateOscillator(oscillator, oscillatorState) {
   if (!oscillatorState) {
     oscillatorState = {};
   }
@@ -99,15 +126,24 @@ module.updateOscillator = function(oscillator, oscillatorState) {
   updateSetting(oscillator.octaveOffsetSetting, oscillatorState.octaveOffset, 0);
   updateSetting(oscillator.noteOffsetSetting, oscillatorState.noteOffset, 0);
   updateSetting(oscillator.detuneSetting, oscillatorState.detune, 0);
-  module.updateContouredValue(oscillator.gainContour, oscillatorState.gain);
+  updateContouredValue(oscillator.gainContour, oscillatorState.gain);
 }
 
-module.updatePitch = function(pitch, pitchState){
+function updatePitch(pitch, pitchState){
   if (!pitchState) {
     pitchState = {};
   }
   updateSetting(pitch.unitsSetting, pitchState.units, AudioConstants.kSemitones);
-  module.updateContouredValue(pitch.contour, pitchState.contour);
+  updateContouredValue(pitch.contour, pitchState.contour);
+}
+
+function getPitchState(pitch) {
+  var pitchState = {};
+
+  pitchState.units = pitch.unitsSetting.value;
+  pitchState.contour = getContouredValueState(pitch.contour);
+
+  return pitchState;
 }
 
 module.updateInstrument = function(instrument, instrumentState) {
@@ -115,14 +151,22 @@ module.updateInstrument = function(instrument, instrumentState) {
     reportError('instrumentState undefined');
     return;
   }
-  module.updatePitch(instrument.pitch, instrumentState.pitch);
+  updatePitch(instrument.pitch, instrumentState.pitch);
   for (var i = 0; i < instrument.oscillators.length; i++) {
-    module.updateOscillator(instrument.oscillators[i], instrumentState.oscillators[i]);
+    updateOscillator(instrument.oscillators[i], instrumentState.oscillators[i]);
   }
   for (var i = 0; i < instrument.filters.length; i++) {
-    module.updateFilter(instrument.filters[i], instrumentState.filters[i]);
+    updateFilter(instrument.filters[i], instrumentState.filters[i]);
   }
-  module.updateContouredValue(instrument.envelopeContour, instrumentState.envelope);
+  updateContouredValue(instrument.envelopeContour, instrumentState.envelope);
+}
+
+module.getInstrumentState = function(instrument) {
+  var instrumentState = {};
+
+  instrumentState.pitch = getPitchState(instrument.pitch);
+
+  return instrumentState;
 }
 
 return module;

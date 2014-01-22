@@ -136,6 +136,8 @@ function init() {
   });
   gTestButton.setCurrentTime(0);
 
+  new InstrumentPersistUI.UI(document.getElementById('saveButton'), gInstrument);  
+
   chrome.storage.local.remove(kDeadKeys);
   chrome.storage.local.get(kSelectedCategoryKey, function(items) {
     var selectedID = items[kSelectedCategoryKey];

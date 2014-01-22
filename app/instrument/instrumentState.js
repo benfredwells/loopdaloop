@@ -117,6 +117,18 @@ function updateFilter(filter, filterState) {
   updateContouredValue(filter.frequencyContour, filterState.frequency);
 }
 
+function getFilterState(filter) {
+  var filterState = {};
+
+  filterState.enabled = filter.enabledSetting.value;
+  filterState.type = filter.typeSetting.value;
+  filterState.order = filter.orderSetting.value;
+  filterState.q = filter.qSetting.value;
+  filterState.frequency = getContouredValueState(filter.frequencyContour);
+
+  return filterState;
+}
+
 function updateOscillator(oscillator, oscillatorState) {
   if (!oscillatorState) {
     oscillatorState = {};
@@ -127,6 +139,19 @@ function updateOscillator(oscillator, oscillatorState) {
   updateSetting(oscillator.noteOffsetSetting, oscillatorState.noteOffset, 0);
   updateSetting(oscillator.detuneSetting, oscillatorState.detune, 0);
   updateContouredValue(oscillator.gainContour, oscillatorState.gain);
+}
+
+function getOscillatorState(oscillator) {
+  var oscillatorState = {};
+
+  oscillatorState.enabled = oscillator.enabledSetting.value;
+  oscillatorState.type = oscillator.typeSetting.value;
+  oscillatorState.octaveOffset = oscillator.octaveOffsetSetting.value;
+  oscillatorState.noteOffset = oscillator.noteOffsetSetting.value;
+  oscillatorState.detune = oscillator.detuneSetting.value;
+  oscillatorState.gain = getContouredValueState(oscillator.gainContour);
+
+  return oscillatorState;
 }
 
 function updatePitch(pitch, pitchState){
@@ -165,6 +190,15 @@ module.getInstrumentState = function(instrument) {
   var instrumentState = {};
 
   instrumentState.pitch = getPitchState(instrument.pitch);
+  instrumentState.oscillators = [];
+  for (var i = 0; i < instrument.oscillators.length; i++) {
+    instrumentState.oscillators[i] = getOscillatorState(instrument.oscillators[i]);
+  }
+  instrumentState.filters = [];
+  for (var i = 0; i < instrument.filters.length; i++) {
+    instrumentState.filters[i] = getFilterState(instrument.filters[i]);
+  }
+  instrumentState.envelope = getContouredValueState(instrument.envelopeContour)
 
   return instrumentState;
 }

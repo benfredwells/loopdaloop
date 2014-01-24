@@ -91,7 +91,7 @@ function getContouredValueState(contouredValue) {
   contouredValueState.numStages = contouredValue.sharedContourSettings.numStagesSetting.value;
   contouredValueState.intermediateStages = [];
   for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++)
-    contouredValueState.intermediateStages[i] = getIntermediateContourStageState(contouredValue.sharedContourSettings.intermediateStages[i]);
+    contouredValueState.intermediateStages.push(getIntermediateContourStageState(contouredValue.sharedContourSettings.intermediateStages[i]));
   contouredValueState.releaseTime = contouredValue.sharedContourSettings.releaseTimeSetting.value;
   contouredValueState.finalValue = contouredValue.sharedContourSettings.finalValueSetting.value;
   contouredValueState.oscillationAmount = contouredValue.sharedContourSettings.oscillationAmountSetting.value;
@@ -192,11 +192,11 @@ module.getInstrumentState = function(instrument) {
   instrumentState.pitch = getPitchState(instrument.pitch);
   instrumentState.oscillators = [];
   for (var i = 0; i < instrument.oscillators.length; i++) {
-    instrumentState.oscillators[i] = getOscillatorState(instrument.oscillators[i]);
+    instrumentState.oscillators.push(getOscillatorState(instrument.oscillators[i]));
   }
   instrumentState.filters = [];
   for (var i = 0; i < instrument.filters.length; i++) {
-    instrumentState.filters[i] = getFilterState(instrument.filters[i]);
+    instrumentState.filters.push(getFilterState(instrument.filters[i]);
   }
   instrumentState.envelope = getContouredValueState(instrument.envelopeContour)
 

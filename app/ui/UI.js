@@ -49,6 +49,21 @@ module.Panel = function(container) {
 
 module.Panel.prototype = Object.create(module.Control.prototype);
 
+module.Button = function(container, onclick, caption) {
+  module.Control.call(this, container);
+
+  this.div.classList.add('button');
+
+  this.textDiv = document.createElement('div');
+  this.textDiv.classList.add('buttonText');
+  this.textDiv.innerHTML = caption;
+  this.div.appendChild(this.textDiv);
+
+  this.div.onclick = onclick;
+}
+
+module.Button.prototype = Object.create(module.Control.prototype);
+
 return module;
 
 })();

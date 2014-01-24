@@ -12,6 +12,11 @@ div {
   margin-bottom: 6px;
 }
 
+/* TODO: remove div with id instrumentPersist and merge into container. */
+#instrumentPersist {
+  display: inline-block;
+}
+
 .instrumentSelect {
   height: 28px;
   width: 256px;
@@ -44,8 +49,12 @@ div {
   width: 75px;
 }
 
-.persistButton {
-  width: 70px;
+#saveButton {
+  width: 60px;
+}
+
+#saveAsButton {
+  width: 80px;
 }
 
 .buttonText {

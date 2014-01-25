@@ -2,7 +2,7 @@ var gClassic =
 
 {
   "name": "Classic",
-  "state":
+  "instrumentState":
   {
     "pitch": {
       "units": "semitone",

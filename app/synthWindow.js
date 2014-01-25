@@ -66,7 +66,7 @@ function init() {
   gainNode.connect(compressor);
   gInstrument = new Instrument.Instrument(gContext, gainNode);
   gSavedInstruments = new SavedInstruments.Manager();
-  InstrumentState.updateInstrument(gInstrument, gSavedInstruments.default.state);
+  InstrumentState.updateInstrument(gInstrument, gSavedInstruments.default.instrumentState);
 
   // Instrument UI setup
   var categoriesEl = document.getElementById('categories');

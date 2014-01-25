@@ -2,7 +2,7 @@ var gBassline =
 
 {
   "name": "Bassline",
-  "state":
+  "instrumentState":
   {
     "pitch": {
       "units": "octave",

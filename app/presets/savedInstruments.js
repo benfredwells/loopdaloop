@@ -4,16 +4,16 @@ SavedInstruments = (function() {
 
 var module = {}
 
-var SavedInstrument = function(name, isPreset, state) {
+var SavedInstrument = function(name, isPreset, instrumentState) {
   this.name = name;
   this.isPreset = isPreset;
-  this.state = state;
+  this.instrumentState = instrumentState;
 }
 
 module.Manager = function() {
   this.presets = [];
-  this.presets.push(new SavedInstrument(gClassic.name, true, gClassic.state));
-  this.presets.push(new SavedInstrument(gBassline.name, true, gBassline.state));
+  this.presets.push(new SavedInstrument(gClassic.name, true, gClassic.instrumentState));
+  this.presets.push(new SavedInstrument(gBassline.name, true, gBassline.instrumentState));
   this.default = this.presets[0];
 }
 

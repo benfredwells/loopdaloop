@@ -196,7 +196,7 @@ module.getInstrumentState = function(instrument) {
   }
   instrumentState.filters = [];
   for (var i = 0; i < instrument.filters.length; i++) {
-    instrumentState.filters.push(getFilterState(instrument.filters[i]);
+    instrumentState.filters.push(getFilterState(instrument.filters[i]));
   }
   instrumentState.envelope = getContouredValueState(instrument.envelopeContour)
 

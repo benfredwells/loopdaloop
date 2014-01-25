@@ -9,7 +9,12 @@ module.Default = function() {
     pitch: {
       contour: { 
         currentContour: 'flat',
-        initialValue: 0,
+        initialValue: -0.3,
+        intermediateStages: [
+          {
+            beginValue: 0
+          }
+        ],
         sustainValue: 0,
         finalValue: 0,
         oscillationMinValue: -0.3,
@@ -19,14 +24,8 @@ module.Default = function() {
     },
     oscillators: [
       {
-        type: 'sine',
+        type: 'sawtooth',
         enabled: true
-      },
-      {
-        type: 'square',
-        enabled: true,
-        octaveOffset: 1,
-        noteOffset: 5
       }
     ],
     filters: [

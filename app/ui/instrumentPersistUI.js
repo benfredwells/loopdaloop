@@ -27,6 +27,7 @@ module.UI = function(parentDiv, instrument, savedInstruments) {
       row.onchange();
   }*/
 
+  var ui = this;
   var save = function(event) {ui.save(event)};
   (new UI.Button(this.div, save, Strings.kSave)).div.id = 'saveButton';
   (new UI.Button(this.div, null, Strings.kSaveAs)).div.id = 'saveAsButton';

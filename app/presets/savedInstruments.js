@@ -12,8 +12,9 @@ var SavedInstrument = function(name, isPreset, state) {
 
 module.Manager = function() {
   this.presets = [];
-  this.presets.push(new SavedInstrument('Classic', true, null));
-  this.presets.push(new SavedInstrument('Sawtooth Bass', true, null));
+  this.presets.push(new SavedInstrument(gClassic.name, true, gClassic.state));
+  this.presets.push(new SavedInstrument(gBassline.name, true, gBassline.state));
+  this.default = this.presets[0];
 }
 
 return module;

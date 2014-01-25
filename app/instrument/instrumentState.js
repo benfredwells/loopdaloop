@@ -73,7 +73,7 @@ function updateContouredValue(contouredValue, contouredValueState) {
   updateSettingWithMinDefault(contouredValue.sharedContourSettings.releaseTimeSetting, contouredValueState.releaseTime);
   updateSettingWithMinDefault(contouredValue.sharedContourSettings.finalValueSetting, contouredValueState.finalValue);
   updateSettingWithMidDefault(contouredValue.sharedContourSettings.oscillationAmountSetting, contouredValueState.oscillationAmount);
-  updateSetting(contouredValue.sharedContourSettings.oscillationWaveSetting, contouredValueState.oscillationType, AudioConstants.kSineWave);
+  updateSetting(contouredValue.sharedContourSettings.oscillationWaveSetting, contouredValueState.oscillationWave, AudioConstants.kSineWave);
   updateSettingWithMaxDefault(contouredValue.sharedContourSettings.oscillationMaxValueSetting, contouredValueState.oscillationMaxValue);
   updateSettingWithMinDefault(contouredValue.sharedContourSettings.oscillationMinValueSetting, contouredValueState.oscillationMinValue);
   updateSettingWithRatioedDefault(contouredValue.sharedContourSettings.oscillationFrequencySetting, contouredValueState.oscillationFrequency, 0.02);
@@ -95,7 +95,7 @@ function getContouredValueState(contouredValue) {
   contouredValueState.releaseTime = contouredValue.sharedContourSettings.releaseTimeSetting.value;
   contouredValueState.finalValue = contouredValue.sharedContourSettings.finalValueSetting.value;
   contouredValueState.oscillationAmount = contouredValue.sharedContourSettings.oscillationAmountSetting.value;
-  contouredValueState.oscillationType = contouredValue.sharedContourSettings.oscillationWaveSetting.value;
+  contouredValueState.oscillationWave = contouredValue.sharedContourSettings.oscillationWaveSetting.value;
   contouredValueState.oscillationMaxValue = contouredValue.sharedContourSettings.oscillationMaxValueSetting.value;
   contouredValueState.oscillationMinValue = contouredValue.sharedContourSettings.oscillationMinValueSetting.value;
   contouredValueState.oscillationFrequency = contouredValue.sharedContourSettings.oscillationFrequencySetting.value;

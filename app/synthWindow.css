@@ -8,13 +8,9 @@ div {
   margin: 0px;
 }
 
-.instrumentPersist {
-  margin-bottom: 6px;
-}
-
-/* TODO: remove div with id instrumentPersist and merge into container. */
 #instrumentPersist {
   display: inline-block;
+  margin-bottom: 6px;
 }
 
 .instrumentSelect {

@@ -6,6 +6,7 @@ var gContext = null;
 var gCurrentNote = null;
 var gInstrumentUIs = [];
 var gInstrument = null;
+var gSavedInstruments = null;
 
 var kOutputGain = 0.05;
 
@@ -64,6 +65,7 @@ function init() {
   gainNode.gain.value = kOutputGain;
   gainNode.connect(compressor);
   gInstrument = new Instrument.Instrument(gContext, gainNode);
+  gSavedInstruments = new SavedInstruments.Manager();
   InstrumentState.updateInstrument(gInstrument, DefaultInstrumentState.Default());
 
   // Instrument UI setup
@@ -136,7 +138,7 @@ function init() {
   });
   gTestButton.setCurrentTime(0);
 
-  new InstrumentPersistUI.UI(document.getElementById('instrumentPersist'), gInstrument);  
+  new InstrumentPersistUI.UI(document.getElementById('instrumentPersist'), gInstrument, gSavedInstruments);  
 
   chrome.storage.local.remove(kDeadKeys);
   chrome.storage.local.get(kSelectedCategoryKey, function(items) {

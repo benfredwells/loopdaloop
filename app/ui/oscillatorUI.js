@@ -83,7 +83,7 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
 
   var ui = this;
   var changeHandler = function() {
-    ui.updateDisplay_();
+    ui.updateDisplay();
   }
   var sizeChangeHandler = function() {
     if (ui.onsizechange)
@@ -107,11 +107,12 @@ module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl,
 
 module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
-module.UI.prototype.updateDisplay_ = function() {
+module.UI.prototype.updateDisplay = function() {
   this.enablePanel_.setEnabled(this.oscillator_.enabledSetting.value);;
   this.updateIcon();
   this.visualizer_.drawVisualization();
   this.gainContourPanel.drawContour();
+  CategoryUI.UI.prototype.updateDisplay.call(this);
 }
 
 module.UI.prototype.updateIcon = function() {
@@ -133,13 +134,13 @@ module.UI.prototype.setCurrentTime = function(time, noteDuration, releaseTime) {
   this.gainContourPanel.setCurrentTime(time, noteDuration, releaseTime);
   this.visualizer_.setCurrentTime(time, noteDuration, releaseTime);
   if (this.isSelected())
-    this.updateDisplay_();
+    this.updateDisplay();
 }
 
 module.UI.prototype.setSelected = function(selected) {
   CategoryUI.UI.prototype.setSelected.call(this, selected);
   if (selected) {
-    this.updateDisplay_();
+    this.updateDisplay();
   }
 }
 

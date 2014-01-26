@@ -99,7 +99,7 @@ module.ContourTypePanel_.prototype.setVisible = function(visible) {
   UI.Panel.prototype.setVisible.call(this, visible);
   if (visible) {
     this.children.forEach(function(row) {
-      row.updateControl();
+      row.updateDisplay();
     });
   }
 }
@@ -351,6 +351,12 @@ module.ContourPanel.prototype.setCurrentTime = function(currentTime, noteDuratio
 
 module.ContourPanel.prototype.drawContour = function() {
   this.visualizer_.drawContour();
+}
+
+module.ContourPanel.prototype.updateDisplay = function() {
+  UI.Panel.prototype.updateDisplay.call(this);
+  this.drawContour();
+  this.showHideContours_();
 }
 
 return module;

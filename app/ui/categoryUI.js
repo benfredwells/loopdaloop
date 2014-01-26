@@ -156,6 +156,11 @@ module.UI.prototype.updateIcon = function() {
   // By default do nothing.
 }
 
+module.UI.prototype.updateDisplay = function() {
+  this.updateIcon();
+  this.settings.updateDisplay();
+}
+
 return module;
 
 })();

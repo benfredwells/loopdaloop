@@ -68,7 +68,7 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
 
   var ui = this;
   var changeHandler = function() {
-    ui.updateDisplay_();
+    ui.updateDisplay();
   }
   var sizeChangeHandler = function() {
     if (ui.onsizechange)
@@ -93,11 +93,12 @@ module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ont
 
 module.UI.prototype = Object.create(CategoryUI.UI.prototype);
 
-module.UI.prototype.updateDisplay_ = function() {
+module.UI.prototype.updateDisplay = function() {
   this.enablePanel_.setEnabled(this.filter_.enabledSetting.value);;
   this.updateIcon();
   this.visualizer_.drawVisualization();
   this.frequencyContourPanel.drawContour();
+  CategoryUI.UI.prototype.updateDisplay.call(this);
 }
 
 module.UI.prototype.updateIcon = function() {
@@ -117,13 +118,13 @@ module.UI.prototype.setCurrentTime = function(time, noteDuration, releaseTime) {
   this.frequencyContourPanel.setCurrentTime(time, noteDuration, releaseTime);
   this.visualizer_.setCurrentTime(time, noteDuration, releaseTime);
   if (this.isSelected())
-    this.updateDisplay_();
+    this.updateDisplay();
 }
 
 module.UI.prototype.setSelected = function(selected) {
   CategoryUI.UI.prototype.setSelected.call(this, selected);
   if (selected) {
-    this.updateDisplay_();
+    this.updateDisplay();
   }
 }
 

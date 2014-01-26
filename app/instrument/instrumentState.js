@@ -176,7 +176,6 @@ module.updateInstrument = function(instrument, instrumentState) {
     reportError('instrumentState undefined');
     return;
   }
-  console.log(instrumentState);
   updatePitch(instrument.pitch, instrumentState.pitch);
   for (var i = 0; i < instrument.oscillators.length; i++) {
     updateOscillator(instrument.oscillators[i], instrumentState.oscillators[i]);

@@ -43,6 +43,12 @@ module.Control.prototype.isEnabled = function() {
   return this.enabled_;
 }
 
+module.Control.prototype.updateDisplay = function() {
+  this.children.forEach(function(child) {
+    child.updateDisplay();
+  });
+}
+
 module.Panel = function(container) {
   module.Control.call(this, container);
 }

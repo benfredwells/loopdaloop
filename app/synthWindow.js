@@ -131,14 +131,20 @@ function init() {
   var headerEl = document.getElementById('header');
   gTestButton = new TestButton.Button(headerEl, gInstrument, gContext, testNoteTimeChange);
 
-  gInstrumentUIs.forEach(function (ui) {
+  gInstrumentUIs.forEach(function(ui) {
     ui.onselect = categorySelected;
     ui.onsizechange = categorySizeChanged;
     ui.setCurrentTime(0, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
   });
   gTestButton.setCurrentTime(0);
 
-  new InstrumentPersistUI.UI(document.getElementById('instrumentPersist'), gInstrument, gSavedInstruments);  
+  var instrumentChanged = function() {
+    gInstrumentUIs.forEach(function(ui) {
+      ui.updateDisplay();
+    });
+    updateSize();
+  };
+  new InstrumentPersistUI.UI(document.getElementById('instrumentPersist'), gInstrument, gSavedInstruments, instrumentChanged); 
 
   chrome.storage.local.remove(kDeadKeys);
   chrome.storage.local.get(kSelectedCategoryKey, function(items) {

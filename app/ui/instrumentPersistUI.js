@@ -4,11 +4,12 @@ InstrumentPersistUI = (function() {
 
 var module = {};
 
-module.UI = function(parentDiv, instrument, savedInstruments) {
+module.UI = function(parentDiv, instrument, savedInstruments, onchange) {
   UI.Control.call(this, parentDiv);
 
   this.instrument_ = instrument;
   this.savedInstruments_ = savedInstruments;
+  this.onchange = onchange;
 
   this.select = document.createElement('select');
   this.select.classList.add('instrumentSelect');
@@ -37,6 +38,8 @@ module.UI.prototype.save = function(event) {
 module.UI.prototype.updateInstrument = function() {
   var savedInstrument = this.savedInstruments_.presets[this.select.value];
   InstrumentState.updateInstrument(this.instrument_, savedInstrument.instrumentState);
+  if (this.onchange)
+    this.onchange();
 }
 
 return module;

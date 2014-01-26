@@ -32,6 +32,7 @@ var kDefaultNoteDuration = 2;
 var lastNoteDuration = kDefaultNoteDuration;
 
 var gTestButton = null;
+var gInstrumentPersistUI = null;
 
 function visualizationTimeChange(newTime) {
   if (newTime > lastNoteDuration + gInstrument.envelopeContour.releaseTime()) {
@@ -65,8 +66,6 @@ function init() {
   gainNode.gain.value = kOutputGain;
   gainNode.connect(compressor);
   gInstrument = new Instrument.Instrument(gContext, gainNode);
-  gSavedInstruments = new SavedInstruments.Manager();
-  InstrumentState.updateInstrument(gInstrument, gSavedInstruments.default.instrumentState);
 
   // Instrument UI setup
   var categoriesEl = document.getElementById('categories');
@@ -144,7 +143,15 @@ function init() {
     });
     updateSize();
   };
-  new InstrumentPersistUI.UI(document.getElementById('instrumentPersist'), gInstrument, gSavedInstruments, instrumentChanged); 
+  gInstrumentPersistUI = new InstrumentPersistUI.UI(document.getElementById('instrumentPersist'),
+                                                    gInstrument, instrumentChanged); 
+
+  var initializeInstrument = function() {
+    InstrumentState.updateInstrument(gInstrument, gSavedInstruments.default.instrumentState);
+    instrumentChanged();
+    gInstrumentPersistUI.initialize(gSavedInstruments);
+  };
+  gSavedInstruments = new SavedInstruments.Manager(initializeInstrument);
 
   chrome.storage.local.remove(kDeadKeys);
   chrome.storage.local.get(kSelectedCategoryKey, function(items) {

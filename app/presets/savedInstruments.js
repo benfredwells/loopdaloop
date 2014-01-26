@@ -10,11 +10,20 @@ var SavedInstrument = function(name, isPreset, instrumentState) {
   this.instrumentState = instrumentState;
 }
 
-module.Manager = function() {
+module.Manager = function(onInstrumentsLoaded) {
   this.presets = [];
-  this.presets.push(new SavedInstrument(gClassic.name, true, gClassic.instrumentState));
-  this.presets.push(new SavedInstrument(gBassline.name, true, gBassline.instrumentState));
-  this.default = this.presets[0];
+  this.onInstrumentsLoaded = onInstrumentsLoaded;
+  this.loadPresets();
+}
+
+module.Manager.prototype.loadPresets = function() {
+  var manager = this;
+  chrome.runtime.getPackageDirectoryEntry(function(entry) {
+    manager.presets.push(new SavedInstrument(gClassic.name, true, gClassic.instrumentState));
+    manager.presets.push(new SavedInstrument(gBassline.name, true, gBassline.instrumentState));
+    manager.default = manager.presets[0];
+    manager.onInstrumentsLoaded();
+  });
 }
 
 return module;

@@ -14,6 +14,9 @@ module.UI = function(parentDiv, instrument, onchange) {
   this.select = document.createElement('select');
   this.select.classList.add('instrumentSelect');
   this.div.appendChild(this.select);
+  var option = document.createElement('option');
+  option.text = Strings.kLoading;
+  this.select.add(option);
 
   var ui = this;
   this.select.onchange = function() {ui.updateInstrument_()};
@@ -38,6 +41,9 @@ module.UI.prototype.updateInstrument_ = function() {
 
 module.UI.prototype.initialize = function(savedInstruments) {
   this.savedInstruments_ = savedInstruments;
+  while(this.select.options.length)
+    this.select.remove(0);
+
   for (var i = 0; i < this.savedInstruments_.presets.length; i++) {
     var option = document.createElement('option');
     option.value = i;

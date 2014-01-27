@@ -17,6 +17,7 @@ module.kFrequencyFormatter = new module.Formatter('', ' Hz');
 
 module.kSave = 'Save';
 module.kSaveAs = 'Save As...';
+module.kLoading = 'Loading';
 
 module.kEnabled = 'Enabled';
 module.kType = 'Type';

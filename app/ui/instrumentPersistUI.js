@@ -23,6 +23,8 @@ module.UI = function(parentDiv, instrument, onchange) {
   var save = function(event) {ui.save_(event)};
   (new UI.Button(this.div, save, Strings.kSave)).div.id = 'saveButton';
   (new UI.Button(this.div, null, Strings.kSaveAs)).div.id = 'saveAsButton';
+
+  this.select.disabled = true;
 }
 
 module.UI.prototype = Object.create(UI.Control.prototype);
@@ -43,6 +45,7 @@ module.UI.prototype.initialize = function(savedInstruments) {
   this.savedInstruments_ = savedInstruments;
   while(this.select.options.length)
     this.select.remove(0);
+  this.select.disabled = false;
 
   for (var i = 0; i < this.savedInstruments_.presets.length; i++) {
     var option = document.createElement('option');

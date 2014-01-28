@@ -1,7 +1,6 @@
-var gClassic = 
-
 {
   "name": "Classic",
+  "default": true,
   "instrumentState":
   {
     "pitch": {

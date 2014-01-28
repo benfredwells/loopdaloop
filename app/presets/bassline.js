@@ -1,5 +1,3 @@
-var gBassline =
-
 {
   "name": "Bassline",
   "instrumentState":

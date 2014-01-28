@@ -43,50 +43,60 @@ function errorHandler(e) {
   console.log('Error: ' + msg);
 }
 
+function readFile(fileEntry, callback) {
+  fileEntry.file(function(file) {
+    var fileReader = new FileReader();
+
+    fileReader.onloadend = function(e) {
+      callback(this.result);
+    };
+
+    fileReader.readAsText(file);
+  }, errorHandler);
+}
+
+function forEachEntry(directoryEntry, callback, then) {
+  var entries = [];
+  var reader = directoryEntry.createReader();
+
+  var handleEachEntry = function() {
+    if (!entries.length) {
+      then();
+      return;
+    }
+
+    callback(entries.shift(), handleEachEntry);
+  };
+
+  var readEntries = function() {
+    reader.readEntries (function(results) {
+      if (!results.length) {
+        handleEachEntry();
+      } else {
+        entries = entries.concat(results);
+        readEntries();
+      }
+    }, errorHandler);
+  };
+
+  readEntries();
+}
+
 module.Manager.prototype.loadPresets = function() {
   var manager = this;
   chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
     packageEntry.getDirectory('presets', {create: false}, function(presetsEntry) {
-      var presetsReader = presetsEntry.createReader();
-      var fileEntries = [];
-
-      var addInstrument = function(instrumentText) {
-        var fromJSON = JSON.parse(instrumentText);
-        manager.presets.push(new SavedInstrument(fromJSON.name, true, fromJSON.instrumentState));
-        if (fromJSON.default)
-          manager.default = manager.presets[manager.presets.length-1];
-      }
-
-      var processNextFile = function() {
-        if (!fileEntries.length) {
-          manager.onInstrumentsLoaded();
-          return;
-        }
-        var fileEntry = fileEntries.shift();
-        fileEntry.file(function(file) {
-          var fileReader = new FileReader();
- 
-          fileReader.onloadend = function(e) {
-            addInstrument(this.result);
-            processNextFile();
-          };
- 
-          fileReader.readAsText(file);
-        }, errorHandler);
+      var processEntry = function(entry, then) {
+        readFile(entry, function(text) {
+          var fromJSON = JSON.parse(text);
+          manager.presets.push(new SavedInstrument(fromJSON.name, true, fromJSON.instrumentState));
+          if (fromJSON.default)
+            manager.default = manager.presets[manager.presets.length-1];
+          then();
+        });
       };
 
-      var readFileEntries = function() {
-        presetsReader.readEntries (function(results) {
-          if (!results.length) {
-            processNextFile();
-          } else {
-            fileEntries = fileEntries.concat(results);
-            readFileEntries();
-          }
-        }, errorHandler);
-      };
-
-      readFileEntries();
+      forEachEntry(presetsEntry, processEntry, manager.onInstrumentsLoaded);
     });
   });
 }

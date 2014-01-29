@@ -16,78 +16,12 @@ module.Manager = function(onInstrumentsLoaded) {
   this.loadPresets();
 }
 
-function errorHandler(e) {
-  var msg = '';
-
-  switch (e.code) {
-    case FileError.QUOTA_EXCEEDED_ERR:
-      msg = 'QUOTA_EXCEEDED_ERR';
-      break;
-    case FileError.NOT_FOUND_ERR:
-      msg = 'NOT_FOUND_ERR';
-      break;
-    case FileError.SECURITY_ERR:
-      msg = 'SECURITY_ERR';
-      break;
-    case FileError.INVALID_MODIFICATION_ERR:
-      msg = 'INVALID_MODIFICATION_ERR';
-      break;
-    case FileError.INVALID_STATE_ERR:
-      msg = 'INVALID_STATE_ERR';
-      break;
-    default:
-      msg = 'Unknown Error';
-      break;
-  };
-
-  console.log('Error: ' + msg);
-}
-
-function readFile(fileEntry, callback) {
-  fileEntry.file(function(file) {
-    var fileReader = new FileReader();
-
-    fileReader.onloadend = function(e) {
-      callback(this.result);
-    };
-
-    fileReader.readAsText(file);
-  }, errorHandler);
-}
-
-function forEachEntry(directoryEntry, callback, then) {
-  var entries = [];
-  var reader = directoryEntry.createReader();
-
-  var handleEachEntry = function() {
-    if (!entries.length) {
-      then();
-      return;
-    }
-
-    callback(entries.shift(), handleEachEntry);
-  };
-
-  var readEntries = function() {
-    reader.readEntries (function(results) {
-      if (!results.length) {
-        handleEachEntry();
-      } else {
-        entries = entries.concat(results);
-        readEntries();
-      }
-    }, errorHandler);
-  };
-
-  readEntries();
-}
-
 module.Manager.prototype.loadPresets = function() {
   var manager = this;
   chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
     packageEntry.getDirectory('presets', {create: false}, function(presetsEntry) {
       var processEntry = function(entry, then) {
-        readFile(entry, function(text) {
+        FileUtil.readFile(entry, function(text) {
           var fromJSON = JSON.parse(text);
           manager.presets.push(new SavedInstrument(fromJSON.name, true, fromJSON.instrumentState));
           if (fromJSON.default)
@@ -96,7 +30,7 @@ module.Manager.prototype.loadPresets = function() {
         });
       };
 
-      forEachEntry(presetsEntry, processEntry, manager.onInstrumentsLoaded);
+      FileUtil.forEachEntry(presetsEntry, processEntry, manager.onInstrumentsLoaded);
     });
   });
 }

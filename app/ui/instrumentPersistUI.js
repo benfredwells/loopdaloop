@@ -30,8 +30,7 @@ module.UI = function(parentDiv, instrument, onchange) {
 module.UI.prototype = Object.create(UI.Control.prototype);
 
 module.UI.prototype.save_ = function(event) {
-  var instrumentState = InstrumentState.getInstrumentState(this.instrument_);
-  console.log(JSON.stringify(instrumentState, null, 2));
+  this.savedInstruments_.export(this.instrument_);
 }
 
 module.UI.prototype.updateInstrument_ = function() {

@@ -9,7 +9,8 @@
     }
   },
   "permissions": [
-    "storage"
+    "storage",
+    {"fileSystem": ["write"]}
   ],
   "icons": {
     "16": "icons/icon_16.png",

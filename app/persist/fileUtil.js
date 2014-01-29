@@ -4,7 +4,7 @@ FileUtil = (function() {
 
 var module = {};
 
-function errorHandler(e) {
+module.errorHandler = function(e) {
   var msg = '';
 
   switch (e.code) {
@@ -40,7 +40,7 @@ module.readFile = function(fileEntry, callback) {
     };
 
     fileReader.readAsText(file);
-  }, errorHandler);
+  }, module.errorHandler);
 };
 
 module.forEachEntry = function(directoryEntry, callback, then) {
@@ -64,7 +64,7 @@ module.forEachEntry = function(directoryEntry, callback, then) {
         entries = entries.concat(results);
         readEntries();
       }
-    }, errorHandler);
+    }, module.errorHandler);
   };
 
   readEntries();

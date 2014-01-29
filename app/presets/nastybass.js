@@ -1,11 +1,11 @@
 {
-  "name": "Funky Bass",
+  "name": "Nasty Bass",
   "instrumentState":
   {
     "pitch": {
       "units": "octave",
       "contour": {
-        "currentContour": "sweep",
+        "currentContour": "flat",
         "initialValue": -0.3,
         "attackTime": 0.0005,
         "numStages": 3,
@@ -53,7 +53,7 @@
         "type": "sawtooth",
         "octaveOffset": 0,
         "noteOffset": 0,
-        "detune": -4,
+        "detune": -15,
         "gain": {
           "currentContour": "flat",
           "initialValue": 0,
@@ -102,7 +102,7 @@
         "type": "sawtooth",
         "octaveOffset": 0,
         "noteOffset": 0,
-        "detune": 4,
+        "detune": 15,
         "gain": {
           "currentContour": "flat",
           "initialValue": 0,
@@ -149,7 +149,7 @@
       {
         "enabled": true,
         "type": "square",
-        "octaveOffset": -1,
+        "octaveOffset": -3,
         "noteOffset": 0,
         "detune": 0,
         "gain": {
@@ -200,20 +200,20 @@
       {
         "enabled": true,
         "type": "lowpass",
-        "order": "fourth",
-        "q": 6,
+        "order": "second",
+        "q": 0,
         "frequency": {
-          "currentContour": "adsr",
-          "initialValue": 0.5,
+          "currentContour": "flat",
+          "initialValue": 1.55,
           "attackTime": 0.25167608371880046,
           "numStages": 3,
           "intermediateStages": [
             {
-              "beginValue": 7.050000000000001,
+              "beginValue": 7.2,
               "duration": 0.25167608371880046
             },
             {
-              "beginValue": 5.25,
+              "beginValue": 4.4,
               "duration": 0.0005
             },
             {
@@ -233,8 +233,8 @@
               "duration": 0.0005
             }
           ],
-          "releaseTime": 0.15898139478014903,
-          "finalValue": 0.6,
+          "releaseTime": 0.3985872651949696,
+          "finalValue": 2.65,
           "oscillationAmount": 0.5,
           "oscillationWave": "sine",
           "oscillationMaxValue": 1.3,
@@ -336,5 +336,5 @@
       "oscillationType": "constant",
       "sweepTimeSetting": 1
     }
-  } 
+  }
 }

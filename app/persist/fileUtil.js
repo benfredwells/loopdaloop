@@ -43,6 +43,16 @@ module.readFile = function(fileEntry, callback) {
   }, module.errorHandler);
 };
 
+module.writeFile = function(fileEntry, data, callback) {
+  fileEntry.createWriter(function(fileWriter) {
+    fileWriter.onwriteend = callback;
+    fileWriter.onerror = module.errorHandler;
+
+    var blob = new Blob([data]);
+    fileWriter.write(blob);
+  }, module.errorHandler);
+};
+
 module.forEachEntry = function(directoryEntry, callback, then) {
   var entries = [];
   var reader = directoryEntry.createReader();

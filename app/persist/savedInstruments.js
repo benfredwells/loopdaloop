@@ -40,17 +40,7 @@ module.Manager.prototype.export = function(instrument) {
   jsonObject.instrumentState = InstrumentState.getInstrumentState(instrument);
   var jsonText = JSON.stringify(jsonObject, null, 2);
   chrome.fileSystem.chooseEntry({type: 'saveFile'}, function(entry) {
-    entry.createWriter(function(fileWriter) {
-      fileWriter.onwriteend = function(e) {
-      };
-
-      fileWriter.onerror = function(e) {
-        console.log('Write failed: ' + e.toString());
-      };
-
-      var blob = new Blob([jsonText]);
-      fileWriter.write(blob);
-    }, FileUtil.errorHandler);
+    FileUtil.writeFile(entry, jsonText);
   });
 }
 

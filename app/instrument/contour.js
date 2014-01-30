@@ -21,36 +21,42 @@ module.kOscillationTypes = [module.kConstantOscillation,
 ////////////////////////////////////////////////////////////////////////////////
 // Contour settings shared by the different contour types.
 var IntermediateContourStage = function(valueSetting) {
-  this.beginValueSetting = valueSetting.copy();
-  this.durationSetting = new Setting.Number(kMinChangeTime, 10);
+  Setting.ModifiableGroup.call(this);
+  this.beginValueSetting = this.addModifiable(valueSetting.copy());
+  this.durationSetting = this.addModifiable(new Setting.Number(kMinChangeTime, 10));
 }
 
+IntermediateContourStage.prototype = Object.create(Setting.ModifiableGroup.prototype);
+
 var SharedContourSettings = function(valueSetting) {
+  Setting.ModifiableGroup.call(this);
   // N Stage settings
-  this.initialValueSetting = valueSetting.copy();
-  this.firstStageTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.numStagesSetting = new Setting.Number(module.kMinStages, module.kMaxStages);
+  this.initialValueSetting = this.addModifiable(valueSetting.copy());
+  this.firstStageTimeSetting = this.addModifiable(new Setting.Number(kMinChangeTime, 10));
+  this.numStagesSetting = this.addModifiable(new Setting.Number(module.kMinStages, module.kMaxStages));
   this.intermediateStages = [];
   for (var i = 0; i < module.kMaxIntermediateStageValues; i++) {
-    this.intermediateStages.push(new IntermediateContourStage(valueSetting));
+    this.intermediateStages.push(this.addModifiable(new IntermediateContourStage(valueSetting)));
   }
-  this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.finalValueSetting = valueSetting.copy;
+  this.releaseTimeSetting = this.addModifiable(new Setting.Number(kMinChangeTime, 10));
+  this.finalValueSetting = (valueSetting.copy());
   // Vanilla oscillation settings
-  this.oscillationWaveSetting = new Setting.Choice(AudioConstants.kWaveTypes);
-  this.oscillationMinValueSetting = valueSetting.copy;
-  this.oscillationMaxValueSetting = valueSetting.copy;
+  this.oscillationWaveSetting = this.addModifiable(new Setting.Choice(AudioConstants.kWaveTypes));
+  this.oscillationMinValueSetting = this.addModifiable(valueSetting.copy());
+  this.oscillationMaxValueSetting = this.addModifiable(valueSetting.copy());
   this.oscillationMaxValueSetting.value = this.oscillationMaxValueSetting.max;
   this.oscillationMinValueSetting.value = this.oscillationMinValueSetting.min;
   // N Stage oscillation settings
-  this.oscillationAmountSetting = new Setting.Number(0, 1);
+  this.oscillationAmountSetting = this.addModifiable(new Setting.Number(0, 1));
   // Shared oscillation settings
-  this.oscillationFrequencySetting = new Setting.Number(0, 20);
-  this.oscillationTimeConstantSetting = new Setting.Number(0, 10);
-  this.oscillationTypeSetting = new Setting.Choice(module.kOscillationTypes);
+  this.oscillationFrequencySetting = this.addModifiable(new Setting.Number(0, 20));
+  this.oscillationTimeConstantSetting = this.addModifiable(new Setting.Number(0, 10));
+  this.oscillationTypeSetting = this.addModifiable(new Setting.Choice(module.kOscillationTypes));
   // Sweep settings
-  this.sweepTimeSetting = new Setting.Number(kMinChangeTime, 10);
+  this.sweepTimeSetting = this.addModifiable(new Setting.Number(kMinChangeTime, 10));
 }
+
+SharedContourSettings.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Contourer interface
@@ -581,15 +587,16 @@ module.kContourTypes = [module.kFlatContour,
 ////////////////////////////////////////////////////////////////////////////////
 // Contoured value
 module.ContouredValue = function(context, valueSetting, isEnvelope) {
+  Setting.ModifiableGroup.call(this);
   this.isEnvelope = isEnvelope;
   this.min = valueSetting.min;
   this.max = valueSetting.max;
-  this.sharedContourSettings = new SharedContourSettings(valueSetting);
+  this.sharedContourSettings = this.addModifiable(new SharedContourSettings(valueSetting));
   this.context_ = context;
   if (isEnvelope)
-    this.currentContourSetting = new Setting.Choice(module.kEnvelopeContourTypes);
+    this.currentContourSetting = this.addModifiable(new Setting.Choice(module.kEnvelopeContourTypes));
   else
-    this.currentContourSetting = new Setting.Choice(module.kContourTypes);
+    this.currentContourSetting = this.addModifiable(new Setting.Choice(module.kContourTypes));
   this.contours_ = [];
   this.contoursByIdentifier = {};
   this.initContour_(module.kFlatContour, new module.FlatContour(this.sharedContourSettings, this));
@@ -600,6 +607,8 @@ module.ContouredValue = function(context, valueSetting, isEnvelope) {
   if (!isEnvelope)
     this.initContour_(module.kSweepContour, new module.SweepContour(this.sharedContourSettings, this));
 }
+
+module.ContouredValue.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {
   this.contours_.push(contour);

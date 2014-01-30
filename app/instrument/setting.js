@@ -108,7 +108,7 @@ module.ModifiableGroup.prototype.isModified = function() {
 module.ModifiableGroup.prototype.clearModified = function() {
   this.wasModified_ = false;
   this.modifiables_.forEach(function (modifiable) {
-    modifable.clearModified();
+    modifiable.clearModified();
   });
 }
 

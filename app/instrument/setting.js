@@ -4,11 +4,21 @@ Setting = (function() {
 var module = {};
 
 var Setting = function() {
-	this.value = null;
+	this.value_ = null;
+  Object.defineProperty(this, "value", {
+    enumerable: true,
+    configurable: false,
+    get: this.getValue,
+    set: this.setValue
+  });
 }
 
 Setting.prototype.setValue = function(aValue) {
-  value = aValue;
+  this.value_ = aValue;
+}
+
+Setting.prototype.getValue = function() {
+  return this.value_;
 }
 
 module.Choice = function(choices) {

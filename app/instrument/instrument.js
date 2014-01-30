@@ -10,21 +10,27 @@ var kOscillatorCount = 3;
 ////////////////////////////////////////////////////////////////////////////////
 // Pitch class
 module.Pitch = function(context) {
-  this.unitsSetting = new Setting.Choice(AudioConstants.kPitchUnits);
-  this.contour = new Contour.ContouredValue(context, new Setting.Number(-1, 1), false);
+  Setting.ModifiableGroup.call(this);
+  this.unitsSetting = this.addModifiable(new Setting.Choice(AudioConstants.kPitchUnits));
+  this.contour = this.addModifiable(new Contour.ContouredValue(context, new Setting.Number(-1, 1), false));
 }
+
+module.Pitch.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillator class
 module.Oscillator = function(context) {
+  Setting.ModifiableGroup.call(this);
   this.context_ = context;
-  this.enabledSetting = new Setting.Boolean();
-  this.typeSetting = new Setting.Choice(AudioConstants.kWaveTypes);
-  this.octaveOffsetSetting = new Setting.Number(-4, 4);
-  this.noteOffsetSetting = new Setting.Number(-8, 8);
-  this.detuneSetting = new Setting.Number(-50, 50);
-  this.gainContour = new Contour.ContouredValue(context, new Setting.Number(0, 1), false);
+  this.enabledSetting = this.addModifiable(new Setting.Boolean());
+  this.typeSetting = this.addModifiable(new Setting.Choice(AudioConstants.kWaveTypes));
+  this.octaveOffsetSetting = this.addModifiable(new Setting.Number(-4, 4));
+  this.noteOffsetSetting = this.addModifiable(new Setting.Number(-8, 8));
+  this.detuneSetting = this.addModifiable(new Setting.Number(-50, 50));
+  this.gainContour = this.addModifiable(new Contour.ContouredValue(context, new Setting.Number(0, 1), false));
 }
+
+module.Oscillator.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
 module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
   var node = Oscillator.createNode(this.context_, this.typeSetting.value);
@@ -58,13 +64,16 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note, pitch) {
 ////////////////////////////////////////////////////////////////////////////////
 // Filter class
 module.Filter = function(context) {
+  Setting.ModifiableGroup.call(this);
   this.context_ = context;
-  this.enabledSetting = new Setting.Boolean();
-  this.typeSetting = new Setting.Choice(AudioConstants.kFilterTypes);
-  this.orderSetting = new Setting.Choice(AudioConstants.kFilterOrders);
-  this.qSetting = new Setting.Number(0, 20);
-  this.frequencyContour = new Contour.ContouredValue(context, new Setting.Number(0.5, 10), false);
+  this.enabledSetting = this.addModifiable(new Setting.Boolean());
+  this.typeSetting = this.addModifiable(new Setting.Choice(AudioConstants.kFilterTypes));
+  this.orderSetting = this.addModifiable(new Setting.Choice(AudioConstants.kFilterOrders));
+  this.qSetting = this.addModifiable(new Setting.Number(0, 20));
+  this.frequencyContour = this.addModifiable(new Contour.ContouredValue(context, new Setting.Number(0.5, 10), false));
 }
+
+module.Filter.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
 module.Filter.prototype.createFilterNode_ = function(octave, note) {
   var filter = this.context_.createBiquadFilter();
@@ -117,19 +126,22 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, time, note
 ////////////////////////////////////////////////////////////////////////////////
 // Instrument class
 module.Instrument = function(context, destinationNode) {
+  Setting.ModifiableGroup.call(this);
   this.context_ = context;
-  this.pitch = new module.Pitch(context);
-  this.envelopeContour = new Contour.ContouredValue(context, new Setting.Number(0, 1), true);
+  this.pitch = this.addModifiable(new module.Pitch(context));
+  this.envelopeContour = this.addModifiable(new Contour.ContouredValue(context, new Setting.Number(0, 1), true));
   this.destinationNode_ = destinationNode;
   this.oscillators = [];
   for (var i = 0; i < kOscillatorCount; i++) {
-    this.oscillators.push(new module.Oscillator(context));
+    this.oscillators.push(this.addModifiable(new module.Oscillator(context)));
   }
   this.filters = [];
   for (var i = 0; i < kFilterCount; i++) {
-    this.filters.push(new module.Filter(context));
+    this.filters.push(this.addModifiable(new module.Filter(context)));
   }
 }
+
+module.Instrument.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
 module.Instrument.prototype.createEnvelope_ = function() {
   var gainNode = this.context_.createGainNode();

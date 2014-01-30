@@ -21,13 +21,13 @@ module.kOscillationTypes = [module.kConstantOscillation,
 ////////////////////////////////////////////////////////////////////////////////
 // Contour settings shared by the different contour types.
 var IntermediateContourStage = function(valueSetting) {
-  this.beginValueSetting = Setting.copyNumber(valueSetting);
+  this.beginValueSetting = valueSetting.copy();
   this.durationSetting = new Setting.Number(kMinChangeTime, 10);
 }
 
 var SharedContourSettings = function(valueSetting) {
   // N Stage settings
-  this.initialValueSetting = Setting.copyNumber(valueSetting);
+  this.initialValueSetting = valueSetting.copy();
   this.firstStageTimeSetting = new Setting.Number(kMinChangeTime, 10);
   this.numStagesSetting = new Setting.Number(module.kMinStages, module.kMaxStages);
   this.intermediateStages = [];
@@ -35,11 +35,11 @@ var SharedContourSettings = function(valueSetting) {
     this.intermediateStages.push(new IntermediateContourStage(valueSetting));
   }
   this.releaseTimeSetting = new Setting.Number(kMinChangeTime, 10);
-  this.finalValueSetting = Setting.copyNumber(valueSetting);
+  this.finalValueSetting = valueSetting.copy;
   // Vanilla oscillation settings
   this.oscillationWaveSetting = new Setting.Choice(AudioConstants.kWaveTypes);
-  this.oscillationMinValueSetting = Setting.copyNumber(valueSetting);
-  this.oscillationMaxValueSetting = Setting.copyNumber(valueSetting);
+  this.oscillationMinValueSetting = valueSetting.copy;
+  this.oscillationMaxValueSetting = valueSetting.copy;
   this.oscillationMaxValueSetting.value = this.oscillationMaxValueSetting.max;
   this.oscillationMinValueSetting.value = this.oscillationMinValueSetting.min;
   // N Stage oscillation settings

@@ -83,9 +83,9 @@ module.Number = function(min, max) {
 
 module.Number.prototype = Object.create(Setting.prototype);
 
-module.copyNumber = function(other) {
-  var number = new module.Number(other.min, other.max);
-  number.value = other.value;
+module.Number.prototype.copy = function() {
+  var number = new module.Number(this.min, this.max);
+  number.value = this.value;
   return number;
 }
 

@@ -11,6 +11,7 @@ module.UI = function(parentDiv, instrument, onchange) {
   this.savedInstruments_ = null;
   this.onchange = onchange;
 
+
   this.select = document.createElement('select');
   this.select.classList.add('instrumentSelect');
   this.div.appendChild(this.select);
@@ -33,14 +34,18 @@ module.UI.prototype.save_ = function(event) {
   this.savedInstruments_.export(this.instrument_);
 }
 
+module.UI.prototype.currentSavedInstrument_ = function() {
+  return this.savedInstruments_.presets[this.select.value];
+}
+
 module.UI.prototype.updateInstrument_ = function() {
-  var savedInstrument = this.savedInstruments_.presets[this.select.value];
-  savedInstrument.updateInstrument(this.instrument_);
+  this.currentSavedInstrument_().updateInstrument(this.instrument_);
   if (this.onchange)
     this.onchange();
 }
 
 module.UI.prototype.initialize = function(savedInstruments) {
+  this.instrument_.setListener(this);
   this.savedInstruments_ = savedInstruments;
   while(this.select.options.length)
     this.select.remove(0);
@@ -52,6 +57,14 @@ module.UI.prototype.initialize = function(savedInstruments) {
     option.text = this.savedInstruments_.presets[i].name;
     this.select.add(option, null);
   }
+}
+
+module.UI.prototype.onModifiedChanged = function() {
+  var suffix = '';
+  if (this.instrument_.isModified())
+    suffix = ' *';
+
+  this.select.options[this.select.value].text = this.currentSavedInstrument_().name + suffix;
 }
 
 return module;

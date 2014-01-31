@@ -35,7 +35,7 @@ module.UI.prototype.save_ = function(event) {
 
 module.UI.prototype.updateInstrument_ = function() {
   var savedInstrument = this.savedInstruments_.presets[this.select.value];
-  InstrumentState.updateInstrument(this.instrument_, savedInstrument.instrumentState);
+  savedInstrument.updateInstrument(this.instrument_);
   if (this.onchange)
     this.onchange();
 }

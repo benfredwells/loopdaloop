@@ -10,6 +10,11 @@ var SavedInstrument = function(name, isPreset, instrumentState) {
   this.instrumentState = instrumentState;
 }
 
+SavedInstrument.prototype.updateInstrument = function(instrument) {
+  InstrumentState.updateInstrument(instrument, this.instrumentState);
+  instrument.clearModified();
+}
+
 module.Manager = function(onInstrumentsLoaded) {
   this.presets = [];
   this.onInstrumentsLoaded = onInstrumentsLoaded;

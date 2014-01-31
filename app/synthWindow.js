@@ -147,7 +147,7 @@ function init() {
                                                     gInstrument, instrumentChanged); 
 
   var initializeInstrument = function() {
-    InstrumentState.updateInstrument(gInstrument, gSavedInstruments.default.instrumentState);
+    gSavedInstruments.default.updateInstrument(gInstrument);
     instrumentChanged();
     gInstrumentPersistUI.initialize(gSavedInstruments);
   };

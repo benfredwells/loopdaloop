@@ -3,9 +3,10 @@ FilterUI = (function() {
 "use strict";
 var module = {};
 
-module.FilterVisualizer_ = function(container, filter, onchange) {
+module.FilterVisualizer_ = function(container, context, filter, onchange) {
   CategoryUI.CategoryVisualizer.call(this, container, onchange);
   this.filter_ = filter;
+  this.context_ = context;
 }
 
 module.FilterVisualizer_.prototype = Object.create(CategoryUI.CategoryVisualizer.prototype);
@@ -36,7 +37,8 @@ module.FilterVisualizer_.prototype.drawVisualization = function() {
     return;
 
   var magPoints = new SVGUI.PointList();
-  var response = this.filter_.getFrequencyResponse(kFreqOctave,
+  var response = this.filter_.getFrequencyResponse(this.context_,
+                                                   kFreqOctave,
                                                    kFreqNote,
                                                    this.currentTime(),
                                                    this.noteDuration,
@@ -60,11 +62,11 @@ kOrderDescriptions[AudioConstants.kSecondOrder] = Strings.kSecondOrder;
 kOrderDescriptions[AudioConstants.kFourthOrder] = Strings.kFourthOrder;
 kOrderDescriptions[AudioConstants.kSixthOrder] = Strings.kSixthOrder;
 
-module.UI = function(id, filter, instrument, title, categoriesEl, detailsEl, ontimechange) {
+module.UI = function(id, filter, context, instrument, title, categoriesEl, detailsEl, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
   this.filter_ = filter;
 
-  this.visualizer_ = new module.FilterVisualizer_(this.titleRow.controlDiv, filter, ontimechange);
+  this.visualizer_ = new module.FilterVisualizer_(this.titleRow.controlDiv, context, filter, ontimechange);
 
   var ui = this;
   var changeHandler = function() {

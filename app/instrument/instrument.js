@@ -9,7 +9,7 @@ var kOscillatorCount = 3;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Pitch class
-module.Pitch = function(context) {
+module.Pitch = function() {
   Setting.ModifiableGroup.call(this);
   this.unitsSetting = this.addModifiable(new Setting.Choice(AudioConstants.kPitchUnits));
   this.contour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(-1, 1), false));
@@ -19,9 +19,8 @@ module.Pitch.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillator class
-module.Oscillator = function(context) {
+module.Oscillator = function() {
   Setting.ModifiableGroup.call(this);
-  this.context_ = context;
   this.enabledSetting = this.addModifiable(new Setting.Boolean());
   this.typeSetting = this.addModifiable(new Setting.Choice(AudioConstants.kWaveTypes));
   this.octaveOffsetSetting = this.addModifiable(new Setting.Number(-4, 4));
@@ -32,18 +31,18 @@ module.Oscillator = function(context) {
 
 module.Oscillator.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
-module.Oscillator.prototype.createOscillatorNode_ = function(octave, note) {
-  var node = Oscillator.createNode(this.context_, this.typeSetting.value);
+module.Oscillator.prototype.createOscillatorNode_ = function(context, octave, note) {
+  var node = Oscillator.createNode(context, this.typeSetting.value);
   node.frequency.value = ChromaticScale.frequencyForNote(octave + this.octaveOffsetSetting.value,
                                                          note + this.noteOffsetSetting.value);
   return node;
 }
 
-module.Oscillator.prototype.createNoteSection_ = function(octave, note, pitch) {
+module.Oscillator.prototype.createNoteSection_ = function(context, octave, note, pitch) {
   var section = new PlayedNote.NoteSection(null);
-  var oscillatorNode = this.createOscillatorNode_(octave, note);
+  var oscillatorNode = this.createOscillatorNode_(context, octave, note);
   section.pushOscillator(oscillatorNode);
-  var gainNode = this.context_.createGainNode();
+  var gainNode = context.createGainNode();
   section.pushNode(gainNode);
   var oscillator = this;
   var detuneValueFunction = function(value) {
@@ -53,19 +52,18 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note, pitch) {
 
     return oscillator.detuneSetting.value + value * multiplier;
   }
-  pitch.contour.currentContour().addContour(this.context_, detuneValueFunction, oscillatorNode.detune, section);
+  pitch.contour.currentContour().addContour(context, detuneValueFunction, oscillatorNode.detune, section);
   var gainValueFunction = function(value) {
     return value;
   }
-  this.gainContour.currentContour().addContour(this.context_, gainValueFunction, gainNode.gain, section)
+  this.gainContour.currentContour().addContour(context, gainValueFunction, gainNode.gain, section)
   return section;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Filter class
-module.Filter = function(context) {
+module.Filter = function() {
   Setting.ModifiableGroup.call(this);
-  this.context_ = context;
   this.enabledSetting = this.addModifiable(new Setting.Boolean());
   this.typeSetting = this.addModifiable(new Setting.Choice(AudioConstants.kFilterTypes));
   this.orderSetting = this.addModifiable(new Setting.Choice(AudioConstants.kFilterOrders));
@@ -75,33 +73,33 @@ module.Filter = function(context) {
 
 module.Filter.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
-module.Filter.prototype.createFilterNode_ = function(octave, note) {
-  var filter = this.context_.createBiquadFilter();
+module.Filter.prototype.createFilterNode_ = function(context, octave, note) {
+  var filter = context.createBiquadFilter();
   filter.type = this.typeSetting.value;
   filter.Q.value = this.qSetting.value;
   return filter;
 }
 
-module.Filter.prototype.createNoteSection_ = function(octave, note) {
+module.Filter.prototype.createNoteSection_ = function(context, octave, note) {
   var noteFrequency = ChromaticScale.frequencyForNote(octave, note);
   var frequencyValueFunction = function(value) {
     return noteFrequency * value;
   }
 
-  var filterNode = this.createFilterNode_(octave, note);
+  var filterNode = this.createFilterNode_(context, octave, note);
   var filterSection = new PlayedNote.NoteSection(filterNode);
-  this.frequencyContour.currentContour().addContour(this.context_, frequencyValueFunction, filterNode.frequency, filterSection);
+  this.frequencyContour.currentContour().addContour(context, frequencyValueFunction, filterNode.frequency, filterSection);
 
   for (var i=1; i<AudioConstants.kFilterOrderNodes[this.orderSetting.value]; i++) {
-    filterNode = this.createFilterNode_(octave, note);
+    filterNode = this.createFilterNode_(context, octave, note);
     filterSection.pushNode(filterNode);
-    this.frequencyContour.currentContour().addContour(this.context_, frequencyValueFunction, filterNode.frequency, filterSection);
+    this.frequencyContour.currentContour().addContour(context, frequencyValueFunction, filterNode.frequency, filterSection);
   }
   return filterSection;
 }
 
-module.Filter.prototype.getFrequencyResponse = function(octave, note, time, noteOnTime, harmonics, steps) {
-  var node = this.createFilterNode_(octave, note);
+module.Filter.prototype.getFrequencyResponse = function(context, octave, note, time, noteOnTime, harmonics, steps) {
+  var node = this.createFilterNode_(context, octave, note);
   // Set up buffers
   var response = {};
   response.frequencies = new Float32Array(steps);
@@ -125,50 +123,49 @@ module.Filter.prototype.getFrequencyResponse = function(octave, note, time, note
 
 ////////////////////////////////////////////////////////////////////////////////
 // Instrument class
-module.Instrument = function(context, destinationNode) {
+module.Instrument = function(destinationNode) {
   Setting.ModifiableGroup.call(this);
-  this.context_ = context;
-  this.pitch = this.addModifiable(new module.Pitch(context));
+  this.pitch = this.addModifiable(new module.Pitch());
   this.envelopeContour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(0, 1), true));
   this.destinationNode_ = destinationNode;
   this.oscillators = [];
   for (var i = 0; i < kOscillatorCount; i++) {
-    this.oscillators.push(this.addModifiable(new module.Oscillator(context)));
+    this.oscillators.push(this.addModifiable(new module.Oscillator()));
   }
   this.filters = [];
   for (var i = 0; i < kFilterCount; i++) {
-    this.filters.push(this.addModifiable(new module.Filter(context)));
+    this.filters.push(this.addModifiable(new module.Filter()));
   }
 }
 
 module.Instrument.prototype = Object.create(Setting.ModifiableGroup.prototype);
 
-module.Instrument.prototype.createEnvelope_ = function() {
-  var gainNode = this.context_.createGainNode();
+module.Instrument.prototype.createEnvelope_ = function(context) {
+  var gainNode = context.createGainNode();
   var section = new PlayedNote.NoteSection(gainNode);
   var gainValueFunction = function(value) {
     return value;
   }
-  this.envelopeContour.currentContour().addContour(this.context_, gainValueFunction, gainNode.gain, section)
+  this.envelopeContour.currentContour().addContour(context, gainValueFunction, gainNode.gain, section)
   return section;
 }
 
-module.Instrument.prototype.createPlayedNote = function(octave, note) {
-  var playedNote = new PlayedNote.Note(this.context_, this.destinationNode_);
+module.Instrument.prototype.createPlayedNote = function(context, octave, note) {
+  var playedNote = new PlayedNote.Note(context, this.destinationNode_);
   var instrument = this;
   var oscillatorSections = [];
   this.oscillators.forEach(function(oscillator) {
     if (oscillator.enabledSetting.value)
-      oscillatorSections.push(oscillator.createNoteSection_(octave, note, instrument.pitch));
+      oscillatorSections.push(oscillator.createNoteSection_(context, octave, note, instrument.pitch));
   });
   playedNote.pushSections(oscillatorSections);
   this.filters.forEach(function(filter) {
     if (filter.enabledSetting.value) {
-      var filterSection = filter.createNoteSection_(octave, note);
+      var filterSection = filter.createNoteSection_(context, octave, note);
       playedNote.pushSections([filterSection]);
     }
   });
-  playedNote.pushSections([this.createEnvelope_()]);
+  playedNote.pushSections([this.createEnvelope_(context)]);
   return playedNote;
 }
 

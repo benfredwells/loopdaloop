@@ -8,6 +8,7 @@ module.Button = function(parentDiv, instrument, context, ontimechange) {
   this.div.id = 'testButton';
   this.div.classList.add('button');
   this.instrument_ = instrument;
+  this.context_ = context;
 
   this.textDiv = document.createElement('div');
   this.textDiv.id = 'testButtonText';
@@ -71,7 +72,7 @@ module.Button.prototype.press_ = function() {
     return;
 
   this.div.classList.add('pressed');
-  this.playedNote_ = this.instrument_.createPlayedNote(kTestOctave, kTestNote);
+  this.playedNote_ = this.instrument_.createPlayedNote(this.context_, kTestOctave, kTestNote);
   this.playedNote_.noteOn(0);
 
   this.noteReleaseTime_ = this.instrument_.envelopeContour.releaseTime();

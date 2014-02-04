@@ -65,7 +65,7 @@ function init() {
   var gainNode = gContext.createGainNode();
   gainNode.gain.value = kOutputGain;
   gainNode.connect(compressor);
-  gInstrument = new Instrument.Instrument(gContext, gainNode);
+  gInstrument = new Instrument.Instrument(gainNode);
 
   // Instrument UI setup
   var categoriesEl = document.getElementById('categories');
@@ -105,6 +105,7 @@ function init() {
   gInstrumentUIs.push(new FilterUI.UI(
       kFilterAID,
       gInstrument.filters[0],
+      gContext,
       gInstrument,
       Strings.kFilter1,
       categoriesEl,
@@ -113,6 +114,7 @@ function init() {
   gInstrumentUIs.push(new FilterUI.UI(
       kFilterBID,
       gInstrument.filters[1],
+      gContext,
       gInstrument,
       Strings.kFilter2,
       categoriesEl,

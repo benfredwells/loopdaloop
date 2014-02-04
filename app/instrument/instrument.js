@@ -12,7 +12,7 @@ var kOscillatorCount = 3;
 module.Pitch = function(context) {
   Setting.ModifiableGroup.call(this);
   this.unitsSetting = this.addModifiable(new Setting.Choice(AudioConstants.kPitchUnits));
-  this.contour = this.addModifiable(new Contour.ContouredValue(context, new Setting.Number(-1, 1), false));
+  this.contour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(-1, 1), false));
 }
 
 module.Pitch.prototype = Object.create(Setting.ModifiableGroup.prototype);
@@ -27,7 +27,7 @@ module.Oscillator = function(context) {
   this.octaveOffsetSetting = this.addModifiable(new Setting.Number(-4, 4));
   this.noteOffsetSetting = this.addModifiable(new Setting.Number(-8, 8));
   this.detuneSetting = this.addModifiable(new Setting.Number(-50, 50));
-  this.gainContour = this.addModifiable(new Contour.ContouredValue(context, new Setting.Number(0, 1), false));
+  this.gainContour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(0, 1), false));
 }
 
 module.Oscillator.prototype = Object.create(Setting.ModifiableGroup.prototype);
@@ -53,11 +53,11 @@ module.Oscillator.prototype.createNoteSection_ = function(octave, note, pitch) {
 
     return oscillator.detuneSetting.value + value * multiplier;
   }
-  pitch.contour.currentContour().addContour(detuneValueFunction, oscillatorNode.detune, section);
+  pitch.contour.currentContour().addContour(this.context_, detuneValueFunction, oscillatorNode.detune, section);
   var gainValueFunction = function(value) {
     return value;
   }
-  this.gainContour.currentContour().addContour(gainValueFunction, gainNode.gain, section)
+  this.gainContour.currentContour().addContour(this.context_, gainValueFunction, gainNode.gain, section)
   return section;
 }
 
@@ -70,7 +70,7 @@ module.Filter = function(context) {
   this.typeSetting = this.addModifiable(new Setting.Choice(AudioConstants.kFilterTypes));
   this.orderSetting = this.addModifiable(new Setting.Choice(AudioConstants.kFilterOrders));
   this.qSetting = this.addModifiable(new Setting.Number(0, 20));
-  this.frequencyContour = this.addModifiable(new Contour.ContouredValue(context, new Setting.Number(0.5, 10), false));
+  this.frequencyContour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(0.5, 10), false));
 }
 
 module.Filter.prototype = Object.create(Setting.ModifiableGroup.prototype);
@@ -90,12 +90,12 @@ module.Filter.prototype.createNoteSection_ = function(octave, note) {
 
   var filterNode = this.createFilterNode_(octave, note);
   var filterSection = new PlayedNote.NoteSection(filterNode);
-  this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);
+  this.frequencyContour.currentContour().addContour(this.context_, frequencyValueFunction, filterNode.frequency, filterSection);
 
   for (var i=1; i<AudioConstants.kFilterOrderNodes[this.orderSetting.value]; i++) {
     filterNode = this.createFilterNode_(octave, note);
     filterSection.pushNode(filterNode);
-    this.frequencyContour.currentContour().addContour(frequencyValueFunction, filterNode.frequency, filterSection);
+    this.frequencyContour.currentContour().addContour(this.context_, frequencyValueFunction, filterNode.frequency, filterSection);
   }
   return filterSection;
 }
@@ -129,7 +129,7 @@ module.Instrument = function(context, destinationNode) {
   Setting.ModifiableGroup.call(this);
   this.context_ = context;
   this.pitch = this.addModifiable(new module.Pitch(context));
-  this.envelopeContour = this.addModifiable(new Contour.ContouredValue(context, new Setting.Number(0, 1), true));
+  this.envelopeContour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(0, 1), true));
   this.destinationNode_ = destinationNode;
   this.oscillators = [];
   for (var i = 0; i < kOscillatorCount; i++) {
@@ -149,7 +149,7 @@ module.Instrument.prototype.createEnvelope_ = function() {
   var gainValueFunction = function(value) {
     return value;
   }
-  this.envelopeContour.currentContour().addContour(gainValueFunction, gainNode.gain, section)
+  this.envelopeContour.currentContour().addContour(this.context_, gainValueFunction, gainNode.gain, section)
   return section;
 }
 

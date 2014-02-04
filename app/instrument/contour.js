@@ -66,7 +66,7 @@ SharedContourSettings.prototype = Object.create(Setting.ModifiableGroup.prototyp
 
 ////////////////////////////////////////////////////////////////////////////////
 // Contour interface
-//   addContour = function(valueFunction, param, noteSection)
+//   addContour = function(context, valueFunction, param, noteSection)
 //   averageValue = function(valueFunction)
 //   valueAtTime = function(time, noteOnTime) - |time| is time from when the
 //                                              note starts playing.
@@ -101,7 +101,7 @@ module.FlatContour = function(sharedSettings, contouredValue) {
   this.valueSetting = sharedSettings.intermediateStages[0].beginValueSetting;
 }
 
-module.FlatContour.prototype.addContour = function(valueFunction, param, noteSection) {
+module.FlatContour.prototype.addContour = function(context, valueFunction, param, noteSection) {
   var flatValue = valueFunction(this.valueSetting.value);
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(param, flatValue));
@@ -165,25 +165,25 @@ module.OscillatingContour.prototype.rawAmplitude_ = function() {
   return (this.maxValueSetting.value - this.minValueSetting.value) / 2;
 }
 
-module.OscillatingContour.prototype.addContour = function(valueFunction, param, noteSection) {
+module.OscillatingContour.prototype.addContour = function(context, valueFunction, param, noteSection) {
   var centerValue = valueFunction(this.rawCenterValue_());
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(param, centerValue));
   else
     param.value = centerValue;
 
-  var oscillator = Oscillator.createNode(this.contouredValue_.context_, this.waveSetting.value);
+  var oscillator = Oscillator.createNode(context, this.waveSetting.value);
   oscillator.frequency.value = this.frequencySetting.value;
   noteSection.addOscillator(oscillator);
   var lastNode = oscillator;
   if (this.typeSetting.value != module.kConstantOscillation) {
-    var growthGain = this.contouredValue_.context_.createGainNode();
+    var growthGain = context.createGainNode();
     noteSection.addContour(new module.OscillationGrowthContourer(growthGain.gain, this));
     noteSection.addNode(growthGain);
     oscillator.connect(growthGain);
     lastNode = growthGain;
   }
-  var gain = this.contouredValue_.context_.createGainNode();
+  var gain = context.createGainNode();
   var amplitudeValue = (valueFunction(this.maxValueSetting.value) - valueFunction(this.minValueSetting.value)) / 2;
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(gain.gain, amplitudeValue));
@@ -349,21 +349,21 @@ module.BaseNStageContour.prototype.oscillationTimeConstant = function() {
   return 0;
 }
 
-module.BaseNStageContour.prototype.addContour = function(valueFunction, param, noteSection) {
+module.BaseNStageContour.prototype.addContour = function(context, valueFunction, param, noteSection) {
   noteSection.addContour(new module.NStageContourer(this, param, valueFunction));
   if (!this.hasOscillation())
     return;
 
-  var oscillator = Oscillator.createNode(this.contouredValue_.context_, AudioConstants.kSineWave);
+  var oscillator = Oscillator.createNode(context, AudioConstants.kSineWave);
   oscillator.frequency.value = this.oscillationFrequency();
   noteSection.addOscillator(oscillator);
 
-  var amplitudeGain = this.contouredValue_.context_.createGainNode();
+  var amplitudeGain = context.createGainNode();
   noteSection.addContour(new module.NStageOscillationGainContourer(this, amplitudeGain.gain));
   noteSection.addNode(amplitudeGain);
   oscillator.connect(amplitudeGain);
 
-  var envelopeGain = this.contouredValue_.context_.createGainNode();
+  var envelopeGain = context.createGainNode();
   noteSection.addContour(new module.NStageContourer(this, envelopeGain.gain, valueFunction));
   noteSection.addNode(envelopeGain);
   amplitudeGain.connect(envelopeGain);
@@ -586,13 +586,12 @@ module.kContourTypes = [module.kFlatContour,
 
 ////////////////////////////////////////////////////////////////////////////////
 // Contoured value
-module.ContouredValue = function(context, valueSetting, isEnvelope) {
+module.ContouredValue = function(valueSetting, isEnvelope) {
   Setting.ModifiableGroup.call(this);
   this.isEnvelope = isEnvelope;
   this.min = valueSetting.min;
   this.max = valueSetting.max;
   this.sharedContourSettings = this.addModifiable(new SharedContourSettings(valueSetting));
-  this.context_ = context;
   if (isEnvelope)
     this.currentContourSetting = this.addModifiable(new Setting.Choice(module.kEnvelopeContourTypes));
   else

@@ -42,7 +42,7 @@ function showKeyboard() {
     gKeyboardWindow = win;
     c = gSynthWindow.contentWindow;
     win.contentWindow.gInstrument = c.gInstrument;
-    win.contentWindow.gContext = c.gContext;
+    win.contentWindow.gScene = c.gScene;
     win.onClosed.addListener(function() {
       gKeyboardWindow = null;
       if (gSynthWindow)

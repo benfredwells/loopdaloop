@@ -3,12 +3,11 @@ TestButton = (function() {
 "use strict";
 var module = {};
 
-module.Button = function(parentDiv, instrument, context, ontimechange) {
+module.Button = function(parentDiv, instrument, scene, ontimechange) {
   UI.Control.call(this, parentDiv);
   this.div.id = 'testButton';
   this.div.classList.add('button');
   this.instrument_ = instrument;
-  this.context_ = context;
 
   this.textDiv = document.createElement('div');
   this.textDiv.id = 'testButtonText';
@@ -21,7 +20,7 @@ module.Button = function(parentDiv, instrument, context, ontimechange) {
   this.shortcutSpan.innerHTML = Strings.kTestShortcut;
   this.textDiv.appendChild(this.shortcutSpan);
 
-  this.context_ = context;
+  this.scene_ = scene;
   this.ontimechange = ontimechange;
 
   this.noteOnTime_ = 0;
@@ -50,8 +49,8 @@ module.Button.prototype.resetDisplay_ = function() {
 }
 
 module.Button.prototype.updateDisplay_ = function() {
-  var timeDelta = this.context_.currentTime - this.noteOnTime_;
-  var offDelta = this.context_.currentTime - this.noteOffTime_;
+  var timeDelta = this.scene_.context.currentTime - this.noteOnTime_;
+  var offDelta = this.scene_.context.currentTime - this.noteOffTime_;
   this.noteDuration_ = timeDelta;
   if (!this.playedNote_)
     this.noteDuration_ = this.noteOffTime_ - this.noteOnTime_;
@@ -72,11 +71,11 @@ module.Button.prototype.press_ = function() {
     return;
 
   this.div.classList.add('pressed');
-  this.playedNote_ = this.instrument_.createPlayedNote(this.context_, kTestOctave, kTestNote);
+  this.playedNote_ = this.instrument_.createPlayedNote(this.scene_, kTestOctave, kTestNote);
   this.playedNote_.noteOn(0);
 
   this.noteReleaseTime_ = this.instrument_.envelopeContour.releaseTime();
-  this.noteOnTime_ = this.context_.currentTime;
+  this.noteOnTime_ = this.scene_.context.currentTime;
   this.updateDisplay_();
 }
 
@@ -86,7 +85,7 @@ module.Button.prototype.release_ = function() {
 
   this.div.classList.remove('pressed');
   if (this.playedNote_) {
-    this.noteOffTime_ = this.context_.currentTime;
+    this.noteOffTime_ = this.scene_.context.currentTime;
     this.playedNote_.noteOff(0);
     this.playedNote_ = null;
   }

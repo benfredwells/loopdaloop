@@ -123,11 +123,10 @@ module.Filter.prototype.getFrequencyResponse = function(context, octave, note, t
 
 ////////////////////////////////////////////////////////////////////////////////
 // Instrument class
-module.Instrument = function(destinationNode) {
+module.Instrument = function() {
   Setting.ModifiableGroup.call(this);
   this.pitch = this.addModifiable(new module.Pitch());
   this.envelopeContour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(0, 1), true));
-  this.destinationNode_ = destinationNode;
   this.oscillators = [];
   for (var i = 0; i < kOscillatorCount; i++) {
     this.oscillators.push(this.addModifiable(new module.Oscillator()));
@@ -150,22 +149,22 @@ module.Instrument.prototype.createEnvelope_ = function(context) {
   return section;
 }
 
-module.Instrument.prototype.createPlayedNote = function(context, octave, note) {
-  var playedNote = new PlayedNote.Note(context, this.destinationNode_);
+module.Instrument.prototype.createPlayedNote = function(scene, octave, note) {
+  var playedNote = new PlayedNote.Note(scene);
   var instrument = this;
   var oscillatorSections = [];
   this.oscillators.forEach(function(oscillator) {
     if (oscillator.enabledSetting.value)
-      oscillatorSections.push(oscillator.createNoteSection_(context, octave, note, instrument.pitch));
+      oscillatorSections.push(oscillator.createNoteSection_(scene.context, octave, note, instrument.pitch));
   });
   playedNote.pushSections(oscillatorSections);
   this.filters.forEach(function(filter) {
     if (filter.enabledSetting.value) {
-      var filterSection = filter.createNoteSection_(context, octave, note);
+      var filterSection = filter.createNoteSection_(scene.context, octave, note);
       playedNote.pushSections([filterSection]);
     }
   });
-  playedNote.pushSections([this.createEnvelope_(context)]);
+  playedNote.pushSections([this.createEnvelope_(scene.context)]);
   return playedNote;
 }
 

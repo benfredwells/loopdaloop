@@ -111,12 +111,10 @@ module.NoteSection.prototype.finishTime = function(offTime) {
 // to nasty effects occasionally.
 var kLatency = 0.02;
 
-module.Note = function(context,
-                       destinationNode) {
-  this.context_ = context;
+module.Note = function(scene) {
+  this.scene_ = scene;
   this.sections = [];
   this.currentSections = [];
-  this.destinationNode = destinationNode;
 }
 
 module.Note.prototype.pushSections = function(sectionArray) {
@@ -132,9 +130,9 @@ module.Note.prototype.pushSections = function(sectionArray) {
 
 module.Note.prototype.noteOn = function(delay) {
   var note = this;
-  var onTime = this.context_.currentTime + delay + kLatency;
+  var onTime = this.scene_.context.currentTime + delay + kLatency;
   this.currentSections.forEach(function(section) {
-    section.outputNode.connect(note.destinationNode);
+    section.outputNode.connect(note.scene_.destinationNode);
   });
   this.sections.forEach(function (section) {
     section.noteOn(onTime);
@@ -154,20 +152,20 @@ module.Note.prototype.updateFinishTime_ = function(releaseTime) {
 
 module.Note.prototype.noteOff = function(delay) {
   var thisNote = this;
-  var releaseTime = this.context_.currentTime + delay + kLatency;
+  var releaseTime = this.scene_.context.currentTime + delay + kLatency;
   thisNote.sections.forEach(function(section) {
     section.releaseTrigger(releaseTime);
   });
   this.updateFinishTime_(releaseTime);
   releasedNotes.push(this);
-  dismantleFinishedNotes(this.context);
+  dismantleFinishedNotes(this.scene_.context);
 }
 
 module.Note.prototype.isFinished = function() {
   if (!this.finishTime)
     return false;
 
-  return (this.finishTime + kLatency < this.context_.currentTime);
+  return (this.finishTime + kLatency < this.scene_.context.currentTime);
 }
 
 module.Note.prototype.dismantle = function() {

@@ -122,7 +122,7 @@ PianoKey.prototype.startPlaying = function() {
     return;
 
   this.playingNote_ = this.instrument_.createPlayedNote(
-      this.keyboard_.context_,
+      this.keyboard_.scene_,
       this.keyboard_.octave + this.octaveDelta_,
       this.note_);
   this.playingNote_.noteOn(0);
@@ -138,14 +138,14 @@ PianoKey.prototype.stopPlaying = function() {
   this.div.classList.remove('playing');
 }
 
-module.Piano = function(parentElement, context, instrument) {
+module.Piano = function(parentElement, scene, instrument) {
   UI.Control.call(this, parentElement);
 
   this.keys_ = [];
   this.mouseDown_ = false;
   this.mouseKey_ = null;
   this.touchKeys_ = [];
-  this.context_ = context;
+  this.scene_ = scene;
 
   for (var i = 0; i < kKeyShortcuts.length; i++) {
     this.keys_.push(new PianoKey(this,

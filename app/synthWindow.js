@@ -2,20 +2,14 @@
 
 // TODO: make this a class.
 
-var gContext = null;
+var gScene = null;
 var gCurrentNote = null;
 var gInstrumentUIs = [];
 var gInstrument = null;
 var gSavedInstruments = null;
 
-var kOutputGain = 0.05;
-
 var kHeightPadding = 100;
 var kWidth = 440;
-var kCompressorThreshold = -30;
-var kCompressorKnee = 10;
-var kCompressorAttack = 0.01;
-var kCompressorRelease = 1;
 
 var kPitchID = 'pitch';
 var kOscillatorAID = 'oscillatora';
@@ -55,17 +49,8 @@ function testNoteTimeChange(newTime, noteDuration, releaseTime) {
 }
 
 function init() {
-  gContext = new webkitAudioContext();
-  var compressor = gContext.createDynamicsCompressor();
-  compressor.threshold.value = kCompressorThreshold;
-  compressor.knee.value = kCompressorKnee;
-  compressor.attack.value = kCompressorAttack;
-  compressor.release.value = kCompressorRelease;
-  compressor.connect(gContext.destination);
-  var gainNode = gContext.createGainNode();
-  gainNode.gain.value = kOutputGain;
-  gainNode.connect(compressor);
-  gInstrument = new Instrument.Instrument(gainNode);
+  gScene = new Scene.Scene();
+  gInstrument = new Instrument.Instrument();
 
   // Instrument UI setup
   var categoriesEl = document.getElementById('categories');
@@ -105,7 +90,7 @@ function init() {
   gInstrumentUIs.push(new FilterUI.UI(
       kFilterAID,
       gInstrument.filters[0],
-      gContext,
+      gScene.context,
       gInstrument,
       Strings.kFilter1,
       categoriesEl,
@@ -114,7 +99,7 @@ function init() {
   gInstrumentUIs.push(new FilterUI.UI(
       kFilterBID,
       gInstrument.filters[1],
-      gContext,
+      gScene.context,
       gInstrument,
       Strings.kFilter2,
       categoriesEl,
@@ -130,7 +115,7 @@ function init() {
       visualizationTimeChange));
 
   var headerEl = document.getElementById('header');
-  gTestButton = new TestButton.Button(headerEl, gInstrument, gContext, testNoteTimeChange);
+  gTestButton = new TestButton.Button(headerEl, gInstrument, gScene, testNoteTimeChange);
 
   gInstrumentUIs.forEach(function(ui) {
     ui.onselect = categorySelected;

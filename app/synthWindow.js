@@ -27,11 +27,11 @@ var gTestButton = null;
 var gInstrumentPersistUI = null;
 
 function visualizationTimeChange(newTime) {
-  if (newTime > lastNoteDuration + gInstrument.envelopeContour.releaseTime()) {
-    newTime = lastNoteDuration + gInstrument.envelopeContour.releaseTime();
+  if (newTime > lastNoteDuration + gBackgroundPage.instrument.envelopeContour.releaseTime()) {
+    newTime = lastNoteDuration + gBackgroundPage.instrument.envelopeContour.releaseTime();
   }
   gInstrumentUIs.forEach(function (ui) {
-    ui.setCurrentTime(newTime, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
+    ui.setCurrentTime(newTime, lastNoteDuration, gBackgroundPage.instrument.envelopeContour.releaseTime());
   });
   gTestButton.setCurrentTime(newTime);
 }
@@ -52,70 +52,70 @@ function init() {
   var detailsEl = document.getElementById('details');
   gInstrumentUIs.push(new PitchUI.UI(
       kPitchID,
-      gInstrument.pitch,
-      gInstrument,
+      gBackgroundPage.instrument.pitch,
+      gBackgroundPage.instrument,
       Strings.kPitch,
       categoriesEl,
       detailsEl,
       visualizationTimeChange));
   gInstrumentUIs.push(new OscillatorUI.UI(
       kOscillatorAID,
-      gInstrument.oscillators[0],
-      gInstrument,
+      gBackgroundPage.instrument.oscillators[0],
+      gBackgroundPage.instrument,
       Strings.kOscillator1,
       categoriesEl,
       detailsEl,
       visualizationTimeChange));
   gInstrumentUIs.push(new OscillatorUI.UI(
       kOscillatorBID,
-      gInstrument.oscillators[1],
-      gInstrument,
+      gBackgroundPage.instrument.oscillators[1],
+      gBackgroundPage.instrument,
       Strings.kOscillator2,
       categoriesEl,
       detailsEl,
       visualizationTimeChange));
   gInstrumentUIs.push(new OscillatorUI.UI(
       kOscillatorCID,
-      gInstrument.oscillators[2],
-      gInstrument,
+      gBackgroundPage.instrument.oscillators[2],
+      gBackgroundPage.instrument,
       Strings.kOscillator3,
       categoriesEl,
       detailsEl,
       visualizationTimeChange));
   gInstrumentUIs.push(new FilterUI.UI(
       kFilterAID,
-      gInstrument.filters[0],
-      gScene.context,
-      gInstrument,
+      gBackgroundPage.instrument.filters[0],
+      gBackgroundPage.scene.context,
+      gBackgroundPage.instrument,
       Strings.kFilter1,
       categoriesEl,
       detailsEl,
       visualizationTimeChange));
   gInstrumentUIs.push(new FilterUI.UI(
       kFilterBID,
-      gInstrument.filters[1],
-      gScene.context,
-      gInstrument,
+      gBackgroundPage.instrument.filters[1],
+      gBackgroundPage.scene.context,
+      gBackgroundPage.instrument,
       Strings.kFilter2,
       categoriesEl,
       detailsEl,
       visualizationTimeChange));
   gInstrumentUIs.push(new EnvelopeUI.UI(
       kEnvelopeID,
-      gInstrument.envelopeContour,
-      gInstrument,
+      gBackgroundPage.instrument.envelopeContour,
+      gBackgroundPage.instrument,
       Strings.kEnvelope,
       categoriesEl,
       detailsEl,
       visualizationTimeChange));
 
   var headerEl = document.getElementById('header');
-  gTestButton = new TestButton.Button(headerEl, gInstrument, gScene, testNoteTimeChange);
+  gTestButton = new TestButton.Button(headerEl, gBackgroundPage.instrument, gBackgroundPage.scene, testNoteTimeChange);
 
   gInstrumentUIs.forEach(function(ui) {
     ui.onselect = categorySelected;
     ui.onsizechange = categorySizeChanged;
-    ui.setCurrentTime(0, lastNoteDuration, gInstrument.envelopeContour.releaseTime());
+    ui.setCurrentTime(0, lastNoteDuration, gBackgroundPage.instrument.envelopeContour.releaseTime());
   });
   gTestButton.setCurrentTime(0);
 
@@ -126,10 +126,10 @@ function init() {
     updateSize();
   };
   gInstrumentPersistUI = new InstrumentPersistUI.UI(document.getElementById('instrumentPersist'),
-                                                    gInstrument, instrumentChanged); 
+                                                    gBackgroundPage.instrument, instrumentChanged); 
 
   var initializeInstrument = function() {
-    gSavedInstruments.default.updateInstrument(gInstrument);
+    gSavedInstruments.default.updateInstrument(gBackgroundPage.instrument);
     instrumentChanged();
     gInstrumentPersistUI.initialize(gSavedInstruments);
   };
@@ -147,8 +147,7 @@ function init() {
     updateSize();
   });
 
-// Defined by background page.
-  window.showKeyboard();
+  gBackgroundPage.showKeyboard();
 }
 
 function saveState() {

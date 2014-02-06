@@ -11,7 +11,7 @@ var kDefaultOctave = 4;
 // Initialization
 function init() {
   // Player setup
-  gKeyboard = new KeyboardPiano.Piano(document.body, gScene, gInstrument);
+  gKeyboard = new KeyboardPiano.Piano(document.body, gBackgroundPage.scene, gBackgroundPage.instrument);
   gOctaveSelector = new OctaveUI.Selector(document.body, octaveChanged);
   resize();
   chrome.storage.local.get(kOctaveKey, function(items) {

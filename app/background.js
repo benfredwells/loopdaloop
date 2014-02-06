@@ -26,10 +26,8 @@ BackgroundPage.prototype.handleLaunch = function() {
 }
 
 BackgroundPage.prototype.handleSynthWindowCreated = function(win) {
-  win.contentWindow.showKeyboard = this.showKeyboard.bind(this);
+  win.contentWindow.gBackgroundPage = this;
   this.synthWindow = win;
-  win.contentWindow.gInstrument = this.instrument;
-  win.contentWindow.gScene = this.scene;
   win.onClosed.addListener(this.handleSynthWindowClose.bind(this));
 }
 
@@ -55,8 +53,7 @@ BackgroundPage.prototype.showKeyboard = function() {
 
 BackgroundPage.prototype.handleKeyboardWindowCreated = function(win) {
   this.keyboardWindow = win;
-  win.contentWindow.gInstrument = this.instrument;
-  win.contentWindow.gScene = this.scene;
+  win.contentWindow.gBackgroundPage = this;
   win.onClosed.addListener(this.handleKeyboardWindowClosed.bind(this));
 }
 

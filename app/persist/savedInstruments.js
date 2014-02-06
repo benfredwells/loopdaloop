@@ -16,7 +16,9 @@ SavedInstrument.prototype.updateInstrument = function(instrument) {
 }
 
 module.Manager = function(onInstrumentsLoaded) {
+  this.default = null;
   this.presets = [];
+  this.loaded = false;
   this.onInstrumentsLoaded = onInstrumentsLoaded;
   this.loadPresets();
 }
@@ -31,6 +33,7 @@ module.Manager.prototype.loadPresets = function() {
           manager.presets.push(new SavedInstrument(fromJSON.name, true, fromJSON.instrumentState));
           if (fromJSON.default)
             manager.default = manager.presets[manager.presets.length-1];
+          manager.loaded = true;
           then();
         });
       };

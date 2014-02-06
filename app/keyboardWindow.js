@@ -1,5 +1,7 @@
 "use strict";
 
+// TODO: wrap in anon function
+// TODO: rename to wrapper
 var kOctaveKey = 'keyboardWindowOctaveField';
 var kDefaultOctave = 4;
 

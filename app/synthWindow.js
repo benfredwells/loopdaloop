@@ -1,5 +1,7 @@
 "use strict";
 
+// TODO: wrap in anon function
+// TODO: rename to wrapper
 var kHeightPadding = 100;
 var kWidth = 440;
 
@@ -18,7 +20,6 @@ var kDefaultNoteDuration = 2;
 
 var SynthesizerWindow = function() {
   this.currentNote = null;
-  this.savedInstruments = null;
   this.lastNoteDuration = kDefaultNoteDuration;
 
   this.testButton = null;
@@ -29,7 +30,7 @@ var SynthesizerWindow = function() {
   this.detailsEl = null;
   this.instrument = gBackgroundPage.instrument;
   this.scene = gBackgroundPage.scene;
-  this.showKeyboard = gBackgroundPage.showKeyboard.bind(gBackgroundPage);
+  this.savedInstruments = gBackgroundPage.savedInstruments;
 }
 
 SynthesizerWindow.prototype.createPitchUI = function(id, title) {
@@ -123,12 +124,11 @@ SynthesizerWindow.prototype.handleLoad = function() {
   this.instrumentUIs.forEach(this.initializeCategoryUI.bind(this));
   this.testButton.setCurrentTime(0);
 
-  this.savedInstruments = new SavedInstruments.Manager(this.handleSavedInstrumentsLoaded.bind(this));
-
   chrome.storage.local.remove(kDeadKeys);
   chrome.storage.local.get(kSelectedCategoryKey, this.handleStorageLoaded.bind(this));
 
-  this.showKeyboard();
+  gBackgroundPage.showKeyboard();
+  gBackgroundPage.setSynthWindowWrapper(this);
 }
 
 SynthesizerWindow.prototype.handleStorageLoaded = function(items) {

@@ -5,6 +5,7 @@ var module = {};
 
 var kMinChangeTime = 0.0005;
 
+// TODO move these constants into contourConstants.js
 // There is one more set of stage values for the sustain.
 module.kMaxIntermediateStageValues = 6;
 module.kMaxIntermediateStages =  module.kMaxIntermediateStageValues - 1;

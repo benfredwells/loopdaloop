@@ -182,7 +182,9 @@ function updateSize() {
   });
   height = height + kHeightPadding;
   var win = chrome.app.window.current();
-  var bounds = win.getBounds();
+  var bounds = {};
+  bounds.left = null;
+  bounds.top = null;
   bounds.width = kWidth;
   bounds.height = height;
   win.setBounds(bounds);

@@ -2,10 +2,8 @@
 
 // TODO: make this a class.
 
-var gScene = null;
 var gCurrentNote = null;
 var gInstrumentUIs = [];
-var gInstrument = null;
 var gSavedInstruments = null;
 
 var kHeightPadding = 100;
@@ -49,9 +47,6 @@ function testNoteTimeChange(newTime, noteDuration, releaseTime) {
 }
 
 function init() {
-  gScene = new Scene.Scene();
-  gInstrument = new Instrument.Instrument();
-
   // Instrument UI setup
   var categoriesEl = document.getElementById('categories');
   var detailsEl = document.getElementById('details');

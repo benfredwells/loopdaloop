@@ -3,6 +3,8 @@
 var BackgroundPage = function() {
   this.synthWindow = null;
   this.keyboardWindow = null;
+  this.scene = new Scene.Scene();
+  this.instrument = new Instrument.Instrument();
 }
 
 BackgroundPage.prototype.handleLaunch = function() {
@@ -26,6 +28,8 @@ BackgroundPage.prototype.handleLaunch = function() {
 BackgroundPage.prototype.handleSynthWindowCreated = function(win) {
   win.contentWindow.showKeyboard = this.showKeyboard.bind(this);
   this.synthWindow = win;
+  win.contentWindow.gInstrument = this.instrument;
+  win.contentWindow.gScene = this.scene;
   win.onClosed.addListener(this.handleSynthWindowClose.bind(this));
 }
 
@@ -51,9 +55,8 @@ BackgroundPage.prototype.showKeyboard = function() {
 
 BackgroundPage.prototype.handleKeyboardWindowCreated = function(win) {
   this.keyboardWindow = win;
-  var c = this.synthWindow.contentWindow;
-  win.contentWindow.gInstrument = c.gInstrument;
-  win.contentWindow.gScene = c.gScene;
+  win.contentWindow.gInstrument = this.instrument;
+  win.contentWindow.gScene = this.scene;
   win.onClosed.addListener(this.handleKeyboardWindowClosed.bind(this));
 }
 

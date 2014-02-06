@@ -1,11 +1,5 @@
 "use strict";
 
-// TODO: make this a class.
-
-var gCurrentNote = null;
-var gInstrumentUIs = [];
-var gSavedInstruments = null;
-
 var kHeightPadding = 100;
 var kWidth = 440;
 
@@ -21,138 +15,167 @@ var kDeadKeys = ['instrumentWindowExpandedField'];
 var kSelectedCategoryKey = 'selectedCategoryField';
 
 var kDefaultNoteDuration = 2;
-var lastNoteDuration = kDefaultNoteDuration;
 
-var gTestButton = null;
-var gInstrumentPersistUI = null;
+var SynthesizerWindow = function() {
+  this.currentNote = null;
+  this.savedInstruments = null;
+  this.lastNoteDuration = kDefaultNoteDuration;
 
-function visualizationTimeChange(newTime) {
-  if (newTime > lastNoteDuration + gBackgroundPage.instrument.envelopeContour.releaseTime()) {
-    newTime = lastNoteDuration + gBackgroundPage.instrument.envelopeContour.releaseTime();
-  }
-  gInstrumentUIs.forEach(function (ui) {
-    ui.setCurrentTime(newTime, lastNoteDuration, gBackgroundPage.instrument.envelopeContour.releaseTime());
-  });
-  gTestButton.setCurrentTime(newTime);
+  this.testButton = null;
+  this.instrumentUIs = [];
+  this.instrumentPersistUI = null;
+
+  this.categoriesEl = null;
+  this.detailsEl = null;
+  this.instrument = gBackgroundPage.instrument;
+  this.scene = gBackgroundPage.scene;
+  this.showKeyboard = gBackgroundPage.showKeyboard.bind(gBackgroundPage);
 }
 
-function testNoteTimeChange(newTime, noteDuration, releaseTime) {
-  lastNoteDuration = noteDuration;
-  if (newTime > lastNoteDuration + releaseTime) {
-    newTime = lastNoteDuration + releaseTime;
-  }
-  gInstrumentUIs.forEach(function (ui) {
-    ui.setCurrentTime(newTime, lastNoteDuration, releaseTime);
-  });
+SynthesizerWindow.prototype.createPitchUI = function(id, title) {
+  this.instrumentUIs.push(new PitchUI.UI(
+      id,
+      this.instrument.pitch,
+      this.instrument,
+      title,
+      this.categoriesEl,
+      this.detailsEl,
+      this.handleVisualizationTimeChange.bind(this)));
 }
 
-function init() {
-  // Instrument UI setup
-  var categoriesEl = document.getElementById('categories');
-  var detailsEl = document.getElementById('details');
-  gInstrumentUIs.push(new PitchUI.UI(
-      kPitchID,
-      gBackgroundPage.instrument.pitch,
-      gBackgroundPage.instrument,
-      Strings.kPitch,
-      categoriesEl,
-      detailsEl,
-      visualizationTimeChange));
-  gInstrumentUIs.push(new OscillatorUI.UI(
-      kOscillatorAID,
-      gBackgroundPage.instrument.oscillators[0],
-      gBackgroundPage.instrument,
-      Strings.kOscillator1,
-      categoriesEl,
-      detailsEl,
-      visualizationTimeChange));
-  gInstrumentUIs.push(new OscillatorUI.UI(
-      kOscillatorBID,
-      gBackgroundPage.instrument.oscillators[1],
-      gBackgroundPage.instrument,
-      Strings.kOscillator2,
-      categoriesEl,
-      detailsEl,
-      visualizationTimeChange));
-  gInstrumentUIs.push(new OscillatorUI.UI(
-      kOscillatorCID,
-      gBackgroundPage.instrument.oscillators[2],
-      gBackgroundPage.instrument,
-      Strings.kOscillator3,
-      categoriesEl,
-      detailsEl,
-      visualizationTimeChange));
-  gInstrumentUIs.push(new FilterUI.UI(
-      kFilterAID,
-      gBackgroundPage.instrument.filters[0],
-      gBackgroundPage.scene.context,
-      gBackgroundPage.instrument,
-      Strings.kFilter1,
-      categoriesEl,
-      detailsEl,
-      visualizationTimeChange));
-  gInstrumentUIs.push(new FilterUI.UI(
-      kFilterBID,
-      gBackgroundPage.instrument.filters[1],
-      gBackgroundPage.scene.context,
-      gBackgroundPage.instrument,
-      Strings.kFilter2,
-      categoriesEl,
-      detailsEl,
-      visualizationTimeChange));
-  gInstrumentUIs.push(new EnvelopeUI.UI(
-      kEnvelopeID,
-      gBackgroundPage.instrument.envelopeContour,
-      gBackgroundPage.instrument,
-      Strings.kEnvelope,
-      categoriesEl,
-      detailsEl,
-      visualizationTimeChange));
+SynthesizerWindow.prototype.createOscillatorUI = function(id, title, index) {
+  this.instrumentUIs.push(new OscillatorUI.UI(
+      id,
+      this.instrument.oscillators[index],
+      this.instrument,
+      title,
+      this.categoriesEl,
+      this.detailsEl,
+      this.handleVisualizationTimeChange.bind(this)));
+}
 
+SynthesizerWindow.prototype.createFilterUI = function(id, title, index) {
+  this.instrumentUIs.push(new FilterUI.UI(
+      id,
+      this.instrument.filters[0],
+      this.scene.context,
+      this.instrument,
+      title,
+      this.categoriesEl,
+      this.detailsEl,
+      this.handleVisualizationTimeChange.bind(this)));
+}
+
+SynthesizerWindow.prototype.createEnvelopeUI = function(id, title) {
+  this.instrumentUIs.push(new EnvelopeUI.UI(
+      id,
+      this.instrument.envelopeContour,
+      this.instrument,
+      title,
+      this.categoriesEl,
+      this.detailsEl,
+      this.handleVisualizationTimeChange.bind(this)));
+}
+
+SynthesizerWindow.prototype.createTestButton = function() {
   var headerEl = document.getElementById('header');
-  gTestButton = new TestButton.Button(headerEl, gBackgroundPage.instrument, gBackgroundPage.scene, testNoteTimeChange);
+  this.testButton = new TestButton.Button(
+      headerEl,
+      this.instrument,
+      this.scene,
+      this.handleTestNoteTimeChange.bind(this));
+}
 
-  gInstrumentUIs.forEach(function(ui) {
-    ui.onselect = categorySelected;
-    ui.onsizechange = categorySizeChanged;
-    ui.setCurrentTime(0, lastNoteDuration, gBackgroundPage.instrument.envelopeContour.releaseTime());
-  });
-  gTestButton.setCurrentTime(0);
+SynthesizerWindow.prototype.createInstrumentPersistUI = function() {
+  this.instrumentPersistUI = new InstrumentPersistUI.UI(
+      document.getElementById('instrumentPersist'),
+      this.instrument,
+      this.handleInstrumentChanged.bind(this)); 
+}
 
-  var instrumentChanged = function() {
-    gInstrumentUIs.forEach(function(ui) {
-      ui.updateDisplay();
-    });
-    updateSize();
-  };
-  gInstrumentPersistUI = new InstrumentPersistUI.UI(document.getElementById('instrumentPersist'),
-                                                    gBackgroundPage.instrument, instrumentChanged); 
+SynthesizerWindow.prototype.initializeCategoryUI = function(ui) {
+  ui.onselect = this.handleCategorySelected.bind(this);
+  ui.onsizechange = this.handleCategorySizeChanged.bind(this);
+  ui.setCurrentTime(0, this.lastNoteDuration, this.instrument.envelopeContour.releaseTime());
+}
 
-  var initializeInstrument = function() {
-    gSavedInstruments.default.updateInstrument(gBackgroundPage.instrument);
-    instrumentChanged();
-    gInstrumentPersistUI.initialize(gSavedInstruments);
-  };
-  gSavedInstruments = new SavedInstruments.Manager(initializeInstrument);
+SynthesizerWindow.prototype.handleSavedInstrumentsLoaded = function() {
+  this.savedInstruments.default.updateInstrument(this.instrument);
+  this.handleInstrumentChanged();
+  this.instrumentPersistUI.initialize(this.savedInstruments);
+}
+
+SynthesizerWindow.prototype.handleLoad = function() {
+  this.categoriesEl = document.getElementById('categories');
+  this.detailsEl = document.getElementById('details');
+
+  this.createPitchUI(kPitchID, Strings.kPitch);
+  this.createOscillatorUI(kOscillatorAID, Strings.kOscillator1, 0);
+  this.createOscillatorUI(kOscillatorBID, Strings.kOscillator2, 1);
+  this.createOscillatorUI(kOscillatorCID, Strings.kOscillator3, 2);
+  this.createFilterUI(kFilterAID, Strings.kFilter1, 0);
+  this.createFilterUI(kFilterBID, Strings.kFilter2, 1);
+  this.createEnvelopeUI(kEnvelopeID, Strings.kEnvelope);
+
+  this.createTestButton();
+  this.createInstrumentPersistUI();
+
+  this.instrumentUIs.forEach(this.initializeCategoryUI.bind(this));
+  this.testButton.setCurrentTime(0);
+
+  this.savedInstruments = new SavedInstruments.Manager(this.handleSavedInstrumentsLoaded.bind(this));
 
   chrome.storage.local.remove(kDeadKeys);
-  chrome.storage.local.get(kSelectedCategoryKey, function(items) {
-    var selectedID = items[kSelectedCategoryKey];
-    if (!selectedID)
-      selectedID = kOscillatorAID;
-    gInstrumentUIs.forEach(function (ui) {
-      ui.setSelected(ui.id == selectedID);
-      ui.updateIcon();
-    });
-    updateSize();
-  });
+  chrome.storage.local.get(kSelectedCategoryKey, this.handleStorageLoaded.bind(this));
 
-  gBackgroundPage.showKeyboard();
+  this.showKeyboard();
 }
 
-function saveState() {
+SynthesizerWindow.prototype.handleStorageLoaded = function(items) {
+  var selectedID = items[kSelectedCategoryKey];
+  if (!selectedID)
+    selectedID = kOscillatorAID;
+  this.instrumentUIs.forEach(function (ui) {
+    ui.setSelected(ui.id == selectedID);
+    ui.updateIcon();
+  });
+  this.updateSize();
+}
+
+SynthesizerWindow.prototype.handleInstrumentChanged = function() {
+  this.instrumentUIs.forEach(function(ui) {
+    ui.updateDisplay();
+  });
+  this.updateSize();
+};
+
+SynthesizerWindow.prototype.handleVisualizationTimeChange = function(newTime) {
+  if (newTime > this.lastNoteDuration + this.instrument.envelopeContour.releaseTime()) {
+    newTime = this.lastNoteDuration + this.instrument.envelopeContour.releaseTime();
+  }
+
+  var win = this;
+  this.instrumentUIs.forEach(function (ui) {
+    ui.setCurrentTime(newTime, win.lastNoteDuration, win.instrument.envelopeContour.releaseTime());
+  });
+  this.testButton.setCurrentTime(newTime);
+}
+
+SynthesizerWindow.prototype.handleTestNoteTimeChange = function(newTime, noteDuration, releaseTime) {
+  this.lastNoteDuration = noteDuration;
+  if (newTime > this.lastNoteDuration + releaseTime) {
+    newTime = this.lastNoteDuration + releaseTime;
+  }
+
+  var win = this;
+  this.instrumentUIs.forEach(function (ui) {
+    ui.setCurrentTime(newTime, win.lastNoteDuration, releaseTime);
+  });
+}
+
+SynthesizerWindow.prototype.saveState = function() {
   var selectedID = '';
-  gInstrumentUIs.forEach(function (ui) {
+  this.instrumentUIs.forEach(function (ui) {
     if (ui.isSelected())
       selectedID = ui.id;
   });
@@ -161,23 +184,23 @@ function saveState() {
   chrome.storage.local.set(setting);
 }
 
-function categorySelected(sender) {
-  gInstrumentUIs.forEach(function (ui) {
+SynthesizerWindow.prototype.handleCategorySelected = function(sender) {
+  this.instrumentUIs.forEach(function (ui) {
     if (ui != sender) {
       ui.setSelected(false);
     }
   });
-  updateSize();
-  saveState();
+  this.updateSize();
+  this.saveState();
 }
 
-function categorySizeChanged(sender) {
-  updateSize();
+SynthesizerWindow.prototype.handleCategorySizeChanged = function(sender) {
+  this.updateSize();
 }
 
-function updateSize() {
+SynthesizerWindow.prototype.updateSize = function() {
   var height = 0;
-  gInstrumentUIs.forEach(function(ui) {
+  this.instrumentUIs.forEach(function(ui) {
     height = height + ui.height();
   });
   height = height + kHeightPadding;
@@ -190,4 +213,6 @@ function updateSize() {
   win.setBounds(bounds);
 }
 
-window.onload = init;
+var gSynthesizerWindow = new SynthesizerWindow();
+
+window.onload = gSynthesizerWindow.handleLoad.bind(gSynthesizerWindow);

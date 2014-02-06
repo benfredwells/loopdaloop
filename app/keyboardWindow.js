@@ -1,69 +1,71 @@
 "use strict";
 
-//TODO: make this a class
-var gKeyboard = null;
-var gOctaveSelector = null;
-
 var kOctaveKey = 'keyboardWindowOctaveField';
 var kDefaultOctave = 4;
 
-////////////////////////////////////////////////////////////////////////////////
-// Initialization
-function init() {
-  // Player setup
-  gKeyboard = new KeyboardPiano.Piano(document.body, gBackgroundPage.scene, gBackgroundPage.instrument);
-  gOctaveSelector = new OctaveUI.Selector(document.body, octaveChanged);
-  resize();
-  chrome.storage.local.get(kOctaveKey, function(items) {
-    var octave = items[kOctaveKey];
-    if (!octave)
-      octave = kDefaultOctave;
-    gOctaveSelector.setCurrentOctave(octave);
-    setOctave();
-  });
+var KeyboardWindow = function() {
+  this.piano = null;
+  this.octaveSelector = null;
 }
 
-function keyDown(event) {
-  gKeyboard.handleKeyDown(event);
-  gOctaveSelector.handleKeyDown(event);
+KeyboardWindow.prototype.handleLoad = function() {
+  this.piano = new KeyboardPiano.Piano(document.body, gBackgroundPage.scene, gBackgroundPage.instrument);
+  this.octaveSelector = new OctaveUI.Selector(document.body, this.octaveChanged.bind(this));
+  this.handleResize();
+  window.onkeydown = this.handleKeyDown.bind(this);
+  window.onkeyup = this.handleKeyUp.bind(this);
+  window.onmouseup = this.handleMouseUp.bind(this);
+  window.onresize = this.handleResize.bind(this);
+  window.onblur = this.handleBlur.bind(this);
+  chrome.storage.local.get(kOctaveKey, this.handleStorageLoaded.bind(this));
 }
 
-function keyUp(event) {
-  gKeyboard.handleKeyUp(event);
+KeyboardWindow.prototype.handleStorageLoaded = function(items) {
+  var octave = items[kOctaveKey];
+  if (!octave)
+    octave = kDefaultOctave;
+  this.octaveSelector.setCurrentOctave(octave);
+  this.setOctave();
 }
 
-function mouseUp(event) {
-  gKeyboard.handleMouseUp(event);
-  gOctaveSelector.handleMouseUp(event);
+KeyboardWindow.prototype.handleKeyDown = function(event) {
+  this.piano.handleKeyDown(event);
+  this.octaveSelector.handleKeyDown(event);
 }
 
-function blur(event) {
-  gKeyboard.handleBlur(event);
+KeyboardWindow.prototype.handleKeyUp = function(event) {
+  this.piano.handleKeyUp(event);
 }
 
-function resize() {
-  gKeyboard.handleResize();
-  gOctaveSelector.handleResize();
+KeyboardWindow.prototype.handleMouseUp = function(event) {
+  this.piano.handleMouseUp(event);
+  this.octaveSelector.handleMouseUp(event);
 }
 
-window.onload = init;
-window.onkeydown = keyDown;
-window.onkeyup = keyUp;
-window.onmouseup = mouseUp;
-window.onresize = resize;
-window.onblur = blur;
+KeyboardWindow.prototype.handleBlur = function(event) {
+  this.piano.handleBlur(event);
+}
 
-function saveState() {
+KeyboardWindow.prototype.handleResize = function() {
+  this.piano.handleResize();
+  this.octaveSelector.handleResize();
+}
+
+KeyboardWindow.prototype.saveState = function() {
   var setting = {};
-  setting[kOctaveKey] = gOctaveSelector.currentOctave();
+  setting[kOctaveKey] = this.octaveSelector.currentOctave();
   chrome.storage.local.set(setting);
 }
 
-function setOctave() {
-  gKeyboard.octave = gOctaveSelector.currentOctave();
+KeyboardWindow.prototype.setOctave = function() {
+  this.piano.octave = this.octaveSelector.currentOctave();
 }
 
-function octaveChanged() {
-  setOctave();
-  saveState();
+KeyboardWindow.prototype.octaveChanged = function() {
+  this.setOctave();
+  this.saveState();
 }
+
+var gKeyboardWindow = new KeyboardWindow();
+
+window.onload = gKeyboardWindow.handleLoad.bind(gKeyboardWindow);

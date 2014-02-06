@@ -1,10 +1,14 @@
-var gSynthWindow = null;
-var gKeyboardWindow = null;
+"use strict"
 
-chrome.app.runtime.onLaunched.addListener(function() {
-  if (gSynthWindow && gKeyboardWindow) {
-    gSynthWindow.focus();
-    gKeyboardWindow.focus();
+var BackgroundPage = function() {
+  this.synthWindow = null;
+  this.keyboardWindow = null;
+}
+
+BackgroundPage.prototype.handleLaunch = function() {
+  if (this.synthWindow && this.keyboardWindow) {
+    this.synthWindow.focus();
+    this.keyboardWindow.focus();
   }
 
   var instrumentParams = {
@@ -16,18 +20,22 @@ chrome.app.runtime.onLaunched.addListener(function() {
     id: 'instrumentv2'
   };
 
-  chrome.app.window.create('synthWindow.html', instrumentParams, function(win) {
-    win.contentWindow.showKeyboard = showKeyboard;
-    gSynthWindow = win;
-    win.onClosed.addListener(function() {
-      gSynthWindow = null;
-      if (gKeyboardWindow)
-        gKeyboardWindow.contentWindow.close();
-    });
-  });
-});
+  chrome.app.window.create('synthWindow.html', instrumentParams, this.handleSynthWindowCreated.bind(this));
+}
 
-function showKeyboard() {
+BackgroundPage.prototype.handleSynthWindowCreated = function(win) {
+  win.contentWindow.showKeyboard = this.showKeyboard.bind(this);
+  this.synthWindow = win;
+  win.onClosed.addListener(this.handleSynthWindowClose.bind(this));
+}
+
+BackgroundPage.prototype.handleSynthWindowClose = function() {
+  this.synthWindow = null;
+  if (this.keyboardWindow)
+    this.keyboardWindow.contentWindow.close();
+}
+
+BackgroundPage.prototype.showKeyboard = function() {
   var keyboardParams = {
     width: 800,
     height: 350,
@@ -38,15 +46,23 @@ function showKeyboard() {
     id: 'keyboard'
   };
 
-  chrome.app.window.create('keyboardWindow.html', keyboardParams, function(win) {
-    gKeyboardWindow = win;
-    c = gSynthWindow.contentWindow;
-    win.contentWindow.gInstrument = c.gInstrument;
-    win.contentWindow.gScene = c.gScene;
-    win.onClosed.addListener(function() {
-      gKeyboardWindow = null;
-      if (gSynthWindow)
-        gSynthWindow.contentWindow.close();
-    });
-  });
+  chrome.app.window.create('keyboardWindow.html', keyboardParams, this.handleKeyboardWindowCreated.bind(this));
 }
+
+BackgroundPage.prototype.handleKeyboardWindowCreated = function(win) {
+  this.keyboardWindow = win;
+  var c = this.synthWindow.contentWindow;
+  win.contentWindow.gInstrument = c.gInstrument;
+  win.contentWindow.gScene = c.gScene;
+  win.onClosed.addListener(this.handleKeyboardWindowClosed.bind(this));
+}
+
+BackgroundPage.prototype.handleKeyboardWindowClosed = function() {
+  this.keyboardWindow = null;
+  if (this.synthWindow)
+    this.synthWindow.contentWindow.close();
+}
+
+var gBackgroundPage = new BackgroundPage();
+
+chrome.app.runtime.onLaunched.addListener(gBackgroundPage.handleLaunch.bind(gBackgroundPage));

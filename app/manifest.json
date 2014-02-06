@@ -5,7 +5,18 @@
   "minimum_chrome_version": "23",
   "app": {
     "background": {
-      "scripts": ["background.js"]
+      "scripts": [
+        "instrument/audioConstants.js",
+        "instrument/chromaticScale.js",
+        "instrument/setting.js",
+        "instrument/instrumentState.js",
+        "instrument/scene.js",
+        "instrument/playedNote.js",
+        "instrument/oscillator.js",
+        "instrument/contour.js",
+        "instrument/instrument.js",
+        "background.js"
+      ]
     }
   },
   "permissions": [

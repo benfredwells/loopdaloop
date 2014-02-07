@@ -1,17 +1,17 @@
-"use strict"
+"use strict";
 
 var BackgroundPage = function() {
   this.synthWindow = null;
   this.keyboardWindow = null;
-  this.synthWindowWrapper = null;
+  this.synthWrapper = null;
   this.scene = new Scene.Scene();
   this.instrument = new Instrument.Instrument();
   this.savedInstruments = new SavedInstruments.Manager(this.handleSavedInstrumentsLoaded.bind(this));
 }
 
 BackgroundPage.prototype.handleSavedInstrumentsLoaded = function() {
-  if (this.synthWindowWrapper)
-    this.synthWindowWrapper.handleSavedInstrumentsLoaded();
+  if (this.synthWrapper)
+    this.synthWrapper.handleSavedInstrumentsLoaded();
 }
 
 BackgroundPage.prototype.handleLaunch = function() {
@@ -40,7 +40,7 @@ BackgroundPage.prototype.handleSynthWindowCreated = function(win) {
 
 BackgroundPage.prototype.handleSynthWindowClose = function() {
   this.synthWindow = null;
-  this.synthWindowWrapper = null;
+  this.synthWrapper = null;
   if (this.keyboardWindow)
     this.keyboardWindow.contentWindow.close();
 }
@@ -59,10 +59,10 @@ BackgroundPage.prototype.showKeyboard = function() {
   chrome.app.window.create('keyboardWindow.html', keyboardParams, this.handleKeyboardWindowCreated.bind(this));
 }
 
-BackgroundPage.prototype.setSynthWindowWrapper = function(wrapper) {
-  this.synthWindowWrapper = wrapper;
+BackgroundPage.prototype.setSynthWrapper = function(wrapper) {
+  this.synthWrapper = wrapper;
   if (this.savedInstruments.loaded)
-    this.synthWindowWrapper.handleSavedInstrumentsLoaded();
+    this.synthWrapper.handleSavedInstrumentsLoaded();
 }
 
 BackgroundPage.prototype.handleKeyboardWindowCreated = function(win) {

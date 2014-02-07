@@ -5,8 +5,6 @@ var module = {};
 
 var kMinChangeTime = 0.0005;
 
-// TODO move these constants into contourConstants.js
-
 ////////////////////////////////////////////////////////////////////////////////
 // Contour settings shared by the different contour types.
 var IntermediateContourStage = function(valueSetting) {

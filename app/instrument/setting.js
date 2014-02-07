@@ -56,7 +56,11 @@ Setting.prototype.isModified = function() {
 }
 
 Setting.prototype.clearModified = function() {
+  if (this.originalValue_ == this.value_)
+    return;
+
   this.originalValue_ = this.value_;
+  this.notifyListener();
 }
 
 module.Choice = function(choices) {
@@ -106,7 +110,6 @@ module.ModifiableGroup.prototype.isModified = function() {
 }
 
 module.ModifiableGroup.prototype.clearModified = function() {
-  this.wasModified_ = false;
   this.modifiables_.forEach(function (modifiable) {
     modifiable.clearModified();
   });

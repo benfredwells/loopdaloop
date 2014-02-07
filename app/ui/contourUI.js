@@ -148,7 +148,7 @@ module.OscillatingContourPanel_ = function(container, onchange, onstructurechang
 module.OscillatingContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
 
 module.OscillatingContourPanel_.prototype.showHideTimeConstant_ = function() {
-  this.timeConstantRow_.setVisible(this.oscillatingContour_.typeSetting.value != Contour.kConstantOscillation);
+  this.timeConstantRow_.setVisible(this.oscillatingContour_.typeSetting.value != AudioConstants.kConstantOscillation);
 }
 
 module.SweepContourPanel_ = function(container, onchange, sweepContour,
@@ -187,14 +187,14 @@ module.NStageContourPanel_ = function(container, onchange, onstructurechange, nS
     onstructurechange();
   }
   new SettingsUI.LinearRangeRow(this, Strings.kNumberOfStages, numStagesChanged, nStageContour.numStagesSetting,
-                                null, Contour.kMaxIntermediateStages);
+                                null, AudioConstants.kMaxIntermediateStages);
   if (!isEnvelope) {
     this.createValueRow_(Strings.kInitialValue, nStageContour.initialValueSetting);
   }
   this.createTimeRow_(Strings.kStage1Duration, nStageContour.firstStageTimeSetting);
   this.intermediateStageBeginRows = [];
   this.intermediateStageDurationRows = [];
-  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++) {
+  for (var i = 0; i < AudioConstants.kMaxIntermediateStageValues; i++) {
     this.intermediateStageBeginRows.push(
         this.createValueRow_(Strings.kIntermediateStageBeginValues[i],
                              nStageContour.intermediateStages[i].beginValueSetting));
@@ -212,8 +212,8 @@ module.NStageContourPanel_ = function(container, onchange, onstructurechange, nS
 module.NStageContourPanel_.prototype = Object.create(module.ContourTypePanel_.prototype);
 
 module.NStageContourPanel_.prototype.showHideStages_ = function() {
-  var numIntermediateStages = this.nStageContour_.numStagesSetting.value - Contour.kMinStages;
-  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++) {
+  var numIntermediateStages = this.nStageContour_.numStagesSetting.value - AudioConstants.kMinStages;
+  for (var i = 0; i < AudioConstants.kMaxIntermediateStageValues; i++) {
     this.intermediateStageBeginRows[i].setVisible(i < numIntermediateStages);
     this.intermediateStageDurationRows[i].setVisible(i < numIntermediateStages);
   }
@@ -288,28 +288,28 @@ module.ContourPanel = function(container, title, onchange, onsizechange, contour
                            Strings.kContourTypeDescriptions);
   this.flatPanel_ = new module.FlatContourPanel_(
       this.selectPanel_, changeHandler,
-      contouredValue.contoursByIdentifier[Contour.kFlatContour],
+      contouredValue.contoursByIdentifier[AudioConstants.kFlatContour],
       contouredValue.isEnvelope, formatter, steps);
   this.oscillatingPanel_ = new module.OscillatingContourPanel_(
       this.selectPanel_, changeHandler, structureChangeHandler,
-      contouredValue.contoursByIdentifier[Contour.kOscillatingContour],
+      contouredValue.contoursByIdentifier[AudioConstants.kOscillatingContour],
       contouredValue.isEnvelope, formatter, steps);
   this.adsrPanel_ = new module.ADSRContourPanel_(
       this.selectPanel_, changeHandler,
-      contouredValue.contoursByIdentifier[Contour.kADSRContour],
+      contouredValue.contoursByIdentifier[AudioConstants.kADSRContour],
       contouredValue.isEnvelope, formatter, steps);
   this.nStagePanel_ = new module.NStageContourPanel_(
       this.selectPanel_, changeHandler, structureChangeHandler,
-      contouredValue.contoursByIdentifier[Contour.kNStageContour],
+      contouredValue.contoursByIdentifier[AudioConstants.kNStageContour],
       contouredValue.isEnvelope, formatter, steps);
   this.nStageOscillatingPanel_ = new module.NStageOscillatingContourPanel_(
       this.selectPanel_, changeHandler, structureChangeHandler,
-      contouredValue.contoursByIdentifier[Contour.kNStageOscillatingContour],
+      contouredValue.contoursByIdentifier[AudioConstants.kNStageOscillatingContour],
       contouredValue.isEnvelope, formatter, steps);
   if (!contouredValue.isEnvelope) {
     this.sweepPanel_ = new module.SweepContourPanel_(
         this.selectPanel_, changeHandler,
-        contouredValue.contoursByIdentifier[Contour.kSweepContour],
+        contouredValue.contoursByIdentifier[AudioConstants.kSweepContour],
         contouredValue.isEnvelope, formatter, steps);
   }
 
@@ -321,13 +321,13 @@ module.ContourPanel.prototype = Object.create(UI.Panel.prototype);
 
 module.ContourPanel.prototype.showHideContours_ = function() {
   var current = this.contouredValue_.currentContourSetting.value
-  this.flatPanel_.setVisible(current == Contour.kFlatContour);
-  this.oscillatingPanel_.setVisible(current == Contour.kOscillatingContour);
-  this.adsrPanel_.setVisible(current == Contour.kADSRContour);
-  this.nStagePanel_.setVisible(current == Contour.kNStageContour);
-  this.nStageOscillatingPanel_.setVisible(current == Contour.kNStageOscillatingContour);
+  this.flatPanel_.setVisible(current == AudioConstants.kFlatContour);
+  this.oscillatingPanel_.setVisible(current == AudioConstants.kOscillatingContour);
+  this.adsrPanel_.setVisible(current == AudioConstants.kADSRContour);
+  this.nStagePanel_.setVisible(current == AudioConstants.kNStageContour);
+  this.nStageOscillatingPanel_.setVisible(current == AudioConstants.kNStageOscillatingContour);
   if (this.sweepPanel_)
-    this.sweepPanel_.setVisible(current == Contour.kSweepContour);
+    this.sweepPanel_.setVisible(current == AudioConstants.kSweepContour);
 }
 
 module.ContourPanel.prototype.setSelected = function(selected) {

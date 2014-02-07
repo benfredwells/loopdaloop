@@ -35,6 +35,42 @@ module.kFilterOrderNodes[module.kSecondOrder] = 1;
 module.kFilterOrderNodes[module.kFourthOrder] = 2;
 module.kFilterOrderNodes[module.kSixthOrder] = 3;
 
+////////////////////////////////////////////////////////////////////////////////
+// Identifiers for contours
+//
+// There is one more set of stage values for the sustain.
+module.kMaxIntermediateStageValues = 6;
+module.kMaxIntermediateStages =  module.kMaxIntermediateStageValues - 1;
+module.kMinStages = 3;
+module.kMaxStages = module.kMinStages + module.kMaxIntermediateStages;
+
+module.kConstantOscillation = 'constant';
+module.kSwellingOscillation = 'swell';
+module.kFadingOscillation = 'fade';
+module.kOscillationTypes = [module.kConstantOscillation,
+                            module.kSwellingOscillation,
+                            module.kFadingOscillation];
+
+////////////////////////////////////////////////////////////////////////////////
+// Identifiers for contour types
+module.kFlatContour = 'flat';
+module.kOscillatingContour = 'oscillating';
+module.kADSRContour = 'adsr';
+module.kNStageContour = 'nstage';
+module.kNStageOscillatingContour = 'nstageoscillating';
+module.kSweepContour = 'sweep';
+module.kEnvelopeContourTypes = [module.kFlatContour,
+                                module.kOscillatingContour,
+                                module.kADSRContour,
+                                module.kNStageContour,
+                                module.kNStageOscillatingContour];
+module.kContourTypes = [module.kFlatContour,
+                        module.kSweepContour,
+                        module.kOscillatingContour,
+                        module.kADSRContour,
+                        module.kNStageContour,
+                        module.kNStageOscillatingContour];
+
 return module;
 
 }());

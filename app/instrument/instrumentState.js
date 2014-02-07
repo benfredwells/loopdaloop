@@ -61,11 +61,11 @@ function updateContouredValue(contouredValue, contouredValueState) {
     contouredValueState = {};
     contouredValueState.contours = {};
   }
-  updateSetting(contouredValue.currentContourSetting, contouredValueState.currentContour, Contour.kFlatContour);
+  updateSetting(contouredValue.currentContourSetting, contouredValueState.currentContour, AudioConstants.kFlatContour);
   updateSettingWithMinDefault(contouredValue.sharedContourSettings.initialValueSetting, contouredValueState.initialValue);
   updateSettingWithMinDefault(contouredValue.sharedContourSettings.firstStageTimeSetting, contouredValueState.attackTime);
   updateSettingWithMinDefault(contouredValue.sharedContourSettings.numStagesSetting, contouredValueState.numStages);
-  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++) {
+  for (var i = 0; i < AudioConstants.kMaxIntermediateStageValues; i++) {
     updateIntermediateContourStage(contouredValue.sharedContourSettings.intermediateStages,
                                    contouredValueState.intermediateStages,
                                    i);
@@ -78,7 +78,7 @@ function updateContouredValue(contouredValue, contouredValueState) {
   updateSettingWithMinDefault(contouredValue.sharedContourSettings.oscillationMinValueSetting, contouredValueState.oscillationMinValue);
   updateSettingWithRatioedDefault(contouredValue.sharedContourSettings.oscillationFrequencySetting, contouredValueState.oscillationFrequency, 0.02);
   updateSettingWithRatioedDefault(contouredValue.sharedContourSettings.oscillationTimeConstantSetting, contouredValueState.oscillationTimeConstant, 0.05);
-  updateSetting(contouredValue.sharedContourSettings.oscillationTypeSetting, contouredValueState.oscillationType, Contour.kConstantOscillation);
+  updateSetting(contouredValue.sharedContourSettings.oscillationTypeSetting, contouredValueState.oscillationType, AudioConstants.kConstantOscillation);
   updateSetting(contouredValue.sharedContourSettings.sweepTimeSetting, contouredValueState.sweepTimeSetting, 1);
 }
 
@@ -90,7 +90,7 @@ function getContouredValueState(contouredValue) {
   contouredValueState.attackTime = contouredValue.sharedContourSettings.firstStageTimeSetting.value;
   contouredValueState.numStages = contouredValue.sharedContourSettings.numStagesSetting.value;
   contouredValueState.intermediateStages = [];
-  for (var i = 0; i < Contour.kMaxIntermediateStageValues; i++)
+  for (var i = 0; i < AudioConstants.kMaxIntermediateStageValues; i++)
     contouredValueState.intermediateStages.push(getIntermediateContourStageState(contouredValue.sharedContourSettings.intermediateStages[i]));
   contouredValueState.releaseTime = contouredValue.sharedContourSettings.releaseTimeSetting.value;
   contouredValueState.finalValue = contouredValue.sharedContourSettings.finalValueSetting.value;

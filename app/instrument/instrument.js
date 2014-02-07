@@ -3,7 +3,6 @@ Instrument = (function() {
 "use strict";
 var module = {};
 
-// TODO move these constants into contourConstants.js
 var kFilterCount = 2;
 var kOscillatorCount = 3;
 

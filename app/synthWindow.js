@@ -206,8 +206,8 @@ SynthesizerWrapper.prototype.updateSize = function() {
   var bounds = {};
   bounds.left = null;
   bounds.top = null;
-  bounds.width = kWidth;
-  bounds.height = height;
+  bounds.width = kWidth + 10;
+  bounds.height = height + 30;
   win.setBounds(bounds);
 }
 

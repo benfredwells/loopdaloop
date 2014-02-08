@@ -41,8 +41,8 @@ module.UI.prototype.updateInstrument_ = function() {
 };
 
 module.UI.prototype.initialize = function(savedInstruments) {
-  this.instrument_.setListener(this);
   this.savedInstruments_ = savedInstruments;
+  this.savedInstruments_.onPresetStateChanged = this.handlePresetStateChanged.bind(this);
   while(this.select.options.length)
     this.select.remove(0);
   this.select.disabled = false;
@@ -50,21 +50,24 @@ module.UI.prototype.initialize = function(savedInstruments) {
   for (var i = 0; i < this.savedInstruments_.presets.length; i++) {
     var option = document.createElement('option');
     option.value = i;
-    option.text = this.savedInstruments_.presets[i].name;
+    option.preset = this.savedInstruments_.presets[i];
+    option.text = option.preset.name;
     this.select.add(option, null);
-    if (this.savedInstruments_.presets[i] == this.savedInstruments_.currentPreset)
+    if (option.preset == this.savedInstruments_.currentPreset)
       this.select.value = i;
   }
 };
 
-module.UI.prototype.onModifiedChanged = function() {
-/*
-  var suffix = '';
-  if (this.instrument_.isModified())
-    suffix = ' *';
+module.UI.prototype.handlePresetStateChanged = function() {
+  var ui = this;
+  for (var i = 0; i < this.select.options.length; i++) {
+    var option = this.select.options[i];
+    var suffix = '';
+    if (option.preset.modified)
+      suffix = ' *';
 
-  this.select.options[this.select.value].text = this.current_().name + suffix;
-*/
+    option.text = option.preset.name + suffix;
+  }
 };
 
 return module;

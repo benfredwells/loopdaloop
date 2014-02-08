@@ -1,6 +1,6 @@
-InstrumentState = (function() {
-
 "use strict";
+
+var InstrumentState = (function() {
 
 var module = {};
 

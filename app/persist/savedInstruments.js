@@ -1,20 +1,19 @@
-SavedInstruments = (function() {
-
 "use strict";
+
+var SavedInstruments = (function() {
 
 var module = {};
 
-var Preset = function(originalEntry, localFolder) {
+var Preset = function(originalEntry) {
   this.name = '';
   this.isDefault = false;
+  this.modified = false;
   this.instrumentState = null;
   this.originalEntry = originalEntry;
-  this.localFolder = localFolder;
 };
 
-Preset.prototype.updateInstrument = function(instrument) {
+Preset.prototype.updateInstrument_ = function(instrument) {
   InstrumentState.updateInstrument(instrument, this.instrumentState);
-  instrument.clearModified();
 };
 
 Preset.prototype.updateFromJSON = function(then, jsonText) {
@@ -30,10 +29,11 @@ Preset.prototype.loadFromOriginal = function(then) {
   FileUtil.readFile(this.originalEntry, this.updateFromJSON.bind(this, then));
 };
 
-module.Manager = function(onInstrumentsLoaded) {
-  this.default = null;
+module.Manager = function(instrument, onInstrumentsLoaded) {
   this.presets = [];
   this.loaded = false;
+  this.currentPreset = null;
+  this.instrument_ = instrument;
   this.onInstrumentsLoaded = onInstrumentsLoaded;
   this.loadPresets();
 };
@@ -43,7 +43,7 @@ module.Manager.prototype.loadPresets = function() {
   chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
     packageEntry.getDirectory('presets', {create: false}, function(presetsEntry) {
       var processEntry = function(entry, then) {
-        var preset = new Preset(entry, null);
+        var preset = new Preset(entry);
         manager.presets.push(preset);
         preset.loadFromOriginal(then);
       };
@@ -57,12 +57,21 @@ module.Manager.prototype.handlePresetsLoaded = function() {
   var manager = this;
   this.presets.forEach(function(preset) {
     if (preset.isDefault)
-      manager.default = preset;
+      manager.usePreset(preset);
   });
 
   this.loaded = true;
   this.onInstrumentsLoaded();
 };
+
+module.Manager.prototype.usePresetWithIndex = function(index) {
+  this.usePreset(this.presets[index]);
+}
+
+module.Manager.prototype.usePreset = function(preset) {
+  this.currentPreset = preset;
+  this.currentPreset.updateInstrument_(this.instrument_);
+}
 
 module.Manager.prototype.export = function(instrument) {
   var jsonObject = {};

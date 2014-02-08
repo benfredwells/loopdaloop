@@ -1,6 +1,6 @@
-FileUtil = (function() {
+"use strict";
 
-"use strict"
+var FileUtil = (function() {
 
 var module = {};
 

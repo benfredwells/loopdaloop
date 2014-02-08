@@ -1,6 +1,6 @@
-InstrumentPersistUI = (function() {
+"use strict";
 
-"use strict"
+var InstrumentPersistUI = (function() {
 
 var module = {};
 
@@ -34,12 +34,8 @@ module.UI.prototype.save_ = function(event) {
   this.savedInstruments_.export(this.instrument_);
 }
 
-module.UI.prototype.currentSavedInstrument_ = function() {
-  return this.savedInstruments_.presets[this.select.value];
-}
-
 module.UI.prototype.updateInstrument_ = function() {
-  this.currentSavedInstrument_().updateInstrument(this.instrument_);
+  this.savedInstruments_.usePreset(this.select.value);
   if (this.onchange)
     this.onchange();
 }
@@ -60,11 +56,14 @@ module.UI.prototype.initialize = function(savedInstruments) {
 }
 
 module.UI.prototype.onModifiedChanged = function() {
+/*
   var suffix = '';
   if (this.instrument_.isModified())
     suffix = ' *';
 
-  this.select.options[this.select.value].text = this.currentSavedInstrument_().name + suffix;
+  this.select.options[this.select.value].text = this.current_().name + suffix;
+*/
+
 }
 
 return module;

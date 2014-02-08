@@ -6,7 +6,7 @@ var BackgroundPage = function() {
   this.synthWrapper = null;
   this.scene = new Scene.Scene();
   this.instrument = new Instrument.Instrument();
-  this.savedInstruments = new SavedInstruments.Manager(this.handleSavedInstrumentsLoaded.bind(this));
+  this.savedInstruments = new SavedInstruments.Manager(this.instrument, this.handleSavedInstrumentsLoaded.bind(this));
 }
 
 BackgroundPage.prototype.handleSavedInstrumentsLoaded = function() {

@@ -100,7 +100,6 @@ SynthesizerWrapper.prototype.initializeCategoryUI = function(ui) {
 }
 
 SynthesizerWrapper.prototype.handleSavedInstrumentsLoaded = function() {
-  this.savedInstruments.default.updateInstrument(this.instrument);
   this.handleInstrumentChanged();
   this.instrumentPersistUI.initialize(this.savedInstruments);
 }

@@ -35,7 +35,7 @@ module.UI.prototype.save_ = function(event) {
 };
 
 module.UI.prototype.updateInstrument_ = function() {
-  this.savedInstruments_.usePreset(this.select.value);
+  this.savedInstruments_.usePresetWithIndex(this.select.value);
   if (this.onchange)
     this.onchange();
 };

@@ -66,12 +66,12 @@ module.Manager.prototype.handlePresetsLoaded = function() {
 
 module.Manager.prototype.usePresetWithIndex = function(index) {
   this.usePreset(this.presets[index]);
-}
+};
 
 module.Manager.prototype.usePreset = function(preset) {
   this.currentPreset = preset;
   this.currentPreset.updateInstrument_(this.instrument_);
-}
+};
 
 module.Manager.prototype.export = function(instrument) {
   var jsonObject = {};

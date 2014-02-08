@@ -1,6 +1,5 @@
 {
   "name": "Classic",
-  "default": true,
   "instrumentState":
   {
     "pitch": {

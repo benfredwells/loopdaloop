@@ -1,5 +1,6 @@
 {
   "name": "Deep Bass",
+  "default": true,
   "instrumentState":
   {
     "pitch": {

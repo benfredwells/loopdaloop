@@ -16,6 +16,10 @@ Preset.prototype.updateInstrument_ = function(instrument) {
   InstrumentState.updateInstrument(instrument, this.instrumentState);
 };
 
+Preset.prototype.updateFromInstrument_ = function(instrument) {
+  this.instrumentState = InstrumentState.getInstrumentState(instrument);
+};
+
 Preset.prototype.updateFromJSON = function(then, jsonText) {
   var fromJSON = JSON.parse(jsonText);
   this.name = fromJSON.name;
@@ -69,6 +73,9 @@ module.Manager.prototype.usePresetWithIndex = function(index) {
 };
 
 module.Manager.prototype.usePreset = function(preset) {
+  if (this.currentPreset)
+    this.currentPreset.updateFromInstrument_(this.instrument_);
+
   this.currentPreset = preset;
   this.currentPreset.updateInstrument_(this.instrument_);
 };

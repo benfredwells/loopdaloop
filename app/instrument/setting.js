@@ -25,7 +25,7 @@ Modifiable.prototype.startListening = function() {
 };
 
 Modifiable.prototype.stopListening = function() {
-  this.listening_ = true;
+  this.listening_ = false;
 };
 
 var Setting = function() {

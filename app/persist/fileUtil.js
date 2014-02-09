@@ -23,11 +23,13 @@ module.readFile = function(fileEntry, callback) {
 
 module.writeFile = function(fileEntry, data, callback) {
   fileEntry.createWriter(function(fileWriter) {
-    fileWriter.onwriteend = callback;
     fileWriter.onerror = module.errorHandler;
-
-    var blob = new Blob([data]);
-    fileWriter.write(blob);
+    fileWriter.onwriteend = function() {
+      fileWriter.onwriteend = callback;
+      var blob = new Blob([data]);
+      fileWriter.write(blob);
+    };
+    fileWriter.truncate(0);
   }, module.errorHandler);
 };
 

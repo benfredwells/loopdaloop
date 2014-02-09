@@ -47,7 +47,17 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
 
   this.isModified = false;
   this.isSaving = true;
-  setTimeout(this.finishedSaving_.bind(this), 10000);
+  this.manager_.notifyObserver();
+
+  var jsonObject = {};
+  jsonObject.instrumentState = this.instrumentState;
+  jsonObject.default = this.isDefault;
+  jsonObject.name = this.name;
+  var jsonText = JSON.stringify(jsonObject, null, 2);
+  var manager = this;
+  this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: true}, function(entry) {
+    FileUtil.writeFile(entry, jsonText, manager.finishedSaving_.bind(manager));
+  }, FileUtil.errorHandler);
 };
 
 Preset.prototype.finishedSaving_ = function() {
@@ -71,7 +81,6 @@ module.Manager = function(instrument, onInstrumentsLoaded) {
 module.Manager.prototype.openStorage = function(then) {
   var manager = this;
   var requestFileSystemCallback = function(fileSystem) {
-    console.log(fileSystem);
     fileSystem.root.getDirectory('presets', {create: true}, function(presetsEntry) {
       manager.presetStorage_ = presetsEntry;
       then();
@@ -150,12 +159,12 @@ module.Manager.prototype.scheduleSave_ = function() {
 };
 
 module.Manager.prototype.doSave_ = function() {
-  console.log('Saving!');
+  console.log('Saving.');
   this.saveTimerId = null;
 
   // if any are still saving, back off and schedule another save.
   if (this.presets.some(function(preset) { return preset.isSaving; } )) {
-    console.log('One is saving, backing off.');
+    console.log('Something is saving, backing off.');
     this.scheduleSave_();
     return;
   }

@@ -63,8 +63,11 @@ module.UI.prototype.handlePresetStateChanged = function() {
   for (var i = 0; i < this.select.options.length; i++) {
     var option = this.select.options[i];
     var suffix = '';
-    if (option.preset.modified)
-      suffix = ' *';
+    if (option.preset.isModified)
+      suffix = ' (dirty)';
+      
+    if (option.preset.isSaving)
+      suffix = suffix + ' (saving)';
 
     option.text = option.preset.name + suffix;
   }

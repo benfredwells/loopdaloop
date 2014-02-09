@@ -6,10 +6,12 @@ var module = {};
 
 var kSaverTimerInterval = 5000;
 
-var Preset = function(originalEntry) {
+var Preset = function(manager, originalEntry) {
   this.name = '';
+  this.manager_ = manager;
   this.isDefault = false;
-  this.modified = false;
+  this.isModified = false;
+  this.isSaving = false;
   this.instrumentState = null;
   this.originalEntry = originalEntry;
 };
@@ -37,6 +39,20 @@ Preset.prototype.loadFromOriginal = function(then) {
   FileUtil.readFile(this.originalEntry, this.updateFromJSON.bind(this, then));
 };
 
+Preset.prototype.beginSaveIfNeeded_ = function() {
+  if (!this.isModified)
+    return;
+
+  this.isModified = false;
+  this.isSaving = true;
+  setTimeout(this.finishedSaving_.bind(this), 10000);
+};
+
+Preset.prototype.finishedSaving_ = function() {
+  this.isSaving = false;
+  this.manager_.notifyObserver();
+};
+
 module.Manager = function(instrument, onInstrumentsLoaded) {
   this.instrument_ = instrument;
   this.presets = [];
@@ -54,7 +70,7 @@ module.Manager.prototype.loadPresets = function() {
   chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
     packageEntry.getDirectory('presets', {create: false}, function(presetsEntry) {
       var processEntry = function(entry, then) {
-        var preset = new Preset(entry);
+        var preset = new Preset(manager, entry);
         manager.presets.push(preset);
         preset.loadFromOriginal(then);
       };
@@ -98,10 +114,14 @@ module.Manager.prototype.export = function(instrument) {
 };
 
 module.Manager.prototype.onChanged = function() {
-  this.currentPreset.modified = true;
+  this.currentPreset.isModified = true;
   this.scheduleSave_();
+  this.notifyObserver();
+};
+
+module.Manager.prototype.notifyObserver = function() {
   if (this.onPresetStateChanged)
-    this.onPresetStateChanged();
+  this.onPresetStateChanged();
 };
 
 module.Manager.prototype.scheduleSave_ = function() {
@@ -112,8 +132,21 @@ module.Manager.prototype.scheduleSave_ = function() {
 };
 
 module.Manager.prototype.doSave_ = function() {
-  console.log('Saved!');
+  console.log('Saving!');
   this.saveTimerId = null;
+
+  // if any are still saving, back off and schedule another save.
+  if (this.presets.some(function(preset) { return preset.isSaving; } )) {
+    console.log('One is saving, backing off.');
+    this.scheduleSave_();
+    return;
+  }
+
+  if (this.currentPreset.isModified)
+    this.currentPreset.updateFromInstrument_(this.instrument_);
+
+  this.presets.forEach(function(preset) { preset.beginSaveIfNeeded_(); } );
+  this.notifyObserver();
 };
 
 return module;

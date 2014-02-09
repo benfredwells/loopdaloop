@@ -4,6 +4,8 @@ var SavedInstruments = (function() {
 
 var module = {};
 
+var kSaverTimerInterval = 5000;
+
 var Preset = function(originalEntry) {
   this.name = '';
   this.isDefault = false;
@@ -44,6 +46,7 @@ module.Manager = function(instrument, onInstrumentsLoaded) {
   this.onPresetStateChanged = null;
   this.instrument_.setListener(this);
   this.loadPresets();
+  this.saveTimerId = null;
 };
 
 module.Manager.prototype.loadPresets = function() {
@@ -96,8 +99,21 @@ module.Manager.prototype.export = function(instrument) {
 
 module.Manager.prototype.onChanged = function() {
   this.currentPreset.modified = true;
+  this.scheduleSave_();
   if (this.onPresetStateChanged)
     this.onPresetStateChanged();
+};
+
+module.Manager.prototype.scheduleSave_ = function() {
+  if (this.saveTimerId)
+    clearTimeout(this.saveTimerId);
+  
+  this.saveTimerId = setTimeout(this.doSave_.bind(this), kSaverTimerInterval);
+};
+
+module.Manager.prototype.doSave_ = function() {
+  console.log('Saved!');
+  this.saveTimerId = null;
 };
 
 return module;

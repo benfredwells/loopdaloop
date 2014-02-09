@@ -1,30 +1,32 @@
-Setting = (function() {
-
 "use strict";
+
+var Setting = (function() {
+
 var module = {};
 
 
-// listener needs to implement onModifiedChanged.
+// listener needs to implement onChanged.
 var Modifiable = function() {
   this.listener_ = null;
-}
-
-// Should be overridden.
-Modifiable.prototype.isModified = function() {
-}
-
-// Should be overridden.
-Modifiable.prototype.clearModified = function() {
-}
+  this.listening_ = false;
+};
 
 Modifiable.prototype.setListener = function(listener) {
   this.listener_ = listener;
-}
+};
 
 Modifiable.prototype.notifyListener = function() {
-  if (this.listener_)
-    this.listener_.onModifiedChanged();
-}
+  if (this.listening_ && this.listener_)
+    this.listener_.onChanged();
+};
+
+Modifiable.prototype.startListening = function() {
+  this.listening_ = true;
+};
+
+Modifiable.prototype.stopListening = function() {
+  this.listening_ = true;
+};
 
 var Setting = function() {
   Modifiable.call(this);
@@ -36,45 +38,31 @@ var Setting = function() {
     get: this.getValue,
     set: this.setValue
   });
-}
+};
 
 Setting.prototype = Object.create(Modifiable.prototype);
 
 Setting.prototype.setValue = function(aValue) {
-  var wasModified = this.isModified();
   this.value_ = aValue;
-  if (this.isModified() != wasModified)
-    this.notifyListener();
-}
+  this.notifyListener();
+};
 
 Setting.prototype.getValue = function() {
   return this.value_;
-}
-
-Setting.prototype.isModified = function() {
-  return (this.originalValue_ != this.value_);
-}
-
-Setting.prototype.clearModified = function() {
-  if (this.originalValue_ == this.value_)
-    return;
-
-  this.originalValue_ = this.value_;
-  this.notifyListener();
-}
+};
 
 module.Choice = function(choices) {
   Setting.call(this);
   this.value = choices[0];
   this.choices = choices;
-}
+};
 
 module.Choice.prototype = Object.create(Setting.prototype);
 
 module.Boolean = function() {
   Setting.call(this);
   this.value = false;
-}
+};
 
 module.Boolean.prototype = Object.create(Setting.prototype);
 
@@ -83,7 +71,7 @@ module.Number = function(min, max) {
   this.value = min;
   this.min = min;
   this.max = max;
-}
+};
 
 module.Number.prototype = Object.create(Setting.prototype);
 
@@ -91,43 +79,39 @@ module.Number.prototype.copy = function() {
   var number = new module.Number(this.min, this.max);
   number.value = this.value;
   return number;
-}
+};
 
 module.ModifiableGroup = function() {
   Modifiable.call(this);
   this.modifiables_ = [];
-  this.wasModified_ = false;
-}
+};
 
 module.ModifiableGroup.prototype = Object.create(Modifiable.prototype);
 
-module.ModifiableGroup.prototype.isModified = function() {
-  for (var i = 0; i < this.modifiables_.length; i++) {
-    if (this.modifiables_[i].isModified())
-      return true;
-  }
-  return false;
-}
-
-module.ModifiableGroup.prototype.clearModified = function() {
-  this.modifiables_.forEach(function (modifiable) {
-    modifiable.clearModified();
-  });
-}
-
 // This is called by this group's sub modifiables.
-module.ModifiableGroup.prototype.onModifiedChanged = function() {
-  if (this.wasModified_ != this.isModified())
-    this.notifyListener();
-  this.wasModified_ = this.isModified();
-}
+module.ModifiableGroup.prototype.onChanged = function() {
+  this.notifyListener();
+};
 
 module.ModifiableGroup.prototype.addModifiable = function(modifiable) {
   this.modifiables_.push(modifiable);
   modifiable.setListener(this);
-  this.onModifiedChanged();
   return modifiable;
-}
+};
+
+module.ModifiableGroup.prototype.startListening = function() {
+  Modifiable.prototype.startListening.call(this);
+  this.modifiables_.forEach(function(modifiable) {
+    modifiable.startListening();
+  });
+};
+
+module.ModifiableGroup.prototype.stopListening = function() {
+  Modifiable.prototype.stopListening.call(this);
+  this.modifiables_.forEach(function(modifiable) {
+    modifiable.stopListening();
+  });
+};
 
 return module;
 

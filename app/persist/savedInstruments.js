@@ -8,15 +8,14 @@ var Preset = function(originalEntry) {
   this.name = '';
   this.isDefault = false;
   this.modified = false;
-  this.savedState = null;
   this.instrumentState = null;
   this.originalEntry = originalEntry;
 };
 
 Preset.prototype.updateInstrument_ = function(instrument) {
-  InstrumentState.updateInstrument(instrument, this.savedState);
-  instrument.clearModified();
+  instrument.stopListening();
   InstrumentState.updateInstrument(instrument, this.instrumentState);
+  instrument.startListening();
 };
 
 Preset.prototype.updateFromInstrument_ = function(instrument) {
@@ -27,7 +26,6 @@ Preset.prototype.updateFromJSON = function(then, jsonText) {
   var fromJSON = JSON.parse(jsonText);
   this.name = fromJSON.name;
   this.instrumentState = fromJSON.instrumentState;
-  this.savedState = this.instrumentState;
   this.isDefault = fromJSON.default;
   then();
 };
@@ -38,12 +36,13 @@ Preset.prototype.loadFromOriginal = function(then) {
 };
 
 module.Manager = function(instrument, onInstrumentsLoaded) {
+  this.instrument_ = instrument;
   this.presets = [];
   this.loaded = false;
   this.currentPreset = null;
-  this.instrument_ = instrument;
   this.onInstrumentsLoaded = onInstrumentsLoaded;
   this.onPresetStateChanged = null;
+  this.instrument_.setListener(this);
   this.loadPresets();
 };
 
@@ -70,8 +69,7 @@ module.Manager.prototype.handlePresetsLoaded = function() {
   });
 
   this.loaded = true;
-  // Start listening to modified changes now.
-  this.instrument_.setListener(this);
+  this.instrument_.startListening();
   this.onInstrumentsLoaded();
 };
 
@@ -96,8 +94,8 @@ module.Manager.prototype.export = function(instrument) {
   });
 };
 
-module.Manager.prototype.onModifiedChanged = function() {
-  this.currentPreset.modified = this.instrument_.isModified();
+module.Manager.prototype.onChanged = function() {
+  this.currentPreset.modified = true;
   if (this.onPresetStateChanged)
     this.onPresetStateChanged();
 };

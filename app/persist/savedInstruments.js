@@ -5,15 +5,17 @@ var SavedInstruments = (function() {
 var module = {};
 
 var kSaverTimerInterval = 5000;
+var kPresetsFolder = 'presets';
 
-var Preset = function(manager, originalEntry) {
+var Preset = function(manager, originalFileEntry, storageDirectoryEntry) {
   this.name = '';
   this.manager_ = manager;
   this.isDefault = false;
   this.isModified = false;
   this.isSaving = false;
   this.instrumentState = null;
-  this.originalEntry = originalEntry;
+  this.originalFileEntry_ = originalFileEntry;
+  this.storageDirectoryEntry_ = storageDirectoryEntry;
 };
 
 Preset.prototype.updateInstrument_ = function(instrument) {
@@ -36,7 +38,7 @@ Preset.prototype.updateFromJSON = function(then, jsonText) {
 
 Preset.prototype.loadFromOriginal = function(then) {
   this.instrumentState = null;
-  FileUtil.readFile(this.originalEntry, this.updateFromJSON.bind(this, then));
+  FileUtil.readFile(this.originalFileEntry_, this.updateFromJSON.bind(this, then));
 };
 
 Preset.prototype.beginSaveIfNeeded_ = function() {
@@ -61,21 +63,37 @@ module.Manager = function(instrument, onInstrumentsLoaded) {
   this.onInstrumentsLoaded = onInstrumentsLoaded;
   this.onPresetStateChanged = null;
   this.instrument_.setListener(this);
-  this.loadPresets();
   this.saveTimerId = null;
+  this.presetStorage_ = null;
+  this.loadPresets();
+};
+
+module.Manager.prototype.openStorage = function(then) {
+  var manager = this;
+  var requestFileSystemCallback = function(fileSystem) {
+    console.log(fileSystem);
+    fileSystem.root.getDirectory('presets', {create: true}, function(presetsEntry) {
+      manager.presetStorage_ = presetsEntry;
+      then();
+    }, FileUtil.errorHandler);
+  };
+
+  window.webkitRequestFileSystem(window.PERSISTENT, 10 * 1024 * 1024, requestFileSystemCallback, FileUtil.errorHandler);
 };
 
 module.Manager.prototype.loadPresets = function() {
   var manager = this;
-  chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
-    packageEntry.getDirectory('presets', {create: false}, function(presetsEntry) {
-      var processEntry = function(entry, then) {
-        var preset = new Preset(manager, entry);
-        manager.presets.push(preset);
-        preset.loadFromOriginal(then);
-      };
-
-      FileUtil.forEachEntry(presetsEntry, processEntry, manager.handlePresetsLoaded.bind(manager));
+  this.openStorage(function() {
+    chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
+      packageEntry.getDirectory('presets', {create: false}, function(presetsEntry) {
+        var processEntry = function(entry, then) {
+          var preset = new Preset(manager, entry, manager.presetStorage_);
+          manager.presets.push(preset);
+          preset.loadFromOriginal(then);
+        };
+  
+        FileUtil.forEachEntry(presetsEntry, processEntry, manager.handlePresetsLoaded.bind(manager));
+      }, FileUtil.errorHandler);
     });
   });
 };

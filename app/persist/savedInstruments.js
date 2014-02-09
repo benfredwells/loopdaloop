@@ -28,7 +28,7 @@ Preset.prototype.updateFromInstrument_ = function(instrument) {
   this.instrumentState = InstrumentState.getInstrumentState(instrument);
 };
 
-Preset.prototype.updateFromJSON = function(then, jsonText) {
+Preset.prototype.updateFromJSON_ = function(then, jsonText) {
   var fromJSON = JSON.parse(jsonText);
   this.name = fromJSON.name;
   this.instrumentState = fromJSON.instrumentState;
@@ -36,10 +36,19 @@ Preset.prototype.updateFromJSON = function(then, jsonText) {
   then();
 };
 
-Preset.prototype.loadFromOriginal = function(then) {
+Preset.prototype.loadFromOriginal_ = function(then) {
   this.instrumentState = null;
-  FileUtil.readFile(this.originalFileEntry_, this.updateFromJSON.bind(this, then));
+  FileUtil.readFile(this.originalFileEntry_, this.updateFromJSON_.bind(this, then));
 };
+
+Preset.prototype.load_ = function(then) {
+  var preset = this;
+  var doLoad = function(fileEntry) {
+    FileUtil.readFile(fileEntry, preset.updateFromJSON_.bind(preset, then));
+  };
+
+  this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: false}, doLoad, this.loadFromOriginal_.bind(this, then));
+}
 
 Preset.prototype.beginSaveIfNeeded_ = function() {
   if (!this.isModified)
@@ -98,7 +107,7 @@ module.Manager.prototype.loadPresets = function() {
         var processEntry = function(entry, then) {
           var preset = new Preset(manager, entry, manager.presetStorage_);
           manager.presets.push(preset);
-          preset.loadFromOriginal(then);
+          preset.load_(then);
         };
   
         FileUtil.forEachEntry(presetsEntry, processEntry, manager.handlePresetsLoaded.bind(manager));

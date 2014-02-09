@@ -9,26 +9,26 @@ var kOscillatorCount = 3;
 ////////////////////////////////////////////////////////////////////////////////
 // Pitch class
 module.Pitch = function() {
-  Setting.ModifiableGroup.call(this);
-  this.unitsSetting = this.addModifiable(new Setting.Choice(AudioConstants.kPitchUnits));
-  this.contour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(-1, 1), false));
+  Setting.ListenableGroup.call(this);
+  this.unitsSetting = this.addListenable(new Setting.Choice(AudioConstants.kPitchUnits));
+  this.contour = this.addListenable(new Contour.ContouredValue(new Setting.Number(-1, 1), false));
 }
 
-module.Pitch.prototype = Object.create(Setting.ModifiableGroup.prototype);
+module.Pitch.prototype = Object.create(Setting.ListenableGroup.prototype);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillator class
 module.Oscillator = function() {
-  Setting.ModifiableGroup.call(this);
-  this.enabledSetting = this.addModifiable(new Setting.Boolean());
-  this.typeSetting = this.addModifiable(new Setting.Choice(AudioConstants.kWaveTypes));
-  this.octaveOffsetSetting = this.addModifiable(new Setting.Number(-4, 4));
-  this.noteOffsetSetting = this.addModifiable(new Setting.Number(-8, 8));
-  this.detuneSetting = this.addModifiable(new Setting.Number(-50, 50));
-  this.gainContour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(0, 1), false));
+  Setting.ListenableGroup.call(this);
+  this.enabledSetting = this.addListenable(new Setting.Boolean());
+  this.typeSetting = this.addListenable(new Setting.Choice(AudioConstants.kWaveTypes));
+  this.octaveOffsetSetting = this.addListenable(new Setting.Number(-4, 4));
+  this.noteOffsetSetting = this.addListenable(new Setting.Number(-8, 8));
+  this.detuneSetting = this.addListenable(new Setting.Number(-50, 50));
+  this.gainContour = this.addListenable(new Contour.ContouredValue(new Setting.Number(0, 1), false));
 }
 
-module.Oscillator.prototype = Object.create(Setting.ModifiableGroup.prototype);
+module.Oscillator.prototype = Object.create(Setting.ListenableGroup.prototype);
 
 module.Oscillator.prototype.createOscillatorNode_ = function(context, octave, note) {
   var node = Oscillator.createNode(context, this.typeSetting.value);
@@ -62,15 +62,15 @@ module.Oscillator.prototype.createNoteSection_ = function(context, octave, note,
 ////////////////////////////////////////////////////////////////////////////////
 // Filter class
 module.Filter = function() {
-  Setting.ModifiableGroup.call(this);
-  this.enabledSetting = this.addModifiable(new Setting.Boolean());
-  this.typeSetting = this.addModifiable(new Setting.Choice(AudioConstants.kFilterTypes));
-  this.orderSetting = this.addModifiable(new Setting.Choice(AudioConstants.kFilterOrders));
-  this.qSetting = this.addModifiable(new Setting.Number(0, 20));
-  this.frequencyContour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(0.5, 10), false));
+  Setting.ListenableGroup.call(this);
+  this.enabledSetting = this.addListenable(new Setting.Boolean());
+  this.typeSetting = this.addListenable(new Setting.Choice(AudioConstants.kFilterTypes));
+  this.orderSetting = this.addListenable(new Setting.Choice(AudioConstants.kFilterOrders));
+  this.qSetting = this.addListenable(new Setting.Number(0, 20));
+  this.frequencyContour = this.addListenable(new Contour.ContouredValue(new Setting.Number(0.5, 10), false));
 }
 
-module.Filter.prototype = Object.create(Setting.ModifiableGroup.prototype);
+module.Filter.prototype = Object.create(Setting.ListenableGroup.prototype);
 
 module.Filter.prototype.createFilterNode_ = function(context, octave, note) {
   var filter = context.createBiquadFilter();
@@ -123,20 +123,20 @@ module.Filter.prototype.getFrequencyResponse = function(context, octave, note, t
 ////////////////////////////////////////////////////////////////////////////////
 // Instrument class
 module.Instrument = function() {
-  Setting.ModifiableGroup.call(this);
-  this.pitch = this.addModifiable(new module.Pitch());
-  this.envelopeContour = this.addModifiable(new Contour.ContouredValue(new Setting.Number(0, 1), true));
+  Setting.ListenableGroup.call(this);
+  this.pitch = this.addListenable(new module.Pitch());
+  this.envelopeContour = this.addListenable(new Contour.ContouredValue(new Setting.Number(0, 1), true));
   this.oscillators = [];
   for (var i = 0; i < kOscillatorCount; i++) {
-    this.oscillators.push(this.addModifiable(new module.Oscillator()));
+    this.oscillators.push(this.addListenable(new module.Oscillator()));
   }
   this.filters = [];
   for (var i = 0; i < kFilterCount; i++) {
-    this.filters.push(this.addModifiable(new module.Filter()));
+    this.filters.push(this.addListenable(new module.Filter()));
   }
 }
 
-module.Instrument.prototype = Object.create(Setting.ModifiableGroup.prototype);
+module.Instrument.prototype = Object.create(Setting.ListenableGroup.prototype);
 
 module.Instrument.prototype.createEnvelope_ = function(context) {
   var gainNode = context.createGainNode();

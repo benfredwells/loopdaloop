@@ -6,30 +6,30 @@ var module = {};
 
 
 // listener needs to implement onChanged.
-var Modifiable = function() {
+var Listenable = function() {
   this.listener_ = null;
   this.listening_ = false;
 };
 
-Modifiable.prototype.setListener = function(listener) {
+Listenable.prototype.setListener = function(listener) {
   this.listener_ = listener;
 };
 
-Modifiable.prototype.notifyListener = function() {
+Listenable.prototype.notifyListener = function() {
   if (this.listening_ && this.listener_)
     this.listener_.onChanged();
 };
 
-Modifiable.prototype.startListening = function() {
+Listenable.prototype.startListening = function() {
   this.listening_ = true;
 };
 
-Modifiable.prototype.stopListening = function() {
+Listenable.prototype.stopListening = function() {
   this.listening_ = false;
 };
 
 var Setting = function() {
-  Modifiable.call(this);
+  Listenable.call(this);
 	this.value_ = null;
   this.originalValue_ = null;
   Object.defineProperty(this, "value", {
@@ -40,7 +40,7 @@ var Setting = function() {
   });
 };
 
-Setting.prototype = Object.create(Modifiable.prototype);
+Setting.prototype = Object.create(Listenable.prototype);
 
 Setting.prototype.setValue = function(aValue) {
   this.value_ = aValue;
@@ -81,35 +81,35 @@ module.Number.prototype.copy = function() {
   return number;
 };
 
-module.ModifiableGroup = function() {
-  Modifiable.call(this);
-  this.modifiables_ = [];
+module.ListenableGroup = function() {
+  Listenable.call(this);
+  this.listenables_ = [];
 };
 
-module.ModifiableGroup.prototype = Object.create(Modifiable.prototype);
+module.ListenableGroup.prototype = Object.create(Listenable.prototype);
 
-// This is called by this group's sub modifiables.
-module.ModifiableGroup.prototype.onChanged = function() {
+// This is called by this group's sub listenables.
+module.ListenableGroup.prototype.onChanged = function() {
   this.notifyListener();
 };
 
-module.ModifiableGroup.prototype.addModifiable = function(modifiable) {
-  this.modifiables_.push(modifiable);
-  modifiable.setListener(this);
-  return modifiable;
+module.ListenableGroup.prototype.addListenable = function(listenable) {
+  this.listenables_.push(listenable);
+  listenable.setListener(this);
+  return listenable;
 };
 
-module.ModifiableGroup.prototype.startListening = function() {
-  Modifiable.prototype.startListening.call(this);
-  this.modifiables_.forEach(function(modifiable) {
-    modifiable.startListening();
+module.ListenableGroup.prototype.startListening = function() {
+  Listenable.prototype.startListening.call(this);
+  this.listenables_.forEach(function(listenable) {
+    listenable.startListening();
   });
 };
 
-module.ModifiableGroup.prototype.stopListening = function() {
-  Modifiable.prototype.stopListening.call(this);
-  this.modifiables_.forEach(function(modifiable) {
-    modifiable.stopListening();
+module.ListenableGroup.prototype.stopListening = function() {
+  Listenable.prototype.stopListening.call(this);
+  this.listenables_.forEach(function(listenable) {
+    listenable.stopListening();
   });
 };
 

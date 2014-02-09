@@ -8,42 +8,42 @@ var kMinChangeTime = 0.0005;
 ////////////////////////////////////////////////////////////////////////////////
 // Contour settings shared by the different contour types.
 var IntermediateContourStage = function(valueSetting) {
-  Setting.ModifiableGroup.call(this);
-  this.beginValueSetting = this.addModifiable(valueSetting.copy());
-  this.durationSetting = this.addModifiable(new Setting.Number(kMinChangeTime, 10));
+  Setting.ListenableGroup.call(this);
+  this.beginValueSetting = this.addListenable(valueSetting.copy());
+  this.durationSetting = this.addListenable(new Setting.Number(kMinChangeTime, 10));
 }
 
-IntermediateContourStage.prototype = Object.create(Setting.ModifiableGroup.prototype);
+IntermediateContourStage.prototype = Object.create(Setting.ListenableGroup.prototype);
 
 var SharedContourSettings = function(valueSetting) {
-  Setting.ModifiableGroup.call(this);
+  Setting.ListenableGroup.call(this);
   // N Stage settings
-  this.initialValueSetting = this.addModifiable(valueSetting.copy());
-  this.firstStageTimeSetting = this.addModifiable(new Setting.Number(kMinChangeTime, 10));
-  this.numStagesSetting = this.addModifiable(new Setting.Number(AudioConstants.kMinStages, AudioConstants.kMaxStages));
+  this.initialValueSetting = this.addListenable(valueSetting.copy());
+  this.firstStageTimeSetting = this.addListenable(new Setting.Number(kMinChangeTime, 10));
+  this.numStagesSetting = this.addListenable(new Setting.Number(AudioConstants.kMinStages, AudioConstants.kMaxStages));
   this.intermediateStages = [];
   for (var i = 0; i < AudioConstants.kMaxIntermediateStageValues; i++) {
-    this.intermediateStages.push(this.addModifiable(new IntermediateContourStage(valueSetting)));
+    this.intermediateStages.push(this.addListenable(new IntermediateContourStage(valueSetting)));
   }
-  this.releaseTimeSetting = this.addModifiable(new Setting.Number(kMinChangeTime, 10));
+  this.releaseTimeSetting = this.addListenable(new Setting.Number(kMinChangeTime, 10));
   this.finalValueSetting = (valueSetting.copy());
   // Vanilla oscillation settings
-  this.oscillationWaveSetting = this.addModifiable(new Setting.Choice(AudioConstants.kWaveTypes));
-  this.oscillationMinValueSetting = this.addModifiable(valueSetting.copy());
-  this.oscillationMaxValueSetting = this.addModifiable(valueSetting.copy());
+  this.oscillationWaveSetting = this.addListenable(new Setting.Choice(AudioConstants.kWaveTypes));
+  this.oscillationMinValueSetting = this.addListenable(valueSetting.copy());
+  this.oscillationMaxValueSetting = this.addListenable(valueSetting.copy());
   this.oscillationMaxValueSetting.value = this.oscillationMaxValueSetting.max;
   this.oscillationMinValueSetting.value = this.oscillationMinValueSetting.min;
   // N Stage oscillation settings
-  this.oscillationAmountSetting = this.addModifiable(new Setting.Number(0, 1));
+  this.oscillationAmountSetting = this.addListenable(new Setting.Number(0, 1));
   // Shared oscillation settings
-  this.oscillationFrequencySetting = this.addModifiable(new Setting.Number(0, 20));
-  this.oscillationTimeConstantSetting = this.addModifiable(new Setting.Number(0, 10));
-  this.oscillationTypeSetting = this.addModifiable(new Setting.Choice(AudioConstants.kOscillationTypes));
+  this.oscillationFrequencySetting = this.addListenable(new Setting.Number(0, 20));
+  this.oscillationTimeConstantSetting = this.addListenable(new Setting.Number(0, 10));
+  this.oscillationTypeSetting = this.addListenable(new Setting.Choice(AudioConstants.kOscillationTypes));
   // Sweep settings
-  this.sweepTimeSetting = this.addModifiable(new Setting.Number(kMinChangeTime, 10));
+  this.sweepTimeSetting = this.addListenable(new Setting.Number(kMinChangeTime, 10));
 }
 
-SharedContourSettings.prototype = Object.create(Setting.ModifiableGroup.prototype);
+SharedContourSettings.prototype = Object.create(Setting.ListenableGroup.prototype);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Contourer interface
@@ -554,15 +554,15 @@ module.NStageOscillatingContour.prototype.oscillationTimeConstant = function(i) 
 ////////////////////////////////////////////////////////////////////////////////
 // Contoured value
 module.ContouredValue = function(valueSetting, isEnvelope) {
-  Setting.ModifiableGroup.call(this);
+  Setting.ListenableGroup.call(this);
   this.isEnvelope = isEnvelope;
   this.min = valueSetting.min;
   this.max = valueSetting.max;
-  this.sharedContourSettings = this.addModifiable(new SharedContourSettings(valueSetting));
+  this.sharedContourSettings = this.addListenable(new SharedContourSettings(valueSetting));
   if (isEnvelope)
-    this.currentContourSetting = this.addModifiable(new Setting.Choice(AudioConstants.kEnvelopeContourTypes));
+    this.currentContourSetting = this.addListenable(new Setting.Choice(AudioConstants.kEnvelopeContourTypes));
   else
-    this.currentContourSetting = this.addModifiable(new Setting.Choice(AudioConstants.kContourTypes));
+    this.currentContourSetting = this.addListenable(new Setting.Choice(AudioConstants.kContourTypes));
   this.contours_ = [];
   this.contoursByIdentifier = {};
   this.initContour_(AudioConstants.kFlatContour, new module.FlatContour(this.sharedContourSettings, this));
@@ -574,7 +574,7 @@ module.ContouredValue = function(valueSetting, isEnvelope) {
     this.initContour_(AudioConstants.kSweepContour, new module.SweepContour(this.sharedContourSettings, this));
 }
 
-module.ContouredValue.prototype = Object.create(Setting.ModifiableGroup.prototype);
+module.ContouredValue.prototype = Object.create(Setting.ListenableGroup.prototype);
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {
   this.contours_.push(contour);

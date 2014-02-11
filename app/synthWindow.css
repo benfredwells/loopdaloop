@@ -8,6 +8,10 @@ div {
   margin: 0px;
 }
 
+#errorDisplay {
+  padding-top: 10px;
+}
+
 #instrumentPersist {
   display: inline-block;
   margin-bottom: 6px;

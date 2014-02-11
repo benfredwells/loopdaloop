@@ -91,7 +91,25 @@ module.Manager = function(instrument, onInstrumentsLoaded) {
   this.instrument_.setListener(this);
   this.saveTimerId = null;
   this.presetStorage_ = null;
+  this.errorCallback_ = null;
+  this.currentError_ = '';
   this.loadPresets();
+};
+
+module.Manager.prototype.setErrorCallback = function(callback) {
+  this.errorCallback_ = null;
+  if (this.currentError_)
+    this.errorCallback_(this.currentError_);
+};
+
+module.Manager.prototype.updateError = function(errorText) {
+  this.currentError_ = errorText;
+  if (this.errorCallback_)
+    this.errorCallback_(this.currentError_);
+};
+
+module.Manager.prototype.domErrorHandler = function(domError) {
+  this.updateError(domError.message);
 };
 
 module.Manager.prototype.openStorage = function(then) {

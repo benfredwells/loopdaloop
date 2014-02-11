@@ -6,6 +6,7 @@ var module = {};
 
 var kSaverTimerInterval = 5000;
 var kPresetsFolder = 'presets';
+var kUseSyncFS = true;
 
 var Preset = function(manager, originalFileEntry, storageDirectoryEntry) {
   this.name = '';
@@ -47,7 +48,10 @@ Preset.prototype.load_ = function(then) {
     FileUtil.readFile(fileEntry, preset.updateFromJSON_.bind(preset, then));
   };
 
-  this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: false}, doLoad, this.loadFromOriginal_.bind(this, then));
+  if (this.storageDirectoryEntry_)
+    this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: false}, doLoad, this.loadFromOriginal_.bind(this, then));
+  else
+    this.loadFromOriginal_(then);
 }
 
 Preset.prototype.beginSaveIfNeeded_ = function() {
@@ -55,6 +59,9 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
     return;
 
   this.isModified = false;
+  if (!this.storageDirectoryEntry_)
+    return;
+  
   this.isSaving = true;
   this.manager_.notifyObserver();
 
@@ -90,13 +97,22 @@ module.Manager = function(instrument, onInstrumentsLoaded) {
 module.Manager.prototype.openStorage = function(then) {
   var manager = this;
   var requestFileSystemCallback = function(fileSystem) {
+    if (chrome.runtime.lastError) {
+      console.log('Error creating syncFS: ' + chrome.runtime.lastError.message);
+      then();
+      return;
+    };
     fileSystem.root.getDirectory('presets', {create: true}, function(presetsEntry) {
       manager.presetStorage_ = presetsEntry;
       then();
     }, FileUtil.errorHandler);
   };
 
-  window.webkitRequestFileSystem(window.PERSISTENT, 10 * 1024 * 1024, requestFileSystemCallback, FileUtil.errorHandler);
+  if (kUseSyncFS) {
+    chrome.syncFileSystem.requestFileSystem(requestFileSystemCallback);
+  } else {
+    window.webkitRequestFileSystem(window.PERSISTENT, 10 * 1024 * 1024, requestFileSystemCallback, FileUtil.errorHandler);
+  }
 };
 
 module.Manager.prototype.loadPresets = function() {

@@ -1,6 +1,7 @@
-Contour = (function() {
-
 "use strict";
+
+var Contour = (function() {
+
 var module = {};
 
 var kMinChangeTime = 0.0005;
@@ -11,7 +12,7 @@ var IntermediateContourStage = function(valueSetting) {
   Setting.ListenableGroup.call(this);
   this.beginValueSetting = this.addListenable(valueSetting.copy());
   this.durationSetting = this.addListenable(new Setting.Number(kMinChangeTime, 10));
-}
+};
 
 IntermediateContourStage.prototype = Object.create(Setting.ListenableGroup.prototype);
 
@@ -41,7 +42,7 @@ var SharedContourSettings = function(valueSetting) {
   this.oscillationTypeSetting = this.addListenable(new Setting.Choice(AudioConstants.kOscillationTypes));
   // Sweep settings
   this.sweepTimeSetting = this.addListenable(new Setting.Number(kMinChangeTime, 10));
-}
+};
 
 SharedContourSettings.prototype = Object.create(Setting.ListenableGroup.prototype);
 
@@ -63,30 +64,30 @@ SharedContourSettings.prototype = Object.create(Setting.ListenableGroup.prototyp
 module.BasicEnvelopeContourer = function(param, value) {
   this.param_ = param;
   this.value_ = value;
-}
+};
 
 module.BasicEnvelopeContourer.prototype.contourOn = function(onTime) {
   this.param_.setValueAtTime(0, onTime);
   this.param_.linearRampToValueAtTime(this.value_, onTime + kMinChangeTime);
-}
+};
 
 module.BasicEnvelopeContourer.prototype.contourOff = function(offTime) {
   this.param_.cancelScheduledValues(0);
   this.param_.value = this.param_.value;
   this.param_.setValueAtTime(this.param_.value, offTime);
   this.param_.linearRampToValueAtTime(0, offTime + kMinChangeTime);
-}
+};
 
 module.BasicEnvelopeContourer.prototype.contourFinishTime = function(offTime) {
   return offTime + kMinChangeTime;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Flat contour
 module.FlatContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
   this.valueSetting = sharedSettings.intermediateStages[0].beginValueSetting;
-}
+};
 
 module.FlatContour.prototype.addContour = function(context, valueFunction, param, noteSection) {
   var flatValue = valueFunction(this.valueSetting.value);
@@ -94,26 +95,26 @@ module.FlatContour.prototype.addContour = function(context, valueFunction, param
     noteSection.addContour(new module.BasicEnvelopeContourer(param, flatValue));
   else
     param.value = flatValue;
-}
+};
 
 module.FlatContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.valueSetting.value);
-}
+};
 
 module.FlatContour.prototype.valueAtTime = function(time, noteOnTime) {
   return this.valueSetting.value;  
-}
+};
 
 module.FlatContour.prototype.releaseTime = function() {
   return kMinChangeTime;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillation growth contour
 module.OscillationGrowthContourer = function(param, contour) {
   this.param_ = param;
   this.contour_ = contour;
-}
+};
 
 module.OscillationGrowthContourer.prototype.contourOn = function(onTime) {
   if (this.contour_.typeSetting.value == AudioConstants.kSwellingOscillation) {
@@ -123,14 +124,14 @@ module.OscillationGrowthContourer.prototype.contourOn = function(onTime) {
     this.param_.setValueAtTime(1, onTime);
     this.param_.setTargetAtTime(0, onTime, this.contour_.timeConstantSetting.value);
   }
-}
+};
 
 module.OscillationGrowthContourer.prototype.contourOff = function(offTime) {
-}
+};
 
 module.OscillationGrowthContourer.prototype.contourFinishTime = function(offTime) {
   return offTime;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Oscillating contour
@@ -142,15 +143,15 @@ module.OscillatingContour = function(sharedSettings, contouredValue) {
   this.frequencySetting = sharedSettings.oscillationFrequencySetting;
   this.typeSetting = sharedSettings.oscillationTypeSetting;
   this.timeConstantSetting = sharedSettings.oscillationTimeConstantSetting;
-}
+};
 
 module.OscillatingContour.prototype.rawCenterValue_ = function() {
   return (this.minValueSetting.value + this.maxValueSetting.value) / 2;
-}
+};
 
 module.OscillatingContour.prototype.rawAmplitude_ = function() {
   return (this.maxValueSetting.value - this.minValueSetting.value) / 2;
-}
+};
 
 module.OscillatingContour.prototype.addContour = function(context, valueFunction, param, noteSection) {
   var centerValue = valueFunction(this.rawCenterValue_());
@@ -179,11 +180,11 @@ module.OscillatingContour.prototype.addContour = function(context, valueFunction
   noteSection.addNode(gain);
   lastNode.connect(gain);
   gain.connect(param);
-}
+};
 
 module.OscillatingContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.rawCenterValue_());
-}
+};
 
 module.OscillatingContour.prototype.factor_ = function(time) {
   if (this.typeSetting.value == AudioConstants.kConstantOscillation ||
@@ -194,16 +195,16 @@ module.OscillatingContour.prototype.factor_ = function(time) {
   if (this.typeSetting.value == AudioConstants.kSwellingOscillation)
     factor = 1 - factor;
   return factor;
-}
+};
 
 module.OscillatingContour.prototype.valueAtTime = function(time, noteOnTime) {
   var oscillation = Oscillator.oscillatorValue(this.waveSetting.value, this.frequencySetting.value, time);
   return this.rawCenterValue_() + this.rawAmplitude_() * oscillation * this.factor_(time);
-}
+};
 
 module.OscillatingContour.prototype.releaseTime = function() {
   return kMinChangeTime;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // n Stage Contourer class
@@ -211,7 +212,7 @@ module.NStageContourer = function(contour, param, valueFunction) {
   this.contour_ = contour;
   this.param_ = param;
   this.valueFunction_ = valueFunction;
-}
+};
 
 module.NStageContourer.prototype.contourOn = function(onTime) {
   var nextTime = onTime;
@@ -225,7 +226,7 @@ module.NStageContourer.prototype.contourOn = function(onTime) {
     nextTime += stageDuration;
   }
   this.param_.linearRampToValueAtTime(v(this.contour_.sustainValue()), nextTime);
-}
+};
 
 module.NStageContourer.prototype.contourOff = function(offTime) {
   if (this.contour_.releaseTime() == 0)
@@ -237,32 +238,32 @@ module.NStageContourer.prototype.contourOff = function(offTime) {
   this.param_.setValueAtTime(this.param_.value, nextTime);
   nextTime += this.contour_.releaseTime();
   this.param_.linearRampToValueAtTime(this.valueFunction_(this.contour_.finalValue()), nextTime);
-}
+};
 
 module.NStageContourer.prototype.contourFinishTime = function(offTime) {
   return offTime + this.contour_.releaseTime();
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // n Stage Oscillation Gain Contourer class
 module.NStageOscillationGainContourer = function(contour, param) {
   this.contour_ = contour;
   this.param_ = param;
-}
+};
 
 module.NStageOscillationGainContourer.prototype.contourOn = function(onTime) {
   this.param_.setValueAtTime(0, onTime);
   this.param_.setTargetAtTime(this.contour_.oscillationAmount(),
                               onTime,
                               this.contour_.oscillationTimeConstant());
-}
+};
 
 module.NStageOscillationGainContourer.prototype.contourOff = function(offTime) {
-}
+};
 
 module.NStageOscillationGainContourer.prototype.contourFinishTime = function(offTime) {
   return offTime;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Base n Stage contoured value
@@ -270,51 +271,51 @@ module.BaseNStageContour = function(sharedSettings, contouredValue) {
   this.contouredValue_ = contouredValue;
   this.initialValueSetting = sharedSettings.initialValueSetting;
   this.finalValueSetting = sharedSettings.finalValueSetting;
-}
+};
 
 module.BaseNStageContour.prototype.initialValue = function() {
   if (this.isEnvelope)
     return 0;
 
   return this.initialValueSetting.value;
-}
+};
 
 // Subclasses should override this
 module.BaseNStageContour.prototype.firstStageTime = function() {
   return 0;
-}
+};
 
 // Subclasses should override this
 module.BaseNStageContour.prototype.numIntermediateStages = function() {
   return 0;
-}
+};
 
 // Subclasses should override this
 module.BaseNStageContour.prototype.intermediateStageBeginValue = function(i) {
   return 0;
-}
+};
 
 // Subclasses should override this
 module.BaseNStageContour.prototype.intermediateStageDuration = function(i) {
   return 0;
-}
+};
 
 // Subclasses should override this
 module.BaseNStageContour.prototype.sustainValue = function() {
   return 0;
-}
+};
 
 // Subclasses should override this if they have a release
 module.BaseNStageContour.prototype.releaseTime = function() {
   return 0;
-}
+};
 
 module.BaseNStageContour.prototype.finalValue = function() {
   if (this.isEnvelope)
     return 0;
 
   return this.finalValueSetting.value;
-}
+};
 
 // Subclasses should override this if they oscillate
 module.BaseNStageContour.prototype.hasOscillation = function() {
@@ -324,17 +325,17 @@ module.BaseNStageContour.prototype.hasOscillation = function() {
 // Subclasses should override this if they oscillate
 module.BaseNStageContour.prototype.oscillationAmount = function() {
   return 0;
-}
+};
 
 // Subclasses should override this if they oscillate
 module.BaseNStageContour.prototype.oscillationFrequency = function() {
   return 0;
-}
+};
 
 // Subclasses should override this if they oscillate
 module.BaseNStageContour.prototype.oscillationTimeConstant = function() {
   return 0;
-}
+};
 
 module.BaseNStageContour.prototype.addContour = function(context, valueFunction, param, noteSection) {
   noteSection.addContour(new module.NStageContourer(this, param, valueFunction));
@@ -355,17 +356,17 @@ module.BaseNStageContour.prototype.addContour = function(context, valueFunction,
   noteSection.addNode(envelopeGain);
   amplitudeGain.connect(envelopeGain);
   envelopeGain.connect(param);
-}
+};
 
 module.BaseNStageContour.prototype.averageValue = function(valueFunction) {
   return valueFunction(this.sustainValue());
-}
+};
 
 module.BaseNStageContour.prototype.interpolatedValue_ = function(time, startTime, endTime,
                                                            startValue, endValue) {
   var relTime = (time - startTime) / (endTime - startTime);
   return startValue + (endValue - startValue) * relTime;
-}
+};
 
 // n is zero based
 // There is one stage before the intermediate stages
@@ -375,7 +376,7 @@ module.BaseNStageContour.prototype.nthOnStageEndValue_ = function(n) {
   if (n < this.numIntermediateStages())
     result = this.intermediateStageBeginValue(n);
   return result;
-}
+};
 
 module.BaseNStageContour.prototype.onValueAtTime_ = function(time) {
   var lastTime = 0;
@@ -394,7 +395,7 @@ module.BaseNStageContour.prototype.onValueAtTime_ = function(time) {
   }
 
   return this.sustainValue();
-}
+};
 
 module.BaseNStageContour.prototype.oscillationAmount_ = function(time) {
   if (!this.hasOscillation())
@@ -406,7 +407,7 @@ module.BaseNStageContour.prototype.oscillationAmount_ = function(time) {
   if (this.oscillationTimeConstant() > 0)
     factor = factor - Math.exp(-time / this.oscillationTimeConstant());
   return amount * factor;
-}
+};
 
 module.BaseNStageContour.prototype.baseValueAtTime_ = function(time, noteOnTime) {
   if (time <= noteOnTime)
@@ -420,11 +421,11 @@ module.BaseNStageContour.prototype.baseValueAtTime_ = function(time, noteOnTime)
                                    sustainValue, this.finalValue());
 
   return this.finalValue();
-}
+};
 
 module.BaseNStageContour.prototype.valueAtTime = function(time, noteOnTime) {
   return this.baseValueAtTime_(time, noteOnTime) * (1 + this.oscillationAmount_(time));
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sweep contoured value
@@ -432,21 +433,21 @@ module.SweepContour = function(sharedSettings, contouredValue) {
   module.BaseNStageContour.call(this, sharedSettings, contouredValue);
   this.sweepTimeSetting = sharedSettings.sweepTimeSetting;
   this.finalValueSetting = sharedSettings.intermediateStages[0].beginValueSetting;
-}
+};
 
 module.SweepContour.prototype = Object.create(module.BaseNStageContour.prototype);
 
 module.SweepContour.prototype.firstStageTime = function() {
   return this.sweepTimeSetting.value;
-}
+};
 
 module.SweepContour.prototype.sustainValue = function() {
   return this.finalValue();
-}
+};
 
 module.SweepContour.prototype.numIntermediateStages = function() {
   return 0;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // ADSR contoured value
@@ -458,32 +459,32 @@ module.ADSRContour = function(sharedSettings, contouredValue) {
   this.sustainValueSetting = sharedSettings.intermediateStages[1].beginValueSetting;
   this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
 }
-
+;
 module.ADSRContour.prototype = Object.create(module.BaseNStageContour.prototype);
 
 module.ADSRContour.prototype.firstStageTime = function() {
   return this.attackTimeSetting.value;
-}
+};
 
 module.ADSRContour.prototype.numIntermediateStages = function() {
   return 1;
-}
+};
 
 module.ADSRContour.prototype.intermediateStageBeginValue = function(i) {
   return this.attackValueSetting.value;
-}
+};
 
 module.ADSRContour.prototype.intermediateStageDuration = function(i) {
   return this.decayTimeSetting.value;
-}
+};
 
 module.ADSRContour.prototype.sustainValue = function() {
   return this.sustainValueSetting.value;
-}
+};
 
 module.ADSRContour.prototype.releaseTime = function() {
   return this.releaseTimeSetting.value;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // n Stage contoured value
@@ -496,33 +497,33 @@ module.NStageContour = function(sharedSettings, contouredValue) {
     this.intermediateStages.push(sharedSettings.intermediateStages[i]);
   }
   this.releaseTimeSetting = sharedSettings.releaseTimeSetting;
-}
+};
 
 module.NStageContour.prototype = Object.create(module.BaseNStageContour.prototype);
 
 module.NStageContour.prototype.firstStageTime = function() {
   return this.firstStageTimeSetting.value;
-}
+};
 
 module.NStageContour.prototype.numIntermediateStages = function() {
   return this.numStagesSetting.value - AudioConstants.kMinStages;
-}
+};
 
 module.NStageContour.prototype.intermediateStageBeginValue = function(i) {
   return this.intermediateStages[i].beginValueSetting.value;
-}
+};
 
 module.NStageContour.prototype.intermediateStageDuration = function(i) {
   return this.intermediateStages[i].durationSetting.value;
-}
+};
 
 module.NStageContour.prototype.sustainValue = function() {
   return this.intermediateStages[this.numIntermediateStages()].beginValueSetting.value;
-}
+};
 
 module.NStageContour.prototype.releaseTime = function() {
   return this.releaseTimeSetting.value;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // n Stage contoured value
@@ -531,25 +532,25 @@ module.NStageOscillatingContour = function(sharedSettings, contouredValue) {
   this.oscillationAmountSetting = sharedSettings.oscillationAmountSetting;
   this.oscillationFrequencySetting = sharedSettings.oscillationFrequencySetting;
   this.oscillationTimeConstantSetting = sharedSettings.oscillationTimeConstantSetting;
-}
+};
 
 module.NStageOscillatingContour.prototype = Object.create(module.NStageContour.prototype);
 
 module.NStageOscillatingContour.prototype.hasOscillation = function() {
   return true;
-}
+};
 
 module.NStageOscillatingContour.prototype.oscillationAmount = function() {
   return this.oscillationAmountSetting.value;
-}
+};
 
 module.NStageOscillatingContour.prototype.oscillationFrequency = function(i) {
   return this.oscillationFrequencySetting.value;
-}
+};
 
 module.NStageOscillatingContour.prototype.oscillationTimeConstant = function(i) {
   return this.oscillationTimeConstantSetting.value;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Contoured value
@@ -572,26 +573,26 @@ module.ContouredValue = function(valueSetting, isEnvelope) {
   this.initContour_(AudioConstants.kNStageOscillatingContour, new module.NStageOscillatingContour(this.sharedContourSettings, this));
   if (!isEnvelope)
     this.initContour_(AudioConstants.kSweepContour, new module.SweepContour(this.sharedContourSettings, this));
-}
+};
 
 module.ContouredValue.prototype = Object.create(Setting.ListenableGroup.prototype);
 
 module.ContouredValue.prototype.initContour_ = function(identifier, contour) {
   this.contours_.push(contour);
   this.contoursByIdentifier[identifier] = contour;
-}
+};
 
 module.ContouredValue.prototype.currentContour = function() {
   return this.contoursByIdentifier[this.currentContourSetting.value];
-}
+};
 
 module.ContouredValue.prototype.valueAtTime = function(time, noteOnTime) {
   return this.currentContour().valueAtTime(time, noteOnTime);
-}
+};
 
 module.ContouredValue.prototype.releaseTime = function() {
   return this.currentContour().releaseTime();
-}
+};
 
 return module;
 

@@ -28,7 +28,11 @@ module.UI.prototype.updateErrorText_ = function(errorText) {
 var kHeightFudge = -4;
 
 module.UI.prototype.height = function() {
-  return this.div.clientHeight + kHeightFudge;
+  var result = this.div.clientHeight;
+  if (result > 0)
+    result = result + kHeightFudge;
+
+  return result;
 };
 
 return module;

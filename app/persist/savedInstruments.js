@@ -6,6 +6,7 @@ var module = {};
 
 var kSaverTimerInterval = 1000;
 var kPresetsFolder = 'presets';
+var kPresetSuffix = '.preset';
 var kUseSyncFS = true;
 
 var Preset = function(manager, originalFileEntry, storageDirectoryEntry) {
@@ -49,7 +50,7 @@ Preset.prototype.load_ = function(then) {
   };
 
   if (this.storageDirectoryEntry_)
-    this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: false}, doLoad,
+    this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name + kPresetSuffix, {create: false}, doLoad,
                                         this.loadFromOriginal_.bind(this, then),
                                         this.manager_.domErrorHandlerCallback);
   else
@@ -73,7 +74,7 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
   jsonObject.name = this.name;
   var jsonText = JSON.stringify(jsonObject, null, 2);
   var preset = this;
-  this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: true}, function(entry) {
+  this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name + kPresetSuffix, {create: true}, function(entry) {
     FileUtil.writeFile(entry, jsonText, preset.finishedSaving_.bind(preset), preset.manager_.domErrorHandlerCallback);
   }, this.manager_.domErrorHandlerCallback);
 };
@@ -123,10 +124,8 @@ module.Manager.prototype.openStorage = function(then) {
       then();
       return;
     };
-    fileSystem.root.getDirectory(kPresetsFolder, {create: true}, function(presetsEntry) {
-      manager.presetStorage_ = presetsEntry;
-      then();
-    }, manager.domErrorHandlerCallback);
+    manager.presetStorage_ = fileSystem.root;
+    then();
   };
 
   if (kUseSyncFS) {

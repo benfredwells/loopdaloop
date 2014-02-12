@@ -4,7 +4,7 @@ var SavedInstruments = (function() {
 
 var module = {};
 
-var kSaverTimerInterval = 5000;
+var kSaverTimerInterval = 1000;
 var kPresetsFolder = 'presets';
 var kUseSyncFS = true;
 
@@ -74,7 +74,7 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
   var jsonText = JSON.stringify(jsonObject, null, 2);
   var preset = this;
   this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: true}, function(entry) {
-    FileUtil.writeFile(entry, jsonText, preset.finishedSaving_.bind(manager), preset.manager_.domErrorHandlerCallback);
+    FileUtil.writeFile(entry, jsonText, preset.finishedSaving_.bind(preset), preset.manager_.domErrorHandlerCallback);
   }, this.manager_.domErrorHandlerCallback);
 };
 
@@ -205,7 +205,6 @@ module.Manager.prototype.scheduleSave_ = function() {
 };
 
 module.Manager.prototype.doSave_ = function() {
-  console.log('Saving.');
   this.saveTimerId = null;
 
   // if any are still saving, back off and schedule another save.

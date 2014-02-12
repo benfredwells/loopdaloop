@@ -123,7 +123,7 @@ module.Manager.prototype.openStorage = function(then) {
       then();
       return;
     };
-    fileSystem.root.getDirectory('presets', {create: true}, function(presetsEntry) {
+    fileSystem.root.getDirectory(kPresetsFolder, {create: true}, function(presetsEntry) {
       manager.presetStorage_ = presetsEntry;
       then();
     }, manager.domErrorHandlerCallback);
@@ -140,7 +140,7 @@ module.Manager.prototype.loadPresets = function() {
   var manager = this;
   this.openStorage(function() {
     chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
-      packageEntry.getDirectory('presets', {create: false}, function(presetsEntry) {
+      packageEntry.getDirectory(kPresetsFolder, {create: false}, function(presetsEntry) {
         var processEntry = function(entry, then) {
           var preset = new Preset(manager, entry, manager.presetStorage_);
           manager.presets.push(preset);

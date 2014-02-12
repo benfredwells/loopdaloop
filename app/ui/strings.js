@@ -15,8 +15,7 @@ module.kMultiplierFormatter = new module.Formatter('x', '');
 module.kSecondsFormatter = new module.Formatter('', ' s');
 module.kFrequencyFormatter = new module.Formatter('', ' Hz');
 
-module.kSave = 'Save';
-module.kSaveAs = 'Save As...';
+module.kExport = 'Export...';
 module.kLoading = 'Loading';
 
 module.kEnabled = 'Enabled';

@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-var kHeightPadding = 100;
+var kHeightPadding = 110;
 var kWidth = 440;
 
 var kPitchID = 'pitch';

@@ -22,8 +22,7 @@ module.UI = function(parentDiv, instrument, onchange) {
   var ui = this;
   this.select.onchange = function() {ui.updateInstrument_()};
   var save = function(event) {ui.save_(event)};
-  (new UI.Button(this.div, save, Strings.kSave)).div.id = 'saveButton';
-  (new UI.Button(this.div, null, Strings.kSaveAs)).div.id = 'saveAsButton';
+  (new UI.Button(this.div, save, Strings.kExport)).div.id = 'exportButton';
 
   this.select.disabled = true;
 };

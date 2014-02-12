@@ -14,12 +14,12 @@ div {
 
 #instrumentPersist {
   display: inline-block;
-  margin-bottom: 6px;
+  margin-bottom: 16px;
 }
 
 .instrumentSelect {
   height: 28px;
-  width: 256px;
+  width: 324px;
 }
 
 #header {
@@ -49,12 +49,9 @@ div {
   width: 75px;
 }
 
-#saveButton {
-  width: 60px;
-}
-
-#saveAsButton {
+#exportButton {
   width: 80px;
+  height: 27px;
 }
 
 .buttonText {

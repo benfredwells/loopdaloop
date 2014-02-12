@@ -39,17 +39,19 @@ Preset.prototype.updateFromJSON_ = function(then, jsonText) {
 
 Preset.prototype.loadFromOriginal_ = function(then) {
   this.instrumentState = null;
-  FileUtil.readFile(this.originalFileEntry_, this.updateFromJSON_.bind(this, then));
+  FileUtil.readFile(this.originalFileEntry_, this.updateFromJSON_.bind(this, then), this.manager_.domErrorHandlerCallback);
 };
 
 Preset.prototype.load_ = function(then) {
   var preset = this;
   var doLoad = function(fileEntry) {
-    FileUtil.readFile(fileEntry, preset.updateFromJSON_.bind(preset, then));
+    FileUtil.readFile(fileEntry, preset.updateFromJSON_.bind(preset, then), preset.manager_.domErrorHandlerCallback);
   };
 
   if (this.storageDirectoryEntry_)
-    this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: false}, doLoad, this.loadFromOriginal_.bind(this, then));
+    this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: false}, doLoad,
+                                        this.loadFromOriginal_.bind(this, then),
+                                        this.manager_.domErrorHandlerCallback);
   else
     this.loadFromOriginal_(then);
 }
@@ -72,8 +74,8 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
   var jsonText = JSON.stringify(jsonObject, null, 2);
   var preset = this;
   this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: true}, function(entry) {
-    FileUtil.writeFile(entry, jsonText, preset.finishedSaving_.bind(manager));
-  }, this.manager.domErrorHandlerCallback);
+    FileUtil.writeFile(entry, jsonText, preset.finishedSaving_.bind(manager), preset.manager_.domErrorHandlerCallback);
+  }, this.manager_.domErrorHandlerCallback);
 };
 
 Preset.prototype.finishedSaving_ = function() {

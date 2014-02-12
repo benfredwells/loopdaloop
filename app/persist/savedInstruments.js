@@ -70,10 +70,10 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
   jsonObject.default = this.isDefault;
   jsonObject.name = this.name;
   var jsonText = JSON.stringify(jsonObject, null, 2);
-  var manager = this;
+  var preset = this;
   this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name, {create: true}, function(entry) {
-    FileUtil.writeFile(entry, jsonText, manager.finishedSaving_.bind(manager));
-  }, FileUtil.errorHandler);
+    FileUtil.writeFile(entry, jsonText, preset.finishedSaving_.bind(manager));
+  }, this.manager.domErrorHandlerCallback);
 };
 
 Preset.prototype.finishedSaving_ = function() {
@@ -93,11 +93,12 @@ module.Manager = function(instrument, onInstrumentsLoaded) {
   this.presetStorage_ = null;
   this.errorCallback_ = null;
   this.currentError_ = '';
+  this.domErrorHandlerCallback = this.domErrorHandler.bind(this);
   this.loadPresets();
 };
 
-module.Manager.prototype.setErrorCallback = function(callback) {
-  this.errorCallback_ = null;
+module.Manager.prototype.setErrorHandler = function(callback) {
+  this.errorCallback_ = callback;
   if (this.currentError_)
     this.errorCallback_(this.currentError_);
 };
@@ -116,20 +117,20 @@ module.Manager.prototype.openStorage = function(then) {
   var manager = this;
   var requestFileSystemCallback = function(fileSystem) {
     if (chrome.runtime.lastError) {
-      console.log('Error creating syncFS: ' + chrome.runtime.lastError.message);
+      manager.updateError('Error creating syncFS: ' + chrome.runtime.lastError.message);
       then();
       return;
     };
     fileSystem.root.getDirectory('presets', {create: true}, function(presetsEntry) {
       manager.presetStorage_ = presetsEntry;
       then();
-    }, FileUtil.errorHandler);
+    }, manager.domErrorHandlerCallback);
   };
 
   if (kUseSyncFS) {
     chrome.syncFileSystem.requestFileSystem(requestFileSystemCallback);
   } else {
-    window.webkitRequestFileSystem(window.PERSISTENT, 10 * 1024 * 1024, requestFileSystemCallback, FileUtil.errorHandler);
+    window.webkitRequestFileSystem(window.PERSISTENT, 10 * 1024 * 1024, requestFileSystemCallback, manager.domErrorHandlerCallback);
   }
 };
 
@@ -144,8 +145,8 @@ module.Manager.prototype.loadPresets = function() {
           preset.load_(then);
         };
   
-        FileUtil.forEachEntry(presetsEntry, processEntry, manager.handlePresetsLoaded.bind(manager));
-      }, FileUtil.errorHandler);
+        FileUtil.forEachEntry(presetsEntry, processEntry, manager.handlePresetsLoaded.bind(manager), manager.domErrorHandlerCallback);
+      }, manager.domErrorHandlerCallback);
     });
   });
 };

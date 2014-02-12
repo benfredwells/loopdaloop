@@ -30,7 +30,6 @@ var SynthesizerWrapper = function() {
   this.instrument = gBackgroundPage.instrument;
   this.scene = gBackgroundPage.scene;
   this.savedInstruments = gBackgroundPage.savedInstruments;
-  this.savedInstruments.setErrorHandler(this.errorDisplayUI.updateErrorTextCallback;
 };
 
 SynthesizerWrapper.prototype.createPitchUI = function(id, title) {
@@ -126,6 +125,7 @@ SynthesizerWrapper.prototype.handleLoad = function() {
   this.createTestButton();
   this.createInstrumentPersistUI();
   this.createErrorDisplayUI();
+  this.savedInstruments.setErrorHandler(this.errorDisplayUI.updateErrorTextCallback);
 
   this.instrumentUIs.forEach(this.initializeCategoryUI.bind(this));
   this.testButton.setCurrentTime(0);

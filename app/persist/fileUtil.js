@@ -9,7 +9,11 @@ module.errorHandler = function(e) {
   console.trace();
 }
 
-module.readFile = function(fileEntry, callback) {
+module.readFile = function(fileEntry, callback, errorHandler) {
+  var theErrorHandler = errorHandler;
+  if (!theErrorHandler)
+    theErrorHandler = module.errorHandler;
+
   fileEntry.file(function(file) {
     var fileReader = new FileReader();
 
@@ -18,24 +22,32 @@ module.readFile = function(fileEntry, callback) {
     };
 
     fileReader.readAsText(file);
-  }, module.errorHandler);
+  }, theErrorHandler);
 };
 
-module.writeFile = function(fileEntry, data, callback) {
+module.writeFile = function(fileEntry, data, callback, errorHandler) {
+  var theErrorHandler = errorHandler;
+  if (!theErrorHandler)
+    theErrorHandler = module.errorHandler;
+
   fileEntry.createWriter(function(fileWriter) {
-    fileWriter.onerror = module.errorHandler;
+    fileWriter.onerror = theErrorHandler;
     fileWriter.onwriteend = function() {
       fileWriter.onwriteend = callback;
       var blob = new Blob([data]);
       fileWriter.write(blob);
     };
     fileWriter.truncate(0);
-  }, module.errorHandler);
+  }, theErrorHandler);
 };
 
-module.forEachEntry = function(directoryEntry, callback, then) {
+module.forEachEntry = function(directoryEntry, callback, then, errorHandler) {
   var entries = [];
   var reader = directoryEntry.createReader();
+  var theErrorHandler = errorHandler;
+  if (!theErrorHandler)
+    theErrorHandler = module.errorHandler;
+
 
   var handleEachEntry = function() {
     if (!entries.length) {
@@ -54,7 +66,7 @@ module.forEachEntry = function(directoryEntry, callback, then) {
         entries = entries.concat(results);
         readEntries();
       }
-    }, module.errorHandler);
+    }, theErrorHandler);
   };
 
   readEntries();

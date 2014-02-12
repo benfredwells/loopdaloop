@@ -9,8 +9,8 @@ module.UI = function(parentDiv, onchange) {
   this.div.id = 'errorDisplay';
   this.onchange_ = onchange;
   this.errorText_ = '';
-  this.updateErrorText('Hey');
-  this.updateErrorTextCallback = this.updateErrorText_.bin(this);
+  this.updateErrorText_('');
+  this.updateErrorTextCallback = this.updateErrorText_.bind(this);
 };
 
 module.UI.prototype = Object.create(UI.Control.prototype);
@@ -25,8 +25,10 @@ module.UI.prototype.updateErrorText_ = function(errorText) {
   this.updateVisible_();
 };
 
+var kHeightFudge = -4;
+
 module.UI.prototype.height = function() {
-  return this.div.clientHeight;
+  return this.div.clientHeight + kHeightFudge;
 };
 
 return module;

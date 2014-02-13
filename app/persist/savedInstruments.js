@@ -118,11 +118,12 @@ module.Manager.prototype.domErrorHandler = function(domError) {
 };
 
 module.Manager.prototype.clearStorage = function(then) {
+  var manager = this;
   var processEntry = function(entry, then) {
     entry.remove(then, manager.domErrorHandlerCallback);
   };
 
-  FileUtil.forEachEntry(this.presetStorage_, processEntry, then, manager.domErrorHandlerCallback);
+  FileUtil.forEachEntry(this.presetStorage_, processEntry, then, this.domErrorHandlerCallback);
 }
 
 module.Manager.prototype.openStorage = function(then) {
@@ -145,7 +146,7 @@ module.Manager.prototype.openStorage = function(then) {
   if (kUseSyncFS) {
     chrome.syncFileSystem.requestFileSystem(requestFileSystemCallback);
   } else {
-    window.webkitRequestFileSystem(window.PERSISTENT, 10 * 1024 * 1024, requestFileSystemCallback, manager.domErrorHandlerCallback);
+    window.webkitRequestFileSystem(window.PERSISTENT, 10 * 1024 * 1024, requestFileSystemCallback, this.domErrorHandlerCallback);
   }
 };
 

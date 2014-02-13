@@ -19,7 +19,7 @@ div {
 
 .instrumentSelect {
   height: 28px;
-  width: 324px;
+  width: 307px;
 }
 
 #header {
@@ -49,8 +49,8 @@ div {
   width: 75px;
 }
 
-#exportButton {
-  width: 80px;
+.persistButton {
+  width: 27px;
   height: 27px;
 }
 

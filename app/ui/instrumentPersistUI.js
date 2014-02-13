@@ -21,8 +21,13 @@ module.UI = function(parentDiv, instrument, onchange) {
 
   var ui = this;
   this.select.onchange = function() {ui.updateInstrument_()};
-  var save = function(event) {ui.save_(event)};
-  (new UI.Button(this.div, save, Strings.kExport)).div.id = 'exportButton';
+
+  (new UI.Button(this.div, null, Strings.kAdd)).div.classList.add('persistButton');
+
+  (new UI.Button(this.div, null, Strings.kClear)).div.classList.add('persistButton');
+
+  var doExport = function(event) {ui.export_(event)};
+  (new UI.Button(this.div, doExport, Strings.kExport)).div.classList.add('persistButton');
 
   this.select.disabled = true;
 };

@@ -135,6 +135,9 @@ module.Manager.prototype.openStorage = function(then) {
       return;
     };
     manager.presetStorage_ = fileSystem.root;
+
+    chrome.syncFileSystem.onFileStatusChanged.addListener(manager.handleFileStatusChanged.bind(manager));
+
     if (kClearStorage) {
       manager.clearStorage(then);
       return;
@@ -181,6 +184,12 @@ module.Manager.prototype.handlePresetsLoaded = function() {
 
 module.Manager.prototype.usePresetWithIndex = function(index) {
   this.usePreset(this.presets[index]);
+};
+
+module.Manager.prototype.handleFileStatusChanged = function(detail) {
+  if (detail.status == 'synced' && detail.direction == 'remote_to_local') {
+    console.log(detail.action);
+  }
 };
 
 module.Manager.prototype.usePreset = function(preset) {

@@ -30,7 +30,10 @@ module.UI = function(parentDiv, instrument, onchange) {
 module.UI.prototype = Object.create(UI.Control.prototype);
 
 module.UI.prototype.save_ = function(event) {
-  this.savedInstruments_.export(this.instrument_);
+  var ui = this;
+  chrome.fileSystem.chooseEntry({type: 'saveFile'}, function(entry) {
+    ui.savedInstruments_.exportCurrent(entry);
+  });
 };
 
 module.UI.prototype.updateInstrument_ = function() {

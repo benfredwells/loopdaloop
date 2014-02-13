@@ -8,6 +8,7 @@ var kSaverTimerInterval = 1000;
 var kPresetsFolder = 'presets';
 var kPresetSuffix = '.preset';
 var kUseSyncFS = true;
+var kClearStorage = true;
 
 var Preset = function(manager, originalFileEntry, storageDirectoryEntry) {
   this.name = '';
@@ -116,6 +117,14 @@ module.Manager.prototype.domErrorHandler = function(domError) {
   this.updateError(domError.message);
 };
 
+module.Manager.prototype.clearStorage = function(then) {
+  var processEntry = function(entry, then) {
+    entry.remove(then, manager.domErrorHandlerCallback);
+  };
+
+  FileUtil.forEachEntry(this.presetStorage_, processEntry, then, manager.domErrorHandlerCallback);
+}
+
 module.Manager.prototype.openStorage = function(then) {
   var manager = this;
   var requestFileSystemCallback = function(fileSystem) {
@@ -125,6 +134,11 @@ module.Manager.prototype.openStorage = function(then) {
       return;
     };
     manager.presetStorage_ = fileSystem.root;
+    if (kClearStorage) {
+      manager.clearStorage(then);
+      return;
+    }
+
     then();
   };
 
@@ -176,13 +190,11 @@ module.Manager.prototype.usePreset = function(preset) {
   this.currentPreset.updateInstrument_(this.instrument_);
 };
 
-module.Manager.prototype.export = function(instrument) {
+module.Manager.prototype.exportCurrent = function(entry) {
   var jsonObject = {};
-  jsonObject.instrumentState = InstrumentState.getInstrumentState(instrument);
+  jsonObject.instrumentState = InstrumentState.getInstrumentState(this.instrument_);
   var jsonText = JSON.stringify(jsonObject, null, 2);
-  chrome.fileSystem.chooseEntry({type: 'saveFile'}, function(entry) {
-    FileUtil.writeFile(entry, jsonText);
-  });
+  FileUtil.writeFile(entry, jsonText, this.domErrorHandlerCallback);
 };
 
 module.Manager.prototype.onChanged = function() {

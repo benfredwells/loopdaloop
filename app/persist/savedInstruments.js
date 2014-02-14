@@ -8,7 +8,7 @@ var kSaverTimerInterval = 1000;
 var kPresetsFolder = 'presets';
 var kPresetSuffix = '.preset';
 var kUseSyncFS = true;
-var kClearStorage = true;
+var kClearStorage = false;
 
 var Preset = function(manager, originalFileEntry, storageDirectoryEntry) {
   this.name = '';

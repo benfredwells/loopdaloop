@@ -57,7 +57,7 @@ SynthesizerWrapper.prototype.createOscillatorUI = function(id, title, index) {
 SynthesizerWrapper.prototype.createFilterUI = function(id, title, index) {
   this.instrumentUIs.push(new FilterUI.UI(
       id,
-      this.instrument.filters[0],
+      this.instrument.filters[index],
       this.scene.context,
       this.instrument,
       title,

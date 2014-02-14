@@ -2,6 +2,7 @@
   "name": "LoopDaLoop",
   "description": "HTML5 synthesizer",
   "version": "0.2.1",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxN0n8uaN2B4jVD7gfvXJOAMkMhS7ttCe1dmkrSvvxfIgF5B3yYtDgI51iFcwpJ7VDUgTo2kZ1lbxIINrwLlrVgQmqo3kfTnZgzuu1yNLsStmdua6pTvxkpjadD4D3xVmM3p0IRT8FbtxjCotF1YAuDMzx+s/rwkIaBmhxKWjZpVjX/TU0Xbg0c+J5OZ/KKz4mUxblKZfTcPdqjAuKl4/mNMk+8ta8lH4bmGZlOVCgyyErV/JO5pwszOHIgJ6JXQLK1tsYmHYNKzWlVeO5mAV6fUyX/yRLHGSOYzoqq6lu9X9xleqshzhRw2hsMWegcczBURkuk2GlPo1kX5A0KodrwIDAQAB",
   "minimum_chrome_version": "23",
   "app": {
     "background": {

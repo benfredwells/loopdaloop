@@ -187,6 +187,8 @@ module.Manager.prototype.usePresetWithIndex = function(index) {
 };
 
 module.Manager.prototype.handleFileStatusChanged = function(detail) {
+  console.log(detail.status);
+  console.log(detail.direction);
   if (detail.status == 'synced' && detail.direction == 'remote_to_local') {
     console.log(detail.action);
   }

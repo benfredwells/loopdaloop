@@ -233,7 +233,7 @@ module.Manager.prototype.onChanged = function() {
 };
 
 module.Manager.prototype.notifyCurrentPresetChanged_ = function() {
-  if (this.onVCurrentPresetChanged)
+  if (this.onCurrentPresetChanged)
     this.onCurrentPresetChanged();
 };
 

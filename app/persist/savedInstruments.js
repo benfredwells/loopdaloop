@@ -185,17 +185,22 @@ module.Manager.prototype.usePresetWithIndex = function(index) {
 };
 
 module.Manager.prototype.handleFileUpdated_ = function(entry) {
+  console.log('Got updated file ' + entry.name);
+
   var manager = this;
   var updateInstrumentAndUpdate = function(preset) {
     if (this.currentPreset == preset) {
+      console.log('Updating instrument and UI');
       preset.updateInstrument(this.instrument_);
       manager.notifyCurrentPresetChanged_();
     }
-  }
+  };
 
   this.presets.forEach(function(preset) {
-    if (preset.fileName == entry.name)
+    if (preset.fileName == entry.name) {
+      console.log('Found saved instrument to update');
       preset.loadFromEntry(updateInstrumentAndUpdate.bind(manager, preset), entry);
+    }
   });
 };
 

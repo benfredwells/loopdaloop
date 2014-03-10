@@ -197,7 +197,7 @@ module.Manager.prototype.handleFileUpdated_ = function(entry) {
   };
 
   this.presets.forEach(function(preset) {
-    if (preset.fileName == entry.name) {
+    if (preset.fileName == entry.name && !(preset.isModified || preset.isSaving)) {
       console.log('Found saved instrument to update');
       preset.loadFromEntry(updateInstrumentAndUpdate.bind(manager, preset), entry);
     }

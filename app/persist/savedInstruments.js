@@ -28,7 +28,7 @@ Preset.prototype.updateInstrument = function(instrument) {
   instrument.startListening();
 };
 
-Preset.prototype.updateFromInstrument_ = function(instrument) {
+Preset.prototype.updateFromInstrument = function(instrument) {
   this.instrumentState = InstrumentState.getInstrumentState(instrument);
 };
 
@@ -46,7 +46,7 @@ Preset.prototype.loadFromEntry = function(then, entry) {
   FileUtil.readFile(entry, this.updateFromJSON_.bind(this, then), this.manager_.domErrorHandlerCallback);
 };
 
-Preset.prototype.load_ = function(then) {
+Preset.prototype.load = function(then) {
   if (this.storageDirectoryEntry) {
     this.storageDirectoryEntry.getFile(this.fileName, {create: false}, this.loadFromEntry.bind(this, then),
                                        this.loadFromEntry.bind(this, then, this.originalFileEntry_),
@@ -56,7 +56,7 @@ Preset.prototype.load_ = function(then) {
     this.loadFromEntry(entry, this.originalFileEntry_);
 }
 
-Preset.prototype.beginSaveIfNeeded_ = function() {
+Preset.prototype.beginSaveIfNeeded = function() {
   if (!this.isModified)
     return;
 
@@ -65,7 +65,7 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
     return;
 
   this.isSaving = true;
-  this.manager_.notifyObserver();
+  this.manager_.notifyObserver_();
 
   var jsonObject = {};
   jsonObject.instrumentState = this.instrumentState;
@@ -80,7 +80,7 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
 
 Preset.prototype.finishedSaving_ = function() {
   this.isSaving = false;
-  this.manager_.notifyObserver();
+  this.manager_.notifyObserver_();
 };
 
 module.Manager = function(instrument, onInstrumentsLoaded) {
@@ -95,8 +95,8 @@ module.Manager = function(instrument, onInstrumentsLoaded) {
   this.presetStorage_ = null;
   this.errorCallback_ = null;
   this.currentError_ = '';
-  this.domErrorHandlerCallback = this.domErrorHandler.bind(this);
-  this.loadPresets();
+  this.domErrorHandlerCallback = this.domErrorHandler_.bind(this);
+  this.loadPresets_();
 };
 
 module.Manager.prototype.setErrorHandler = function(callback) {
@@ -105,17 +105,17 @@ module.Manager.prototype.setErrorHandler = function(callback) {
     this.errorCallback_(this.currentError_);
 };
 
-module.Manager.prototype.updateError = function(errorText) {
+module.Manager.prototype.updateError_ = function(errorText) {
   this.currentError_ = errorText;
   if (this.errorCallback_)
     this.errorCallback_(this.currentError_);
 };
 
-module.Manager.prototype.domErrorHandler = function(domError) {
-  this.updateError(domError.message);
+module.Manager.prototype.domErrorHandler_ = function(domError) {
+  this.updateError_(domError.message);
 };
 
-module.Manager.prototype.clearStorage = function(then) {
+module.Manager.prototype.clearStorage_ = function(then) {
   var manager = this;
   var processEntry = function(entry, then) {
     entry.remove(then, manager.domErrorHandlerCallback);
@@ -124,11 +124,11 @@ module.Manager.prototype.clearStorage = function(then) {
   FileUtil.forEachEntry(this.presetStorage_, processEntry, then, this.domErrorHandlerCallback);
 }
 
-module.Manager.prototype.openStorage = function(then) {
+module.Manager.prototype.openStorage_ = function(then) {
   var manager = this;
   var requestFileSystemCallback = function(fileSystem) {
     if (chrome.runtime.lastError) {
-      manager.updateError('Error creating syncFS: ' + chrome.runtime.lastError.message);
+      manager.updateError_('Error creating syncFS: ' + chrome.runtime.lastError.message);
       then();
       return;
     };
@@ -137,7 +137,7 @@ module.Manager.prototype.openStorage = function(then) {
     chrome.syncFileSystem.onFileStatusChanged.addListener(manager.handleFileStatusChanged_.bind(manager));
 
     if (kClearStorage) {
-      manager.clearStorage(then);
+      manager.clearStorage_(then);
       return;
     }
 
@@ -151,24 +151,24 @@ module.Manager.prototype.openStorage = function(then) {
   }
 };
 
-module.Manager.prototype.loadPresets = function() {
+module.Manager.prototype.loadPresets_ = function() {
   var manager = this;
-  this.openStorage(function() {
+  this.openStorage_(function() {
     chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
       packageEntry.getDirectory(kPresetsFolder, {create: false}, function(presetsEntry) {
         var processEntry = function(entry, then) {
           var preset = new Preset(manager, entry, manager.presetStorage_);
           manager.presets.push(preset);
-          preset.load_(then);
+          preset.load(then);
         };
 
-        FileUtil.forEachEntry(presetsEntry, processEntry, manager.handlePresetsLoaded.bind(manager), manager.domErrorHandlerCallback);
+        FileUtil.forEachEntry(presetsEntry, processEntry, manager.handlePresetsLoaded_.bind(manager), manager.domErrorHandlerCallback);
       }, manager.domErrorHandlerCallback);
     });
   });
 };
 
-module.Manager.prototype.handlePresetsLoaded = function() {
+module.Manager.prototype.handlePresetsLoaded_ = function() {
   var manager = this;
   this.presets.forEach(function(preset) {
     if (preset.isDefault)
@@ -188,7 +188,7 @@ module.Manager.prototype.handleFileUpdated_ = function(entry) {
   var manager = this;
   var updateInstrumentAndUpdate = function(preset) {
     preset.updateInstrument(this.instrument_);
-    manager.notifyObserver();
+    manager.notifyObserver_();
   }
 
   this.presets.forEach(function(preset) {
@@ -206,7 +206,7 @@ module.Manager.prototype.handleFileStatusChanged_ = function(detail) {
 
 module.Manager.prototype.usePreset = function(preset) {
   if (this.currentPreset)
-    this.currentPreset.updateFromInstrument_(this.instrument_);
+    this.currentPreset.updateFromInstrument(this.instrument_);
 
   this.currentPreset = preset;
   this.currentPreset.updateInstrument(this.instrument_);
@@ -219,13 +219,14 @@ module.Manager.prototype.exportCurrent = function(entry) {
   FileUtil.writeFile(entry, jsonText, this.domErrorHandlerCallback);
 };
 
+// TODO: rename this handleSettingChanged
 module.Manager.prototype.onChanged = function() {
   this.currentPreset.isModified = true;
   this.scheduleSave_();
-  this.notifyObserver();
+  this.notifyObserver_();
 };
 
-module.Manager.prototype.notifyObserver = function() {
+module.Manager.prototype.notifyObserver_ = function() {
   if (this.onPresetStateChanged)
     this.onPresetStateChanged();
 };
@@ -248,10 +249,10 @@ module.Manager.prototype.doSave_ = function() {
   }
 
   if (this.currentPreset.isModified)
-    this.currentPreset.updateFromInstrument_(this.instrument_);
+    this.currentPreset.updateFromInstrument(this.instrument_);
 
-  this.presets.forEach(function(preset) { preset.beginSaveIfNeeded_(); } );
-  this.notifyObserver();
+  this.presets.forEach(function(preset) { preset.beginSaveIfNeeded(); } );
+  this.notifyObserver_();
 };
 
 return module;

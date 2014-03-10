@@ -187,8 +187,10 @@ module.Manager.prototype.usePresetWithIndex = function(index) {
 module.Manager.prototype.handleFileUpdated_ = function(entry) {
   var manager = this;
   var updateInstrumentAndUpdate = function(preset) {
-    preset.updateInstrument(this.instrument_);
-    manager.notifyCurrentPresetChanged_();
+    if (this.currentPreset == preset) {
+      preset.updateInstrument(this.instrument_);
+      manager.notifyCurrentPresetChanged_();
+    }
   }
 
   this.presets.forEach(function(preset) {

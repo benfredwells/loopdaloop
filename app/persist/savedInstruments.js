@@ -187,7 +187,7 @@ module.Manager.prototype.handleFileUpdated_ = function(entry) {
   var manager = this;
   this.presets.forEach(function(preset) {
     if (preset.fileName == entry.name) {
-      preset.loadFromEntry(manager.notifyObservers.bind(manager), entry);
+      preset.loadFromEntry(manager.notifyObserver.bind(manager), entry);
     }
   });
 }

@@ -18,7 +18,8 @@ var Preset = function(manager, originalFileEntry, storageDirectoryEntry) {
   this.isSaving = false;
   this.instrumentState = null;
   this.originalFileEntry_ = originalFileEntry;
-  this.storageDirectoryEntry_ = storageDirectoryEntry;
+  this.storageDirectoryEntry = storageDirectoryEntry;
+  this.fileName = this.originalFileEntry_.name + kPresetSuffix;
 };
 
 Preset.prototype.updateInstrument_ = function(instrument) {
@@ -39,23 +40,19 @@ Preset.prototype.updateFromJSON_ = function(then, jsonText) {
   then();
 };
 
-Preset.prototype.loadFromOriginal_ = function(then) {
+Preset.prototype.loadFromEntry = function(then, entry) {
   this.instrumentState = null;
-  FileUtil.readFile(this.originalFileEntry_, this.updateFromJSON_.bind(this, then), this.manager_.domErrorHandlerCallback);
+  FileUtil.readFile(entry, this.updateFromJSON_.bind(this, then), this.manager_.domErrorHandlerCallback);
 };
 
 Preset.prototype.load_ = function(then) {
-  var preset = this;
-  var doLoad = function(fileEntry) {
-    FileUtil.readFile(fileEntry, preset.updateFromJSON_.bind(preset, then), preset.manager_.domErrorHandlerCallback);
-  };
-
-  if (this.storageDirectoryEntry_)
-    this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name + kPresetSuffix, {create: false}, doLoad,
-                                        this.loadFromOriginal_.bind(this, then),
-                                        this.manager_.domErrorHandlerCallback);
+  if (this.storageDirectoryEntry) {
+    this.storageDirectoryEntry.getFile(this.fileName, {create: false}, this.loadFromEntry.bind(this, then),
+                                       this.loadFromEntry.bind(this, then, this.originalFileEntry_),
+                                       this.manager_.domErrorHandlerCallback);
+  }
   else
-    this.loadFromOriginal_(then);
+    this.loadFromEntry(entry, this.originalFileEntry_);
 }
 
 Preset.prototype.beginSaveIfNeeded_ = function() {
@@ -63,9 +60,9 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
     return;
 
   this.isModified = false;
-  if (!this.storageDirectoryEntry_)
+  if (!this.storageDirectoryEntry)
     return;
-  
+
   this.isSaving = true;
   this.manager_.notifyObserver();
 
@@ -75,7 +72,7 @@ Preset.prototype.beginSaveIfNeeded_ = function() {
   jsonObject.name = this.name;
   var jsonText = JSON.stringify(jsonObject, null, 2);
   var preset = this;
-  this.storageDirectoryEntry_.getFile(this.originalFileEntry_.name + kPresetSuffix, {create: true}, function(entry) {
+  this.storageDirectoryEntry.getFile(this.fileName, {create: true}, function(entry) {
     FileUtil.writeFile(entry, jsonText, preset.finishedSaving_.bind(preset), preset.manager_.domErrorHandlerCallback);
   }, this.manager_.domErrorHandlerCallback);
 };
@@ -136,7 +133,7 @@ module.Manager.prototype.openStorage = function(then) {
     };
     manager.presetStorage_ = fileSystem.root;
 
-    chrome.syncFileSystem.onFileStatusChanged.addListener(manager.handleFileStatusChanged.bind(manager));
+    chrome.syncFileSystem.onFileStatusChanged.addListener(manager.handleFileStatusChanged_.bind(manager));
 
     if (kClearStorage) {
       manager.clearStorage(then);
@@ -163,7 +160,7 @@ module.Manager.prototype.loadPresets = function() {
           manager.presets.push(preset);
           preset.load_(then);
         };
-  
+
         FileUtil.forEachEntry(presetsEntry, processEntry, manager.handlePresetsLoaded.bind(manager), manager.domErrorHandlerCallback);
       }, manager.domErrorHandlerCallback);
     });
@@ -186,11 +183,21 @@ module.Manager.prototype.usePresetWithIndex = function(index) {
   this.usePreset(this.presets[index]);
 };
 
-module.Manager.prototype.handleFileStatusChanged = function(detail) {
+module.Manager.prototype.handleFileUpdated_ = function(entry) {
+  var manager = this;
+  this.presets.forEach(function(preset) {
+    if (preset.fileName == entry.name) {
+      preset.loadFromEntry(manager.notifyObservers.bind(manager), entry);
+    }
+  });
+}
+
+module.Manager.prototype.handleFileStatusChanged_ = function(detail) {
   console.log(detail.status);
   console.log(detail.direction);
   if (detail.status == 'synced' && detail.direction == 'remote_to_local') {
-    console.log(detail.action);
+    if (detail.action == 'updated')
+      this.handleFileUpdated_(detail.Entry);
   }
 };
 
@@ -217,13 +224,13 @@ module.Manager.prototype.onChanged = function() {
 
 module.Manager.prototype.notifyObserver = function() {
   if (this.onPresetStateChanged)
-  this.onPresetStateChanged();
+    this.onPresetStateChanged();
 };
 
 module.Manager.prototype.scheduleSave_ = function() {
   if (this.saveTimerId)
     clearTimeout(this.saveTimerId);
-  
+
   this.saveTimerId = setTimeout(this.doSave_.bind(this), kSaverTimerInterval);
 };
 

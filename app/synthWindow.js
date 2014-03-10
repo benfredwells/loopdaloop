@@ -107,8 +107,8 @@ SynthesizerWrapper.prototype.initializeCategoryUI = function(ui) {
 };
 
 SynthesizerWrapper.prototype.handleSavedInstrumentsLoaded = function() {
-  this.handleInstrumentChanged();
-  this.instrumentPersistUI.initialize(this.savedInstruments);
+  chrome.storage.local.remove(kDeadKeys);
+  chrome.storage.local.get([kSelectedCategoryKey, kSelectedPresetKey], this.handleStorageLoaded.bind(this));
 };
 
 SynthesizerWrapper.prototype.handleLoad = function() {
@@ -131,17 +131,19 @@ SynthesizerWrapper.prototype.handleLoad = function() {
   this.instrumentUIs.forEach(this.initializeCategoryUI.bind(this));
   this.testButton.setCurrentTime(0);
 
-  chrome.storage.local.remove(kDeadKeys);
-  chrome.storage.local.get([kSelectedCategoryKey, kSelectedPresetKey], this.handleStorageLoaded.bind(this));
-
   gBackgroundPage.showKeyboard();
   gBackgroundPage.setSynthWrapper(this);
 };
 
 SynthesizerWrapper.prototype.handleStorageLoaded = function(items) {
+  this.instrumentPersistUI.initialize(this.savedInstruments);
+
   var selectedPresetName = items[kSelectedPresetKey];
+  console.log('restoring ' + selectedPresetName);
   if (selectedPresetName)
     this.instrumentPersistUI.useNamedPreset(selectedPresetName);
+  else
+    this.handleInstrumentChanged();
 
   var selectedID = items[kSelectedCategoryKey];
   if (!selectedID)
@@ -193,6 +195,7 @@ SynthesizerWrapper.prototype.saveState = function() {
   var setting = {};
   setting[kSelectedCategoryKey] = selectedID;
   setting[kSelectedPresetKey] = this.instrumentPersistUI.getCurrentPresetName();
+  console.log('saving ' + setting[kSelectedPresetKey]);
   chrome.storage.local.set(setting);
 };
 

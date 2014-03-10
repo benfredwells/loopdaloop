@@ -33,8 +33,6 @@ Preset.prototype.updateFromInstrument_ = function(instrument) {
 };
 
 Preset.prototype.updateFromJSON_ = function(then, jsonText) {
-  console.log('in update from json');
-  console.log(jsonText);
   var fromJSON = JSON.parse(jsonText);
   this.name = fromJSON.name;
   this.instrumentState = fromJSON.instrumentState;
@@ -43,7 +41,7 @@ Preset.prototype.updateFromJSON_ = function(then, jsonText) {
 };
 
 Preset.prototype.loadFromEntry = function(then, entry) {
-  console.log('in load');
+
   this.instrumentState = null;
   FileUtil.readFile(entry, this.updateFromJSON_.bind(this, then), this.manager_.domErrorHandlerCallback);
 };
@@ -194,16 +192,12 @@ module.Manager.prototype.handleFileUpdated_ = function(entry) {
   }
 
   this.presets.forEach(function(preset) {
-    console.log('looking...');
-    if (preset.fileName == entry.name) {
-      console.log('found...');
+    if (preset.fileName == entry.name)
       preset.loadFromEntry(updateInstrumentAndUpdate.bind(manager, preset), entry);
-    }
   });
 };
 
 module.Manager.prototype.handleFileStatusChanged_ = function(detail) {
-  console.log(detail);
   if (detail.status == 'synced' && detail.direction == 'remote_to_local') {
     if (detail.action == 'updated')
       this.handleFileUpdated_(detail.fileEntry);
@@ -232,11 +226,8 @@ module.Manager.prototype.onChanged = function() {
 };
 
 module.Manager.prototype.notifyObserver = function() {
-  console.log('notifying');
-  if (this.onPresetStateChanged) {
-    console.log('notifying .....');
+  if (this.onPresetStateChanged)
     this.onPresetStateChanged();
-  }
 };
 
 module.Manager.prototype.scheduleSave_ = function() {

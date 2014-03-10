@@ -172,7 +172,7 @@ module.Manager.prototype.handlePresetsLoaded_ = function() {
   var manager = this;
   this.presets.forEach(function(preset) {
     if (preset.isDefault)
-      manager.usePreset(preset);
+      manager.usePreset_(preset);
   });
 
   this.loaded = true;
@@ -181,7 +181,15 @@ module.Manager.prototype.handlePresetsLoaded_ = function() {
 };
 
 module.Manager.prototype.usePresetWithIndex = function(index) {
-  this.usePreset(this.presets[index]);
+  this.usePreset_(this.presets[index]);
+};
+
+module.Manager.prototype.usePresetWithFileName = function(fileName) {
+  function hasFileName(element, index, array) {
+    return element.fileName == fileName;
+  }
+
+  this.usePreset_(this.presets.find(hasFileName));
 };
 
 module.Manager.prototype.handleFileUpdated_ = function(entry) {
@@ -211,7 +219,10 @@ module.Manager.prototype.handleFileStatusChanged_ = function(detail) {
   }
 };
 
-module.Manager.prototype.usePreset = function(preset) {
+module.Manager.prototype.usePreset_ = function(preset) {
+  if (!preset)
+    return;
+
   if (this.currentPreset)
     this.currentPreset.updateFromInstrument(this.instrument_);
 

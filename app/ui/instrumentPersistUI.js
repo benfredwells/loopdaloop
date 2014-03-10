@@ -65,6 +65,19 @@ module.UI.prototype.initialize = function(savedInstruments) {
   }
 };
 
+module.UI.prototype.useNamedPreset = function(name) {
+  this.savedInstruments_.usePresetWithFileName(name);
+  if (this.onchange)
+    this.onchange();
+};
+
+module.UI.prototype.getCurrentPresetName = function() {
+  if (!this.savedInstruments_.currentPreset)
+    return '';
+
+  return this.savedInstruments_.currentPreset.fileName;
+};
+
 module.UI.prototype.handleCurrentPresetChanged = function() {
   if (this.onchange)
     this.onchange();

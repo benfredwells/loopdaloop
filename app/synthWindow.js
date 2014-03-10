@@ -14,6 +14,7 @@ var kEnvelopeID = 'envelope';
 
 var kDeadKeys = ['instrumentWindowExpandedField'];
 var kSelectedCategoryKey = 'selectedCategoryField';
+var kSelectedPresetKey = 'selectedPreset';
 
 var kDefaultNoteDuration = 2;
 
@@ -90,7 +91,7 @@ SynthesizerWrapper.prototype.createInstrumentPersistUI = function() {
   this.instrumentPersistUI = new InstrumentPersistUI.UI(
       document.getElementById('instrumentPersist'),
       this.instrument,
-      this.handleInstrumentChanged.bind(this)); 
+      this.handleInstrumentChanged.bind(this));
 }
 
 SynthesizerWrapper.prototype.createErrorDisplayUI = function() {
@@ -131,13 +132,17 @@ SynthesizerWrapper.prototype.handleLoad = function() {
   this.testButton.setCurrentTime(0);
 
   chrome.storage.local.remove(kDeadKeys);
-  chrome.storage.local.get(kSelectedCategoryKey, this.handleStorageLoaded.bind(this));
+  chrome.storage.local.get([kSelectedCategoryKey, kSelectedPresetKey], this.handleStorageLoaded.bind(this));
 
   gBackgroundPage.showKeyboard();
   gBackgroundPage.setSynthWrapper(this);
 };
 
 SynthesizerWrapper.prototype.handleStorageLoaded = function(items) {
+  var selectedPresetName = items[kSelectedPresetKey];
+  if (selectedPresetName)
+    this.instrumentPersistUI.useNamedPreset(selectedPresetName);
+
   var selectedID = items[kSelectedCategoryKey];
   if (!selectedID)
     selectedID = kOscillatorAID;
@@ -187,6 +192,7 @@ SynthesizerWrapper.prototype.saveState = function() {
   });
   var setting = {};
   setting[kSelectedCategoryKey] = selectedID;
+  setting[kSelectedPresetKey] = this.instrumentPersistUI.getCurrentPresetName();
   chrome.storage.local.set(setting);
 };
 

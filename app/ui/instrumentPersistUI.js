@@ -72,12 +72,14 @@ module.UI.prototype.handlePresetStateChanged = function() {
     var suffix = '';
     if (option.preset.isModified)
       suffix = ' (dirty)';
-      
+
     if (option.preset.isSaving)
       suffix = suffix + ' (saving)';
 
     option.text = option.preset.name + suffix;
   }
+  if (this.onchange)
+    this.onchange();
 };
 
 return module;

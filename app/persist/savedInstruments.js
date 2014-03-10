@@ -22,7 +22,7 @@ var Preset = function(manager, originalFileEntry, storageDirectoryEntry) {
   this.fileName = this.originalFileEntry_.name + kPresetSuffix;
 };
 
-Preset.prototype.updateInstrument_ = function(instrument) {
+Preset.prototype.updateInstrument = function(instrument) {
   instrument.stopListening();
   InstrumentState.updateInstrument(instrument, this.instrumentState);
   instrument.startListening();
@@ -33,6 +33,8 @@ Preset.prototype.updateFromInstrument_ = function(instrument) {
 };
 
 Preset.prototype.updateFromJSON_ = function(then, jsonText) {
+  console.log('in update from json');
+  console.log(jsonText);
   var fromJSON = JSON.parse(jsonText);
   this.name = fromJSON.name;
   this.instrumentState = fromJSON.instrumentState;
@@ -41,6 +43,7 @@ Preset.prototype.updateFromJSON_ = function(then, jsonText) {
 };
 
 Preset.prototype.loadFromEntry = function(then, entry) {
+  console.log('in load');
   this.instrumentState = null;
   FileUtil.readFile(entry, this.updateFromJSON_.bind(this, then), this.manager_.domErrorHandlerCallback);
 };
@@ -185,12 +188,19 @@ module.Manager.prototype.usePresetWithIndex = function(index) {
 
 module.Manager.prototype.handleFileUpdated_ = function(entry) {
   var manager = this;
+  var updateInstrumentAndUpdate = function(preset) {
+    preset.updateInstrument(this.instrument_);
+    manager.notifyObserver();
+  }
+
   this.presets.forEach(function(preset) {
+    console.log('looking...');
     if (preset.fileName == entry.name) {
-      preset.loadFromEntry(manager.notifyObserver.bind(manager), entry);
+      console.log('found...');
+      preset.loadFromEntry(updateInstrumentAndUpdate.bind(manager, preset), entry);
     }
   });
-}
+};
 
 module.Manager.prototype.handleFileStatusChanged_ = function(detail) {
   console.log(detail);
@@ -205,7 +215,7 @@ module.Manager.prototype.usePreset = function(preset) {
     this.currentPreset.updateFromInstrument_(this.instrument_);
 
   this.currentPreset = preset;
-  this.currentPreset.updateInstrument_(this.instrument_);
+  this.currentPreset.updateInstrument(this.instrument_);
 };
 
 module.Manager.prototype.exportCurrent = function(entry) {
@@ -222,8 +232,11 @@ module.Manager.prototype.onChanged = function() {
 };
 
 module.Manager.prototype.notifyObserver = function() {
-  if (this.onPresetStateChanged)
+  console.log('notifying');
+  if (this.onPresetStateChanged) {
+    console.log('notifying .....');
     this.onPresetStateChanged();
+  }
 };
 
 module.Manager.prototype.scheduleSave_ = function() {

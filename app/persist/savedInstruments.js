@@ -196,7 +196,7 @@ module.Manager.prototype.handleFileStatusChanged_ = function(detail) {
   console.log(detail);
   if (detail.status == 'synced' && detail.direction == 'remote_to_local') {
     if (detail.action == 'updated')
-      this.handleFileUpdated_(detail.Entry);
+      this.handleFileUpdated_(detail.fileEntry);
   }
 };
 

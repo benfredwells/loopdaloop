@@ -60,13 +60,13 @@ Preset.prototype.beginSaveIfNeeded = function() {
   if (!this.isModified)
     return;
 
+  console.log('Saving preset ' + this.fileName);
+
   this.isModified = false;
   if (!this.storageDirectoryEntry)
     return;
 
   this.isSaving = true;
-  this.manager_.notifyObserver_();
-
   var jsonObject = {};
   jsonObject.instrumentState = this.instrumentState;
   jsonObject.default = this.isDefault;
@@ -79,8 +79,8 @@ Preset.prototype.beginSaveIfNeeded = function() {
 };
 
 Preset.prototype.finishedSaving_ = function() {
+  console.log('Finished saving preset ' + this.fileName);
   this.isSaving = false;
-  this.manager_.notifyObserver_();
 };
 
 module.Manager = function(instrument, onInstrumentsLoaded) {
@@ -188,7 +188,7 @@ module.Manager.prototype.handleFileUpdated_ = function(entry) {
   var manager = this;
   var updateInstrumentAndUpdate = function(preset) {
     preset.updateInstrument(this.instrument_);
-    manager.notifyObserver_();
+    manager.notifyCurrentPresetChanged_();
   }
 
   this.presets.forEach(function(preset) {
@@ -223,12 +223,11 @@ module.Manager.prototype.exportCurrent = function(entry) {
 module.Manager.prototype.onChanged = function() {
   this.currentPreset.isModified = true;
   this.scheduleSave_();
-  this.notifyObserver_();
 };
 
-module.Manager.prototype.notifyObserver_ = function() {
-  if (this.onPresetStateChanged)
-    this.onPresetStateChanged();
+module.Manager.prototype.notifyCurrentPresetChanged_ = function() {
+  if (this.onVCurrentPresetChanged)
+    this.onCurrentPresetChanged();
 };
 
 module.Manager.prototype.scheduleSave_ = function() {
@@ -252,7 +251,6 @@ module.Manager.prototype.doSave_ = function() {
     this.currentPreset.updateFromInstrument(this.instrument_);
 
   this.presets.forEach(function(preset) { preset.beginSaveIfNeeded(); } );
-  this.notifyObserver_();
 };
 
 return module;

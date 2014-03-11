@@ -185,11 +185,12 @@ module.Manager.prototype.usePresetWithIndex = function(index) {
 };
 
 module.Manager.prototype.usePresetWithFileName = function(fileName) {
-  function hasFileName(element, index, array) {
-    return element.fileName == fileName;
-  }
-
-  this.usePreset_(this.presets.find(hasFileName));
+  var toUse = null;
+  this.presets.forEach(function(preset) {
+    if (preset.fileName = fileName)
+      toUse = preset;
+  })
+  this.usePreset_(toUse);
 };
 
 module.Manager.prototype.handleFileUpdated_ = function(entry) {

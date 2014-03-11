@@ -139,7 +139,6 @@ SynthesizerWrapper.prototype.handleStorageLoaded = function(items) {
   this.instrumentPersistUI.initialize(this.savedInstruments);
 
   var selectedPresetName = items[kSelectedPresetKey];
-  console.log('restoring ' + selectedPresetName);
   if (selectedPresetName)
     this.instrumentPersistUI.useNamedPreset(selectedPresetName);
   else
@@ -195,7 +194,6 @@ SynthesizerWrapper.prototype.saveState = function() {
   var setting = {};
   setting[kSelectedCategoryKey] = selectedID;
   setting[kSelectedPresetKey] = this.instrumentPersistUI.getCurrentPresetName();
-  console.log('saving ' + setting[kSelectedPresetKey]);
   chrome.storage.local.set(setting);
 };
 

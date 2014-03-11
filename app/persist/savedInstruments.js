@@ -187,9 +187,9 @@ module.Manager.prototype.usePresetWithIndex = function(index) {
 module.Manager.prototype.usePresetWithFileName = function(fileName) {
   var toUse = null;
   this.presets.forEach(function(preset) {
-    if (preset.fileName = fileName)
+    if (preset.fileName == fileName)
       toUse = preset;
-  })
+  });
   this.usePreset_(toUse);
 };
 

@@ -89,7 +89,7 @@ module.Manager = function(instrument, onInstrumentsLoaded) {
   this.loaded = false;
   this.currentPreset = null;
   this.onInstrumentsLoaded = onInstrumentsLoaded;
-  this.onPresetStateChanged = null;
+  this.onCurrentPresetModified = null;
   this.instrument_.setListener(this);
   this.saveTimerId = null;
   this.presetStorage_ = null;
@@ -201,7 +201,7 @@ module.Manager.prototype.handleFileUpdated_ = function(entry) {
     if (this.currentPreset == preset) {
       console.log('Updating instrument and UI');
       preset.updateInstrument(this.instrument_);
-      manager.notifyCurrentPresetChanged_();
+      manager.notifyCurrentPresetModified_();
     }
   };
 
@@ -244,9 +244,9 @@ module.Manager.prototype.onChanged = function() {
   this.scheduleSave_();
 };
 
-module.Manager.prototype.notifyCurrentPresetChanged_ = function() {
-  if (this.onCurrentPresetChanged)
-    this.onCurrentPresetChanged();
+module.Manager.prototype.notifyCurrentPresetModified_ = function() {
+  if (this.onCurrentPresetModified)
+    this.onCurrentPresetModified();
 };
 
 module.Manager.prototype.scheduleSave_ = function() {

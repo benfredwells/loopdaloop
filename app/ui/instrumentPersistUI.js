@@ -49,7 +49,7 @@ module.UI.prototype.updateInstrument_ = function() {
 
 module.UI.prototype.initialize = function(savedInstruments) {
   this.savedInstruments_ = savedInstruments;
-  this.savedInstruments_.onCurrentPresetChanged = this.handleCurrentPresetChanged.bind(this);
+  this.savedInstruments_.onCurrentPresetModified = this.handleCurrentPresetModified.bind(this);
   while(this.select.options.length)
     this.select.remove(0);
   this.select.disabled = false;
@@ -83,7 +83,7 @@ module.UI.prototype.getCurrentPresetName = function() {
   return this.savedInstruments_.currentPreset.fileName;
 };
 
-module.UI.prototype.handleCurrentPresetChanged = function() {
+module.UI.prototype.handleCurrentPresetModified = function() {
   if (this.onchange)
     this.onchange();
 };

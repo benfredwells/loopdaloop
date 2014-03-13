@@ -159,6 +159,7 @@ SynthesizerWrapper.prototype.handleInstrumentChanged = function() {
     ui.updateDisplay();
   });
   this.updateSize();
+  this.saveState();
 };
 
 SynthesizerWrapper.prototype.handleVisualizationTimeChange = function(newTime) {

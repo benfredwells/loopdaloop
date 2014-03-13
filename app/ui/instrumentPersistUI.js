@@ -67,6 +67,11 @@ module.UI.prototype.initialize = function(savedInstruments) {
 
 module.UI.prototype.useNamedPreset = function(name) {
   this.savedInstruments_.usePresetWithFileName(name);
+  for (var i = 0; i < this.select.options.length; i++) {
+    var option = this.select[i];
+    if (option.preset == this.savedInstruments_.currentPreset)
+      this.select.value = i;
+  }
   if (this.onchange)
     this.onchange();
 };

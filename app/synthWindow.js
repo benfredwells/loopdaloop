@@ -115,6 +115,8 @@ SynthesizerWrapper.prototype.handleLoad = function() {
   this.categoriesEl = document.getElementById('categories');
   this.detailsEl = document.getElementById('details');
 
+  this.loaded = false;
+
   this.createPitchUI(kPitchID, Strings.kPitch);
   this.createOscillatorUI(kOscillatorAID, Strings.kOscillator1, 0);
   this.createOscillatorUI(kOscillatorBID, Strings.kOscillator2, 1);
@@ -151,6 +153,7 @@ SynthesizerWrapper.prototype.handleStorageLoaded = function(items) {
     ui.setSelected(ui.id == selectedID);
     ui.updateIcon();
   });
+  this.loaded = true;
   this.updateSize();
 };
 
@@ -217,6 +220,9 @@ SynthesizerWrapper.prototype.handleErrorVisibilityChanged = function(sender) {
 }
 
 SynthesizerWrapper.prototype.updateSize = function() {
+  if (!this.loaded)
+    return;
+
   var height = 0;
   this.instrumentUIs.forEach(function(ui) {
     height = height + ui.height();

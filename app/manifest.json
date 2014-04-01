@@ -17,6 +17,7 @@
         "instrument/contour.js",
         "instrument/instrument.js",
         "persist/fileUtil.js",
+        "persist/preset.js",
         "persist/savedInstruments.js",
         "background.js"
       ]

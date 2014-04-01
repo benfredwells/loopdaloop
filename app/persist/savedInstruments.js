@@ -10,79 +10,6 @@ var kPresetSuffix = '.preset';
 var kUseSyncFS = true;
 var kClearStorage = false;
 
-var Preset = function(manager, originalFileEntry, storageDirectoryEntry) {
-  this.name = '';
-  this.manager_ = manager;
-  this.isDefault = false;
-  this.isModified = false;
-  this.isSaving = false;
-  this.instrumentState = null;
-  this.originalFileEntry_ = originalFileEntry;
-  this.storageDirectoryEntry = storageDirectoryEntry;
-  this.fileName = this.originalFileEntry_.name + kPresetSuffix;
-};
-
-Preset.prototype.updateInstrument = function(instrument) {
-  instrument.stopListening();
-  InstrumentState.updateInstrument(instrument, this.instrumentState);
-  instrument.startListening();
-};
-
-Preset.prototype.updateFromInstrument = function(instrument) {
-  this.instrumentState = InstrumentState.getInstrumentState(instrument);
-};
-
-Preset.prototype.updateFromJSON_ = function(then, jsonText) {
-  var fromJSON = JSON.parse(jsonText);
-  this.name = fromJSON.name;
-  this.instrumentState = fromJSON.instrumentState;
-  this.isDefault = fromJSON.default;
-  then();
-};
-
-Preset.prototype.loadFromEntry = function(then, entry) {
-
-  this.instrumentState = null;
-  FileUtil.readFile(entry, this.updateFromJSON_.bind(this, then), this.manager_.domErrorHandlerCallback);
-};
-
-Preset.prototype.load = function(then) {
-  if (this.storageDirectoryEntry) {
-    this.storageDirectoryEntry.getFile(this.fileName, {create: false}, this.loadFromEntry.bind(this, then),
-                                       this.loadFromEntry.bind(this, then, this.originalFileEntry_),
-                                       this.manager_.domErrorHandlerCallback);
-  }
-  else
-    this.loadFromEntry(entry, this.originalFileEntry_);
-}
-
-Preset.prototype.beginSaveIfNeeded = function() {
-  if (!this.isModified)
-    return;
-
-  console.log('Saving preset ' + this.fileName);
-
-  this.isModified = false;
-  if (!this.storageDirectoryEntry)
-    return;
-
-  this.isSaving = true;
-  var jsonObject = {};
-  jsonObject.instrumentState = this.instrumentState;
-  jsonObject.default = this.isDefault;
-  jsonObject.name = this.name;
-  var jsonText = JSON.stringify(jsonObject, null, 2);
-  var preset = this;
-  this.storageDirectoryEntry.getFile(this.fileName, {create: true}, function(entry) {
-    FileUtil.writeFile(entry, jsonText, preset.finishedSaving_.bind(preset), preset.manager_.domErrorHandlerCallback);
-  }, this.manager_.domErrorHandlerCallback);
-};
-
-Preset.prototype.finishedSaving_ = function() {
-  console.log('Finished saving preset ' + this.fileName);
-  this.isSaving = false;
-};
-
 module.Manager = function(instrument, onInstrumentsLoaded) {
   this.instrument_ = instrument;
   this.presets = [];
@@ -157,7 +84,7 @@ module.Manager.prototype.loadPresets_ = function() {
     chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
       packageEntry.getDirectory(kPresetsFolder, {create: false}, function(presetsEntry) {
         var processEntry = function(entry, then) {
-          var preset = new Preset(manager, entry, manager.presetStorage_);
+          var preset = new Preset.Preset(manager, entry, manager.presetStorage_);
           manager.presets.push(preset);
           preset.load(then);
         };

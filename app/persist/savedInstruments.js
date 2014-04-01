@@ -6,7 +6,6 @@ var module = {};
 
 var kSaverTimerInterval = 1000;
 var kPresetsFolder = 'presets';
-var kPresetSuffix = '.preset';
 var kUseSyncFS = true;
 var kClearStorage = false;
 

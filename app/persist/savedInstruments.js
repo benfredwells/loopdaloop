@@ -54,7 +54,7 @@ module.Manager.prototype.openStorage_ = function(then) {
   var manager = this;
   var requestFileSystemCallback = function(fileSystem) {
     if (chrome.runtime.lastError) {
-      manager.updateError_('Error creating syncFS: ' + chrome.runtime.lastError.message);
+      manager.updateError_('Error creating file system: ' + chrome.runtime.lastError.message);
       then();
       return;
     };
@@ -83,7 +83,7 @@ module.Manager.prototype.loadPresets_ = function() {
     chrome.runtime.getPackageDirectoryEntry(function(packageEntry) {
       packageEntry.getDirectory(kPresetsFolder, {create: false}, function(presetsEntry) {
         var processEntry = function(entry, then) {
-          var preset = new Preset.Preset(manager, entry, manager.presetStorage_);
+          var preset = new Preset.BuiltIn(manager, entry, manager.presetStorage_);
           manager.presets.push(preset);
           preset.load(then);
         };

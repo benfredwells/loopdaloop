@@ -6,16 +6,16 @@ var kPresetSuffix = '.preset';
 
 var module = {};
 
-module.Preset = function(manager, originalFileEntry, storageDirectoryEntry) {
-  this.name = '';
+module.Preset = function(manager, name, fileName, storageDirectoryEntry) {
+  this.name = name;
   this.manager_ = manager;
   this.isDefault = false;
   this.isModified = false;
   this.isSaving = false;
   this.instrumentState = null;
-  this.originalFileEntry_ = originalFileEntry;
   this.storageDirectoryEntry = storageDirectoryEntry;
-  this.fileName = this.originalFileEntry_.name + kPresetSuffix;
+  // TODO: why kPresetSuffix again?
+  this.fileName = fileName + kPresetSuffix;
 };
 
 module.Preset.prototype.updateInstrument = function(instrument) {
@@ -78,6 +78,13 @@ module.Preset.prototype.finishedSaving_ = function() {
   console.log('Finished saving preset ' + this.fileName);
   this.isSaving = false;
 };
+
+module.BuiltIn = function(manager, originalFileEntry, storageDirectoryEntry) {
+  module.Preset.call(this, manager, '', originalFileEntry.name, storageDirectoryEntry);
+  this.originalFileEntry_ = originalFileEntry;
+};
+
+module.BuiltIn.prototype = Object.create(module.Preset.prototype);
 
 return module;
 

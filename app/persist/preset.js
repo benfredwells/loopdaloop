@@ -2,8 +2,6 @@
 
 var Preset = (function() {
 
-var kPresetSuffix = '.preset';
-
 var module = {};
 
 var Preset = function(manager, name, fileName, storageDirectoryEntry) {
@@ -14,8 +12,7 @@ var Preset = function(manager, name, fileName, storageDirectoryEntry) {
   this.isSaving = false;
   this.instrumentState = null;
   this.storageDirectoryEntry = storageDirectoryEntry;
-  // TODO: why kPresetSuffix again?
-  this.fileName = fileName + kPresetSuffix;
+  this.fileName = fileName;
 };
 
 Preset.prototype.updateInstrument = function(instrument) {

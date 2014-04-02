@@ -37,19 +37,22 @@ module.Preset.prototype.updateFromJSON_ = function(then, jsonText) {
 };
 
 module.Preset.prototype.loadFromEntry = function(then, entry) {
-
   this.instrumentState = null;
   FileUtil.readFile(entry, this.updateFromJSON_.bind(this, then), this.manager_.domErrorHandlerCallback);
 };
 
+module.Preset.prototype.loadFromOriginal_ = function(then) {
+  // by default do nothing. Only builtins have original state.
+}
+
 module.Preset.prototype.load = function(then) {
   if (this.storageDirectoryEntry) {
     this.storageDirectoryEntry.getFile(this.fileName, {create: false}, this.loadFromEntry.bind(this, then),
-                                       this.loadFromEntry.bind(this, then, this.originalFileEntry_),
+                                       this.loadFromOriginal_.bind(this, then),
                                        this.manager_.domErrorHandlerCallback);
   }
   else
-    this.loadFromEntry(entry, this.originalFileEntry_);
+    this.loadFromOriginal_(then);
 }
 
 module.Preset.prototype.beginSaveIfNeeded = function() {
@@ -85,6 +88,10 @@ module.BuiltIn = function(manager, originalFileEntry, storageDirectoryEntry) {
 };
 
 module.BuiltIn.prototype = Object.create(module.Preset.prototype);
+
+module.BuiltIn.prototype.loadFromOriginal_ = function(then) {
+  this.loadFromEntry(then, this.originalFileEntry_);
+};
 
 return module;
 

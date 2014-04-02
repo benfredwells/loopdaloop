@@ -6,7 +6,7 @@ var kPresetSuffix = '.preset';
 
 var module = {};
 
-module.Preset = function(manager, name, fileName, storageDirectoryEntry) {
+var Preset = function(manager, name, fileName, storageDirectoryEntry) {
   this.name = name;
   this.manager_ = manager;
   this.isDefault = false;
@@ -18,17 +18,17 @@ module.Preset = function(manager, name, fileName, storageDirectoryEntry) {
   this.fileName = fileName + kPresetSuffix;
 };
 
-module.Preset.prototype.updateInstrument = function(instrument) {
+Preset.prototype.updateInstrument = function(instrument) {
   instrument.stopListening();
   InstrumentState.updateInstrument(instrument, this.instrumentState);
   instrument.startListening();
 };
 
-module.Preset.prototype.updateFromInstrument = function(instrument) {
+Preset.prototype.updateFromInstrument = function(instrument) {
   this.instrumentState = InstrumentState.getInstrumentState(instrument);
 };
 
-module.Preset.prototype.updateFromJSON_ = function(then, jsonText) {
+Preset.prototype.updateFromJSON_ = function(then, jsonText) {
   var fromJSON = JSON.parse(jsonText);
   this.name = fromJSON.name;
   this.instrumentState = fromJSON.instrumentState;
@@ -36,16 +36,16 @@ module.Preset.prototype.updateFromJSON_ = function(then, jsonText) {
   then();
 };
 
-module.Preset.prototype.loadFromEntry = function(then, entry) {
+Preset.prototype.loadFromEntry = function(then, entry) {
   this.instrumentState = null;
   FileUtil.readFile(entry, this.updateFromJSON_.bind(this, then), this.manager_.domErrorHandlerCallback);
 };
 
-module.Preset.prototype.loadFromOriginal_ = function(then) {
+Preset.prototype.loadFromOriginal_ = function(then) {
   // by default do nothing. Only builtins have original state.
 }
 
-module.Preset.prototype.load = function(then) {
+Preset.prototype.load = function(then) {
   if (this.storageDirectoryEntry) {
     this.storageDirectoryEntry.getFile(this.fileName, {create: false}, this.loadFromEntry.bind(this, then),
                                        this.loadFromOriginal_.bind(this, then),
@@ -55,7 +55,7 @@ module.Preset.prototype.load = function(then) {
     this.loadFromOriginal_(then);
 }
 
-module.Preset.prototype.beginSaveIfNeeded = function() {
+Preset.prototype.beginSaveIfNeeded = function() {
   if (!this.isModified)
     return;
 
@@ -77,17 +77,17 @@ module.Preset.prototype.beginSaveIfNeeded = function() {
   }, this.manager_.domErrorHandlerCallback);
 };
 
-module.Preset.prototype.finishedSaving_ = function() {
+Preset.prototype.finishedSaving_ = function() {
   console.log('Finished saving preset ' + this.fileName);
   this.isSaving = false;
 };
 
 module.BuiltIn = function(manager, originalFileEntry, storageDirectoryEntry) {
-  module.Preset.call(this, manager, '', originalFileEntry.name, storageDirectoryEntry);
+  Preset.call(this, manager, '', originalFileEntry.name, storageDirectoryEntry);
   this.originalFileEntry_ = originalFileEntry;
 };
 
-module.BuiltIn.prototype = Object.create(module.Preset.prototype);
+module.BuiltIn.prototype = Object.create(Preset.prototype);
 
 module.BuiltIn.prototype.loadFromOriginal_ = function(then) {
   this.loadFromEntry(then, this.originalFileEntry_);

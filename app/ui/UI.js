@@ -12,7 +12,10 @@ module.Control = function(container) {
   this.div = document.createElement('div');
   this.children = [];
   var containerEl = container;
-  if (container.div) {
+  if (!containerEl) {
+    containerEl = document.body;
+  }
+  if (containerEl.div) {
     containerEl = container.div;
     container.children.push(this);
   }

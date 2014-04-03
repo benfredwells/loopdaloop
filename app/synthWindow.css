@@ -20,6 +20,9 @@ div {
 }
 
 #dialogHolder {
+  display: flex;
+  justify-content: center;
+  align-items: center;  width: 100px;
   position: absolute;
   visibility: hidden;
   top: 0px;

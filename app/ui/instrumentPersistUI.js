@@ -19,10 +19,13 @@ module.UI = function(parentDiv, instrument, onchange) {
   option.text = Strings.kLoading;
   this.select.add(option);
 
+  this.chooseNameDialog_ = new Dialog.BaseDialog(document);
+
   var ui = this;
   this.select.onchange = function() {ui.updateInstrument_()};
 
-  (new UI.Button(this.div, null, Strings.kAdd)).div.classList.add('persistButton');
+  var doAdd = function(event) {ui.add_(event)};
+  (new UI.Button(this.div, doAdd, Strings.kAdd)).div.classList.add('persistButton');
 
   (new UI.Button(this.div, null, Strings.kClear)).div.classList.add('persistButton');
 
@@ -40,6 +43,10 @@ module.UI.prototype.save_ = function(event) {
     ui.savedInstruments_.exportCurrent(entry);
   });
 };
+
+module.UI.prototype.add_ = function(event) {
+  this.chooseNameDialog_.show();
+}
 
 module.UI.prototype.updateInstrument_ = function() {
   this.savedInstruments_.usePresetWithIndex(this.select.value);

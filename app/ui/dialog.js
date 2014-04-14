@@ -74,7 +74,7 @@ module.EnterTextDialog.prototype.addContent = function() {
   var textEditRow = new UI.Control(this.mainControl);
   textEditRow.div.classList.add('dialogRow');
   this.textEdit_ = document.createElement('input');
-  this.textEdit_.classList.add('dialogElement');
+  this.textEdit_.classList.add('dialogEdit');
   textEditRow.div.appendChild(this.textEdit_);
 }
 

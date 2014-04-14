@@ -47,11 +47,11 @@ BaseDialog.prototype.layout_ = function(captionText) {
   var dialog = this;
 
   var doOK = function(event) { dialog.handleOK_(); };
-  var ok = new UI.Button(this.mainControl, doOK, 'OK');
+  var ok = new UI.Button(this.mainControl, doOK, Strings.kOK);
   ok.div.classList.add('dialogButton');
 
   var doCancel = function(event) { dialog.handleCancel_(); }
-  var cancel = new UI.Button(this.mainControl, doCancel, 'Cancel');
+  var cancel = new UI.Button(this.mainControl, doCancel, Strings.kCancel);
   cancel.div.classList.add('dialogButton');
 }
 

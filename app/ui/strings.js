@@ -9,6 +9,9 @@ module.Formatter = function(prefix, suffix) {
   }
 }
 
+module.kOK = 'OK';
+module.kCancel = 'Cancel';
+
 module.kMaxFormatter = new module.Formatter('', ' of max');
 module.kPercentFormatter = new module.Formatter('', '%');
 module.kMultiplierFormatter = new module.Formatter('x', '');

@@ -12,7 +12,8 @@ var DialogControl = function(container) {
 
 DialogControl.prototype = Object.create(UI.Control.prototype);
 
-var BaseDialog = function() {
+var BaseDialog = function(oncancel) {
+  this.oncancel = oncancel;
   this.background_ = document.getElementById('dialogBackground');
   this.holder_ = document.getElementById('dialogHolder');
   this.mainControl = new DialogControl(this.holder_);
@@ -33,21 +34,38 @@ BaseDialog.prototype.hide = function() {
 };
 
 BaseDialog.prototype.addContent = function() {
-  // Overridden classes implement this.
+  // Child classes implement this.
 }
+
 BaseDialog.prototype.layout_ = function() {
   var caption = new UI.Control(this.mainControl);
   caption.div.classList.add('dialogRow');
   caption.div.innerHTML = 'Dialog';
   this.addContent();
-  this.ok = new UI.Button(this.mainControl, null, 'OK');
+
+  var dialog = this;
+
+  var doOK = function(event) { dialog.handleOK_(); };
+  this.ok = new UI.Button(this.mainControl, doOK, 'OK');
   this.ok.div.classList.add('dialogButton');
-  this.cancel = new UI.Button(this.mainControl, null, 'Cancel');
+
+  var doCancel = function(event) { dialog.handleCancel_(); }
+  this.cancel = new UI.Button(this.mainControl, doCancel, 'Cancel');
   this.cancel.div.classList.add('dialogButton');
 }
 
-module.EnterTextDialog = function() {
-  BaseDialog.call(this);
+BaseDialog.prototype.handleOK_ = function() {
+  // Child classes implement this.
+}
+
+BaseDialog.prototype.handleCancel_ = function() {
+  this.hide();
+  if (this.oncancel)
+    this.oncancel();
+}
+
+module.EnterTextDialog = function(oncancel) {
+  BaseDialog.call(this, oncancel);
 }
 
 module.EnterTextDialog.prototype = Object.create(BaseDialog.prototype);

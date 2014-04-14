@@ -46,7 +46,12 @@ div {
 .dialogRow {
   width: 100%;
   flex-shrink: 0;
-  padding-bottom: 16px;
+  padding-bottom: 12px;
+}
+
+.dialogCaption {
+  padding-bottom: 8px;
+  font-size: 13px;
 }
 
 .dialogEdit {

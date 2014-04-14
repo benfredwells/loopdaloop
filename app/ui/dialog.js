@@ -40,6 +40,7 @@ BaseDialog.prototype.addContent = function() {
 BaseDialog.prototype.layout_ = function() {
   var caption = new UI.Control(this.mainControl);
   caption.div.classList.add('dialogRow');
+  caption.div.classList.add('dialogCaption');
   caption.div.innerHTML = 'Dialog';
   this.addContent();
 

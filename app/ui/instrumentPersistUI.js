@@ -19,7 +19,7 @@ module.UI = function(parentDiv, instrument, onchange) {
   option.text = Strings.kLoading;
   this.select.add(option);
 
-  this.chooseNameDialog_ = new Dialog.BaseDialog(document);
+  this.chooseNameDialog_ = new Dialog.EnterTextDialog();
 
   var ui = this;
   this.select.onchange = function() {ui.updateInstrument_()};

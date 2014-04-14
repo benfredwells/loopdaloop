@@ -4,32 +4,61 @@ var Dialog = (function() {
 
 var module= {};
 
-var DialogDiv = function(container) {
+var DialogControl = function(container) {
   UI.Control.call(this, container);
 
   this.div.classList.add('dialogDiv');
 };
 
-DialogDiv.prototype = Object.create(UI.Control.prototype);
+DialogControl.prototype = Object.create(UI.Control.prototype);
 
-module.BaseDialog = function() {
+var BaseDialog = function() {
   this.background_ = document.getElementById('dialogBackground');
   this.holder_ = document.getElementById('dialogHolder');
-  this.div = new DialogDiv(this.holder_);
-  this.div.hidden = true;
+  this.mainControl = new DialogControl(this.holder_);
+  this.mainControl.hidden = true;
+  this.layout_();
 };
 
-module.BaseDialog.prototype.show = function() {
+BaseDialog.prototype.show = function() {
   this.background_.style.visibility = "visible";
   this.holder_.style.visibility = "visible";
-  this.div.hidden = false;
+  this.mainControl.hidden = false;
 };
 
-module.BaseDialog.prototype.hide = function() {
+BaseDialog.prototype.hide = function() {
   this.background_.style.visibility = "hidden";
   this.holder_.style.visibility = "hidden";
-  this.div.hidden = true;
+  this.mainControl.hidden = true;
 };
+
+BaseDialog.prototype.addContent = function() {
+  // Overridden classes implement this.
+}
+BaseDialog.prototype.layout_ = function() {
+  var caption = new UI.Control(this.mainControl);
+  caption.div.classList.add('dialogRow');
+  caption.div.innerHTML = 'Dialog';
+  this.addContent();
+  this.ok = new UI.Button(this.mainControl, null, 'OK');
+  this.ok.div.classList.add('dialogButton');
+  this.cancel = new UI.Button(this.mainControl, null, 'Cancel');
+  this.cancel.div.classList.add('dialogButton');
+}
+
+module.EnterTextDialog = function() {
+  BaseDialog.call(this);
+}
+
+module.EnterTextDialog.prototype = Object.create(BaseDialog.prototype);
+
+module.EnterTextDialog.prototype.addContent = function() {
+  var textEditRow = new UI.Control(this.mainControl);
+  textEditRow.div.classList.add('dialogRow');
+  this.textEdit_ = document.createElement('input');
+  this.textEdit_.classList.add('dialogElement');
+  textEditRow.div.appendChild(this.textEdit_);
+}
 
 return module;
 

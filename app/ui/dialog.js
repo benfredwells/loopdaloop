@@ -12,8 +12,8 @@ var DialogControl = function(container) {
 
 DialogControl.prototype = Object.create(UI.Control.prototype);
 
-var BaseDialog = function(captionText, oncancel) {
-  this.oncancel = oncancel;
+var BaseDialog = function(captionText) {
+  this.oncancel = null;
   this.background_ = document.getElementById('dialogBackground');
   this.holder_ = document.getElementById('dialogHolder');
   this.mainControl = new DialogControl(this.holder_);
@@ -21,16 +21,18 @@ var BaseDialog = function(captionText, oncancel) {
   this.layout_(captionText);
 };
 
-BaseDialog.prototype.show = function() {
+BaseDialog.prototype.show = function(oncancel) {
   this.background_.style.visibility = "visible";
   this.holder_.style.visibility = "visible";
   this.mainControl.hidden = false;
+  this.oncancel = oncancel;
 };
 
 BaseDialog.prototype.hide = function() {
   this.background_.style.visibility = "hidden";
   this.holder_.style.visibility = "hidden";
   this.mainControl.hidden = true;
+  this.oncancel = null;
 };
 
 BaseDialog.prototype.addContent = function() {
@@ -56,17 +58,18 @@ BaseDialog.prototype.layout_ = function(captionText) {
 }
 
 BaseDialog.prototype.handleOK_ = function() {
-  // Child classes implement this.
+  this.hide();
 }
 
 BaseDialog.prototype.handleCancel_ = function() {
-  this.hide();
   if (this.oncancel)
     this.oncancel();
+  this.hide();
 }
 
 module.EnterTextDialog = function(captionText, oncancel) {
-  BaseDialog.call(this, captionText, oncancel);
+  BaseDialog.call(this, captionText);
+  this.ontextentered = null;
 }
 
 module.EnterTextDialog.prototype = Object.create(BaseDialog.prototype);
@@ -77,6 +80,23 @@ module.EnterTextDialog.prototype.addContent = function() {
   this.textEdit_ = document.createElement('input');
   this.textEdit_.classList.add('dialogEdit');
   textEditRow.div.appendChild(this.textEdit_);
+}
+
+module.EnterTextDialog.prototype.show = function(ontextentered, oncancel) {
+  BaseDialog.prototype.show.call(this, oncancel);
+  this.ontextentered = ontextentered;
+}
+
+module.EnterTextDialog.prototype.hide = function() {
+  BaseDialog.prototype.hide.call(this);
+  this.ontextentered = null;
+}
+
+module.EnterTextDialog.prototype.handleOK_ = function() {
+  var text = this.textEdit_.value;
+  if (this.ontextentered)
+    this.ontextentered(text);
+  BaseDialog.prototype.handleOK_.call(this);
 }
 
 return module;

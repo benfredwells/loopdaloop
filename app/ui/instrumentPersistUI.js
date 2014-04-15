@@ -19,7 +19,7 @@ module.UI = function(parentDiv, instrument, onchange) {
   option.text = Strings.kLoading;
   this.select.add(option);
 
-  this.chooseNameDialog_ = new Dialog.EnterTextDialog('Enter Name', null);
+  this.chooseNameDialog_ = new Dialog.EnterTextDialog('Enter Name');
 
   var ui = this;
   this.select.onchange = function() {ui.updateInstrument_()};
@@ -44,8 +44,12 @@ module.UI.prototype.save_ = function(event) {
   });
 };
 
+module.UI.prototype.handleNameChosen_ = function(name) {
+  console.log(name);
+}
+
 module.UI.prototype.add_ = function(event) {
-  this.chooseNameDialog_.show();
+  this.chooseNameDialog_.show(this.handleNameChosen_.bind(this));
 }
 
 module.UI.prototype.updateInstrument_ = function() {

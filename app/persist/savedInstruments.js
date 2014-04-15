@@ -8,6 +8,7 @@ var kSaverTimerInterval = 1000;
 var kPresetsFolder = 'presets';
 var kUseSyncFS = true;
 var kClearStorage = false;
+var kUserPresetFileNameBase = 'user_';
 
 module.Manager = function(instrument, onInstrumentsLoaded) {
   this.instrument_ = instrument;
@@ -197,6 +198,18 @@ module.Manager.prototype.doSave_ = function() {
 
   this.presets.forEach(function(preset) { preset.beginSaveIfNeeded(); } );
 };
+
+module.Manager.prototype.getNextUserPresetFileName = function() {
+  return kUserPresetFileNameBase + '.json';
+}
+
+module.Manager.prototype.addUserPreset = function(name) {
+  var fileName = this.getNextUserPresetFileName();
+  var userPreset = new Preset.UserPreset(this, name, fileName, this.presetStorage_);
+  this.presets.push(userPreset);
+  userPreset.isModified = true;
+  this.scheduleSave_();
+}
 
 return module;
 

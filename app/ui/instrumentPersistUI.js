@@ -45,7 +45,7 @@ module.UI.prototype.save_ = function(event) {
 };
 
 module.UI.prototype.handleNameChosen_ = function(name) {
-  console.log(name);
+  this.savedInstruments_.addUserPreset(name);
 }
 
 module.UI.prototype.add_ = function(event) {

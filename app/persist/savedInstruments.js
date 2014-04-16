@@ -205,23 +205,26 @@ module.Manager.prototype.doSave_ = function() {
   this.presets.forEach(function(preset) { preset.beginSaveIfNeeded(); } );
 };
 
-module.Manager.prototype.getNextUserPresetFileName = function() {
-  return kUserPresetFileNameBase + '.json';
+module.Manager.prototype.getNextUserPresetFileName = function(then) {
+  then(kUserPresetFileNameBase + '.json');
 }
 
 module.Manager.prototype.addUserPreset = function(name) {
-  var fileName = this.getNextUserPresetFileName();
-  var userPreset = new Preset.UserPreset(this,
-                                         name,
-                                         fileName,
-                                         this.presetStorage_,
-                                         this.currentPreset.instrumentState);
-  this.presets.push(userPreset);
-  this.currentPreset = userPreset;
-  this.notifyPresetListChanged_();
-  
-  userPreset.isModified = true;
-  this.scheduleSave_();
+  var manager = this;
+  var addPresetWithFileName = function(fileName) {
+    var userPreset = new Preset.UserPreset(manager,
+                                           name,
+                                           fileName,
+                                           manager.presetStorage_,
+                                           manager.currentPreset.instrumentState);
+    manager.presets.push(userPreset);
+    manager.currentPreset = userPreset;
+    manager.notifyPresetListChanged_();
+    
+    userPreset.isModified = true;
+    manager.scheduleSave_();
+  }
+  this.getNextUserPresetFileName(addPresetWithFileName);
 }
 
 return module;

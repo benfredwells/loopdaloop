@@ -90,8 +90,9 @@ module.BuiltIn.prototype.loadFromOriginal_ = function(then) {
   this.loadFromEntry(then, this.originalFileEntry_);
 };
 
-module.UserPreset = function(manager, name, fileName, storageDirectoryEntry) {
+module.UserPreset = function(manager, name, fileName, storageDirectoryEntry, instrumentState) {
   Preset.call(this, manager, name, fileName, storageDirectoryEntry);
+  this.instrumentState = instrumentState;
 }
 
 module.UserPreset.prototype = Object.create(Preset.prototype);

@@ -17,6 +17,7 @@ module.Manager = function(instrument, onInstrumentsLoaded) {
   this.currentPreset = null;
   this.onInstrumentsLoaded = onInstrumentsLoaded;
   this.onCurrentPresetModified = null;
+  this.onPresetListChanged = null;
   this.instrument_.setListener(this);
   this.saveTimerId = null;
   this.presetStorage_ = null;
@@ -176,6 +177,11 @@ module.Manager.prototype.notifyCurrentPresetModified_ = function() {
     this.onCurrentPresetModified();
 };
 
+module.Manager.prototype.notifyPresetListChanged_ = function() {
+  if (this.onPresetListChanged)
+    this.onPresetListChanged();
+};
+
 module.Manager.prototype.scheduleSave_ = function() {
   if (this.saveTimerId)
     clearTimeout(this.saveTimerId);
@@ -205,8 +211,15 @@ module.Manager.prototype.getNextUserPresetFileName = function() {
 
 module.Manager.prototype.addUserPreset = function(name) {
   var fileName = this.getNextUserPresetFileName();
-  var userPreset = new Preset.UserPreset(this, name, fileName, this.presetStorage_);
+  var userPreset = new Preset.UserPreset(this,
+                                         name,
+                                         fileName,
+                                         this.presetStorage_,
+                                         this.currentPreset.instrumentState);
   this.presets.push(userPreset);
+  this.currentPreset = userPreset;
+  this.notifyPresetListChanged_();
+  
   userPreset.isModified = true;
   this.scheduleSave_();
 }

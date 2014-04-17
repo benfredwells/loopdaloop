@@ -43,7 +43,7 @@ module.Oscillator.prototype.createNode = function(octave, note, paramControllers
 }
 
 module.Oscillator.prototype.createTremoloNode = function(paramControllers) {
-  var gainNode = this.context_.createGainNode();
+  var gainNode = this.context_.createGain();
   paramControllers.push(this.tremolo.createController(gainNode.gain));
   return gainNode;
 }
@@ -138,7 +138,7 @@ module.Instrument.prototype._addFilterNodes = function(filter, octave, note, all
 module.Instrument.prototype.createPlayedNote = function(octave, note) {
   var paramControllers = [];
   var oscillator = this.oscillator.createNode(octave, note, paramControllers);
-  var gainNode = this.context_.createGainNode();
+  var gainNode = this.context_.createGain();
   var allNodes = [oscillator, gainNode];
   var oscillatorOut = oscillator;
   if (this.oscillator.tremolo.enabled) {

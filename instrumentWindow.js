@@ -21,7 +21,7 @@ var kExpandedFieldKey = 'instrumentWindowExpandedField';
 // Initialization
 
 function init() {
-  gContext = new webkitAudioContext();
+  gContext = new AudioContext();
   gControllerManager = new ParamController.Manager(gContext);
   var compressor = gContext.createDynamicsCompressor();
   compressor.threshold.value = kCompressorThreshold;

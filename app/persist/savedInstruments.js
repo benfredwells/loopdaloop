@@ -7,7 +7,7 @@ var module = {};
 var kSaverTimerInterval = 1000;
 var kPresetsFolder = 'presets';
 var kUseSyncFS = true;
-var kClearStorage = true;
+var kClearStorage = false;
 var kUserPresetFileNameBase = 'user_';
 var kPresetExtension = '.json';
 
@@ -89,20 +89,16 @@ module.Manager.prototype.openStorage_ = function(then) {
 };
 
 module.Manager.prototype.loadUserPresets_ = function() {
-  console.log('a');
   var processEntry = function(entry, then) {
-    console.log('b');
     if (this.presetWithFileName(entry.fileName) !== null) {
-      console.log('c');
       then();
       return;
     }
 
-    console.log('d');
     // TODO: remove name and instrumentstate from this
     var preset = new Preset.UserPreset(this, '', entry.fileName, this.presetStorage_, null);
     this.presets.push(preset);
-    preset.load(then);
+    preset.loadFromEntry(then, entry);
   };
 
   FileUtil.forEachEntry(this.presetStorage_,
@@ -243,6 +239,7 @@ module.Manager.prototype.doSave_ = function() {
 module.Manager.prototype.getNextUserPresetFileName = function(then) {
   var manager = this;
   var checkFileName = function(uniqueifier) {
+    // TODO: add proper error handler.
     var fileName = kUserPresetFileNameBase + uniqueifier + kPresetExtension;
     manager.presetStorage_.getFile(fileName, {create: false},
                                    checkFileName.bind(manager, uniqueifier+1),

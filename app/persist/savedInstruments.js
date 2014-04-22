@@ -45,11 +45,12 @@ module.Manager.prototype.domErrorHandler_ = function(domError) {
 };
 
 module.Manager.prototype.presetWithFileName = function(fileName) {
+  var match = null;
   this.presets.forEach(function(preset) {
     if (preset.fileName == fileName)
-      return preset;
+      match = preset;
   });
-  return null;
+  return match;
 };
 
 module.Manager.prototype.clearStorage_ = function(then) {

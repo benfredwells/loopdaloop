@@ -40,6 +40,7 @@ Preset.prototype.loadFromEntry = function(then, entry) {
 
 Preset.prototype.loadFromOriginal_ = function(then) {
   // by default do nothing. Only builtins have original state.
+  then();
 }
 
 Preset.prototype.load = function(then) {

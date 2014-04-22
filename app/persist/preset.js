@@ -45,8 +45,7 @@ Preset.prototype.loadFromOriginal_ = function(then) {
 Preset.prototype.load = function(then) {
   if (this.storageDirectoryEntry) {
     this.storageDirectoryEntry.getFile(this.fileName, {create: false}, this.loadFromEntry.bind(this, then),
-                                       this.loadFromOriginal_.bind(this, then),
-                                       this.manager_.domErrorHandlerCallback);
+                                       this.loadFromOriginal_.bind(this, then));
   }
   else
     this.loadFromOriginal_(then);

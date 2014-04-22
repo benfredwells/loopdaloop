@@ -9,6 +9,7 @@ var kPresetsFolder = 'presets';
 var kUseSyncFS = true;
 var kClearStorage = false;
 var kUserPresetFileNameBase = 'user_';
+var kPresetExtension = '.json';
 
 module.Manager = function(instrument, onInstrumentsLoaded) {
   this.instrument_ = instrument;
@@ -206,7 +207,14 @@ module.Manager.prototype.doSave_ = function() {
 };
 
 module.Manager.prototype.getNextUserPresetFileName = function(then) {
-  then(kUserPresetFileNameBase + '.json');
+  var manager = this;
+  var checkFileName = function(uniqueifier) {
+    var fileName = kUserPresetFileNameBase + uniqueifier + kPresetExtension;
+    manager.presetStorage_.getFile(fileName, {create: false},
+                                   checkFileName.bind(manager, uniqueifier+1),
+                                  then.bind(manager, fileName));
+  }
+  checkFileName(1);
 }
 
 module.Manager.prototype.addUserPreset = function(name) {

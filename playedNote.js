@@ -42,7 +42,7 @@ module.Note.prototype.start = function() {
   this.gainNode_.gain.linearRampToValueAtTime(this.envelope_.sustain, nextTime);
   this.sustainStart_ = nextTime;
   this.oscillatorNodes_.forEach(function (oscillator) {
-    oscillator.noteOn(0);
+    oscillator.start(0);
   });
 }
 
@@ -56,7 +56,7 @@ module.Note.prototype.stop = function() {
   var thisNote = this;
   setTimeout(function() {
     thisNote.oscillatorNodes_.forEach(function(oscillator) {
-      oscillator.noteOff(0);
+      oscillator.stop(0);
     });
     thisNote.allNodes_.forEach(function(node) {
       node.disconnect();

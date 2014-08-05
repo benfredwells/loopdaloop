@@ -1,7 +1,7 @@
 {
   "name": "LoopDaLoop",
   "description": "HTML5 synthesizer",
-  "version": "0.21",
+  "version": "0.22",
   "minimum_chrome_version": "23",
   "app": {
     "background": {

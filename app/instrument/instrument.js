@@ -41,7 +41,7 @@ module.Oscillator.prototype.createNoteSection_ = function(context, octave, note,
   var section = new PlayedNote.NoteSection(null);
   var oscillatorNode = this.createOscillatorNode_(context, octave, note);
   section.pushOscillator(oscillatorNode);
-  var gainNode = context.createGainNode();
+  var gainNode = context.createGain();
   section.pushNode(gainNode);
   var oscillator = this;
   var detuneValueFunction = function(value) {
@@ -139,7 +139,7 @@ module.Instrument = function() {
 module.Instrument.prototype = Object.create(Setting.ListenableGroup.prototype);
 
 module.Instrument.prototype.createEnvelope_ = function(context) {
-  var gainNode = context.createGainNode();
+  var gainNode = context.createGain();
   var section = new PlayedNote.NoteSection(gainNode);
   var gainValueFunction = function(value) {
     return value;

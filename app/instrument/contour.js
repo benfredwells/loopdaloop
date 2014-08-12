@@ -102,7 +102,7 @@ module.FlatContour.prototype.averageValue = function(valueFunction) {
 };
 
 module.FlatContour.prototype.valueAtTime = function(time, noteOnTime) {
-  return this.valueSetting.value;  
+  return this.valueSetting.value;
 };
 
 module.FlatContour.prototype.releaseTime = function() {
@@ -165,13 +165,13 @@ module.OscillatingContour.prototype.addContour = function(context, valueFunction
   noteSection.addOscillator(oscillator);
   var lastNode = oscillator;
   if (this.typeSetting.value != AudioConstants.kConstantOscillation) {
-    var growthGain = context.createGainNode();
+    var growthGain = context.createGain();
     noteSection.addContour(new module.OscillationGrowthContourer(growthGain.gain, this));
     noteSection.addNode(growthGain);
     oscillator.connect(growthGain);
     lastNode = growthGain;
   }
-  var gain = context.createGainNode();
+  var gain = context.createGain();
   var amplitudeValue = (valueFunction(this.maxValueSetting.value) - valueFunction(this.minValueSetting.value)) / 2;
   if (this.contouredValue_.isEnvelope)
     noteSection.addContour(new module.BasicEnvelopeContourer(gain.gain, amplitudeValue));
@@ -346,12 +346,12 @@ module.BaseNStageContour.prototype.addContour = function(context, valueFunction,
   oscillator.frequency.value = this.oscillationFrequency();
   noteSection.addOscillator(oscillator);
 
-  var amplitudeGain = context.createGainNode();
+  var amplitudeGain = context.createGain();
   noteSection.addContour(new module.NStageOscillationGainContourer(this, amplitudeGain.gain));
   noteSection.addNode(amplitudeGain);
   oscillator.connect(amplitudeGain);
 
-  var envelopeGain = context.createGainNode();
+  var envelopeGain = context.createGain();
   noteSection.addContour(new module.NStageContourer(this, envelopeGain.gain, valueFunction));
   noteSection.addNode(envelopeGain);
   amplitudeGain.connect(envelopeGain);

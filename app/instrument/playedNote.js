@@ -71,7 +71,7 @@ module.NoteSection.prototype.connect = function(otherSection) {
 
 module.NoteSection.prototype.noteOn = function(time) {
   this.oscillatorNodes_.forEach(function (oscillator) {
-    oscillator.noteOn(time);
+    oscillator.start(time);
   });
   this.contours_.forEach(function (contour) {
     contour.contourOn(time);
@@ -86,10 +86,10 @@ module.NoteSection.prototype.releaseTrigger = function(time) {
 
 module.NoteSection.prototype.dismantle = function() {
   this.oscillatorNodes_.forEach(function (oscillator) {
-    oscillator.noteOff(kLatency);
+    oscillator.stop(kLatency);
   });
   this.allNodes_.forEach(function (node) {
-    node.disconnect();  
+    node.disconnect();
   });
 }
 

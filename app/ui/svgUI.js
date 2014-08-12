@@ -36,6 +36,7 @@ module.SVGControl = function(container) {
 
   this.svg_ = document.createElementNS(svgns, "svg:svg");
   this.div.appendChild(this.svg_);
+  this.div.classList.add('svg');
   this.primitives_ = [];
   // SVG Defs not currently used. Useful for gradients
   // and other reusable definitions.

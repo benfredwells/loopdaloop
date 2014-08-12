@@ -258,8 +258,12 @@ div {
   vertical-align: top;
 }
 
-.categoryDisplay {
+.svg {
   height: 50px;
+  overflow: hidden;
+}
+
+.categoryDisplay {
   width: 225px;
 }
 
@@ -298,7 +302,6 @@ div {
 }
 
 .contourDisplay {
-  height: 50px;
   width: 225px;
 }
 

@@ -60,7 +60,7 @@ module.Manager.prototype.clearStorage_ = function(then) {
   };
 
   FileUtil.forEachEntry(this.presetStorage_, processEntry, then, this.domErrorHandlerCallback);
-}
+};
 
 module.Manager.prototype.openStorage_ = function(then) {
   var manager = this;
@@ -91,13 +91,13 @@ module.Manager.prototype.openStorage_ = function(then) {
 
 module.Manager.prototype.loadUserPresets_ = function() {
   var processEntry = function(entry, then) {
-    if (this.presetWithFileName(entry.fileName) !== null) {
+    if (this.presetWithFileName(entry.name) !== null) {
       then();
       return;
     }
 
     // TODO: remove name and instrumentstate from this
-    var preset = new Preset.UserPreset(this, '', entry.fileName, this.presetStorage_, null);
+    var preset = new Preset.UserPreset(this, '', entry.name, this.presetStorage_, null);
     this.presets.push(preset);
     preset.loadFromEntry(then, entry);
   };

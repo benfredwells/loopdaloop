@@ -48,9 +48,9 @@ Preset.prototype.load = function(then) {
     // TODO: add error handler.
     this.storageDirectoryEntry.getFile(this.fileName, {create: false}, this.loadFromEntry.bind(this, then),
                                        this.loadFromOriginal_.bind(this, then));
-  }
-  else
+  } else {
     this.loadFromOriginal_(then);
+  }
 }
 
 Preset.prototype.beginSaveIfNeeded = function() {

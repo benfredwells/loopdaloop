@@ -93,7 +93,7 @@ module.BuiltIn.prototype.loadFromOriginal_ = function(then) {
 
 module.UserPreset = function(manager, fileName, storageDirectoryEntry) {
   Preset.call(this, manager, '', fileName, storageDirectoryEntry);
-  this.instrumentState = instrumentState;
+  this.instrumentState = null;
 }
 
 module.UserPreset.prototype = Object.create(Preset.prototype);

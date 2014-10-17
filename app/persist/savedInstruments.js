@@ -239,11 +239,16 @@ module.Manager.prototype.doSave_ = function() {
 module.Manager.prototype.getNextUserPresetFileName = function(then) {
   var manager = this;
   var checkFileName = function(uniqueifier) {
-    // TODO: add proper error handler.
     var fileName = kUserPresetFileNameBase + uniqueifier + kPresetExtension;
+    var handleError = function(DOMError) {
+      if (DOMError.name == 'NotFoundError')
+        then(fileName);
+      else
+        manager.domErrorHandlerCallback(DOMError);
+    }
     manager.presetStorage_.getFile(fileName, {create: false},
                                    checkFileName.bind(manager, uniqueifier+1),
-                                   then.bind(manager, fileName));
+                                   handleError);
   }
   checkFileName(1);
 }
@@ -252,10 +257,10 @@ module.Manager.prototype.addUserPreset = function(name) {
   var manager = this;
   var addPresetWithFileName = function(fileName) {
     var userPreset = new Preset.UserPreset(manager,
-                                           name,
                                            fileName,
-                                           manager.presetStorage_,
-                                           manager.currentPreset.instrumentState);
+                                           manager.presetStorage_);
+    userPreset.name = name;
+    userPreset.instrumentState = manager.currentPreset.instrumentState;
     manager.presets.push(userPreset);
     manager.currentPreset = userPreset;
     manager.notifyPresetListChanged_();

@@ -45,9 +45,15 @@ Preset.prototype.loadFromOriginal_ = function(then) {
 
 Preset.prototype.load = function(then) {
   if (this.storageDirectoryEntry) {
-    // TODO: handler errors.
+    var preset = this;
+    var handleError = function(DOMError) {
+      if (DOMError.name == 'NotFoundError')
+        preset.loadFromOriginal_(then);
+      else
+        preset.manager_.domErrorHandlerCallback(DOMError);
+    }
     this.storageDirectoryEntry.getFile(this.fileName, {create: false}, this.loadFromEntry.bind(this, then),
-                                       this.loadFromOriginal_.bind(this, then));
+                                       handleError);
   } else {
     this.loadFromOriginal_(then);
   }

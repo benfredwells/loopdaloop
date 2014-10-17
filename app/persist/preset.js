@@ -45,7 +45,7 @@ Preset.prototype.loadFromOriginal_ = function(then) {
 
 Preset.prototype.load = function(then) {
   if (this.storageDirectoryEntry) {
-    // TODO: add error handler.
+    // TODO: handler errors.
     this.storageDirectoryEntry.getFile(this.fileName, {create: false}, this.loadFromEntry.bind(this, then),
                                        this.loadFromOriginal_.bind(this, then));
   } else {
@@ -91,8 +91,8 @@ module.BuiltIn.prototype.loadFromOriginal_ = function(then) {
   this.loadFromEntry(then, this.originalFileEntry_);
 };
 
-module.UserPreset = function(manager, name, fileName, storageDirectoryEntry, instrumentState) {
-  Preset.call(this, manager, name, fileName, storageDirectoryEntry);
+module.UserPreset = function(manager, fileName, storageDirectoryEntry) {
+  Preset.call(this, manager, '', fileName, storageDirectoryEntry);
   this.instrumentState = instrumentState;
 }
 

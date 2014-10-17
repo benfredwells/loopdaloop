@@ -96,8 +96,7 @@ module.Manager.prototype.loadUserPresets_ = function() {
       return;
     }
 
-    // TODO: remove name and instrumentstate from this
-    var preset = new Preset.UserPreset(this, '', entry.name, this.presetStorage_, null);
+    var preset = new Preset.UserPreset(this, entry.name, this.presetStorage_);
     this.presets.push(preset);
     preset.loadFromEntry(then, entry);
   };
@@ -244,7 +243,7 @@ module.Manager.prototype.getNextUserPresetFileName = function(then) {
     var fileName = kUserPresetFileNameBase + uniqueifier + kPresetExtension;
     manager.presetStorage_.getFile(fileName, {create: false},
                                    checkFileName.bind(manager, uniqueifier+1),
-                                  then.bind(manager, fileName));
+                                   then.bind(manager, fileName));
   }
   checkFileName(1);
 }

@@ -26,6 +26,10 @@ BaseDialog.prototype.show = function(oncancel) {
   this.holder_.style.visibility = "visible";
   this.mainControl.hidden = false;
   this.oncancel = oncancel;
+  this.windowonkeydown = window.onkeydown;
+  this.windowonkeyup = window.onkeyup;
+  window.onkeydown = null;
+  window.onkeyup = null;
 };
 
 BaseDialog.prototype.hide = function() {
@@ -33,6 +37,8 @@ BaseDialog.prototype.hide = function() {
   this.holder_.style.visibility = "hidden";
   this.mainControl.hidden = true;
   this.oncancel = null;
+  window.onkeydown = this.windowonkeydown;
+  window.onkeyup = this.windowonkeyup;
 };
 
 BaseDialog.prototype.addContent = function() {

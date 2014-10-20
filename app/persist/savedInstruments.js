@@ -179,11 +179,15 @@ module.Manager.prototype.handleFileAdded_ = function(entry) {
     then();
     return;
   }
+  
+  var manager = this;
+  var afterLoad = function() {
+    manager.notifyPresetListChanged_();
+  }
 
   var preset = new Preset.UserPreset(this, entry.name, this.presetStorage_);
   this.presets.push(preset);
-  preset.loadFromEntry(then, entry);
-  manager.notifyPresetListChanged_();
+  preset.loadFromEntry(afterLoad, entry);
 };
 
 module.Manager.prototype.handleFileStatusChanged_ = function(detail) {

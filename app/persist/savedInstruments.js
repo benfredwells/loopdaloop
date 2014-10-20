@@ -172,10 +172,26 @@ module.Manager.prototype.handleFileUpdated_ = function(entry) {
   });
 };
 
+module.Manager.prototype.handleFileAdded_ = function(entry) {
+  console.log('Got added file ' + entry.name);
+
+  if (this.presetWithFileName(entry.name) !== null) {
+    then();
+    return;
+  }
+
+  var preset = new Preset.UserPreset(this, entry.name, this.presetStorage_);
+  this.presets.push(preset);
+  preset.loadFromEntry(then, entry);
+  manager.notifyPresetListChanged_();
+};
+
 module.Manager.prototype.handleFileStatusChanged_ = function(detail) {
   if (detail.status == 'synced' && detail.direction == 'remote_to_local') {
     if (detail.action == 'updated')
       this.handleFileUpdated_(detail.fileEntry);
+    else if (detail.action == 'added')
+      this.handleFileAdded_(detail.fileEntry);
   }
 };
 

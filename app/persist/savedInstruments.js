@@ -258,6 +258,10 @@ module.Manager.prototype.doSave_ = function() {
 
 module.Manager.prototype.getNextUserPresetFileName = function(then) {
   var manager = this;
+  var getRandomUniqifier = function() {
+    return Math.floor((Math.random() * 10000) + 1);
+  }
+  
   var checkFileName = function(uniqueifier) {
     var fileName = kUserPresetFileNameBase + uniqueifier + kPresetExtension;
     var handleError = function(DOMError) {
@@ -267,10 +271,10 @@ module.Manager.prototype.getNextUserPresetFileName = function(then) {
         manager.domErrorHandlerCallback(DOMError);
     }
     manager.presetStorage_.getFile(fileName, {create: false},
-                                   checkFileName.bind(manager, uniqueifier+1),
+                                   checkFileName.bind(manager, getRandomUniqifier()),
                                    handleError);
   }
-  checkFileName(1);
+  checkFileName(getRandomUniqifier());
 }
 
 module.Manager.prototype.addUserPreset = function(name) {

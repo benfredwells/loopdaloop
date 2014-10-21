@@ -90,6 +90,7 @@ module.EnterTextDialog.prototype.addContent = function() {
 
 module.EnterTextDialog.prototype.show = function(ontextentered, oncancel) {
   BaseDialog.prototype.show.call(this, oncancel);
+  this.textEdit_.focus();
   this.ontextentered = ontextentered;
 }
 

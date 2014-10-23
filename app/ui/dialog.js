@@ -4,6 +4,22 @@ var Dialog = (function() {
 
 var module= {};
 
+function walkDom(callback) {
+  var body = document.body;
+  var loop = function(element) {
+    do {
+      var recurse = true;
+      if(element.nodeType == 1)
+        recurse = callback(element);
+      if (recurse && element.hasChildNodes() && !element.hidden)
+        loop(element.firstChild);
+      element = element.nextSibling;
+    }
+    while (element);
+  };
+  loop(body);
+}
+
 var DialogControl = function(container) {
   UI.Control.call(this, container);
 
@@ -30,6 +46,17 @@ BaseDialog.prototype.show = function(oncancel) {
   this.windowonkeyup = window.onkeyup;
   window.onkeydown = null;
   window.onkeyup = null;
+  var dialog = this;
+  walkDom(function(element) {
+    if (element == dialog.holder_)
+      return false;
+
+    if (element.hasAttribute('tabIndex')) {
+      element.oldTabIndex = element.getAttribute('tabIndex');
+    }
+    element.setAttribute('tabIndex', '-1');
+    return true;
+  })
 };
 
 BaseDialog.prototype.hide = function() {
@@ -39,6 +66,19 @@ BaseDialog.prototype.hide = function() {
   this.oncancel = null;
   window.onkeydown = this.windowonkeydown;
   window.onkeyup = this.windowonkeyup;
+  var dialog = this;
+  walkDom(function(element) {
+    if (element == dialog.holder_)
+      return false;
+
+    if (element.oldTabIndex) {
+      element.setAttribute('tabIndex', element.oldTabIndex);
+      delete element.oldTabIndex;
+    } else {
+      element.removeAttribute('tabIndex');
+    }
+    return true;
+  })
 };
 
 BaseDialog.prototype.addContent = function() {

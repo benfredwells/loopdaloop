@@ -4,6 +4,7 @@ TestButton = (function() {
 var module = {};
 
 module.Button = function(parentDiv, instrument, scene, ontimechange) {
+  // TODO: this should use UI.Button...
   UI.Control.call(this, parentDiv);
   this.div.id = 'testButton';
   this.div.classList.add('button');

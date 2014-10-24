@@ -69,9 +69,29 @@ module.Button = function(container, onclick, caption) {
   this.div.appendChild(this.textDiv);
 
   this.div.onclick = onclick;
+  this.div.onkeydown = this.handleKeyDown.bind(this);
+  this.div.onkeyup = this.handleKeyUp.bind(this);
+  this.div.onblur = this.handleBlur.bind(this);
+  this.pressedWithKey = false;
 }
 
 module.Button.prototype = Object.create(module.Control.prototype);
+
+module.Button.prototype.handleKeyDown = function(event) {
+  if (event.keyCode == ' '.charCodeAt(0))
+    this.pressedWithKey = true;
+}
+
+module.Button.prototype.handleKeyUp = function(event) {
+  if (event.keyCode == ' '.charCodeAt(0) && this.pressedWithKey) {
+    this.pressedWithKey = false;
+    this.div.onclick();
+  }
+}
+
+module.Button.prototype.handleBlur = function(event) {
+  this.pressedWithKey = false;
+}
 
 return module;
 

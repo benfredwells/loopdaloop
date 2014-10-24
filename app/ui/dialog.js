@@ -97,10 +97,12 @@ BaseDialog.prototype.layout_ = function(captionText) {
   var doOK = function(event) { dialog.handleOK_(); };
   var ok = new UI.Button(this.mainControl, doOK, Strings.kOK);
   ok.div.classList.add('dialogButton');
+  ok.div.tabIndex = 100;
 
   var doCancel = function(event) { dialog.handleCancel_(); }
   var cancel = new UI.Button(this.mainControl, doCancel, Strings.kCancel);
   cancel.div.classList.add('dialogButton');
+  cancel.div.tabIndex = 101;
 }
 
 BaseDialog.prototype.handleOK_ = function() {

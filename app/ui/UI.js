@@ -58,7 +58,7 @@ module.Panel = function(container) {
 
 module.Panel.prototype = Object.create(module.Control.prototype);
 
-module.Button = function(container, onclick, caption) {
+module.Button = function(container, onpressed, caption) {
   module.Control.call(this, container);
 
   this.div.classList.add('button');
@@ -68,29 +68,62 @@ module.Button = function(container, onclick, caption) {
   this.textDiv.innerHTML = caption;
   this.div.appendChild(this.textDiv);
 
-  this.div.onclick = onclick;
+  this.onpressed_ = onpressed;
+  this.div.onmousedown = this.handleMouseDown.bind(this);
+  this.div.onmouseup = this.handleMouseUp.bind(this);
+  this.div.onmouseleave = this.handleMouseLeave.bind(this);
   this.div.onkeydown = this.handleKeyDown.bind(this);
   this.div.onkeyup = this.handleKeyUp.bind(this);
   this.div.onblur = this.handleBlur.bind(this);
-  this.pressedWithKey = false;
+  this.pressed_ = false;
 }
 
 module.Button.prototype = Object.create(module.Control.prototype);
 
+module.Button.prototype.fire_ = function(event) {
+  if (this.onpressed_)
+    this.onpressed_();
+}
+
+module.Button.prototype.press_ = function(event) {
+  this.pressed_ = true;
+  this.div.classList.add('pressed');
+}
+
+module.Button.prototype.unpress_ = function(event) {
+  this.pressed_ = false;
+  this.div.classList.remove('pressed');
+}
+
+module.Button.prototype.handleMouseDown = function(event) {
+  this.press_();
+}
+
+module.Button.prototype.handleMouseUp = function(event) {
+  if (this.pressed_) {
+    this.unpress_();
+    this.fire_();
+  }
+}
+
+module.Button.prototype.handleMouseLeave = function(event) {
+  this.unpress_();
+}
+
 module.Button.prototype.handleKeyDown = function(event) {
   if (event.keyCode == ' '.charCodeAt(0))
-    this.pressedWithKey = true;
+    this.press_();
 }
 
 module.Button.prototype.handleKeyUp = function(event) {
-  if (event.keyCode == ' '.charCodeAt(0) && this.pressedWithKey) {
-    this.pressedWithKey = false;
-    this.div.onclick();
+  if (event.keyCode == ' '.charCodeAt(0) && this.pressed_) {
+    this.unpress_();
+    this.fire_();
   }
 }
 
 module.Button.prototype.handleBlur = function(event) {
-  this.pressedWithKey = false;
+  this.unpress_();
 }
 
 return module;

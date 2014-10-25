@@ -92,7 +92,7 @@ div {
   display: inline-block;
   text-align: center;
   border-width: 1px;
-  border-color: #CCC;
+  border-color: #999;
   border-style: solid;
   border-radius: 2px;
   background-image: linear-gradient(0deg, #f5f5f5, #e0e0e0 50%, #f5f5f5);
@@ -107,8 +107,8 @@ div {
 }
 
 .persistButton {
-  width: 27px;
-  height: 27px;
+  width: 26px;
+  height: 26px;
 }
 
 .buttonText {
@@ -125,8 +125,8 @@ div {
 }
 
 .button:hover {
-  border-color: #BBB;
-  box-shadow: 0px 0px 1px 1px #EEE;
+  border-color: #777;
+  box-shadow: 0px 0px 2px 2px #EEE;
 }
 
 .button.pressed {

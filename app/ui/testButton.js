@@ -8,6 +8,7 @@ module.Button = function(parentDiv, instrument, scene, ontimechange) {
   UI.Control.call(this, parentDiv);
   this.div.id = 'testButton';
   this.div.classList.add('button');
+  this.div.classList.add('persistButton');
   this.instrument_ = instrument;
 
   this.textDiv = document.createElement('div');
@@ -16,11 +17,6 @@ module.Button = function(parentDiv, instrument, scene, ontimechange) {
   this.textDiv.innerHTML = Strings.kTest;
   this.div.appendChild(this.textDiv);
   
-  this.shortcutSpan = document.createElement('span');
-  this.shortcutSpan.classList.add('buttonShortcut');
-  this.shortcutSpan.innerHTML = Strings.kTestShortcut;
-  this.textDiv.appendChild(this.shortcutSpan);
-
   this.scene_ = scene;
   this.ontimechange = ontimechange;
 

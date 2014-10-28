@@ -78,21 +78,20 @@ SynthesizerWrapper.prototype.createEnvelopeUI = function(id, title) {
       this.handleVisualizationTimeChange.bind(this)));
 };
 
-SynthesizerWrapper.prototype.createTestButton = function() {
-  var headerEl = document.getElementById('header');
-  this.testButton = new TestButton.Button(
-      headerEl,
-      this.instrument,
-      this.scene,
-      this.handleTestNoteTimeChange.bind(this));
-};
-
 SynthesizerWrapper.prototype.createInstrumentPersistUI = function() {
   this.instrumentPersistUI = new InstrumentPersistUI.UI(
       document.getElementById('instrumentPersist'),
       this.instrument,
       this.handleInstrumentChanged.bind(this));
 }
+
+SynthesizerWrapper.prototype.createTestButton = function() {
+  this.testButton = new TestButton.Button(
+      this.instrumentPersistUI.div,
+      this.instrument,
+      this.scene,
+      this.handleTestNoteTimeChange.bind(this));
+};
 
 SynthesizerWrapper.prototype.createErrorDisplayUI = function() {
   this.errorDisplayUI = new ErrorUI.UI(
@@ -125,8 +124,8 @@ SynthesizerWrapper.prototype.handleLoad = function() {
   this.createFilterUI(kFilterBID, Strings.kFilter2, 1);
   this.createEnvelopeUI(kEnvelopeID, Strings.kEnvelope);
 
-  this.createTestButton();
   this.createInstrumentPersistUI();
+  this.createTestButton();
   this.createErrorDisplayUI();
   this.savedInstruments.setErrorHandler(this.errorDisplayUI.updateErrorTextCallback);
 

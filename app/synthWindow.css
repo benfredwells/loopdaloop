@@ -1,8 +1,7 @@
 body {
-  margin: 16px;
   font-family: arial, sans-serif;
   color: #444;
-  background: #79aa79;
+  margin: 0px;
 }
 
 div {
@@ -72,7 +71,9 @@ div {
 
 #instrumentPersist {
   display: inline-block;
-  margin-bottom: 16px;
+  padding: 16px;
+  width: 100%;
+  background: #79aa79;
 }
 
 .instrumentSelect {
@@ -87,24 +88,17 @@ div {
 
 #categories {
   display: inline-block;
+  width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+  background: #d2eecb;
 }
 
 .button {
   display: inline-block;
   text-align: center;
-  border-width: 1px;
-  border-color: #999;
-  border-style: solid;
-  border-radius: 2px;
-  background-image: linear-gradient(0deg, #f5f5f5, #e0e0e0 50%, #f5f5f5);
+  border: none;
   margin-left: 6px;
-}
-
-#testButton {
-  vertical-align: top;
-  margin-left: 6px;
-  height: 34px;
-  width: 75px;
 }
 
 .persistButton {
@@ -137,22 +131,20 @@ div {
 .category {
   width: 46px;
   height: 40px;
-  border-width: 1px;
-  border-color: #999;
-  border-style: solid;
   display: inline-block;
-  margin-right: -1px;
-  background-image: linear-gradient(0deg, #fafafa, #e5e5e5);
+  border: none;
 }
 
 .category.hover {
-  background-image: linear-gradient(0deg, #fafafa, #fafafa);
 }
 
 .category.selected {
-  background-color: #fff;
-  background-image: none;
-  border-bottom-color: #fff;
+  border-width: 0px;
+  border-bottom-color: blue;
+  border-bottom-width: 3px;
+  border-style: solid;
+  margin-bottom: -3px;
+  background: #97dcb4;
 }
 
 .categoryIcon {
@@ -224,9 +216,6 @@ div {
 #details {
   background-color: #fff;
   width: 394px;
-  border-width: 1px;
-  border-color: #999;
-  border-style: solid;
   padding: 8px;
   font-size: 13px;
   margin-top: -1px;
@@ -313,7 +302,17 @@ select {
   width: 180px;
   top: 0px;
   margin-top: -4px;
-  background: #ccc;
+  background: white;
+  border: none;
+}
+
+select.instrumentSelect {
+  -webkit-appearance:none;
+  font-size: 17px;
+  color: white;
+  top: 0px;
+  margin-top: -4px;
+  background: #79aa79;
   border: none;
 }
 

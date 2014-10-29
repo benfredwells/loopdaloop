@@ -72,8 +72,10 @@ div {
 #instrumentPersist {
   display: inline-block;
   padding: 16px;
+  padding-top: 8px;
+  padding-bottom: 0px;
   width: 100%;
-  background: #79aa79;
+  background: #4db6ac;
 }
 
 .instrumentSelect {
@@ -89,9 +91,12 @@ div {
 #categories {
   display: inline-block;
   width: 100%;
-  padding-left: 16px;
-  padding-right: 16px;
-  background: #d2eecb;
+  padding-left: 4px;
+  background: #4db6ac;
+  border-width: 0px;
+  border-bottom-color: #009688;
+  border-bottom-width: 4px;
+  border-style: solid;
 }
 
 .button {
@@ -108,11 +113,8 @@ div {
 
 .buttonText {
   padding: 5px;
-  font-size: 13px;
-}
-
-#testButtonText {
-  padding-top: 9px;
+  font-size: 17px;
+  color: white;
 }
 
 .buttonShortcut {
@@ -130,7 +132,7 @@ div {
 
 .category {
   width: 46px;
-  height: 40px;
+  height: 34px;
   display: inline-block;
   border: none;
 }
@@ -140,11 +142,11 @@ div {
 
 .category.selected {
   border-width: 0px;
-  border-bottom-color: blue;
-  border-bottom-width: 3px;
+  border-bottom-color: #ffc400;
+  border-bottom-width: 4px;
   border-style: solid;
-  margin-bottom: -3px;
-  background: #97dcb4;
+  padding-bottom: 3px;
+  margin-bottom: -7px;
 }
 
 .categoryIcon {
@@ -312,7 +314,7 @@ select.instrumentSelect {
   color: white;
   top: 0px;
   margin-top: -4px;
-  background: #79aa79;
+  background: #4db6ac;
   border: none;
 }
 

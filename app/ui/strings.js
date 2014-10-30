@@ -129,8 +129,7 @@ module.kFilter1 = 'Filter 1';
 module.kFilter2 = 'Filter 2';
 module.kEnvelope = 'Envelope';
 
-module.kTest = 'Test';
-module.kTestShortcut =' (T)';
+module.kTest = 'T';
 
 return module;
 

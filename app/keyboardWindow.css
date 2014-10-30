@@ -1,5 +1,5 @@
 body {
-  background: #f06292;
+  background: #4dd0e1;
   color: #212121;
 }
 
@@ -10,7 +10,7 @@ div.keyboard {
 div.key {
   display: inline-block;
   position: fixed;
-  border: 3px solid #f06292;
+  border: 3px solid #4dd0e1;
   text-align: center;
   -webkit-user-select: none;
 }

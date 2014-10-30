@@ -65,7 +65,7 @@ div.black.playing:hover {
 
 .octaveShortcut {
   display: inline-block;
-  margin-top: 30px;
+  margin-top: 25px;
   vertical-align: top;
   margin-left: 10px;
   margin-right: 10px;
@@ -76,8 +76,7 @@ div.black.playing:hover {
   width: 529px;
   height: 40px;
   margin-top: 20px;
-  background-image: url("assets/octaveselect.png");
-  -webkit-filter: brightness(3.0);
+  background-image: url("assets/octaveselect_background.png");
 }
 
 #octaveThumb {

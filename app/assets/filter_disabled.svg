@@ -3,9 +3,9 @@
    width="32"
    height="32">
   <polyline
-    style="fill:#d5d5d5"
+    style="fill:white;fill-opacity:0.2"
     points="6,8 20,8 26,25 6,25"/>
   <polyline
-    style="fill:none;stroke:#aaaaaa;stroke-width:2"
+    style="fill:none;stroke:white;stroke-opacity:0.5;stroke-width:2"
     points="6,8 20,8 26,25"/>
 </svg>

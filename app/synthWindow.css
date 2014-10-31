@@ -1,6 +1,6 @@
 body {
   font-family: arial, sans-serif;
-  color: #444;
+  color: #212121;
   margin: 0px;
 }
 
@@ -75,7 +75,7 @@ div {
   padding-top: 8px;
   padding-bottom: 0px;
   width: 100%;
-  background: #4db6ac;
+  background: #4dd0e1;
 }
 
 .instrumentSelect {
@@ -92,11 +92,11 @@ div {
   display: inline-block;
   width: 100%;
   padding-left: 4px;
-  background: #4db6ac;
+  background: #4dd0e1;
   border-width: 0px;
-  border-bottom-color: #009688;
-  border-bottom-width: 4px;
+  border-bottom-color: #00acc1;
   border-style: solid;
+  border-bottom-width: 6px;
 }
 
 .button {
@@ -142,11 +142,11 @@ div {
 
 .category.selected {
   border-width: 0px;
-  border-bottom-color: #ffc400;
-  border-bottom-width: 4px;
+  border-bottom-color: #056f00;
+  border-bottom-width: 6px;
   border-style: solid;
   padding-bottom: 3px;
-  margin-bottom: -7px;
+  margin-bottom: -9px;
 }
 
 .categoryIcon {
@@ -314,7 +314,7 @@ select.instrumentSelect {
   color: white;
   top: 0px;
   margin-top: -4px;
-  background: #4db6ac;
+  background: #4dd0e1;
   border: none;
 }
 

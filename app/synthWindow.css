@@ -265,7 +265,7 @@ div {
 }
 
 .contourPanelRow .rowName {
-  background-image: url('assets/rightarrow.png');
+  background-image: url('assets/rightarrow_small.png');
   background-repeat: no-repeat;
   background-position: left -2px top 22px;
   padding-top: 20px;
@@ -279,7 +279,7 @@ div {
 }
 
 .contourPanelRow.selected .rowName {
-  background-image: url('assets/downarrow.png');
+  background-image: url('assets/downarrow_small.png');
   background-position: left -2px top 23px;
 }
 

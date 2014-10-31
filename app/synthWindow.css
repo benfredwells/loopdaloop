@@ -73,7 +73,7 @@ div {
   display: inline-block;
   padding: 16px;
   padding-top: 8px;
-  padding-bottom: 0px;
+  padding-bottom: 16px;
   width: 100%;
   background: #4dd0e1;
 }
@@ -92,9 +92,9 @@ div {
   display: inline-block;
   width: 100%;
   padding-left: 28px;
-  background: #4dd0e1;
+  background: #dadada;
   border-width: 0px;
-  border-bottom-color: #00acc1;
+  border-bottom-color: #b8b8b8;
   border-style: solid;
   border-bottom-width: 6px;
 }
@@ -142,7 +142,7 @@ div {
 
 .category.selected {
   border-width: 0px;
-  border-bottom-color: #056f00;
+  border-bottom-color: #0097a7;
   border-bottom-width: 6px;
   border-style: solid;
   padding-bottom: 3px;

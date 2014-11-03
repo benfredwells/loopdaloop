@@ -72,10 +72,8 @@ div {
 #instrumentPersist {
   display: inline-block;
   padding: 16px;
-  padding-top: 8px;
-  padding-bottom: 16px;
   width: 100%;
-  background: #4dd0e1;
+  background: #673ab7;
 }
 
 .instrumentSelect {
@@ -142,7 +140,7 @@ div {
 
 .category.selected {
   border-width: 0px;
-  border-bottom-color: #0097a7;
+  border-bottom-color: #673ab7;
   border-bottom-width: 6px;
   border-style: solid;
   padding-bottom: 3px;
@@ -314,7 +312,7 @@ select.instrumentSelect {
   color: white;
   top: 0px;
   margin-top: -4px;
-  background: #4dd0e1;
+  background: #673ab7;
   border: none;
   padding-left: 24px;
   background-image: url('assets/menu.png');

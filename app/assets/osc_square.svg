@@ -3,6 +3,6 @@
    width="32"
    height="32">
   <polyline
-    style="fill:none;stroke:white;stroke-width:2"
+    style="fill:none;stroke:#727272;stroke-width:2"
     points="6,22 16,22 16,10 26,10 26,23"/>
 </svg>

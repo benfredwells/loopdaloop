@@ -111,8 +111,11 @@ div {
 
 .buttonText {
   padding: 5px;
-  font-size: 17px;
+}
+
+.persistButton .buttonText {
   color: white;
+  font-size: 17px;
 }
 
 .buttonShortcut {
@@ -306,6 +309,10 @@ select {
   border: none;
 }
 
+select:focus {
+  border: 1px solid;
+}
+
 select.instrumentSelect {
   -webkit-appearance:none;
   font-size: 17px;
@@ -314,10 +321,15 @@ select.instrumentSelect {
   margin-top: -4px;
   background: #673ab7;
   border: none;
-  padding-left: 24px;
+  padding-left: 32px;
   background-image: url('assets/menu.png');
   background-repeat: no-repeat;
-  background-position: left 0px top 4px;
+  background-position: left 8px top 4px;
+}
+
+select.instrumentSelect:focus {
+  border-color: white;
+  outline: 1px solid #7e57c2;
 }
 
 .setting input {

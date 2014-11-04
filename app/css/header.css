@@ -1,0 +1,85 @@
+#instrumentPersist {
+  display: inline-block;
+  padding: 16px;
+  width: 100%;
+  background: #673ab7;
+}
+
+.instrumentSelect {
+  height: 28px;
+  width: 270px;
+  font-size: 17px;
+  color: white;
+  top: 0;
+  background: #673ab7;
+  vertical-align: top;
+  border: 1px solid transparent;
+  margin-top: 0px;
+  padding-top: 3px;
+  padding-left: 32px;
+  background-image: url('../assets/menu.png');
+  background-repeat: no-repeat;
+  background-position: left 8px top 5px;
+}
+
+.instrumentSelect:focus {
+  border: 1px solid #7e57c2;
+  outline: none;
+}
+
+#categories {
+  display: inline-block;
+  width: 100%;
+  padding-left: 28px;
+  background: #dadada;
+  border-width: 0px;
+  border-bottom-color: #b8b8b8;
+  border-style: solid;
+  border-bottom-width: 6px;
+}
+
+.persistButton {
+  width: 26px;
+  height: 26px;
+  border-radius: 13px;
+  border: 1px solid transparent;
+}
+
+.persistButton:focus {
+  border: 1px solid #7e57c2;
+  outline: none;
+}
+
+.persistButton.pressed {
+  background-color: #7e57c2;
+}
+
+.persistButton .buttonText {
+  color: white;
+  font-size: 17px;
+}
+
+.category {
+  width: 46px;
+  height: 34px;
+  display: inline-block;
+  border: none;
+}
+
+.category.hover {
+}
+
+.category.selected {
+  border-width: 0px;
+  border-bottom-color: #673ab7;
+  border-bottom-width: 6px;
+  border-style: solid;
+  padding-bottom: 3px;
+  margin-bottom: -9px;
+}
+
+.categoryIcon {
+  height: 38px;
+  width: 44px;
+  border: none;
+}

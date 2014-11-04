@@ -1,117 +1,38 @@
 body {
-  font-family: arial, sans-serif;
-  color: #212121;
   margin: 0px;
 }
 
-div {
-  margin: 0px;
+input[type="range"] {
+  -webkit-appearance:none;
+  height: 2px;
+  background-color: #ccc;
+  padding-top: 0px;
+  margin-top: 8px;
+  vertical-align: top;
+  outline: none;
 }
 
-#dialogBackground {
-  opacity: 0.8;
-  position: absolute;
-  visibility: hidden;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  background-color: white;
+input::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:10px;
+  height:10px;
+  border-radius:10px;
+  background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #aaa), color-stop(0.49, #666), color-stop(0.51, #666), color-stop(1, #444) );
 }
 
-#dialogHolder {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100px;
-  padding-top: 20px;
-  position: absolute;
-  visibility: hidden;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-}
-
-.dialogDiv {
-  width: 200px;
-  padding: 24px;
-  border: 2px #CCC solid;
-  background-color: white;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.dialogRow {
-  width: 100%;
-  flex-shrink: 0;
-  padding-bottom: 12px;
-}
-
-.dialogCaption {
-  padding-bottom: 8px;
+select {
+  -webkit-appearance:none;
   font-size: 13px;
-}
-
-.dialogEdit {
-  width: calc(100% - 8px);
-  padding: 2px;
-  margin: 0;
-}
-
-.dialogButton {
-  width: 70px;
-  flex-shrink: 0;
+  color: #444;
+  width: 180px;
+  top: 0;
+  margin-top: -4px;
+  background: white;
+  border: none;
 }
 
 #errorDisplay {
   padding-top: 10px;
-}
-
-#instrumentPersist {
-  display: inline-block;
-  padding: 16px;
-  width: 100%;
-  background: #673ab7;
-}
-
-.instrumentSelect {
-  height: 28px;
-  width: 270px;
-  font-size: 17px;
-  color: white;
-  top: 0;
-  background: #673ab7;
-  vertical-align: top;
-  border: 1px solid transparent;
-  margin-top: 0px;
-  padding-top: 3px;
-  padding-left: 32px;
-  background-image: url('../assets/menu.png');
-  background-repeat: no-repeat;
-  background-position: left 8px top 5px;
-}
-
-.instrumentSelect:focus {
-  border: 1px solid #7e57c2;
-  outline: none;
-}
-
-#header {
-  padding: 0px;
-  height: 42px;
-}
-
-#categories {
-  display: inline-block;
-  width: 100%;
-  padding-left: 28px;
-  background: #dadada;
-  border-width: 0px;
-  border-bottom-color: #b8b8b8;
-  border-style: solid;
-  border-bottom-width: 6px;
 }
 
 .button {
@@ -127,126 +48,8 @@ div {
 .button.pressed {
 }
 
-.persistButton {
-  width: 26px;
-  height: 26px;
-  border-radius: 13px;
-  border: 1px solid transparent;
-}
-
-.persistButton:focus {
-  border: 1px solid #7e57c2;
-  outline: none;
-}
-
-.persistButton.pressed {
-  background-color: #7e57c2;
-}
-
-.newInstrumentIcon {
-  background-image: url('../assets/new_instrument.png');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.deleteInstrumentIcon {
-  background-image: url('../assets/delete_instrument.png');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
 .buttonText {
   padding: 5px;
-}
-
-.persistButton .buttonText {
-  color: white;
-  font-size: 17px;
-}
-
-.category {
-  width: 46px;
-  height: 34px;
-  display: inline-block;
-  border: none;
-}
-
-.category.hover {
-}
-
-.category.selected {
-  border-width: 0px;
-  border-bottom-color: #673ab7;
-  border-bottom-width: 6px;
-  border-style: solid;
-  padding-bottom: 3px;
-  margin-bottom: -9px;
-}
-
-.categoryIcon {
-  height: 38px;
-  width: 44px;
-  border: none;
-}
-
-.pitchIcon {
-  background-image: url('../assets/pitch.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
-}
-
-.sineWaveIcon {
-  background-image: url('../assets/osc_sine.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
-}
-
-.squareWaveIcon {
-  background-image: url('../assets/osc_square.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
-}
-
-.sawtoothWaveIcon {
-  background-image: url('../assets/osc_saw.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
-}
-
-.triangleWaveIcon {
-  background-image: url('../assets/osc_triangle.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
-}
-
-.disabledWaveIcon {
-  background-image: url('../assets/osc_disabled.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
-}
-
-.lowPassFilterIcon {
-  background-image: url('../assets/filter_low.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
-}
-
-.highPassFilterIcon {
-  background-image: url('../assets/filter_high.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
-}
-
-.disabledFilterIcon {
-  background-image: url('../assets/filter_disabled.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
-}
-
-.envelopeIcon {
-  background-image: url('../assets/env.svg');
-  background-repeat: no-repeat;
-  background-position: left 7px top 4px;
 }
 
 #details {
@@ -331,22 +134,6 @@ div {
   width: 225px;
 }
 
-select {
-  -webkit-appearance:none;
-  font-size: 13px;
-  color: #444;
-  width: 180px;
-  top: 0;
-  margin-top: -4px;
-  background: white;
-  border: none;
-}
-
-.instrumentSelect:focus {
-  border: 1px solid #7e57c2;
-  outline: none;
-}
-
 .setting input {
   width: 140px;
 }
@@ -355,24 +142,4 @@ select {
   width: 225px;
   margin-left: 0px;
   margin-right: 0px;
-}
-
-input[type="range"] {
-  -webkit-appearance:none;
-  height: 2px;
-  background-color: #ccc;
-  padding-top: 0px;
-  margin-top: 8px;
-  vertical-align: top;
-  outline: none;
-}
-
-input::-webkit-slider-thumb {
-  -webkit-appearance:none;
-  width:10px;
-  height:10px;
-  border-radius:10px;
-  background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #aaa), color-stop(0.49, #666), color-stop(0.51, #666), color-stop(1, #444) );
-}
-444) );
 }

@@ -9,6 +9,7 @@ module.Button = function(parentDiv, instrument, scene, ontimechange) {
   this.div.id = 'testButton';
   this.div.classList.add('button');
   this.div.classList.add('persistButton');
+  this.div.classList.add('testInstrumentIcon');
   this.instrument_ = instrument;
 
   this.textDiv = document.createElement('div');

@@ -10,6 +10,18 @@
   background-position: center;
 }
 
+.exportInstrumentIcon {
+  background-image: url('../assets/export_instrument.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.testInstrumentIcon {
+  background-image: url('../assets/test_instrument.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .pitchIcon {
   background-image: url('../assets/pitch.svg');
   background-repeat: no-repeat;

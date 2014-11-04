@@ -34,7 +34,9 @@ module.UI = function(parentDiv, instrument, onchange) {
   deleteButton.div.classList.add('deleteInstrumentIcon');
 
   var doExport = function(event) {ui.export_(event)};
-  (new UI.Button(this.div, doExport, '')).div.classList.add('persistButton');
+  var exportButton = new UI.Button(this.div, doExport, '');
+  exportButton.div.classList.add('persistButton');
+  exportButton.div.classList.add('exportInstrumentIcon');
 
   this.select.disabled = true;
 };

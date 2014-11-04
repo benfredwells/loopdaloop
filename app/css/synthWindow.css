@@ -88,7 +88,7 @@ div {
   margin-top: 0px;
   padding-top: 3px;
   padding-left: 32px;
-  background-image: url('assets/menu.png');
+  background-image: url('../assets/menu.png');
   background-repeat: no-repeat;
   background-position: left 8px top 5px;
 }
@@ -144,13 +144,13 @@ div {
 }
 
 .newInstrumentIcon {
-  background-image: url('assets/new_instrument.png');
+  background-image: url('../assets/new_instrument.png');
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .deleteInstrumentIcon {
-  background-image: url('assets/delete_instrument.png');
+  background-image: url('../assets/delete_instrument.png');
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -190,61 +190,61 @@ div {
 }
 
 .pitchIcon {
-  background-image: url('assets/pitch.svg');
+  background-image: url('../assets/pitch.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 .sineWaveIcon {
-  background-image: url('assets/osc_sine.svg');
+  background-image: url('../assets/osc_sine.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 .squareWaveIcon {
-  background-image: url('assets/osc_square.svg');
+  background-image: url('../assets/osc_square.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 .sawtoothWaveIcon {
-  background-image: url('assets/osc_saw.svg');
+  background-image: url('../assets/osc_saw.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 .triangleWaveIcon {
-  background-image: url('assets/osc_triangle.svg');
+  background-image: url('../assets/osc_triangle.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 .disabledWaveIcon {
-  background-image: url('assets/osc_disabled.svg');
+  background-image: url('../assets/osc_disabled.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 .lowPassFilterIcon {
-  background-image: url('assets/filter_low.svg');
+  background-image: url('../assets/filter_low.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 .highPassFilterIcon {
-  background-image: url('assets/filter_high.svg');
+  background-image: url('../assets/filter_high.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 .disabledFilterIcon {
-  background-image: url('assets/filter_disabled.svg');
+  background-image: url('../assets/filter_disabled.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
 
 .envelopeIcon {
-  background-image: url('assets/env.svg');
+  background-image: url('../assets/env.svg');
   background-repeat: no-repeat;
   background-position: left 7px top 4px;
 }
@@ -299,7 +299,7 @@ div {
 }
 
 .contourPanelRow .rowName {
-  background-image: url('assets/rightarrow_small.png');
+  background-image: url('../assets/rightarrow_small.png');
   background-repeat: no-repeat;
   background-position: left -2px top 22px;
   padding-top: 20px;
@@ -313,7 +313,7 @@ div {
 }
 
 .contourPanelRow.selected .rowName {
-  background-image: url('assets/downarrow_small.png');
+  background-image: url('../assets/downarrow_small.png');
   background-position: left -2px top 23px;
 }
 

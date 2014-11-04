@@ -76,7 +76,7 @@ div.black.playing:hover {
   width: 529px;
   height: 40px;
   margin-top: 20px;
-  background-image: url("assets/octaveselect_background.png");
+  background-image: url("../assets/octaveselect_background.png");
 }
 
 #octaveThumb {
@@ -85,5 +85,5 @@ div.black.playing:hover {
   height: 40px;
   top: 291px;
   left: 200px;
-  background-image: url("assets/octaveselect.png");
+  background-image: url("../assets/octaveselect.png");
 }

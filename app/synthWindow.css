@@ -149,6 +149,12 @@ div {
   background-position: center;
 }
 
+.deleteInstrumentIcon {
+  background-image: url('assets/delete_instrument.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .buttonText {
   padding: 5px;
 }

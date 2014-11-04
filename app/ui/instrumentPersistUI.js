@@ -29,7 +29,9 @@ module.UI = function(parentDiv, instrument, onchange) {
   addButton.div.classList.add('persistButton');
   addButton.div.classList.add('newInstrumentIcon');
 
-  (new UI.Button(this.div, null, '')).div.classList.add('persistButton');
+  var deleteButton = new UI.Button(this.div, null, '');
+  deleteButton.div.classList.add('persistButton');
+  deleteButton.div.classList.add('deleteInstrumentIcon');
 
   var doExport = function(event) {ui.export_(event)};
   (new UI.Button(this.div, doExport, '')).div.classList.add('persistButton');

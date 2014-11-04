@@ -14,7 +14,7 @@ module.Button = function(parentDiv, instrument, scene, ontimechange) {
   this.textDiv = document.createElement('div');
   this.textDiv.id = 'testButtonText';
   this.textDiv.classList.add('buttonText');
-  this.textDiv.innerHTML = Strings.kTest;
+  this.textDiv.innerHTML = '';
   this.div.appendChild(this.textDiv);
   
   this.scene_ = scene;

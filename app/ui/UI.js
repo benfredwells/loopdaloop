@@ -62,6 +62,7 @@ module.Button = function(container, onpressed, caption) {
   module.Control.call(this, container);
 
   this.div.classList.add('button');
+  this.div.tabIndex = 0;
 
   this.textDiv = document.createElement('div');
   this.textDiv.classList.add('buttonText');

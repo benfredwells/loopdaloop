@@ -78,7 +78,24 @@ div {
 
 .instrumentSelect {
   height: 28px;
-  width: 307px;
+  width: 270px;
+  font-size: 17px;
+  color: white;
+  top: 0;
+  background: #673ab7;
+  vertical-align: top;
+  border: 1px solid transparent;
+  margin-top: 0px;
+  padding-top: 3px;
+  padding-left: 32px;
+  background-image: url('assets/menu.png');
+  background-repeat: no-repeat;
+  background-position: left 8px top 5px;
+}
+
+.instrumentSelect:focus {
+  border: 1px solid #7e57c2;
+  outline: none;
 }
 
 #header {
@@ -104,9 +121,32 @@ div {
   margin-left: 6px;
 }
 
+.button:hover {
+}
+
+.button.pressed {
+}
+
 .persistButton {
   width: 26px;
   height: 26px;
+  border-radius: 13px;
+  border: 1px solid transparent;
+}
+
+.persistButton:focus {
+  border: 1px solid #7e57c2;
+  outline: none;
+}
+
+.persistButton.pressed {
+  background-color: #7e57c2;
+}
+
+.newInstrumentIcon {
+  background-image: url('assets/new_instrument.png');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .buttonText {
@@ -116,19 +156,6 @@ div {
 .persistButton .buttonText {
   color: white;
   font-size: 17px;
-}
-
-.buttonShortcut {
-  color: #666;
-}
-
-.button:hover {
-  border-color: #777;
-  box-shadow: 0px 0px 2px 2px #EEE;
-}
-
-.button.pressed {
-  background-image: linear-gradient(0deg, #e5e5e5, #e0e0e0 50%, #e5e5e5);
 }
 
 .category {
@@ -303,33 +330,15 @@ select {
   font-size: 13px;
   color: #444;
   width: 180px;
-  top: 0px;
+  top: 0;
   margin-top: -4px;
   background: white;
   border: none;
 }
 
-select:focus {
-  border: 1px solid;
-}
-
-select.instrumentSelect {
-  -webkit-appearance:none;
-  font-size: 17px;
-  color: white;
-  top: 0px;
-  margin-top: -4px;
-  background: #673ab7;
-  border: none;
-  padding-left: 32px;
-  background-image: url('assets/menu.png');
-  background-repeat: no-repeat;
-  background-position: left 8px top 4px;
-}
-
-select.instrumentSelect:focus {
-  border-color: white;
-  outline: 1px solid #7e57c2;
+.instrumentSelect:focus {
+  border: 1px solid #7e57c2;
+  outline: none;
 }
 
 .setting input {

@@ -25,12 +25,14 @@ module.UI = function(parentDiv, instrument, onchange) {
   this.select.onchange = function() {ui.updateInstrument_()};
 
   var doAdd = function(event) {ui.add_(event)};
-  (new UI.Button(this.div, doAdd, Strings.kAdd)).div.classList.add('persistButton');
+  var addButton = new UI.Button(this.div, doAdd, '');
+  addButton.div.classList.add('persistButton');
+  addButton.div.classList.add('newInstrumentIcon');
 
-  (new UI.Button(this.div, null, Strings.kClear)).div.classList.add('persistButton');
+  (new UI.Button(this.div, null, '')).div.classList.add('persistButton');
 
   var doExport = function(event) {ui.export_(event)};
-  (new UI.Button(this.div, doExport, Strings.kExport)).div.classList.add('persistButton');
+  (new UI.Button(this.div, doExport, '')).div.classList.add('persistButton');
 
   this.select.disabled = true;
 };

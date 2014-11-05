@@ -64,10 +64,12 @@ module.Button = function(container, onpressed, caption) {
   this.div.classList.add('button');
   this.div.tabIndex = 0;
 
-  this.textDiv = document.createElement('div');
-  this.textDiv.classList.add('buttonText');
-  this.textDiv.innerHTML = caption;
-  this.div.appendChild(this.textDiv);
+  if (caption != '') {
+    this.textDiv = document.createElement('div');
+    this.textDiv.classList.add('buttonText');
+    this.textDiv.innerHTML = caption;
+    this.div.appendChild(this.textDiv);
+  }
 
   this.onpressed_ = onpressed;
   this.div.onmousedown = this.handleMouseDown.bind(this);
@@ -99,11 +101,12 @@ module.Button.prototype.unpress_ = function(event) {
 };
 
 module.Button.prototype.handleMouseDown = function(event) {
-  this.press_();
+  if (event.button == 0)
+    this.press_();
 };
 
 module.Button.prototype.handleMouseUp = function(event) {
-  if (this.pressed_) {
+  if (event.button == 0 && this.pressed_) {
     this.unpress_();
     this.fire_();
   }

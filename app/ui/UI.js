@@ -73,59 +73,72 @@ module.Button = function(container, onpressed, caption) {
   this.div.onmousedown = this.handleMouseDown.bind(this);
   this.div.onmouseup = this.handleMouseUp.bind(this);
   this.div.onmouseleave = this.handleMouseLeave.bind(this);
+  this.div.ontouchstart = this.handleTouchStart.bind(this);
+  this.div.ontouchend = this.handleTouchEnd.bind(this);
   this.div.onkeydown = this.handleKeyDown.bind(this);
   this.div.onkeyup = this.handleKeyUp.bind(this);
   this.div.onblur = this.handleBlur.bind(this);
   this.pressed_ = false;
-}
+};
 
 module.Button.prototype = Object.create(module.Control.prototype);
 
 module.Button.prototype.fire_ = function(event) {
   if (this.onpressed_)
     this.onpressed_();
-}
+};
 
 module.Button.prototype.press_ = function(event) {
   this.pressed_ = true;
   this.div.classList.add('pressed');
-}
+};
 
 module.Button.prototype.unpress_ = function(event) {
   this.pressed_ = false;
   this.div.classList.remove('pressed');
-}
+};
 
 module.Button.prototype.handleMouseDown = function(event) {
   this.press_();
-}
+};
 
 module.Button.prototype.handleMouseUp = function(event) {
   if (this.pressed_) {
     this.unpress_();
     this.fire_();
   }
-}
+};
 
 module.Button.prototype.handleMouseLeave = function(event) {
   this.unpress_();
-}
+};
+
+module.Button.prototype.handleTouchStart = function(event) {
+  this.press_();
+  event.preventDefault();
+};
+
+module.Button.prototype.handleTouchEnd = function(event) {
+  if (this.pressed_)
+    this.unpress_();
+  event.preventDefault();
+};
 
 module.Button.prototype.handleKeyDown = function(event) {
   if (event.keyCode == ' '.charCodeAt(0))
     this.press_();
-}
+};
 
 module.Button.prototype.handleKeyUp = function(event) {
   if (event.keyCode == ' '.charCodeAt(0) && this.pressed_) {
     this.unpress_();
     this.fire_();
   }
-}
+};
 
 module.Button.prototype.handleBlur = function(event) {
   this.unpress_();
-}
+};
 
 return module;
 

@@ -86,7 +86,7 @@ SynthesizerWrapper.prototype.createInstrumentPersistUI = function() {
 }
 
 SynthesizerWrapper.prototype.createTestButton = function() {
-  this.testButton = new TestButton.Button(
+  this.testButton = new TestButton.TestButton(
       this.instrumentPersistUI.div,
       this.instrument,
       this.scene,

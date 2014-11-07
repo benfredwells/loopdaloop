@@ -2,3 +2,20 @@ body {
   margin: 0px;
 }
 
+.button {
+  display: inline-block;
+  text-align: center;
+  border: none;
+  margin-left: 6px;
+}
+
+.button:hover {
+}
+
+.button.pressed {
+}
+
+.buttonText {
+  padding: 5px;
+}
+

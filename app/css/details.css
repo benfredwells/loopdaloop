@@ -1,4 +1,16 @@
-input[type="range"] {
+#errorDisplay {
+  padding-top: 10px;
+}
+
+#details {
+  background-color: #fff;
+  width: 394px;
+  padding: 16px 24px;
+  font-size: 13px;
+  margin-top: -1px;
+}
+
+#details input[type="range"] {
   -webkit-appearance:none;
   height: 2px;
   background-color: #ccc;
@@ -8,7 +20,7 @@ input[type="range"] {
   outline: none;
 }
 
-input::-webkit-slider-thumb {
+#details input::-webkit-slider-thumb {
   -webkit-appearance:none;
   width:10px;
   height:10px;
@@ -16,7 +28,7 @@ input::-webkit-slider-thumb {
   background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #aaa), color-stop(0.49, #666), color-stop(0.51, #666), color-stop(1, #444) );
 }
 
-select {
+#details select {
   -webkit-appearance:none;
   font-size: 13px;
   color: #444;
@@ -25,35 +37,6 @@ select {
   margin-top: -4px;
   background: white;
   border: none;
-}
-
-#errorDisplay {
-  padding-top: 10px;
-}
-
-.button {
-  display: inline-block;
-  text-align: center;
-  border: none;
-  margin-left: 6px;
-}
-
-.button:hover {
-}
-
-.button.pressed {
-}
-
-.buttonText {
-  padding: 5px;
-}
-
-#details {
-  background-color: #fff;
-  width: 394px;
-  padding: 8px;
-  font-size: 13px;
-  margin-top: -1px;
 }
 
 .row {

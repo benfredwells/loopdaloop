@@ -6,6 +6,7 @@
 }
 
 .instrumentSelect {
+  -webkit-appearance:none;
   height: 28px;
   width: 294px;
   font-size: 17px;

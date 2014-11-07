@@ -17,6 +17,7 @@
   background-repeat: repeat;
   padding: 6px 0px;
   vertical-align: top;
+  margin-bottom: -1px;
   border: 1px solid transparent;
 }
 
@@ -67,7 +68,7 @@
   display: inline-block;
   padding-top: 4px;
   width: 74px;
-  vertical-align: top;
+  vertical-align: bottom;
 }
 
 .svg {

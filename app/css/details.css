@@ -13,25 +13,29 @@
 #details input[type="range"] {
   -webkit-appearance:none;
   height: 2px;
-  background-color: #ccc;
-  padding-top: 0px;
-  margin-top: 8px;
+  background-image: url('../assets/details_slider.png');
+  background-repeat: repeat;
+  padding: 6px 0px;
   vertical-align: top;
+  border: 1px solid transparent;
+}
+
+#details input[type="range"]:focus {
   outline: none;
+  border: 1px solid #dadada;
 }
 
 #details input::-webkit-slider-thumb {
   -webkit-appearance:none;
-  width:10px;
-  height:10px;
-  border-radius:10px;
-  background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #aaa), color-stop(0.49, #666), color-stop(0.51, #666), color-stop(1, #444) );
+  width:12px;
+  height:12px;
+  background-image: url('../assets/details_slider_thumb.png');
+  background-position: left 0px top -1px;
 }
 
 #details select {
   -webkit-appearance:none;
   font-size: 13px;
-  color: #444;
   width: 180px;
   top: 0;
   margin-top: -4px;

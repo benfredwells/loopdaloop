@@ -49,7 +49,7 @@
   display: inline-block;
   padding-top: 4px;
   width: 150px;
-  vertical-align: top;
+  vertical-align: bottom;
   padding-left: 12px;
 }
 
@@ -85,6 +85,7 @@
   background-repeat: no-repeat;
   background-position: left -2px top 22px;
   padding-top: 20px;
+  vertical-align: top;
 }
 
 .contourPanelRow.hover {
@@ -107,6 +108,7 @@
   /* padding is 8px less, so width must be 8px more. */
   width: 158px;
   background-image: none;
+  vertical-align: top;
 }
 
 .contourDisplay {

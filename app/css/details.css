@@ -15,9 +15,8 @@
   height: 2px;
   background-image: url('../assets/details_slider.png');
   background-repeat: repeat;
-  padding: 6px 0px;
+  padding: 6px 0px 4px 0px;
   vertical-align: top;
-  margin-bottom: -1px;
   border: 1px solid transparent;
 }
 

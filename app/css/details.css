@@ -33,6 +33,23 @@
   background-position: left 0px top -1px;
 }
 
+#details input[type="checkbox"] {
+  -webkit-appearance:none;
+  width: 16px;
+  height: 16px;
+  margin-bottom: -2px;
+  background-image: url('../assets/details_checkbox_unchecked.png');
+  padding: 2px;
+}
+
+#details input[type="checkbox"]:checked {
+  background-image: url('../assets/details_checkbox_checked.png');
+}
+
+#details input[type="checkbox"]:focus {
+  outline: 1px solid #dadada;
+}
+
 #details select {
   -webkit-appearance:none;
   font-size: 13px;

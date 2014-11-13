@@ -37,6 +37,7 @@
   -webkit-appearance:none;
   width: 16px;
   height: 16px;
+  margin-left: 1px;
   margin-bottom: -2px;
   background-image: url('../assets/details_checkbox_unchecked.png');
   padding: 2px;

@@ -55,13 +55,19 @@
   font-size: 13px;
   width: 180px;
   top: 0;
-  margin-top: -4px;
   background: white;
-  border: none;
+  vertical-align: bottom;
+  margin-bottom: -2px;
+  border: 1px solid transparent;
+}
+
+#details select:focus {
+  border: 1px solid #dadada;
+  outline: none;
 }
 
 .row {
-  min-height: 26px;
+  min-height: 28px;
   padding-left: 4px;
   padding-right: 4px;
 }

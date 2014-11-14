@@ -79,13 +79,13 @@ module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {
   this.id = id;
   this.title = title;
 
-  this.categoryEl_ = document.createElement('div');
-  this.categoryEl_.classList.add('category');
-  categoriesEl.appendChild(this.categoryEl_);
+  this.categoryEl = document.createElement('div');
+  this.categoryEl.classList.add('category');
+  categoriesEl.appendChild(this.categoryEl);
 
   this.categoryIconEl_ = document.createElement('div');
   this.categoryIconEl_.classList.add('categoryIcon');
-  this.categoryEl_.appendChild(this.categoryIconEl_);
+  this.categoryEl.appendChild(this.categoryIconEl_);
 
   if (!hideTitle) {
     this.titleRow = new SettingsUI.Row(detailsEl, title, null);
@@ -97,7 +97,7 @@ module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {
   this.setSelected(false);
 
   var ui = this;
-  this.categoryEl_.onclick = function() {
+  this.categoryEl.onclick = function() {
     if (ui.isSelected())
       return;
     ui.setSelected(true);
@@ -105,20 +105,20 @@ module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {
       ui.onselect(ui);
   }
 
-  this.categoryEl_.onmouseenter = function() {
-    ui.categoryEl_.classList.add('hover');
+  this.categoryEl.onmouseenter = function() {
+    ui.categoryEl.classList.add('hover');
   }
 
-  this.categoryEl_.onmouseleave = function() {
-    ui.categoryEl_.classList.remove('hover');
+  this.categoryEl.onmouseleave = function() {
+    ui.categoryEl.classList.remove('hover');
   }
 }
 
 module.UI.prototype.setSelected = function(selected) {
   if (selected)
-    this.categoryEl_.classList.add('selected');
+    this.categoryEl.classList.add('selected');
   else
-    this.categoryEl_.classList.remove('selected');
+    this.categoryEl.classList.remove('selected');
 
   if (!this.hideTitle_)
     this.titleRow.setVisible(selected);

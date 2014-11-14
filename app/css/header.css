@@ -39,6 +39,10 @@
   border-bottom-width: 6px;
 }
 
+#categories:focus {
+  outline: none;
+}
+
 .persistButton {
   width: 26px;
   height: 26px;
@@ -65,19 +69,30 @@
   width: 46px;
   height: 34px;
   display: inline-block;
-  border: none;
+  border: 1px solid transparent;
 }
 
 .category.hover {
 }
 
 .category.selected {
-  border-width: 0px;
   border-bottom-color: #673ab7;
   border-bottom-width: 6px;
-  border-style: solid;
   padding-bottom: 3px;
   margin-bottom: -9px;
+}
+
+#categories:focus .category.selected {
+  border-top-color: #b8b8b8;
+  border-left-color: #b8b8b8;
+  border-right-color: #b8b8b8;
+}
+
+#activeCategoryIndicator {
+  position: absolute;
+  background: #673ab7;
+  height: 6px;
+  width: 46px;
 }
 
 .categoryIcon {

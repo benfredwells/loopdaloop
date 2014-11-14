@@ -28,6 +28,7 @@ var SynthesizerWrapper = function() {
 
   this.categoriesEl = null;
   this.detailsEl = null;
+  this.activeCategoryIndicatorEl = null;
   this.instrument = gBackgroundPage.instrument;
   this.scene = gBackgroundPage.scene;
   this.savedInstruments = gBackgroundPage.savedInstruments;
@@ -112,6 +113,8 @@ SynthesizerWrapper.prototype.handleSavedInstrumentsLoaded = function() {
 
 SynthesizerWrapper.prototype.handleLoad = function() {
   this.categoriesEl = document.getElementById('categories');
+  this.categoriesEl.tabIndex = 0;
+  this.activeCategoryIndicatorEl = document.getElementById('activeCategoryIndicator');
   this.detailsEl = document.getElementById('details');
 
   this.loaded = false;
@@ -148,9 +151,16 @@ SynthesizerWrapper.prototype.handleStorageLoaded = function(items) {
   var selectedID = items[kSelectedCategoryKey];
   if (!selectedID)
     selectedID = kOscillatorAID;
+  var wrapper = this;
   this.instrumentUIs.forEach(function (ui) {
     ui.setSelected(ui.id == selectedID);
     ui.updateIcon();
+    if (ui.id == selectedID) {
+      console.log('here');
+      console.log(wrapper.activeCategoryIndicatorEl);
+      wrapper.activeCategoryIndicatorEl.style.left = UI.asPixels(ui.categoryEl.offsetLeft);
+      console.log('left: ' + wrapper.activeCategoryIndicatorEl.style.left);
+    }
   });
   this.loaded = true;
   this.updateSize();

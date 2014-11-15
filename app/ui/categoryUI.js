@@ -115,6 +115,9 @@ module.UI = function(id, title, categoriesEl, detailsEl, hideTitle) {
 }
 
 module.UI.prototype.setSelected = function(selected) {
+  if (this.isSelected() == selected)
+    return;
+
   if (selected)
     this.categoryEl.classList.add('selected');
   else

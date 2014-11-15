@@ -100,6 +100,12 @@ SynthesizerWrapper.prototype.createErrorDisplayUI = function() {
       this.handleErrorVisibilityChanged.bind(this));
 };
 
+SynthesizerWrapper.prototype.createCategoryIndicator = function() {
+  this.activeCategoryIndicatorEl = document.createElement('div');
+  this.activeCategoryIndicatorEl.id = 'activeCategoryIndicator';
+  this.categoriesEl.appendChild(this.activeCategoryIndicatorEl);
+};
+
 SynthesizerWrapper.prototype.initializeCategoryUI = function(ui) {
   ui.onselect = this.handleCategorySelected.bind(this);
   ui.onsizechange = this.handleCategorySizeChanged.bind(this);
@@ -114,7 +120,6 @@ SynthesizerWrapper.prototype.handleSavedInstrumentsLoaded = function() {
 SynthesizerWrapper.prototype.handleLoad = function() {
   this.categoriesEl = document.getElementById('categories');
   this.categoriesEl.tabIndex = 0;
-  this.activeCategoryIndicatorEl = document.getElementById('activeCategoryIndicator');
   this.detailsEl = document.getElementById('details');
 
   this.loaded = false;
@@ -127,6 +132,7 @@ SynthesizerWrapper.prototype.handleLoad = function() {
   this.createFilterUI(kFilterBID, Strings.kFilter2, 1);
   this.createEnvelopeUI(kEnvelopeID, Strings.kEnvelope);
 
+  this.createCategoryIndicator();
   this.createInstrumentPersistUI();
   this.createTestButton();
   this.createErrorDisplayUI();
@@ -138,6 +144,15 @@ SynthesizerWrapper.prototype.handleLoad = function() {
   gBackgroundPage.showKeyboard();
   gBackgroundPage.setSynthWrapper(this);
 };
+
+SynthesizerWrapper.prototype.setCategorySelected = function(categoryUI, selected) {
+  categoryUI.setSelected(selected);
+  if (selected) {
+    this.activeCategoryIndicatorEl.style.left = UI.asPixels(categoryUI.categoryEl.offsetLeft);
+    this.activeCategoryIndicatorEl.style.top = UI.asPixels(
+        this.categoriesEl.offsetTop + this.categoriesEl.offsetHeight - this.activeCategoryIndicatorEl.offsetHeight);
+  }
+}
 
 SynthesizerWrapper.prototype.handleStorageLoaded = function(items) {
   this.instrumentPersistUI.initialize(this.savedInstruments);
@@ -153,14 +168,8 @@ SynthesizerWrapper.prototype.handleStorageLoaded = function(items) {
     selectedID = kOscillatorAID;
   var wrapper = this;
   this.instrumentUIs.forEach(function (ui) {
-    ui.setSelected(ui.id == selectedID);
+    wrapper.setCategorySelected(ui, ui.id == selectedID);
     ui.updateIcon();
-    if (ui.id == selectedID) {
-      console.log('here');
-      console.log(wrapper.activeCategoryIndicatorEl);
-      wrapper.activeCategoryIndicatorEl.style.left = UI.asPixels(ui.categoryEl.offsetLeft);
-      console.log('left: ' + wrapper.activeCategoryIndicatorEl.style.left);
-    }
   });
   this.loaded = true;
   this.updateSize();
@@ -211,10 +220,9 @@ SynthesizerWrapper.prototype.saveState = function() {
 };
 
 SynthesizerWrapper.prototype.handleCategorySelected = function(sender) {
+  var wrapper = this;
   this.instrumentUIs.forEach(function (ui) {
-    if (ui != sender) {
-      ui.setSelected(false);
-    }
+    wrapper.setCategorySelected(ui, ui == sender);
   });
   this.updateSize();
   this.saveState();

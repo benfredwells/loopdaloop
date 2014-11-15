@@ -28,21 +28,6 @@
   outline: none;
 }
 
-#categories {
-  display: inline-block;
-  width: 100%;
-  padding-left: 28px;
-  background: #dadada;
-  border-width: 0px;
-  border-bottom-color: #b8b8b8;
-  border-style: solid;
-  border-bottom-width: 6px;
-}
-
-#categories:focus {
-  outline: none;
-}
-
 .persistButton {
   width: 26px;
   height: 26px;
@@ -65,21 +50,30 @@
   font-size: 17px;
 }
 
+#categories {
+  display: inline-block;
+  width: 100%;
+  height: 39px;
+  padding-left: 28px;
+  background: #dadada;
+  border-width: 0px;
+  border-bottom-color: #b8b8b8;
+  border-style: solid;
+  border-bottom-width: 6px;
+}
+
+#categories:focus {
+  outline: none;
+}
+
 .category {
   width: 46px;
-  height: 34px;
   display: inline-block;
   border: 1px solid transparent;
+  border-bottom-width: 0;
 }
 
 .category.hover {
-}
-
-.category.selected {
-  border-bottom-color: #673ab7;
-  border-bottom-width: 6px;
-  padding-bottom: 3px;
-  margin-bottom: -9px;
 }
 
 #categories:focus .category.selected {
@@ -92,7 +86,7 @@
   position: absolute;
   background: #673ab7;
   height: 6px;
-  width: 46px;
+  width: 48px;
 }
 
 .categoryIcon {

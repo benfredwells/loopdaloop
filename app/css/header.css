@@ -52,18 +52,20 @@
 
 #categories {
   display: inline-block;
-  width: 100%;
+  width: calc(100% - 32px);
   height: 39px;
   padding-left: 28px;
   background: #dadada;
-  border-width: 0px;
+  border: 2px solid transparent;
   border-bottom-color: #b8b8b8;
-  border-style: solid;
   border-bottom-width: 6px;
 }
 
 #categories:focus {
   outline: none;
+  border-top-color: #b8b8b8;
+  border-left-color: #b8b8b8;
+  border-right-color: #b8b8b8;
 }
 
 .category {
@@ -74,12 +76,6 @@
 }
 
 .category.hover {
-}
-
-#categories:focus .category.selected {
-  border-top-color: #b8b8b8;
-  border-left-color: #b8b8b8;
-  border-right-color: #b8b8b8;
 }
 
 #activeCategoryIndicator {

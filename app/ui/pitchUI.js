@@ -3,7 +3,7 @@ PitchUI = (function() {
 "use strict";
 var module = {};
 
-module.UI = function(id, pitch, instrument, title, categoriesEl, detailsEl, ontimechange) {
+module.UI = function(id, pitch, context, instrument, title, categoriesEl, detailsEl, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, true);
 
   var ui = this;

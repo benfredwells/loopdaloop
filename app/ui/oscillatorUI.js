@@ -23,7 +23,7 @@ var kHarmonicStrokeWidth = 2;
 module.OscillatorVisualizer_.prototype.harmonicAmplitude_ = function(harmonic) {
   switch (this.oscillator_.typeSetting.value) {
     case AudioConstants.kSineWave: {
-      if (harmonic == 1) 
+      if (harmonic == 1)
         return 1
       else
         return 0;
@@ -75,7 +75,7 @@ module.OscillatorVisualizer_.prototype.drawVisualization = function() {
   }
 }
 
-module.UI = function(id, oscillator, instrument, title, categoriesEl, detailsEl, ontimechange) {
+module.UI = function(id, oscillator, context, instrument, title, categoriesEl, detailsEl, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, false);
   this.oscillator_ = oscillator;
 

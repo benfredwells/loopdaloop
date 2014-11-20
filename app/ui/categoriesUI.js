@@ -24,49 +24,10 @@ module.UI = function(categoriesEl, detailsEl, instrument, scene, onvisualization
   this.createCategoryIndicator();
 }
 
-module.UI.prototype.createPitchUI = function(id, title) {
-  this.categories.push(new PitchUI.UI(
-      id,
-      this.instrument.pitch,
-      this.instrument,
-      title,
-      this.categoriesEl,
-      this.detailsEl,
-      this.onvisualizationtimechange));
-};
-
-module.UI.prototype.createOscillatorUI = function(id, title, index) {
-  this.categories.push(new OscillatorUI.UI(
-      id,
-      this.instrument.oscillators[index],
-      this.instrument,
-      title,
-      this.categoriesEl,
-      this.detailsEl,
-      this.onvisualizationtimechange));
-};
-
-module.UI.prototype.createFilterUI = function(id, title, index) {
-  this.categories.push(new FilterUI.UI(
-      id,
-      this.instrument.filters[index],
-      this.scene.context,
-      this.instrument,
-      title,
-      this.categoriesEl,
-      this.detailsEl,
-      this.onvisualizationtimechange));
-};
-
-module.UI.prototype.createEnvelopeUI = function(id, title) {
-  this.categories.push(new EnvelopeUI.UI(
-      id,
-      this.instrument.envelopeContour,
-      this.instrument,
-      title,
-      this.categoriesEl,
-      this.detailsEl,
-      this.onvisualizationtimechange));
+module.UI.prototype.createCategoryUI = function(constructor, aspect, id, title) {
+  this.categories.push(new constructor(id, aspect, this.scene.context, this.instrument,
+                                       title, this.categoriesEl, this.detailsEl,
+                                       this.onvisualizationtimechange));
 };
 
 module.UI.prototype.createCategoryIndicator = function() {
@@ -76,13 +37,13 @@ module.UI.prototype.createCategoryIndicator = function() {
 };
 
 module.UI.prototype.createCategories = function() {
-  this.createPitchUI(kPitchID, Strings.kPitch);
-  this.createOscillatorUI(kOscillatorAID, Strings.kOscillator1, 0);
-  this.createOscillatorUI(kOscillatorBID, Strings.kOscillator2, 1);
-  this.createOscillatorUI(kOscillatorCID, Strings.kOscillator3, 2);
-  this.createFilterUI(kFilterAID, Strings.kFilter1, 0);
-  this.createFilterUI(kFilterBID, Strings.kFilter2, 1);
-  this.createEnvelopeUI(kEnvelopeID, Strings.kEnvelope);
+  this.createCategoryUI(PitchUI.UI, this.instrument.pitch, kPitchID, Strings.kPitch);
+  this.createCategoryUI(OscillatorUI.UI, this.instrument.oscillators[0], kOscillatorAID, Strings.kOscillator1);
+  this.createCategoryUI(OscillatorUI.UI, this.instrument.oscillators[1], kOscillatorBID, Strings.kOscillator2);
+  this.createCategoryUI(OscillatorUI.UI, this.instrument.oscillators[2], kOscillatorCID, Strings.kOscillator3);
+  this.createCategoryUI(FilterUI.UI, this.instrument.filters[0], kFilterAID, Strings.kFilter1);
+  this.createCategoryUI(FilterUI.UI, this.instrument.filters[1], kFilterBID, Strings.kFilter2);
+  this.createCategoryUI(EnvelopeUI.UI, this.instrument.envelopeContour, kEnvelopeID, Strings.kEnvelope);
 }
 
 return module;

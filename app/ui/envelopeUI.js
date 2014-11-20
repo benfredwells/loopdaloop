@@ -3,7 +3,7 @@ EnvelopeUI = (function() {
 "use strict";
 var module = {};
 
-module.UI = function(id, envelopeContour, instrument, title, categoriesEl, detailsEl, ontimechange) {
+module.UI = function(id, envelopeContour, context, instrument, title, categoriesEl, detailsEl, ontimechange) {
   CategoryUI.UI.call(this, id, title, categoriesEl, detailsEl, true);
   this.envelopeContour_ = envelopeContour;
 

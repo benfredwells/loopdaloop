@@ -45,12 +45,6 @@ SynthesizerWrapper.prototype.createErrorDisplayUI = function() {
       this.handleErrorVisibilityChanged.bind(this));
 };
 
-SynthesizerWrapper.prototype.initializeCategoryUI = function(ui) {
-  ui.onselect = this.handleCategorySelected.bind(this);
-  ui.onsizechange = this.handleCategorySizeChanged.bind(this);
-  ui.setCurrentTime(0, this.lastNoteDuration, this.instrument.envelopeContour.releaseTime());
-};
-
 SynthesizerWrapper.prototype.handleSavedInstrumentsLoaded = function() {
   chrome.storage.local.remove(kDeadKeys);
   chrome.storage.local.get([kSelectedCategoryKey, kSelectedPresetKey], this.handleStorageLoaded.bind(this));
@@ -62,29 +56,22 @@ SynthesizerWrapper.prototype.handleLoad = function() {
   var categoriesEl = document.getElementById('categories');
   var detailsEl = document.getElementById('details');
   var visualizationTimeChangeHandler = this.handleVisualizationTimeChange.bind(this);
+  var selectedCategoryChangedHandler = this.handleSelectedCategoryChanged.bind(this);
+  var categorySizeChangedHandler = this.handleCategorySizeChanged.bind(this);
   
-  this.categoriesUI = new CategoriesUI.UI(categoriesEl, detailsEl, this.instrument, this.scene, visualizationTimeChangeHandler);
+  this.categoriesUI = new CategoriesUI.UI(categoriesEl, detailsEl, this.instrument, this.scene, this.lastNoteDuration,
+                          visualizationTimeChangeHandler, selectedCategoryChangedHandler, categorySizeChangedHandler);
 
   this.createInstrumentPersistUI();
   this.createTestButton();
   this.createErrorDisplayUI();
-  this.savedInstruments.setErrorHandler(this.errorDisplayUI.updateErrorTextCallback);
 
-  this.categoriesUI.categories.forEach(this.initializeCategoryUI.bind(this));
+  this.savedInstruments.setErrorHandler(this.errorDisplayUI.updateErrorTextCallback);
   this.testButton.setCurrentTime(0);
 
   gBackgroundPage.showKeyboard();
   gBackgroundPage.setSynthWrapper(this);
 };
-
-SynthesizerWrapper.prototype.setCategorySelected = function(categoryUI, selected) {
-  categoryUI.setSelected(selected);
-  if (selected) {
-    this.categoriesUI.activeCategoryIndicatorEl.style.left = UI.asPixels(categoryUI.categoryEl.offsetLeft);
-    this.categoriesUI.activeCategoryIndicatorEl.style.top = UI.asPixels(
-        this.categoriesUI.categoriesEl.offsetTop + this.categoriesUI.categoriesEl.offsetHeight - this.categoriesUI.activeCategoryIndicatorEl.offsetHeight);
-  }
-}
 
 SynthesizerWrapper.prototype.handleStorageLoaded = function(items) {
   this.instrumentPersistUI.initialize(this.savedInstruments);
@@ -97,12 +84,9 @@ SynthesizerWrapper.prototype.handleStorageLoaded = function(items) {
 
   var selectedID = items[kSelectedCategoryKey];
   if (!selectedID)
-    selectedID = kOscillatorAID;
+    selectedID = CategoriesUI.kDefaultCategoryID;
   var wrapper = this;
-  this.categoriesUI.categories.forEach(function (ui) {
-    wrapper.setCategorySelected(ui, ui.id == selectedID);
-    ui.updateIcon();
-  });
+  this.categoriesUI.selectCategoryWithID(selectedID);
   this.loaded = true;
   this.updateSize();
 };
@@ -151,11 +135,7 @@ SynthesizerWrapper.prototype.saveState = function() {
   chrome.storage.local.set(setting);
 };
 
-SynthesizerWrapper.prototype.handleCategorySelected = function(sender) {
-  var wrapper = this;
-  this.categoriesUI.categories.forEach(function (ui) {
-    wrapper.setCategorySelected(ui, ui == sender);
-  });
+SynthesizerWrapper.prototype.handleSelectedCategoryChanged = function(sender) {
   this.updateSize();
   this.saveState();
 };
